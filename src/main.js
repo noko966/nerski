@@ -1640,9 +1640,15 @@ class Skinner {
 
     createDownloadBtn(name, className, number) {
         let _dn = "download " + name;
-
-        let btn = this.createBtn(_dn, className);
-
+        let i = document.createElement('i');
+        i.className = 'dg_icon_24_download';
+        let s = document.createElement('span');
+        s.innerText = 'download css';
+        s.className = '';
+        let btn = document.createElement("button");
+        btn.className = `skinner_btn ${className}`;
+        btn.appendChild(i);
+        btn.appendChild(s);
         btn.addEventListener("click", () => {
             this.makeDownloadRequest(_dn, number);
         });
@@ -1661,29 +1667,17 @@ class Skinner {
         this.btnWrapper.appendChild(this.btnWrapperTop);
         this.btnWrapper.appendChild(this.btnWrapperBottom);
 
-        this.toolboxWrapper.appendChild(this.btnWrapper);
+        const actionsWrapper = document.createElement("div");
+        actionsWrapper.className = "sk_actions_wrapper";
+
+        this.toolboxWrapper.appendChild(actionsWrapper);
 
         let config = this.cssCb(this.skin);
         let name = config.name;
         let name2 = config.name2;
 
-        this.btnWrapperTop.appendChild(
-            this.createDownloadBtn(
-                name,
-                `${name2 ? this.classNames.btn50 : this.classNames.btn100
-                } skinner_btn-accent`
-            )
-        );
-        if (name2) {
-            this.btnWrapperTop.appendChild(
-                this.createDownloadBtn(
-                    name2,
-                    `${this.classNames.btn50} skinner_btn-accent`,
-                    2
-                )
-            );
-        }
-        let saveConfigBtn = this.createBtn("", "skinner_btn-s skinner_btn-accent");
+        
+        let saveConfigBtn = this.createBtn("", "skinner_btn-icon");
         let saveIcoWrapper = document.createElement("i");
         saveIcoWrapper.className = "dg_icon_24_copy";
         saveConfigBtn.appendChild(saveIcoWrapper);
@@ -1698,7 +1692,7 @@ class Skinner {
 
         let loadConfigButton = this.createBtn(
             "",
-            "skinner_btn-l skinner_btn-accent"
+            "skinner_btn-icon"
         );
         let loadIcoWrapper = document.createElement("i");
         loadIcoWrapper.className = "dg_icon_reload";
@@ -1717,10 +1711,26 @@ class Skinner {
             this.saveConfig();
         });
 
-        this.btnWrapperBottom.appendChild(saveConfigBtn);
+        actionsWrapper.appendChild(saveConfigBtn);
         loadConfigInputWrapper.appendChild(loadConfigInput);
-        this.btnWrapperBottom.appendChild(loadConfigInputWrapper);
-        this.btnWrapperBottom.appendChild(loadConfigButton);
+        actionsWrapper.appendChild(loadConfigInputWrapper);
+        actionsWrapper.appendChild(loadConfigButton);
+
+        actionsWrapper.appendChild(
+            this.createDownloadBtn(
+                name,
+                'skinner_btn-accent'
+            )
+        );
+        if (name2) {
+            actionsWrapper.appendChild(
+                this.createDownloadBtn(
+                    name2,
+                    `${this.classNames.btn50} skinner_btn-accent`,
+                    2
+                )
+            );
+        }
 
         this.messageWrapper = document.createElement("div");
         this.messageWrapper.className = "nik_skinner_message hide";
@@ -2161,7 +2171,7 @@ class Skinner {
 
     generateUiPalette(colors) {
         //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
-        let step = 2;
+        let step = 4;
 
         let bg = colors.bg;
         let islight = tinycolor(bg).isLight;
@@ -2226,11 +2236,11 @@ class Skinner {
         :root{
         --sk_zind: 1000000;
         --sk_zind2: calc(var(--sk_zind) + 10);
-        --skinnerHeaderHeight: 42px;
+        --skinnerHeaderHeight: 32px;
         --skinnerHeaderTogglerSize: 50px;
-        --skinnerToolboxHeight: 38px;
-        --skinnerToolboxFooterHeight: 120px;
-        --skinnerBtnHeight: 42px;
+        --skinnerToolboxHeight: 24px;
+        --skinnerToolboxFooterHeight: 48px;
+        --skinnerBtnHeight: 32px;
         --skinnerToolboxCollapserSize: 42px;
         --control-picker-size: 28px;
         --controls-row-height: 32px;
@@ -2639,6 +2649,22 @@ html, body {
     font-style: normal;
 }
 
+.sk_actions_wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+    padding: 0 16px;
+    height: var(--skinnerToolboxFooterHeight);
+    background: var(--skinnerBg);
+    position: absolute;
+    border-top: 1px solid var(--skinnerAccent);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+        box-shadow: 0 15px 9px 11px rgba(0, 0, 0, 0.3);
+}
+
 .nik_root_mobile {
     width: 420px;
     margin: 0 auto;
@@ -2838,7 +2864,7 @@ body {
     transform: translate(-50%, 0);
     transition: transform 0.5s;
     z-index: var(--sk_zind);
-    height: 410px;
+    height: 320px;
     width: auto;
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt);
@@ -2852,7 +2878,7 @@ body {
 }
 
 .skinner_toolbox-hide {
-    transform: translate(-50%, 100%);
+       transform: translate(-50%, calc(100% - 24px));
 }
 
 .skinner_ico_arrow {
@@ -2868,21 +2894,20 @@ body {
 
 .skinner_toolbox_toggler {
     display: block;
-    width: calc(var(--skinnerToolboxHeight) * 2);
+    width: var(--skinnerToolboxHeight);
     height: var(--skinnerToolboxHeight);
-    background-color: var(--skinnerToolboxBg);
-    color: var(--skinnerToolboxAccent);
+    color: var(--skinnerTxt);
+    background: inherit;
     position: absolute;
-    top: 0;
-    left: 50%;
     z-index: 10;
-    transform: translate(-50%, -100%);
     transition: color 0.5s, transform 0.5s;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     border: 0;
+    right:0;
+    top: 0;
 }
 
 .color_controls_toggle {
@@ -2921,6 +2946,7 @@ body {
     flex-direction: column;
     align-items: stretch;
     row-gap: 6px;
+    padding-bottom: var(--skinnerToolboxFooterHeight);
 }
 
 .skn_controls_row{
@@ -3071,7 +3097,6 @@ padding: 0 var(--controls-ui-pad-x);
 
 .nik_skinner_control_collapse_content {
     max-height: 0;
-    overflow: hidden;
     background-color: var(--skinnerBg);
     display: flex;
     column-gap: var(--controls-ui-gap);
@@ -3113,14 +3138,27 @@ padding: 0 var(--controls-ui-pad-x);
     display: block;
     transition: all 0.314s;
     text-transform: capitalize;
-    font-size: 16px;
+    font-size: 12px;
     position: relative;
     font-weight: 500;
-    padding: 0 12px;
-    border-radius: 3px;
-    transition: box-shadow 0.5s, background-color 0.5s, color 0.5s, border-color 0.5s;
-    text-shadow: 0 1px 1px var(--shadow);
+    padding: 0 6px;
+    border-radius: 4px;
+    transition: all 0.5s;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+}
+
+.skinner_btn-icon{
+   width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--skinnerBg3);
+    color: var(--skinnerTxt);    
 }
 
 .skinner_btn-50 {
@@ -3320,9 +3358,13 @@ padding: 0 var(--controls-ui-pad-x);
     margin: 0;
     flex-shrink: 0;
     border-radius: 0;
-     column-gap: 4px;
-         padding: 8px;
+    column-gap: 4px;
+    padding: 8px;
     border-radius: 4px;
+}
+
+.nik_skinner_checkbox_wrapper > .pickr{
+        position: absolute;
 }
 
     .nik_skinner_checkbox_wrapper:last-child {
@@ -3667,8 +3709,8 @@ input[type=number] {
 }
 
 .skinner_custom_chb_label > input[type='checkbox']:checked + .skinner_custom_chb {
-    background: var(--skinnerToolboxAccent);
-    color:  var(--skinnerToolboxBg); 
+    background: var(--skinnerAccent);
+    color:  var(--skinnerAccentTxt); 
     border-color: var(--skinnerToolboxAccentHover);
 }
 
@@ -3722,11 +3764,13 @@ input[type=number] {
 .nik_skinner_input {
     margin: 0;
     padding: 0 8px;
-    background-color: var(--skinnerToolboxBg);
+    background-color: var(--skinnerBg);
     color: var(--skinnerToolboxTxt);
+    border: 0;
     border-radius: 2px;
-    border: 1px solid var(--skinnerToolboxBg2);
+    border-bottom: 1px solid var(--skinnerBg6);
     outline: 0;
+    font-size: 11px;
     text-transform: capitalize;
     display: block;
     cursor: pointer;
@@ -3735,17 +3779,16 @@ input[type=number] {
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translate(-50%,0);
+    transform: translate(-50%, 0);
     width: 100%;
     height: 100%;
-    line-height: 35px;
+    line-height: 32px;
+    font-weight: 500;
     overflow: hidden;
-    font-size: 16px;
     z-index: 80;
 }
 
     .nik_skinner_input:focus {
-        border-radius: 5px;
         height: 300px;
         overflow: auto;
     }
@@ -3887,7 +3930,7 @@ input[type=number] {
         }
 
 .ap_root {
-    --w: 40px;
+    --w: 24px;
     width: var(--w);
     height: var(--w);
     border-radius: 50%;
