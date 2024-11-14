@@ -288,7 +288,7 @@ class Skinner {
                 accent: "#ee5253",
             },
             light: {
-                bg: "#c8d6e5",
+                bg: "#fff",
                 accent: "#10ac84",
             },
         };
@@ -1046,7 +1046,9 @@ class Skinner {
 
             self[verbalData.nameBg].picker.style.background = self.skin[verbalData.nameBg];
             self[verbalData.nameBg].picker2.style.background = self.skin[verbalData.nameBg_g];
-            self[verbalData.nameBg].picker3.style.background = self.skin[verbalData.nameTxt];
+            self[verbalData.nameBg].picker3.style.setProperty = ('--bg', self.skin[verbalData.nameBg]);
+            self[verbalData.nameBg].picker3.style.setProperty = ('--txt', self.skin[verbalData.nameTxt]);
+
             self[verbalData.nameBg].borderPckr.style.background = self.skin[verbalData.nameBorder];
             self[verbalData.nameBg].customAccentPckr.style.background = self.skin[verbalData.nameAccent];
             timeoutId = setTimeout(apply);
@@ -1402,12 +1404,11 @@ class Skinner {
 
         this[c.nameBg].picker.style.background = this.skin[c.nameBg];
         this[c.nameBg].picker2.style.background = this.skin[c.nameBg_g];
-        this[c.nameBg].picker3.style.background = this.skin[c.nameTxt];
+        this[c.nameBg].picker3.style.setProperty('--bg', this.skin[c.nameBg]);
+        this[c.nameBg].picker3.style.setProperty('--txt', this.skin[c.nameTxt]);
         this[c.nameBg].borderPckr.style.background = this.skin[c.nameBorder];
         this[c.nameBg].customAccentPckr.style.background = this.skin[c.nameAccent];
-
         this[c.nameBg].radiusInput.value = this.skin[c.nameRadius];
-
         this[c.nameBg].radiusAmount.value = this.skin[c.nameRadius];
     }
 
@@ -1580,7 +1581,6 @@ class Skinner {
         toolboxWrapper.appendChild(header);
 
         let tableHeaders = [
-            "Name",
             "Background",
             "Gradient",
             "Text",
@@ -1598,9 +1598,12 @@ class Skinner {
                         "nik_skinner_header_control nik_skinner_header_control-name";
                     break;
                 case "Background":
+                    className =
+                        "nik_skinner_header_control nik_skinner_header_control-bg";
+                    break;
                 case "Gradient":
                     className =
-                        "nik_skinner_header_control nik_skinner_header_control-big";
+                        "nik_skinner_header_control nik_skinner_header_control-gg";
                     break;
                 case "Text":
                 case "Accent":
@@ -1790,7 +1793,7 @@ class Skinner {
         div.className = className;
         div.style.background = color;
         div.addEventListener('click', callBack);
-
+        
         return div;
     }
 
@@ -1826,7 +1829,7 @@ class Skinner {
             ? this.labelsMap[label]
             : label;
         _label.appendChild(_labelSpan);
-        _label.appendChild(_labelArrow);
+        // _label.appendChild(_labelArrow);
 
         let pickerMainColor = this.skin[label + "Bg"];
         let pickerGradientColor = this.skin[label + "Bg_g"];
@@ -1842,22 +1845,13 @@ class Skinner {
         let ddContent = document.createElement("div");
         ddContent.className = "nik_skinner_control_collapse_content";
 
-        _label.addEventListener("click", () => {
-            _label.classList.toggle("nik_skinner_control_collapse_collapser-open");
-            ddContent.classList.toggle("nik_skinner_control_collapse_content-show");
-            _labelArrow.classList.toggle("skinner_ico_arrow-rotated");
-        });
-
-        wrapper.appendChild(_label);
-        wrapper.appendChild(ddContent);
-
-        //main color
-
-        let isEnabledControl, isEnabledChb, isEnabledPckr;
-        {
-            //isEnabledPckrDiv = this.createDiv("nik_skinner_control_group_picker");
-            isEnabledControl = this.createDiv("nik_skinner_checkbox_wrapper");
-            let chb = this.createCheckBox(label);
+        // _label.addEventListener("click", () => {
+        //     _label.classList.toggle("nik_skinner_control_collapse_collapser-open");
+        //     ddContent.classList.toggle("nik_skinner_control_collapse_content-show");
+        //     _labelArrow.classList.toggle("skinner_ico_arrow-rotated");
+        // });
+        let isEnabledChb
+        let chb = this.createCheckBox(label);
             isEnabledChb = chb.checkbox;
             isEnabledChb.addEventListener("change", function (e) {
                 checkboxCallback(e);
@@ -1866,12 +1860,28 @@ class Skinner {
                     tinycolor(t[verbalData.nameBg].picker.style.background).toHexString()
                 );
             });
+
+            let labelWrapper = document.createElement("div");
+            labelWrapper.className = "skn_controls_row";
+
+            labelWrapper.appendChild(chb.label);
+            labelWrapper.appendChild(_label);
+            wrapper.appendChild(labelWrapper);
+            wrapper.appendChild(ddContent);
+
+        //main color
+
+        let isEnabledControl, isEnabledPckr;
+        {
+            //isEnabledPckrDiv = this.createDiv("nik_skinner_control_group_picker");
+            isEnabledControl = this.createDiv("nik_skinner_checkbox_wrapper");
+            
+
             ddContent.appendChild(isEnabledControl);
             isEnabledControl.appendChild(
                 this.createSpan(this.classNames.uiLabelSm, this.labelsMap.background)
             );
 
-            isEnabledControl.appendChild(chb.label);
             isEnabledPckr = this.createColorBox(pickerMainColor, 'nik_skinner_control_group_picker', pickerCallback);
             isEnabledControl.appendChild(isEnabledPckr);
 
@@ -1953,7 +1963,7 @@ class Skinner {
                 this.createSpan(this.classNames.uiLabelSm, this.labelsMap.text)
             );
             isCustomTextControl.appendChild(chb.label);
-            isCustomTextPckr = this.createColorBox(pickerTextColor, 'nik_skinner_control_group_picker', customTxtCb);
+            isCustomTextPckr = this.createColorBox(pickerTextColor, 'nik_skinner_control_group_picker variant_text', customTxtCb);
             isCustomTextControl.appendChild(isCustomTextPckr);
 
         }
@@ -2152,22 +2162,15 @@ class Skinner {
     generateUiPalette(colors) {
         //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
         let step = 2;
-        let bg = tinycolor(colors.bg).lighten(step).toHexString();
-        let bg2 = tinycolor(colors.bg)
-            .lighten(step * 2)
-            .toHexString();
-        let bg3 = tinycolor(colors.bg)
-            .lighten(step * 3)
-            .toHexString();
-        let bg4 = tinycolor(colors.bg)
-            .lighten(step * 4)
-            .toHexString();
-        let bg5 = tinycolor(colors.bg)
-            .lighten(step * 5)
-            .toHexString();
-        let bg6 = tinycolor(colors.bg)
-            .lighten(step * 6)
-            .toHexString();
+
+        let bg = colors.bg;
+        let islight = tinycolor(bg).isLight;
+
+        let bg2 = islight ? tinycolor(bg).darken(step * 2).toHexString() : tinycolor(bg).lighten(step * 2).toHexString();
+        let bg3 = islight ? tinycolor(bg).darken(step * 3).toHexString() : tinycolor(bg).lighten(step * 3).toHexString();
+        let bg4 = islight ? tinycolor(bg).darken(step * 4).toHexString() : tinycolor(bg).lighten(step * 4).toHexString();
+        let bg5 = islight ? tinycolor(bg).darken(step * 5).toHexString() : tinycolor(bg).lighten(step * 5).toHexString();
+        let bg6 = islight ? tinycolor(bg).darken(step * 6).toHexString() : tinycolor(bg).lighten(step * 6).toHexString();
 
         let accent = tinycolor(colors.accent).lighten(step).toHexString();
         let accent2 = tinycolor(colors.accent)
@@ -2191,6 +2194,9 @@ class Skinner {
         document.documentElement.style.setProperty("--skinnerBg", bg);
         document.documentElement.style.setProperty("--skinnerBg2", bg2);
         document.documentElement.style.setProperty("--skinnerBg3", bg3);
+        document.documentElement.style.setProperty("--skinnerBg4", bg4);
+        document.documentElement.style.setProperty("--skinnerBg5", bg5);
+        document.documentElement.style.setProperty("--skinnerBg6", bg6);
         document.documentElement.style.setProperty("--skinnerToolboxBg", bg4);
         document.documentElement.style.setProperty("--skinnerToolboxBg2", bg5);
         document.documentElement.style.setProperty("--skinnerToolboxBg3", bg6);
@@ -2220,8 +2226,18 @@ class Skinner {
         :root{
         --sk_zind: 1000000;
         --sk_zind2: calc(var(--sk_zind) + 10);
+        --skinnerHeaderHeight: 42px;
+        --skinnerHeaderTogglerSize: 50px;
+        --skinnerToolboxHeight: 38px;
+        --skinnerToolboxFooterHeight: 120px;
+        --skinnerBtnHeight: 42px;
+        --skinnerToolboxCollapserSize: 42px;
+        --control-picker-size: 28px;
+        --controls-row-height: 32px;
+        --controls-ui-gap: 6px;
+        --controls-ui-pad-x: 6px;
+        --controls-ui-pad-y: 6px;
         }
-        /*! Pickr 1.8.1 MIT | https://github.com/Simonwep/pickr */
 
 .pickr {
     position: relative;
@@ -2605,14 +2621,6 @@ class Skinner {
     background-size: 100%,50%
 }
 
-:root {
-    --skinnerHeaderHeight: 42px;
-    --skinnerHeaderTogglerSize: 50px;
-    --skinnerToolboxHeight: 38px;
-    --skinnerToolboxFooterHeight: 120px;
-    --skinnerBtnHeight: 42px;
-    --skinnerToolboxCollapserSize: 42px;
-}
 
 html, body {
     height: 100%;
@@ -2736,10 +2744,13 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    transform: translateY(0);
+    height: var(--skinnerHeaderHeight);
     z-index: 100;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt);
     border-bottom: 1px solid var(--skinnerAccent);
@@ -2777,8 +2788,9 @@ body {
 
 .nik_skinner_link_wrapper {
     display: flex;
-    flex-direction: column;
-    padding: 60px 20px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
 }
 
 .nik_skinner_link {
@@ -2793,7 +2805,7 @@ body {
     color: var(--skinnerTxt);
     transition: all 0.314s;
     text-transform: capitalize;
-    font-size: 20px;
+    font-size: 14px;
     position: relative;
     font-weight: 500;
     margin: 2px;
@@ -2802,6 +2814,13 @@ body {
     transition: box-shadow 0.2s, background-color 0.2s, color 0.2s;
     text-shadow: 0 1px 3px var(--shadow);
     padding: 0 8px;
+    height: 30px;
+        font-size: 14px;
+        line-height: 30px;
+        min-width: 80px;
+        width: auto;
+        justify-content: center;
+        flex-shrink: 0;
 }
 
     .nik_skinner_link:hover,
@@ -2820,12 +2839,12 @@ body {
     transition: transform 0.5s;
     z-index: var(--sk_zind);
     height: 410px;
-    width: calc(100% - 40px);
-    background-color: var(--skinnerToolboxBg);
-    color: var(--skinnerToolboxTxt);
-    border: 1px solid var(--skinnerToolboxBg3);
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    width: auto;
+    background-color: var(--skinnerBg);
+    color: var(--skinnerTxt);
+    border: 1px solid var(--skinnerBg2);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
 
 .pcr-app {
@@ -2839,11 +2858,6 @@ body {
 .skinner_ico_arrow {
     content: "";
     display: block;
-    width: var(--chbSizeArrow);
-    height: var(--chbSizeArrow);
-    border: var(--chbSizeBorder) solid var(--skinnerToolboxAccent);
-    border-top: 0;
-    border-right: 0;
     transition: transform 0.8s;
 }
 
@@ -2903,13 +2917,33 @@ body {
     overflow-x: hidden;
     height: calc(100% - var(--skinnerToolboxFooterHeight));
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 6px;
+}
+
+.skn_controls_row{
+        display: flex;
+        align-items: center;
+        column-gap: var(--controls-ui-gap);
+        height: var(--controls-row-height);
+            background-color: var(--skinnerBg2);
 }
 
 .nik_skinner_control_group {
+padding: 0 var(--controls-ui-pad-x);
+    height: var(--controls-row-height);
     display: flex;
     flex-direction: column;
     position: relative;
-    margin-bottom: 8px;
+    border-bottom: 0;
+        flex-direction: row;
+        background-color: var(--skinnerBg2);
+        flex-wrap: nowrap;
+        margin-bottom: 1px;
+        align-items: center;
+            border-radius: 4px;
 }
 
 .nik_skinner_control_group_checkbox {
@@ -2925,17 +2959,31 @@ body {
     }
 
 .nik_skinner_control_group_picker {
-    width: 44px;
-    height: 44px;
+    width: var(--control-picker-size);
+    height: var(--control-picker-size);
     border: none;
     outline: 0;
     appearance: none;
     -webkit-appearance: none;
     background: #11585d;
-    border-radius: 8px;
+    border-radius: 2px;
     cursor: pointer;
     transition: all 0.314s;
-    margin: 0 5px;
+}
+
+.nik_skinner_control_group_picker.variant_text{
+        display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+        background: var(--bg) !important;
+    
+}
+
+.nik_skinner_control_group_picker.variant_text::before{
+        content: "T";
+        color: var(--txt);
 }
 
     .nik_skinner_control_group_picker:hover {
@@ -2956,22 +3004,25 @@ body {
     }
 
 .nik_skinner_control_collapse_collapser {
-    font-size: 20px;
-    text-align: center;
+    font-size: 11px;
+    text-align: start;
     font-weight: 500;
     flex-shrink: 0;
-    width: 100%;
     position: relative;
-    height: var(--skinnerToolboxCollapserSize);
-    background: var(--skinnerToolboxBg2);
-    color: var(--skinnerToolboxTxt);
-    border: 2px solid var(--skinnerToolboxAccent);
     display: flex;
-    align-items: center;
     z-index: 10;
     padding: 0 12px;
     border-radius: 6px;
-    transition: border-radius 0.5s, background 0.5s, border-color 0.5s;
+    width: 70px;
+        display: flex;
+        flex-grow: 0;
+        padding: 0;
+        z-index: 10;
+        flex-grow: 0;
+        flex-shrink: 0;
+        min-width: 1px;
+        background: transparent;
+        border: 0;
 }
 
     .nik_skinner_control_collapse_collapser > span {
@@ -3019,24 +3070,21 @@ body {
 }
 
 .nik_skinner_control_collapse_content {
-    padding: 5px;
-    background: var(--skinnerToolboxBg);
-    color: var(--skinnerToolboxTxt);
-    border: 2px solid var(--skinnerToolboxAccent);
-    border-top: 0;
     max-height: 0;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
     overflow: hidden;
+    background-color: var(--skinnerBg);
     display: flex;
-    flex-direction: column;
-    transition: all 0.5s;
-    animation: collapse 0.5s ease-in forwards;
+    column-gap: var(--controls-ui-gap);
+    flex-direction: row;
+        max-height: initial;
+        animation: none;
+        padding: 0;
+        border: 0;
 }
 
 .nik_skinner_control_collapse_content-show {
     /*max-height: 600px;*/
-    animation: expand 0.5s ease-in forwards;
+    /*animation: expand 0.5s ease-in forwards;*/
 }
 
 .skinner_canvas {
@@ -3170,15 +3218,15 @@ body {
 .nik_skinner_header_controls {
     display: flex;
     align-items: center;
-    font-size: 10px;
-    height: var(--skinnerToolboxHeight);
+    font-size: 11px;
+    padding: var(--controls-ui-pad-y) var(--controls-ui-pad-x);
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt2);
     z-index: 10;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     border-bottom: 1px solid var(--skinnerBg2);
-    display: none;
+        column-gap: 4px;
 }
 
 .nik_skinner_load_config {
@@ -3206,7 +3254,6 @@ body {
 .nik_skinner_header_control {
     width: 120px;
     flex-shrink: 0;
-    padding: 5px 0;
     text-align: center;
     flex-shrink: 0;
 }
@@ -3221,24 +3268,33 @@ body {
 }
 
 .nik_skinner_header_control-small {
-    width: 90px;
+    width: 64px;
+}
+
+.nik_skinner_header_control-bg {
+    width: 188px;
+}
+
+.nik_skinner_header_control-gg {
+    width: 112px;
 }
 
 .nik_skinner_header_control-radius {
-    width: 150px;
+    width: 160px;
 }
 
 .nik_skinner_radius_amount {
-    width: var(--chbSize);
-    font-size: 15px;
-    height: var(--chbSize);
-    line-height: var(--chbSize);
-    background: var(--skinnerToolboxBg);
-    color: var(--skinnerToolboxAccent);
-    border-radius: 4px;
-    text-align: center;
-    border: 1px solid var(--skinnerToolboxBg2);
-    margin: 0 5px;
+    width: 50px;
+    font-size: 11px;
+    height: 24px;
+    font-weight: 500;
+    background: var(--skinnerBg4);
+    color: var(--skinnerTxt2);
+    border-radius: 0px;
+    text-align: right;
+    border: 0;
+    border-bottom: 1px solid var(--skinnerBg6);
+    outline: 0;
 }
 
 .nik_skinner_header_control_radius {
@@ -3254,25 +3310,24 @@ body {
 
 .nik_skinner_checkbox_wrapper {
     display: flex;
+    height: var(--controls-row-height);
     align-items: center;
     justify-content: center;
-    width: 100%;
-    padding: 2px 8px;
-    background: var(--skinnerToolboxBg2);
-    border: 1px solid var(--skinnerToolboxBg3);
-    border-radius: 3px;
-    margin-bottom: 2px;
+    background-color: var(--skinnerBg2);
     flex-shrink: 0;
     position: relative;
+    border: 0;
+    margin: 0;
+    flex-shrink: 0;
+    border-radius: 0;
+     column-gap: 4px;
+         padding: 8px;
+    border-radius: 4px;
 }
 
     .nik_skinner_checkbox_wrapper:last-child {
         border: 0;
         margin: 0;
-    }
-
-    .nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-small {
-        width: 100%;
     }
 
     .nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-range {
@@ -3454,21 +3509,21 @@ input[type=range] {
     }
 
     input[type=range]::-webkit-slider-runnable-track {
-        background: var(--skinnerToolboxTxt);
-        border-radius: 1.3px;
+        background: var(--skinnerTxt);
+        border-radius: 0px;
         width: 100%;
         height: 2px;
         cursor: pointer;
     }
 
     input[type=range]::-webkit-slider-thumb {
-        margin-top: -5px;
-        width: 20px;
-        height: 20px;
-        background-color: var(--skinnerBg);
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-appearance: none;
+        margin-top: -8px;
+    width: 8px;
+    height: 18px;
+    background-color: var(--skinnerBg6);
+    border-radius: 2px;
+    cursor: pointer;
+    -webkit-appearance: none;
     }
 
     input[type=range]:focus::-webkit-slider-runnable-track {
@@ -3549,12 +3604,10 @@ how to remove the virtical space around the range input in IE*/
 }
 
 :root {
-    --chbSize: 20px;
+    --chbSize: 16px;
     --chbH: var(--chbSize);
     --wrapperChbSize: 42px;
-    --chbSizeHalf: 18px;
-    --chbSizeArrow: 10px;
-    --chbSizeBorder: 4px;
+    --chbSizeBorder: 1px;
     --chbBg: var(--skinnerBg2);
     --activeChbBg: var(--skinnerAccent2);
 }
@@ -3575,14 +3628,15 @@ how to remove the virtical space around the range input in IE*/
 
 
 .skinner_custom_chb_label.variant_tone {
-    --chbSize: 40px;
-    --chbH: 20px;
+    --chbSize: 32px;
+    --chbH: 18px;
     }
 
 .skinner_custom_chb_label.variant_tone .skinner_custom_chb {
     color: transparent !important;
     border: 0 !important;
     opacity: 1 !important;
+    border-radius: 0;
     background: linear-gradient(to right, var(--bg1) 0%, var(--bg1) 33.33%, var(--bg2) 33.33%, var(--bg2) 66.66%, var(--bg3) 66.66%, var(--bg3) 100%) !important;
 }
 
@@ -3809,8 +3863,9 @@ input[type=number] {
 
 .skinner_settings_wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    left: 6px;
 }
 
 .skinner_ui_label_sm {
@@ -3819,164 +3874,17 @@ input[type=number] {
     font-size: 11px;
 }
 
-@media (min-width: 900px) {
-    :root {
-        --skinnerToolboxFooterHeight: 142px;
-        --chbSize: 28px;
-        --wrapperChbSize: 32px;
-        --chbSizeHalf: 14px;
-        --chbSizeArrow: 10px;
-        --chbSizeBorder: 2px;
-    }
-
-    .skinner_settings_wrapper {
-        position: absolute;
-        flex-direction: row;
-        left: 6px;
-    }
-
-    .nik_skinner_header {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        transform: translateY(0);
-        height: var(--skinnerHeaderHeight);
-    }
-
-    .nik_skinner_link_wrapper {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 0;
-    }
-
-    .nik_skinner_link {
-        height: 30px;
-        font-size: 14px;
-        line-height: 30px;
-        min-width: 80px;
-        width: auto;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .skinner_toolbox {
-        bottom: 0;
-        left: 50%;
-        width: auto;
-        height: 410px;
-    }
-
-    .nik_skinner_control_group {
-        border-bottom: 0;
-        flex-direction: row;
-        background-color: var(--skinnerBg);
-        flex-wrap: nowrap;
-        margin-bottom: 2px;
-        align-items: center;
-    }
-
-    .nik_skinner_control_collapse_collapser {
-        font-size: 12px;
-        width: 100px;
-        display: flex;
-        /* height: 100%; */
-        flex-grow: 0;
-        padding: 0;
-        z-index: 10;
-        flex-grow: 0;
-        flex-shrink: 0;
-        min-width: 1px;
-        background: transparent;
-        border: 0;
-    }
-
-        .nik_skinner_control_collapse_collapser > .skinner_ico_arrow {
+.nik_skinner_control_collapse_collapser > .skinner_ico_arrow {
             display: none;
         }
 
-    .nik_skinner_control_collapse_content {
-        flex-direction: row;
-        max-height: initial;
-        animation: none;
-        padding: 0;
-        border: 0;
-        margin: 1px 0;
-    }
-
-    .nik_skinner_checkbox_wrapper {
-        width: 120px;
-        border: 0;
-        margin: 0;
-        padding: 2px;
-        flex-shrink: 0;
-        border-radius: 0;
-    }
-
         .nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-small {
-            width: 90px;
+            width: 64px;
         }
 
         .nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-range {
-            width: 150px;
+            width: 160px;
         }
-
-    .pickr {
-        max-width: 35px;
-        height: 35px;
-        margin: 0 4px;
-        /*border-radius: 6px;*/
-    }
-
-    .nik_skinner_header_controls {
-        display: flex;
-    }
-
-    .skinner_main_wrapper iframe {
-        width: 100%;
-        transform: none;
-    }
-
-
-    .nik_skinner_control_wrapper {
-        padding: 4px;
-    }
-
-    .skinner_main_wrapper-mobile {
-        --skinnerToolboxFooterHeight: 100px;
-    }
-
-    .nik_skinner_download_button_wrapper {
-        padding: 2px 8px;
-    }
-
-    .nik_skinner_download_button_wrapper_row {
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-
-    .skinner_main_wrapper-mobile > .skinner_toolbox {
-        bottom: auto;
-        position: relative;
-        transform: none;
-        left: auto;
-        height: calc(100% - 100px);
-    }
-
-    .skinner_main_wrapper-mobile .nik_skinner_mobile_iframe_wrapper {
-        width: 30%;
-        padding: 24px;
-    }
-
-
-    .skinner_ui_label_sm {
-        display: none;
-    }
-}
-
-
 
 .ap_root {
     --w: 40px;
@@ -4048,7 +3956,47 @@ input[type=number] {
     overflow: hidden;
     margin: 0 !important;
     min-width: 0 !important;
+    max-width: 35px;
+        height: 35px;
+        margin: 0 4px;
 }
+
+
+    .skinner_main_wrapper iframe {
+        width: 100%;
+        transform: none;
+    }
+
+    .skinner_main_wrapper-mobile {
+        --skinnerToolboxFooterHeight: 100px;
+    }
+
+    .nik_skinner_download_button_wrapper {
+        padding: 2px 8px;
+    }
+
+    .nik_skinner_download_button_wrapper_row {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .skinner_main_wrapper-mobile > .skinner_toolbox {
+        bottom: auto;
+        position: relative;
+        transform: none;
+        left: auto;
+        height: calc(100% - 100px);
+    }
+
+    .skinner_main_wrapper-mobile .nik_skinner_mobile_iframe_wrapper {
+        width: 30%;
+        padding: 24px;
+    }
+
+
+    .skinner_ui_label_sm {
+        display: none;
+    }
 
         `
         const skinnerUIStyles = document.createElement('style');

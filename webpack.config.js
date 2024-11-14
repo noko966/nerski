@@ -13,7 +13,8 @@ module.exports = {
       },
       client: {
         logging: 'none',
-        overlay: false, // Disable the error overlay
+        overlay
+        : false, // Disable the error overlay
       },
     compress: true,
     port: 8888,
