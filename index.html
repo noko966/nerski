@@ -1,18 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" id="sk_css_selector" href="">
+    <link rel="stylesheet" id="sk_css_selector" href="" />
     <style>
-        body {
+      .bainnn {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      body {
         background-color: var(--cwBodyBg) !important;
-    }
+      }
+      .box {
+        height: 40px;
+        width: 100%;
+        display: flex;
+        position: relative;
+        top: -20px;
+        z-index: 1;
+      }
+      .bainnn {
+        height: 1px;
+        position: relative;
+        width: 100%;
+        margin-bottom: 20px;
+        stroke: var(--skinnerTxt);
+        stroke-width: 2;
+        fill: none;
+      }
+      .svg_bainn {
+        position: absolute;
+        height: 100px;
+        width: 100%;
+        top: -50px;
+      }
     </style>
-</head>
-<body>
-    
-</body>
-<script src="dist/bundle.js"></script>
+  </head>
+  <body></body>
+  <div class="bainnn">
+    <div class="box"></div>
+    <svg class="svg_bainn">
+      <path class="p"></path>
+    </svg>
+  </div>
+
+  <script>
+    const box = document.querySelector(".box");
+    const path = document.querySelector("path");
+
+    let progress = 0;
+    let x = 0.5;
+    let time = Math.PI / 2;
+    let reqId = null;
+
+    const setPath = (progress) => {
+      const width = window.innerWidth * 1.0;
+      path.setAttribute(
+        "d",
+        `M0 50 Q${width * x} ${50 + progress}, ${width} 50`
+      );
+    };
+
+    const lerp = (x, y, a) => x * (1 - a) + y * a;
+
+    const manageMouseEnter = () => {
+      if (reqId) {
+        cancelAnimationFrame(reqId);
+        resetAnimation();
+      }
+    };
+
+    const manageMouseMove = (e) => {
+      const { movementY, clientX } = e;
+      const pathBound = path.getBoundingClientRect();
+      x = (clientX - pathBound.left) / pathBound.width;
+      progress += movementY;
+      setPath(progress);
+    };
+
+    const manageMouseLeave = () => {
+      animateOut();
+    };
+
+    const animateOut = () => {
+      const newProgress = progress * Math.sin(time);
+      progress = lerp(progress, 0, 0.025);
+      time += 0.2;
+      setPath(newProgress);
+      if (Math.abs(progress) > 0.75) {
+        reqId = requestAnimationFrame(animateOut);
+      } else {
+        resetAnimation();
+      }
+    };
+
+    const resetAnimation = () => {
+      time = Math.PI / 2;
+      progress = 0;
+    };
+
+    box.addEventListener("mouseenter", manageMouseEnter);
+    box.addEventListener("mousemove", manageMouseMove);
+    box.addEventListener("mouseleave", manageMouseLeave);
+
+    // Initialize path
+    setPath(progress);
+  </script>
+  <script src="dist/bundle.js"></script>
 </html>

@@ -1,23 +1,22 @@
 // webpack.config.js
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  entry: './src/index.js', // Your entry point
+  entry: "./src/index.js", // Your entry point
   output: {
-    filename: 'bundle.js', // Output filename
-    path: path.resolve(__dirname, 'dist'), // Output directory
+    filename: "bundle.js", // Output filename
+    path: path.resolve(__dirname, "dist"), // Output directory
   },
   devServer: {
     static: {
-        directory: path.join(__dirname, 'dist'),
-      },
-      client: {
-        logging: 'none',
-        overlay
-        : false, // Disable the error overlay
-      },
+      directory: path.join(__dirname, "dist"),
+    },
+    client: {
+      logging: "none",
+      overlay: false, // Disable the error overlay
+    },
     compress: true,
-    port: 8888,
+    port: 9000,
   },
-  mode: 'production', // or 'development'
+  mode: "production", // or 'development'
 };

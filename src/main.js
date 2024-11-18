@@ -1075,7 +1075,99 @@ class Skinner {
     this.updateAllControls();
     this.createDownloadButton();
     this.createCloseButton();
+    this.addStringAnim();
     this.cssCb(this.skin);
+  }
+
+  destroy() {
+    document.body.removeChild(this.overlay);
+    document.body.removeChild(this.toolbox);
+    document.body.removeChild(this.header);
+    document.body.removeChild(this.messageWrapper);
+  }
+
+  addStringAnim() {
+    const stringWrapper = document.createElement("div");
+    stringWrapper.className = "sk_path_string_root";
+
+    const box = document.createElement("div");
+    box.className = "sk_path_string_box";
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttributeNS(
+      "http://www.w3.org/2000/xmlns/",
+      "xmlns:xlink",
+      "http://www.w3.org/1999/xlink"
+    );
+
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("vector-effect", "non-scaling-stroke");
+    svg.setAttribute("preserveAspectRatio", "none");
+
+    svg.appendChild(path);
+
+    stringWrapper.appendChild(svg);
+    stringWrapper.appendChild(box);
+
+    this.toolBox.appendChild(stringWrapper);
+
+    let progress = 0;
+    let width = 500;
+    let time = Math.PI / 2;
+    let x = 0.5;
+    let reqId = null;
+
+    svg.setAttribute("viewBox", `0 0 ${width} 40`);
+
+    const setPath = (progress) => {
+      path.setAttribute(
+        "d",
+        `M0 20 Q${width * x} ${20 + progress}, ${width} 20`
+      );
+    };
+
+    const lerp = (x, y, a) => x * (1 - a) + y * a;
+
+    const manageMouseEnter = () => {
+      if (reqId) {
+        cancelAnimationFrame(reqId);
+        resetAnimation();
+      }
+    };
+
+    const manageMouseMove = (e) => {
+      const { movementY, clientX } = e;
+      const pathBound = box.getBoundingClientRect();
+      x = (clientX - pathBound.left) / pathBound.width;
+      progress += movementY * 0.1;
+      setPath(progress);
+    };
+
+    const manageMouseLeave = () => {
+      animateOut();
+    };
+
+    const animateOut = () => {
+      const newProgress = progress * Math.sin(time);
+      progress = lerp(progress, 0, 0.025);
+      time += 0.2;
+      setPath(newProgress);
+      if (Math.abs(progress) > 0.75) {
+        reqId = requestAnimationFrame(animateOut);
+      } else {
+        resetAnimation();
+      }
+    };
+
+    const resetAnimation = () => {
+      time = Math.PI / 2;
+      progress = 0;
+    };
+
+    box.addEventListener("mouseenter", manageMouseEnter);
+    box.addEventListener("mousemove", manageMouseMove);
+    box.addEventListener("mouseleave", manageMouseLeave);
+
+    setPath(progress);
   }
 
   addSettingsWrapper() {
@@ -1627,7 +1719,9 @@ class Skinner {
     main.className = "nik_skinner_control_wrapper nik_skinner_scrollbar";
     let header = document.createElement("div");
     header.className = "nik_skinner_header_controls";
+    this.toolbox = toolbox;
     toolbox.appendChild(toolboxWrapper);
+
     toolboxWrapper.appendChild(header);
 
     let tableHeaders = [
@@ -2251,6 +2345,12 @@ class Skinner {
     let accent = tinycolor(colors.accent).lighten(step).toHexString();
     let accent2 = tinycolor(accent).lighten(step).toHexString();
     let accent3 = tinycolor(accent2).lighten(step).toHexString();
+    let accentL = tinycolor(accent)
+      .lighten(step * 2)
+      .toHexString();
+    let accentD = tinycolor(accent)
+      .darken(step * 2)
+      .toHexString();
 
     let txt = tinycolor(guessVisibleColor(bg)).setAlpha(0.8).toRgbString();
     let txt2 = tinycolor(guessVisibleColor(bg)).setAlpha(0.7).toRgbString();
@@ -2275,6 +2375,9 @@ class Skinner {
 
     document.documentElement.style.setProperty("--skinnerToolboxTxt", txt);
     document.documentElement.style.setProperty("--shadow", shadow);
+
+    document.documentElement.style.setProperty("--skinnerAccentLight", accentL);
+    document.documentElement.style.setProperty("--skinnerAccentDark", accentD);
 
     document.documentElement.style.setProperty("--skinnerAccent", accent);
     document.documentElement.style.setProperty("--skinnerAccent2", accent2);
@@ -2302,10 +2405,35 @@ class Skinner {
         --skinnerBtnHeight: 32px;
         --skinnerToolboxCollapserSize: 42px;
         --control-picker-size: 24px;
+        --control-picker-size-border: calc(var(--control-picker-size) - 4px);
         --controls-row-height: 32px;
         --controls-ui-gap: 6px;
         --controls-ui-pad-x: 6px;
         --controls-ui-pad-y: 6px;
+        }
+
+        .sk_path_string_root{
+        height: 40px;
+      position: relative;
+      width: 100%;
+      position: absolute;
+      top: 5px;
+        }
+
+        .sk_path_string_box{
+        width: 100%;
+        height: 40px;
+        position: relative;
+        }
+
+        .sk_path_string_root > svg{
+        position: absolute;
+        height: 40px;
+        width: 100%;
+        top: 0px;
+        stroke: var(--skinnerAccent);
+        stroke-width: 1px;
+        fill: none;
         }
 
 .pickr {
@@ -2928,6 +3056,7 @@ body {
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt);
     border: 1px solid var(--skinnerBg2);
+    border-top-color: var(--skinnerAccent);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -3063,6 +3192,7 @@ opacity: 1;
 .nik_skinner_control_group_picker {
     width: var(--control-picker-size);
     height: var(--control-picker-size);
+    flex-shrink: 0;
     border: none;
     outline: 0;
     appearance: none;
@@ -3071,6 +3201,21 @@ opacity: 1;
     border-radius: 2px;
     cursor: pointer;
     transition: all 0.314s;
+}
+
+.nik_skinner_control_group_picker.variant_border{
+        display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.nik_skinner_control_group_picker.variant_border::before{
+        content: "";
+        background: var(--skinnerBg);
+        width: var(--control-picker-size-border);
+        height: var(--control-picker-size-border);
+        flex-shrink: 0;
 }
 
 .nik_skinner_control_group_picker.variant_text{
@@ -3103,6 +3248,7 @@ opacity: 1;
     height: 14px;
     border-radius: 50%;
     background: var(--Accent);
+    color: var(--AccentTxt);
     display: block;
     display: flex;
     align-items: center;
@@ -3249,14 +3395,18 @@ opacity: 1;
 }
 
 .skinner_btn-icon{
-   width: 32px;
+    width: 32px;
     height: 32px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--skinnerBg3);
-    color: var(--skinnerTxt);    
+    background-color: var(--skinnerBg2);
+    border: 1px solid var(--skinnerBg3);
+    border-top-color: var(--skinnerBg);
+    border-bottom-color: var(--skinnerBg6);
+    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+    color: var(--skinnerTxt2); 
 }
 
 .skinner_btn-50 {
@@ -3301,9 +3451,11 @@ opacity: 1;
 
 .skinner_btn-accent {
     background-color: var(--skinnerAccent);
-    border-color:  var(--skinnerAccent2);
+    border-color: var(--skinnerAccentDark);
+    border-top-color: var(--skinnerAccentLight);
     color: var(--skinnerAccentTxt);
     position: relative;
+    padding-inline-start: 6px;
 }
 
     .skinner_btn-accent:hover {
@@ -3358,7 +3510,6 @@ opacity: 1;
     align-items: center;
     font-size: 11px;
     padding: var(--controls-ui-pad-y) var(--controls-ui-pad-x);
-    background-color: var(--skinnerBg);
     color: var(--skinnerTxt2);
     z-index: 10;
     border-top-left-radius: 2px;
