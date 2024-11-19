@@ -1,4 +1,4 @@
-import { init, destroy } from "./main.js";
+import { init, destroy, createPreview } from "./main.js";
 
 // Check if init and destroy are already defined in the global scope
 if (!window.init) {
@@ -22,5 +22,8 @@ window.addEventListener("keydown", (event) => {
   } else if (event.key === "d" || event.key === "D") {
     // Trigger destroy function
     destroy();
+  } else if (event.key === "f" || event.key === "F") {
+    // Trigger destroy function
+    createPreview();
   }
 });

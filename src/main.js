@@ -4684,4 +4684,91 @@ function destroy() {
   console.log("SkinnerInstance destroyed");
 }
 
-export { init, destroy };
+function createPreview() {
+  let style = `
+  .sk_demo_essence_root{
+    background: var(--bgG);
+    color: var(--txt);
+    border-radius: var(--radius);
+    border: 1px solid var(--bg2);
+    padding: 24px;
+    width: 20%
+  }
+  .sk_demo_root{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+  }
+  .sk_demo_essence_tint{
+    padding: 8px;
+  }  
+
+  
+  .sk_demo_essence_tint.variant_1{
+    background: var(--bg1);
+  }
+  .sk_demo_essence_tint.variant_2{
+    background: var(--bg2);
+  }
+    .sk_demo_essence_tint.variant_3{
+    background: var(--bg3);
+  }
+    .sk_demo_essence_tint.variant_4{
+    background: var(--bg4);
+  }
+    .sk_demo_essence_tint.variant_5{
+    background: var(--bg5);
+  }
+    .sk_demo_essence_tint.variant_6{
+    background: var(--bg6);
+  }
+    h3 {
+    margin: 0;
+    }
+  `;
+
+  const demoStyle = document.createElement("style");
+  demoStyle.innerHTML = style;
+  document.body.appendChild(demoStyle);
+
+  const demoRoot = document.createElement("div");
+  demoRoot.className = "sk_demo_root";
+
+  configOrderCasino.forEach((c, i) => {
+    let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
+    let essence = verbalData(n);
+    let value = verbalData(c.name);
+
+    const essenceRoot = document.createElement("div");
+    essenceRoot.className = "sk_demo_essence_root";
+
+    const essenceRootTitle = document.createElement("h3");
+    essenceRootTitle.className = "sk_demo_essence_title";
+    essenceRootTitle.innerText = n;
+    essenceRoot.style.setProperty("--bgG", `var(--cw${essence.nameG})`);
+    essenceRoot.style.setProperty("--bg1", `var(--cw${essence.nameBg})`);
+    essenceRoot.style.setProperty("--bg2", `var(--cw${essence.nameBgHov})`);
+    essenceRoot.style.setProperty("--bg3", `var(--cw${essence.nameBg2})`);
+    essenceRoot.style.setProperty("--bg4", `var(--cw${essence.nameBg2Hov})`);
+    essenceRoot.style.setProperty("--bg5", `var(--cw${essence.nameBg3})`);
+    essenceRoot.style.setProperty("--bg6", `var(--cw${essence.nameBg3Hov})`);
+    essenceRoot.style.setProperty("--txt", `var(--cw${essence.nameTxt})`);
+    essenceRoot.style.setProperty("--txt2", `var(--cw${essence.nameTxt2})`);
+    essenceRoot.style.setProperty("--txt3", `var(--cw${essence.nameTxt3})`);
+    essenceRoot.style.setProperty("--radius", `var(--cw${essence.nameRadius})`);
+
+    essenceRoot.appendChild(essenceRootTitle);
+    for (i = 1; i <= 6; i++) {
+      const essenceTint = document.createElement("div");
+      essenceTint.className = `sk_demo_essence_tint variant_${i}`;
+      essenceTint.innerText = `text on essence ${n}`;
+      essenceRoot.appendChild(essenceTint);
+    }
+    demoRoot.appendChild(essenceRoot);
+  });
+  document.body.appendChild(demoRoot);
+}
+
+export { init, destroy, createPreview };
