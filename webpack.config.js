@@ -16,7 +16,7 @@ module.exports = {
       overlay: false, // Disable the error overlay
     },
     compress: true,
-    port: 9000,
+    port: 8888,
   },
   mode: "production", // or 'development'
 };

@@ -16,10 +16,10 @@ if (!window.destroy) {
 // Add event listener for keydown event to trigger init on pressing "s"
 // and destroy SkinnerInstance on pressing "d"
 window.addEventListener("keydown", (event) => {
-  if (event.key === "s" || event.key === "S") {
+  if (event.key === "a" || event.key === "A") {
     // Trigger init function
     init();
-  } else if (event.key === "d" || event.key === "D") {
+  } else if (event.key === "q" || event.key === "Q") {
     // Trigger destroy function
     destroy();
   } else if (event.key === "p" || event.key === "P") {
