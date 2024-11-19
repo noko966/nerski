@@ -1,0 +1,88 @@
+<!-- ui.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #cssSkinInput {
+        width: 100%;
+        height: 300px; /* Set desired height */
+        font-family: monospace; /* Makes it easier to read CSS */
+        font-size: 14px;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+
+      .sk_fg_input{
+        appearance: none;
+
+      }
+
+      .sk_fg_btn{
+        background-color: #4CAF50; 
+      color: white; 
+      border: none; 
+      padding: 10px 20px; 
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      transition: background-color 0.3s ease; 
+      }
+      #generateSkin{
+        background-color: #4CAF50; /* Green */
+      color: white; /* White text */
+      }
+     
+    </style>
+  </head>
+<body>
+  <h3>Update Local Styles</h3>
+  <textarea class="sk_fg_input" type="text" id="cssSkinInput"></textarea>
+  <button class="sk_fg_btn" id="generateSkin">Generate Skin</button>
+  <button class="sk_fg_btn" id="clearStyles">Clear Existing Styles</button>
+  <button class="sk_fg_btn" id="drawElements">Draw Skinner Essence Ui</button>
+
+  <script>
+    document.getElementById('clearStyles').onclick = () => {
+
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'clear-styles',
+          },
+        },
+        '*'
+      );
+    };
+    document.getElementById('generateSkin').onclick = () => {
+      const cssTheme = document.getElementById('cssSkinInput').value;
+
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'generate-styles',
+            cssTheme: cssTheme
+          },
+        },
+        '*'
+      );
+    };
+
+    document.getElementById('drawElements').onclick = () => {
+
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'draw-elements',
+          },
+        },
+        '*'
+      );
+    };
+
+    
+  </script>
+</body>
+</html>

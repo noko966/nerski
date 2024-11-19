@@ -1,0 +1,37 @@
+<!-- ui.html -->
+<!DOCTYPE html>
+<html>
+<body>
+  <h3>Update Local Styles</h3>
+  <label for="styleName">Style Name:</label>
+  <input type="text" id="styleName" /><br />
+  <label for="newColor">New Color (hex):</label>
+  <input type="color" id="newColor" /><br />
+  <button id="updateButton">Update</button>
+
+  <script>
+    document.getElementById('updateButton').onclick = () => {
+      const styleName = document.getElementById('styleName').value;
+      const newColor = document.getElementById('newColor').value;
+
+      const rgb = hexToRgb(newColor);
+
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'update-styles',
+            styleName,
+            newColor: { r: rgb.r / 255, g: rgb.g / 255, b: rgb.b / 255 },
+          },
+        },
+        '*'
+      );
+    };
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+  </script>
+</body>
+</html>
