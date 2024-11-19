@@ -207,9 +207,8 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
     res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
     res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${
-      skin[`${value.name}ShadowFade`]
-    };\n`;
+    res += `    --cw${essence.name}ShadowFade: ${skin[`${value.name}ShadowFade`]
+      };\n`;
     res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
@@ -733,19 +732,19 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+        .darken(this.defaults.dark.bg2)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+        .lighten(this.defaults.light.bg2)
+        .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg3)
-          .toString()
+        .darken(this.defaults.dark.bg3)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg3)
-          .toString();
+        .lighten(this.defaults.light.bg3)
+        .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -796,27 +795,27 @@ class Skinner {
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -847,9 +846,8 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${
-        this.skin[_vb.gradientAngle]
-      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
+        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -2939,7 +2937,6 @@ html, body {
     left: 0;
     right: 0;
     z-index: 100;
-    box-shadow: 0 4px 4px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nik_root_mobile {
@@ -3146,9 +3143,9 @@ body {
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt);
     border: 1px solid var(--skinnerBg2);
-    border-top-color: var(--skinnerAccent);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.2);
 }
 
 .pcr-app {
@@ -4542,7 +4539,7 @@ window.colorsCasweb = {
   },
   accent: {
     Background: {
-      color: "#FF8600",
+      color: "#A3D140",
     },
     borderRadius: 8,
   },
@@ -4684,17 +4681,24 @@ function destroy() {
   console.log("SkinnerInstance destroyed");
 }
 
+let isPreviewInitialized = false;
+
 function createPreview() {
+  if (isPreviewInitialized) return;
+  isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-    background: var(--bgG);
-    color: var(--txt);
+        background: var(--skinnerBg2);
+    color: var(--skinnerTxt);
     border-radius: var(--radius);
-    border: 1px solid var(--bg2);
-    padding: 24px;
-    width: 20%
+    border: 2px solid var(--skinnerBg3);
+    padding: 6px 8px;
+    width: 20%;
+    /*box-shadow: 0 0 0px 5px var(--shadow);*/
   }
   .sk_demo_root{
+    --card_width: 60px;
+    font-size: 12px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -4702,45 +4706,124 @@ function createPreview() {
     padding: 16px;
   }
   .sk_demo_essence_tint{
-    padding: 8px;
+    padding: 6px;
+    font-size: 12px;
+    width: 100%;
+    height: auto;
   }  
 
+  .sk_demo_essence_tint_text{
+  padding: 6px;
+    font-size: 12px;
+    width: 100%;
+    height: auto;
+  }
+
   
-  .sk_demo_essence_tint.variant_1{
+  .sk_demo_essence_tint.variant_0{
     background: var(--bg1);
   }
-  .sk_demo_essence_tint.variant_2{
+  .sk_demo_essence_tint.variant_1{
     background: var(--bg2);
   }
-    .sk_demo_essence_tint.variant_3{
+    .sk_demo_essence_tint.variant_2{
     background: var(--bg3);
   }
-    .sk_demo_essence_tint.variant_4{
+    .sk_demo_essence_tint.variant_3{
     background: var(--bg4);
   }
-    .sk_demo_essence_tint.variant_5{
+    .sk_demo_essence_tint.variant_4{
     background: var(--bg5);
   }
-    .sk_demo_essence_tint.variant_6{
+    .sk_demo_essence_tint.variant_5{
     background: var(--bg6);
   }
-    h3 {
-    margin: 0;
+    .sk_demo_essence_title {
+        margin: 0;
+    font-size: 19px;
+    text-align: center;
+    color: var(--skinnerTxt);
+    margin-bottom: 6px;
+    }
+
+    .sk_demo_essence_tint_text{
+            padding: 8px;
+    font-size: 12px;
+    }
+
+    .sk_demo_essence_tint_text .sk_demo_key{
+      --txt2: var(--bg2);
+    }
+      .sk_demo_essence_tint_text .sk_demo_val{
+      --txt: var(--bg1);
+    }
+
+    .sk_demo_essence_accent{
+          background: var(--ab);
+    color: var(--at);
+    font-weight: 500;
+            padding: 8px;
+    }
+
+    .sk_demo_essence_text {
+        display: flex;
+      flex-direction: column;
+    }
+    .sk_demo_essence_tint_text.variant_1{
+    background: var(--txt);
+    }
+    .sk_demo_essence_tint_text.variant_2{
+    background: var(--txt2);
+    }
+    .sk_demo_essence_tint_text.variant_3{
+    background: var(--txt3);
+    }
+    .sk_demo_key_val_root {
+        display: flex;
+        align-items: center;
+        column-gap: 4px;
+        height: 24px;
+    }
+    .sk_demo_key {
+        color: var(--txt2);
+        flex-grow: 1;
+        min-width: 1px;
+    }
+    .sk_demo_val {
+        color: var(--txt);
+        font-weight: bold;
     }
   `;
 
   const demoStyle = document.createElement("style");
   demoStyle.innerHTML = style;
+  demoStyle.id = "sk_demo_style";
+
   document.body.appendChild(demoStyle);
 
   const demoRoot = document.createElement("div");
   demoRoot.className = "sk_demo_root";
+  demoRoot.id = "sk_demo_root";
+
+  function createKeyVal(key, val){
+    const root = document.createElement("div");
+    const k = document.createElement("span");
+    const v = document.createElement("span");
+    root.className = 'sk_demo_key_val_root'
+    k.className = 'sk_demo_key';
+    v.className = 'sk_demo_val';
+    k.innerText = key;
+    v.innerText = val;
+    root.appendChild(k);
+    root.appendChild(v);
+
+    return root;
+  }
 
   configOrderCasino.forEach((c, i) => {
     let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
     let essence = verbalData(n);
-    let value = verbalData(c.name);
-
+    let _vd = verbalData(c.name);
     const essenceRoot = document.createElement("div");
     essenceRoot.className = "sk_demo_essence_root";
 
@@ -4758,17 +4841,76 @@ function createPreview() {
     essenceRoot.style.setProperty("--txt2", `var(--cw${essence.nameTxt2})`);
     essenceRoot.style.setProperty("--txt3", `var(--cw${essence.nameTxt3})`);
     essenceRoot.style.setProperty("--radius", `var(--cw${essence.nameRadius})`);
+    essenceRoot.style.setProperty("--shadow", `var(--cw${essence.name}Shadow)`);
+    essenceRoot.style.setProperty("--ab", `var(--cw${essence.nameAccent})`);
+    essenceRoot.style.setProperty("--at", `var(--cw${essence.nameAccentTxt})`);
 
     essenceRoot.appendChild(essenceRootTitle);
-    for (i = 1; i <= 6; i++) {
+
+    const tintsArr = [
+      'nameBg',
+      'nameBgHov',
+      'nameBg2',
+      'nameBg2Hov',
+      'nameBg3',
+      'nameBg3Hov',
+    ]
+
+    for (i = 0; i < tintsArr.length; i++) {
       const essenceTint = document.createElement("div");
       essenceTint.className = `sk_demo_essence_tint variant_${i}`;
-      essenceTint.innerText = `text on essence ${n}`;
+      const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
+      
+      essenceTint.appendChild(createKeyVal('name', `${essence[tintsArr[i]]}`));
+      essenceTint.appendChild(createKeyVal('value', hexVal));
+
       essenceRoot.appendChild(essenceTint);
+
     }
+    const essenceText = document.createElement("div");
+    essenceText.className = `sk_demo_essence_text`;
+    const essenceTintText1 = document.createElement("div");
+    const essenceTintText2 = document.createElement("div");
+    const essenceTintText3 = document.createElement("div");
+
+    const Txt1HexVal = window.SkinnerInstance.skin[_vd['nameTxt']];
+    essenceTintText1.appendChild(createKeyVal('name', `${essence['nameTxt']}`));
+    essenceTintText1.appendChild(createKeyVal('value', Txt1HexVal));
+
+    const Txt2HexVal = window.SkinnerInstance.skin[_vd['nameTxt2']];
+    essenceTintText2.appendChild(createKeyVal('name', `${essence['nameTxt2']}`));
+    essenceTintText2.appendChild(createKeyVal('value', Txt2HexVal));
+
+    const Txt3HexVal = window.SkinnerInstance.skin[_vd['nameTxt3']];
+    essenceTintText3.appendChild(createKeyVal('name', `${essence['nameTxt3']}`));
+    essenceTintText3.appendChild(createKeyVal('value', Txt3HexVal));
+
+    essenceTintText1.className = `sk_demo_essence_tint_text variant_1`;
+    essenceTintText2.className = `sk_demo_essence_tint_text variant_2`;
+    essenceTintText3.className = `sk_demo_essence_tint_text variant_3`;
+    essenceText.appendChild(essenceTintText1);
+    essenceText.appendChild(essenceTintText2);
+    essenceText.appendChild(essenceTintText3);
+
+    const essenceAccent = document.createElement("div");
+    essenceAccent.className = `sk_demo_essence_accent`;
+    essenceAccent.innerText = `${essence.nameAccent}`;
+
+    essenceRoot.appendChild(essenceText);
+    essenceRoot.appendChild(essenceAccent);
     demoRoot.appendChild(essenceRoot);
   });
   document.body.appendChild(demoRoot);
 }
 
-export { init, destroy, createPreview };
+function destroyPreview() {
+  const demoStyle = document.getElementById("sk_demo_style");
+  const demoRoot = document.getElementById("sk_demo_root");
+
+  if (demoStyle) demoStyle.remove();
+  if (demoRoot) demoRoot.remove();
+
+  isPreviewInitialized = false;
+}
+
+export { init, destroy, createPreview, destroyPreview };
