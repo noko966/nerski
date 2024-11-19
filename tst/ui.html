@@ -3,86 +3,189 @@
 <html>
   <head>
     <style>
-      #cssSkinInput {
-        width: 100%;
-        height: 300px; /* Set desired height */
-        font-family: monospace; /* Makes it easier to read CSS */
-        font-size: 14px;
-        padding: 8px;
+      body {
+        --skinnerBg: #fff;
+        --skinnerBg2: #f5f5f5;
+        --skinnerBg3: #ebebeb;
+        --skinnerBg4: #e1e1e1;
+        --skinnerBg5: #d7d7d7;
+        --skinnerBg6: #cdcdcd;
+        --skinnerToolboxBg: #e1e1e1;
+        --skinnerToolboxBg2: #d7d7d7;
+        --skinnerToolboxBg3: #cdcdcd;
+        --skinnerTxt: rgba(0, 0, 0, 0.8);
+        --skinnerTxt2: rgba(0, 0, 0, 0.7);
+        --skinnerToolboxTxt: rgba(0, 0, 0, 0.8);
+        --shadow: rgba(255, 255, 255, 0.3);
+        --skinnerAccentLight: #16e4ae;
+        --skinnerAccentDark: #0e9a75;
+        --skinnerAccent: #12bf92;
+        --skinnerAccent2: #14d2a0;
+        --skinnerToolboxAccent: #12bf92;
+        --skinnerToolboxAccentHover: #14d2a0;
+        --skinnerAccentTxt: rgba(0, 0, 0, 0.8);
+        --skinnerBtnHeight: 32px;
+
+        background-color: var(--skinnerBg2);
+      }
+
+      * {
         box-sizing: border-box;
       }
 
-      .sk_fg_input{
+      .sk_fg_input {
+        margin: 0;
+        padding: 0 8px;
+        background-color: var(--skinnerBg);
+        color: var(--skinnerTxt2);
+        border: 0;
+        border-radius: 2px;
+        border: 1px solid var(--skinnerBg3);
+        outline: 0;
+        font-size: 11px;
+        text-transform: capitalize;
+        display: block;
+        cursor: pointer;
+        transition: all 0.314s;
+        resize: none;
+        bottom: 0;
+        left: 50%;
+        width: 100%;
+        height: 300px;
+        font-weight: 500;
+        overflow: hidden;
+        z-index: 80;
+      }
+
+      .sk_fg_btn {
         appearance: none;
-
+        border: 1px solid var(--skinnerBg3);
+        height: var(--skinnerBtnHeight);
+        text-decoration: none;
+        background-color: var(--skinnerBg3);
+        color: var(--skinnerTxt2);
+        text-transform: capitalize;
+        font-size: 12px;
+        position: relative;
+        font-weight: 500;
+        padding: 0 12px;
+        border-radius: 4px;
+        transition: all 0.5s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
       }
-
-      .sk_fg_btn{
-        background-color: #4CAF50; 
-      color: white; 
-      border: none; 
-      padding: 10px 20px; 
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 14px; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      transition: background-color 0.3s ease; 
+      .sk_fg_title {
+        font-size: 14px;
+        text-align: start;
+        font-weight: 500;
+        flex-shrink: 0;
+        position: relative;
+        display: flex;
+        z-index: 10;
+        padding: 0 12px;
+        border-radius: 6px;
+        width: 100%;
+        display: flex;
+        flex-grow: 0;
+        padding: 0;
+        z-index: 10;
+        flex-grow: 0;
+        flex-shrink: 0;
+        min-width: 1px;
+        background: transparent;
       }
-      #generateSkin{
-        background-color: #4CAF50; /* Green */
-      color: white; /* White text */
+      .sk_fg_root {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px;
       }
-     
+      .sk_controls_main {
+        flex-grow: 1;
+      }
+      .sk_controls_footer {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        padding: 12px;
+      }
+      .sk_controls_clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 8px;
+        padding: 6px;
+      }
+      .sk_fg_btn_accent {
+        border: 1px solid var(--skinnerAccentLight);
+        background-color: var(--skinnerAccent);
+        color: var(--skinnerAccentTxt);
+      }
+      .sk_fg_btn_accent2 {
+        border: 1px solid var(--skinnerAccent);
+        background-color: transparent;
+        color: var(--skinnerAccent);
+      }
     </style>
   </head>
-<body>
-  <h3>Update Local Styles</h3>
-  <textarea class="sk_fg_input" type="text" id="cssSkinInput"></textarea>
-  <button class="sk_fg_btn" id="generateSkin">Generate Skin</button>
-  <button class="sk_fg_btn" id="clearStyles">Clear Existing Styles</button>
-  <button class="sk_fg_btn" id="drawElements">Draw Skinner Essence Ui</button>
-
-  <script>
-    document.getElementById('clearStyles').onclick = () => {
-
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: 'clear-styles',
+  <body>
+    <div class="sk_fg_root">
+      <div class="sk_controls_main">
+        <h3 class="sk_fg_title">Update Local Styles</h3>
+        <textarea class="sk_fg_input" type="text" id="cssSkinInput"></textarea>
+      </div>
+      <div class="sk_controls_footer">
+        <button class="sk_fg_btn sk_fg_btn_accent" id="generateSkin">
+          Generate Skin
+        </button>
+        <button class="sk_fg_btn sk_fg_btn_accent2" id="drawElements">
+          Draw Skinner Essence Ui
+        </button>
+      </div>
+      <div class="sk_controls_clear">
+        <button class="sk_fg_btn" id="clearStyles">
+          Clear Existing Styles
+        </button>
+      </div>
+    </div>
+    <script>
+      document.getElementById("clearStyles").onclick = () => {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "clear-styles",
+            },
           },
-        },
-        '*'
-      );
-    };
-    document.getElementById('generateSkin').onclick = () => {
-      const cssTheme = document.getElementById('cssSkinInput').value;
+          "*"
+        );
+      };
+      document.getElementById("generateSkin").onclick = () => {
+        const cssTheme = document.getElementById("cssSkinInput").value;
 
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: 'generate-styles',
-            cssTheme: cssTheme
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "generate-styles",
+              cssTheme: cssTheme,
+            },
           },
-        },
-        '*'
-      );
-    };
+          "*"
+        );
+      };
 
-    document.getElementById('drawElements').onclick = () => {
-
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: 'draw-elements',
+      document.getElementById("drawElements").onclick = () => {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "draw-elements",
+            },
           },
-        },
-        '*'
-      );
-    };
-
-    
-  </script>
-</body>
+          "*"
+        );
+      };
+    </script>
+  </body>
 </html>
