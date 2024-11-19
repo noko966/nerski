@@ -77,7 +77,7 @@ const configOrderCasino = [
   {
     name: "buttonSecondary",
     inherits: ["dominant", "body"],
-    variation: 5,
+    // variation: 5,
   },
   {
     name: "navbar",
@@ -256,6 +256,8 @@ function setOrUpdateIframeCss(cssStyle, target) {
 
 class Skinner {
   constructor(cssCb, starterConfig, header, root, variant) {
+    this.pickers = [];
+    this.eventListeners = [];
     this.variant = variant || "sport";
     this.header =
       document.querySelector(header) || document.createElement("div");
@@ -327,7 +329,7 @@ class Skinner {
         {
           name: "buttonSecondary",
           inherits: ["dominant", "body"],
-          variation: 5,
+          // variation: 5,
         },
         {
           name: "navbar",
@@ -1084,6 +1086,22 @@ class Skinner {
     document.body.removeChild(this.toolbox);
     document.body.removeChild(this.header);
     document.body.removeChild(this.messageWrapper);
+    document.documentElement.style = "";
+    this.skinnerRoot.removeChild(this.skinnerUIStyles);
+    document.head.removeChild(this.iconsLink);
+
+    let styleId = "css-as-test-stylesheet";
+    let styleElement = document.getElementById(styleId);
+    document.head.removeChild(styleElement);
+
+    this.eventListeners.forEach(({ element, type, listener }) => {
+      element.removeEventListener(type, listener);
+    });
+    this.eventListeners = [];
+
+    this.destroyPickers();
+
+    // Clear the array to avoid memory leaks
   }
 
   addStringAnim() {
@@ -1600,30 +1618,14 @@ class Skinner {
           this.modifyKey(_vd.gradientAngle, e.data.angle);
         },
         (e) => {
-          let picker = this.createPickerAndTrigger(
-            e.target.parentElement,
-            this.skin[_vd.nameBg]
+          this.handlePicker(e, _vd.nameBg, (color) =>
+            this.modifyKey(_vd.nameBg, color.toHEXA().toString())
           );
-          picker.show();
-          picker.on("change", (color, source, instance) => {
-            this.modifyKey(_vd.nameBg, color.toHEXA().toString());
-          });
-          picker.on("hide", (instance) => {
-            instance.destroyAndRemove();
-          });
         },
         (e) => {
-          let picker = this.createPickerAndTrigger(
-            e.target.parentElement,
-            this.skin[_vd.nameBg_g]
+          this.handlePicker(e, _vd.nameBg_g, (color) =>
+            this.modifyKey(_vd.nameBg_g, color.toHEXA().toString())
           );
-          picker.show();
-          picker.on("change", (color, source, instance) => {
-            this.modifyKey(_vd.nameBg_g, color.toHEXA().toString());
-          });
-          picker.on("hide", (instance) => {
-            instance.destroyAndRemove();
-          });
         },
         (e) => {
           this.modifyKey(_vd.isDark, e.target.checked);
@@ -1632,49 +1634,25 @@ class Skinner {
           this.modifyKey(_vd.isCustomTxt, e.target.checked);
         },
         (e) => {
-          let picker = this.createPickerAndTrigger(
-            e.target.parentElement,
-            this.skin[_vd.nameTxt]
+          this.handlePicker(e, _vd.nameTxt, (color) =>
+            this.modifyKey(_vd.nameTxt, color.toHEXA().toString())
           );
-          picker.show();
-          picker.on("change", (color, source, instance) => {
-            this.modifyKey(_vd.nameTxt, color.toHEXA().toString());
-          });
-          picker.on("hide", (instance) => {
-            instance.destroyAndRemove();
-          });
         },
         (e) => {
           this.modifyKey(_vd.isCustomAccent, e.target.checked);
         },
         (e) => {
-          let picker = this.createPickerAndTrigger(
-            e.target.parentElement,
-            this.skin[_vd.nameAccent]
+          this.handlePicker(e, _vd.nameAccent, (color) =>
+            this.modifyKey(_vd.nameAccent, color.toHEXA().toString())
           );
-          picker.show();
-          picker.on("change", (color, source, instance) => {
-            this.modifyKey(_vd.nameAccent, color.toHEXA().toString());
-          });
-          picker.on("hide", (instance) => {
-            instance.destroyAndRemove();
-          });
         },
         (e) => {
           this.modifyKey(_vd.isCustomBorder, e.target.checked);
         },
         (e) => {
-          let picker = this.createPickerAndTrigger(
-            e.target.parentElement,
-            this.skin[_vd.nameBorder]
+          this.handlePicker(e, _vd.nameBorder, (color) =>
+            this.modifyKey(_vd.nameBorder, color.toHEXA().toString())
           );
-          picker.show();
-          picker.on("change", (color, source, instance) => {
-            this.modifyKey(_vd.nameBorder, color.toHEXA().toString());
-          });
-          picker.on("hide", (instance) => {
-            instance.destroyAndRemove();
-          });
         },
         (e) => {
           this.modifyKey(_vd.nameRadius, e.target.value);
@@ -1682,6 +1660,37 @@ class Skinner {
         _hiddenControlsArray,
       ]);
     }
+  }
+
+  handlePicker(event, skinKey, onChangeCallback) {
+    let picker = this.createPickerAndTrigger(
+      event.target.parentElement,
+      this.skin[skinKey]
+    );
+
+    picker.show();
+
+    picker.on("change", (color, source, instance) => {
+      onChangeCallback(color);
+    });
+
+    picker.on("hide", (instance) => {
+      instance.destroyAndRemove();
+      this.removePicker(instance); // Remove from pickers array
+    });
+
+    this.pickers.push(picker); // Store picker instance
+  }
+
+  // Method to remove a specific picker from the pickers array
+  removePicker(instance) {
+    this.pickers = this.pickers.filter((p) => p !== instance);
+  }
+
+  // Cleanup method to destroy all pickers
+  destroyPickers() {
+    this.pickers.forEach((picker) => picker.destroyAndRemove());
+    this.pickers = []; // Clear the array
   }
 
   toggleUi() {
@@ -2001,12 +2010,21 @@ class Skinner {
     let isEnabledChb;
     let chb = this.createCheckBox(label);
     isEnabledChb = chb.checkbox;
-    isEnabledChb.addEventListener("change", function (e) {
+
+    const onEnableChange = function (e) {
       checkboxCallback(e);
       t.modifyKey(
         verbalData.nameBg,
         tinycolor(t[verbalData.nameBg].picker.style.background).toHexString()
       );
+    };
+
+    isEnabledChb.addEventListener("change", onEnableChange);
+
+    this.eventListeners.push({
+      element: isEnabledChb,
+      type: "change",
+      listener: onEnableChange,
     });
 
     let labelWrapper = document.createElement("div");
@@ -2059,10 +2077,20 @@ class Skinner {
           val: this.skin[verbalData.nameBg3],
         },
       ];
+      const onDarkChange = function (e) {
+        isDarkCallback(e);
+      };
+
       let chb = this.createCheckBox(label + "dark", "variant_tone", tintsArr);
       isDarkChb = chb.checkbox;
 
-      isDarkChb.addEventListener("change", isDarkCallback);
+      isDarkChb.addEventListener("change", onDarkChange);
+
+      this.eventListeners.push({
+        element: isDarkChb,
+        type: "change",
+        listener: onDarkChange,
+      });
       isEnabledControl.appendChild(chb.label);
     }
 
@@ -2078,7 +2106,11 @@ class Skinner {
       );
       let chb = this.createCheckBox(label + "_g");
       isGradientEnabledChb = chb.checkbox;
-      isGradientEnabledChb.addEventListener("change", gradientCallback);
+      const onGradientEnableChange = function (e) {
+        gradientCallback(e);
+      };
+
+      isGradientEnabledChb.addEventListener("change", onGradientEnableChange);
       ddContent.appendChild(isGradientEnabledControl);
       isGradientEnabledControl.appendChild(
         this.createSpan(this.classNames.uiLabelSm, this.labelsMap.gradient)
@@ -2090,15 +2122,29 @@ class Skinner {
         picker2Callback
       );
       isGradientEnabledControl.appendChild(isGradientEnabledPckr);
+
+      this.eventListeners.push({
+        element: isGradientEnabledChb,
+        type: "change",
+        listener: onGradientEnableChange,
+      });
     }
 
     let anglePicker;
     {
       anglePicker = new AnglePicker(isGradientEnabledControl);
-      anglePicker.eventTarget.addEventListener(
-        "angleChange",
-        angleChangeCallback
-      );
+
+      const onAngleChange = function (e) {
+        angleChangeCallback(e);
+      };
+
+      anglePicker.eventTarget.addEventListener("angleChange", onAngleChange);
+
+      this.eventListeners.push({
+        element: anglePicker.eventTarget,
+        type: "angleChange",
+        listener: onAngleChange,
+      });
     }
 
     //custom text
@@ -2110,7 +2156,12 @@ class Skinner {
       );
       let chb = this.createCheckBox(label + "_text");
       isCustomTextChb = chb.checkbox;
-      isCustomTextChb.addEventListener("change", isCustomTxtCb);
+
+      const onTextEnableChange = function (e) {
+        isCustomTxtCb(e);
+      };
+
+      isCustomTextChb.addEventListener("change", onTextEnableChange);
       ddContent.appendChild(isCustomTextControl);
       isCustomTextControl.appendChild(
         this.createSpan(this.classNames.uiLabelSm, this.labelsMap.text)
@@ -2122,6 +2173,12 @@ class Skinner {
         customTxtCb
       );
       isCustomTextControl.appendChild(isCustomTextPckr);
+
+      this.eventListeners.push({
+        element: isCustomTextChb,
+        type: "change",
+        listener: onTextEnableChange,
+      });
     }
 
     //custom accent
@@ -2133,7 +2190,10 @@ class Skinner {
       );
       let chb = this.createCheckBox(label + "_custom_accent");
       customAccentChb = chb.checkbox;
-      customAccentChb.addEventListener("change", isCustomAccentCb);
+      const onAccentEnableChange = function (e) {
+        isCustomAccentCb(e);
+      };
+      customAccentChb.addEventListener("change", onAccentEnableChange);
       ddContent.appendChild(customAccentControl);
       customAccentControl.appendChild(
         this.createSpan(this.classNames.uiLabelSm, this.labelsMap.accent)
@@ -2145,6 +2205,11 @@ class Skinner {
         customAccentCb
       );
       customAccentControl.appendChild(customAccentPckr);
+      this.eventListeners.push({
+        element: customAccentChb,
+        type: "change",
+        listener: onAccentEnableChange,
+      });
     }
 
     //custom border
@@ -2156,7 +2221,12 @@ class Skinner {
       );
       let chb = this.createCheckBox(label + "_border");
       borderChb = chb.checkbox;
-      borderChb.addEventListener("change", isCustomBorderCb);
+
+      const onBorderEnableChange = function (e) {
+        isCustomBorderCb(e);
+      };
+
+      borderChb.addEventListener("change", onBorderEnableChange);
       ddContent.appendChild(borderControl);
       borderControl.appendChild(
         this.createSpan(this.classNames.uiLabelSm, this.labelsMap.border)
@@ -2168,6 +2238,11 @@ class Skinner {
         customBorderCb
       );
       borderControl.appendChild(borderPckr);
+      this.eventListeners.push({
+        element: borderChb,
+        type: "change",
+        listener: onBorderEnableChange,
+      });
     }
 
     //custom roundness
@@ -2184,16 +2259,20 @@ class Skinner {
       radiusAmount = document.createElement("input");
       radiusAmount.type = "number";
       radiusAmount.className = "nik_skinner_radius_amount";
-      radiusInput.addEventListener("input", function (e) {
+
+      const onRadiusRangeInput = function (e) {
         radiusAmount.value = e.target.value;
         customRadiusCb(e);
-      });
+      };
 
-      radiusAmount.addEventListener("input", function (e) {
-        // Update range input with the number input's value
+      const onRadiusInputInput = function (e) {
         radiusInput.value = e.target.value;
         customRadiusCb(e);
-      });
+      };
+
+      radiusInput.addEventListener("input", onRadiusRangeInput);
+
+      radiusAmount.addEventListener("input", onRadiusInputInput);
       ddContent.appendChild(radiusControl);
       radiusControl.appendChild(
         this.createSpan(this.classNames.uiLabelSm, this.labelsMap.radius)
@@ -2201,6 +2280,17 @@ class Skinner {
 
       radiusControl.appendChild(radiusInput);
       radiusControl.appendChild(radiusAmount);
+
+      this.eventListeners.push({
+        element: radiusInput,
+        type: "input",
+        listener: onRadiusRangeInput,
+      });
+      this.eventListeners.push({
+        element: radiusAmount,
+        type: "input",
+        listener: onRadiusInputInput,
+      });
     }
 
     let _hideConfigArray = hideConfigArray || [];
@@ -4305,14 +4395,14 @@ input[type=number] {
     }
 
         `;
-    const skinnerUIStyles = document.createElement("style");
-    skinnerUIStyles.innerHTML = css;
-    this.skinnerRoot.appendChild(skinnerUIStyles);
+    this.skinnerUIStyles = document.createElement("style");
+    this.skinnerUIStyles.innerHTML = css;
+    this.skinnerRoot.appendChild(this.skinnerUIStyles);
     const fontURL = `https://cdn-sp.totogaming.am/assets/fonts/sport-ui-icons/style.css?`;
-    const iconsLink = document.createElement("link");
-    iconsLink.rel = "stylesheet";
-    iconsLink.href = fontURL;
-    document.head.appendChild(iconsLink);
+    this.iconsLink = document.createElement("link");
+    this.iconsLink.rel = "stylesheet";
+    this.iconsLink.href = fontURL;
+    document.head.appendChild(this.iconsLink);
   }
 }
 
@@ -4563,7 +4653,12 @@ window.colorsCasweb = {
   },
 };
 
-export default function init() {
+function init() {
+  if (window.SkinnerInstance) {
+    console.warn("SkinnerInstance already exists!");
+    return;
+  }
+
   window.SkinnerInstance = new Skinner(
     createCss,
     colorsCasweb,
@@ -4572,4 +4667,21 @@ export default function init() {
     "casino"
   );
   window.SkinnerInstance.init();
+  console.log("SkinnerInstance initialized");
 }
+
+function destroy() {
+  if (!window.SkinnerInstance) {
+    console.warn("No SkinnerInstance to destroy");
+    return;
+  }
+
+  if (typeof window.SkinnerInstance.destroy === "function") {
+    window.SkinnerInstance.destroy(); // Call destroy method if it exists
+  }
+
+  delete window.SkinnerInstance; // Remove the instance from the global object
+  console.log("SkinnerInstance destroyed");
+}
+
+export { init, destroy };
