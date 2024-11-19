@@ -25,7 +25,7 @@ window.addEventListener("keydown", (event) => {
   } else if (event.key === "p" || event.key === "P") {
     // Trigger destroy function
     createPreview();
-  }else if (event.key === "o" || event.key === "O") {
+  } else if (event.key === "o" || event.key === "O") {
     // Trigger destroy function
     destroyPreview();
   }

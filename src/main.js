@@ -207,8 +207,9 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
     res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
     res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${skin[`${value.name}ShadowFade`]
-      };\n`;
+    res += `    --cw${essence.name}ShadowFade: ${
+      skin[`${value.name}ShadowFade`]
+    };\n`;
     res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
@@ -732,19 +733,19 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg2)
-        .toString()
+          .darken(this.defaults.dark.bg2)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg2)
-        .toString();
+          .lighten(this.defaults.light.bg2)
+          .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg3)
-        .toString()
+          .darken(this.defaults.dark.bg3)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg3)
-        .toString();
+          .lighten(this.defaults.light.bg3)
+          .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -795,27 +796,27 @@ class Skinner {
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -846,8 +847,9 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
-        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${
+        this.skin[_vb.gradientAngle]
+      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -1071,10 +1073,10 @@ class Skinner {
     this.addVersioning();
     this.generateTheme();
     this.generateUiPalette(this.uiColors.light);
-    this.addUiThemeSwitcher();
     this.updateAllControls();
     this.createDownloadButton();
     this.createCloseButton();
+    this.addUiThemeSwitcher();
     this.addStringAnim();
     this.cssCb(this.skin);
   }
@@ -1200,38 +1202,6 @@ class Skinner {
     vDiv.className = "nik_skinner_versioning";
     vDiv.innerText = "V " + this.version;
     this.settingsWrapper.appendChild(vDiv);
-  }
-
-  addUiThemeSwitcher() {
-    let _id = "skinner_ui_switcher";
-    let switcherWrapper = document.createElement("label");
-    switcherWrapper.className = this.classNames.uiSwitch;
-    switcherWrapper.for = _id;
-    let inp = document.createElement("input");
-    inp.id = _id;
-    inp.type = "checkbox";
-    let lightIco = document.createElement("i");
-    lightIco.className = this.classNames.ico;
-    lightIco.innerHTML = this.icons.sun;
-    let darkIco = document.createElement("i");
-    darkIco.className = this.classNames.ico;
-    darkIco.innerHTML = this.icons.moon;
-
-    let thumb = document.createElement("span");
-
-    let darkColors = this.uiColors.dark;
-    let lightColors = this.uiColors.light;
-
-    inp.addEventListener("change", (e) => {
-      let uiTheme = e.currentTarget.checked ? darkColors : lightColors;
-      this.updateUiPalette(uiTheme);
-    });
-    switcherWrapper.appendChild(inp);
-    switcherWrapper.appendChild(lightIco);
-    switcherWrapper.appendChild(darkIco);
-    switcherWrapper.appendChild(thumb);
-
-    this.settingsWrapper.appendChild(switcherWrapper);
   }
 
   prerogative(name) {
@@ -1716,9 +1686,12 @@ class Skinner {
 
     this.skinnerUIToggler.addEventListener("change", this.toggleUi);
     this.overlay = document.createElement("div");
+    this.skinnerUiControls = document.createElement("div");
+    this.skinnerUiControls.className = "sk_ui_controls";
     this.overlay.id = "skinner_overlay";
     skinnerRoot.appendChild(this.overlay);
     let toolbox = document.createElement("div");
+    toolbox.appendChild(this.skinnerUiControls);
     toolbox.className = "skinner_toolbox";
     let toolboxWrapper = document.createElement("div");
     toolboxWrapper.className = "skinner_toolbox_wrapper";
@@ -1906,6 +1879,30 @@ class Skinner {
     document.body.removeChild(element);
   }
 
+  addUiThemeSwitcher() {
+    let _id = "skinner_ui_switcher";
+    let switcherWrapper = document.createElement("label");
+    switcherWrapper.className = this.classNames.uiSwitch;
+    switcherWrapper.for = _id;
+    let inp = document.createElement("input");
+    inp.id = _id;
+    inp.type = "checkbox";
+
+    let thumb = document.createElement("span");
+
+    let darkColors = this.uiColors.dark;
+    let lightColors = this.uiColors.light;
+
+    inp.addEventListener("change", (e) => {
+      let uiTheme = e.currentTarget.checked ? darkColors : lightColors;
+      this.updateUiPalette(uiTheme);
+    });
+    switcherWrapper.appendChild(inp);
+    switcherWrapper.appendChild(thumb);
+
+    this.skinnerUiControls.appendChild(switcherWrapper);
+  }
+
   createCloseButton() {
     this.toolBox = document.querySelector(".skinner_toolbox");
     this.closeBtn = document.createElement("button");
@@ -1918,7 +1915,7 @@ class Skinner {
       arrow.classList.toggle("skinner_ico_arrow-rotated");
     });
     this.closeBtn.appendChild(arrow);
-    this.toolBox.appendChild(this.closeBtn);
+    this.skinnerUiControls.appendChild(this.closeBtn);
   }
 
   showOverlay() {
@@ -2409,7 +2406,7 @@ class Skinner {
 
   generateUiPalette(colors) {
     //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
-    let step = 4;
+    let step = 6;
 
     let bg = colors.bg;
     let islight = tinycolor(bg).isLight;
@@ -3173,16 +3170,14 @@ body {
     height: var(--skinnerToolboxHeight);
     color: var(--skinnerTxt);
     background: inherit;
-    position: absolute;
+    position: relative;
     z-index: 10;
-    transition: color 0.5s, transform 0.5s;
+    transition: transform 0.5s;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     border: 0;
-    right:0;
-    top: 0;
 }
 
 .color_controls_toggle {
@@ -3232,6 +3227,7 @@ border: 1px solid var(--skinnerBg3);
     column-gap: var(--controls-ui-gap);
     height: var(--controls-row-height);
     background-color: var(--skinnerBg2);
+    color: var(--skinnerTxt) !important;
     border-radius: 4px;
 }
 
@@ -3383,7 +3379,8 @@ opacity: 1;
 }
 
     .nik_skinner_control_collapse_collapser > span {
-        flex-grow: 1;
+            flex-grow: 1;
+    color: var(--skinnerTxt) !important;
     }
 
 .nik_skinner_control_collapse_collapser-open {
@@ -4209,20 +4206,30 @@ input[type=number] {
 }
 
 .skinner_ui_switcher {
-    width: 70px;
+    width: calc(var(--skinnerToolboxHeight) * 2);
     background-color: var(--skinnerBg);
     color: var(--skinnerTxt);
-    border: 2px solid var(--skinnerAccent);
-    border-radius: 35px;
-    padding: 4px;
+    border: 1px solid var(--skinnerAccent);
+    border-radius: 16px;
+    padding: 2px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 35px;
+    height: var(--skinnerToolboxHeight);
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    transition: all 0.2s;
+}
+
+.sk_ui_controls{
+display: flex;
+    align-items: center;
+    column-gap: 6px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
 }
 
     .skinner_ui_switcher > i {
@@ -4238,19 +4245,19 @@ input[type=number] {
     .skinner_ui_switcher > span {
         content: '';
         display: block;
-        width: 35px;
-        height: 35px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         background-color: var(--skinnerAccent);
         position: absolute;
-        left: -1px;
-        top: -1px;
+        left: 1px;
+        top: 1px;
         transform: translateX(0);
         transition: background-color 0.3s, transform 0.3s;
     }
 
     .skinner_ui_switcher > input:checked ~ span {
-        transform: translateX(32px);
+        transform: translateX(24px);
     }
 
 .skinner_settings_wrapper {
@@ -4805,13 +4812,13 @@ function createPreview() {
   demoRoot.className = "sk_demo_root";
   demoRoot.id = "sk_demo_root";
 
-  function createKeyVal(key, val){
+  function createKeyVal(key, val) {
     const root = document.createElement("div");
     const k = document.createElement("span");
     const v = document.createElement("span");
-    root.className = 'sk_demo_key_val_root'
-    k.className = 'sk_demo_key';
-    v.className = 'sk_demo_val';
+    root.className = "sk_demo_key_val_root";
+    k.className = "sk_demo_key";
+    v.className = "sk_demo_val";
     k.innerText = key;
     v.innerText = val;
     root.appendChild(k);
@@ -4848,24 +4855,23 @@ function createPreview() {
     essenceRoot.appendChild(essenceRootTitle);
 
     const tintsArr = [
-      'nameBg',
-      'nameBgHov',
-      'nameBg2',
-      'nameBg2Hov',
-      'nameBg3',
-      'nameBg3Hov',
-    ]
+      "nameBg",
+      "nameBgHov",
+      "nameBg2",
+      "nameBg2Hov",
+      "nameBg3",
+      "nameBg3Hov",
+    ];
 
     for (i = 0; i < tintsArr.length; i++) {
       const essenceTint = document.createElement("div");
       essenceTint.className = `sk_demo_essence_tint variant_${i}`;
       const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
-      
-      essenceTint.appendChild(createKeyVal('name', `${essence[tintsArr[i]]}`));
-      essenceTint.appendChild(createKeyVal('value', hexVal));
+
+      essenceTint.appendChild(createKeyVal("name", `${essence[tintsArr[i]]}`));
+      essenceTint.appendChild(createKeyVal("value", hexVal));
 
       essenceRoot.appendChild(essenceTint);
-
     }
     const essenceText = document.createElement("div");
     essenceText.className = `sk_demo_essence_text`;
@@ -4873,17 +4879,21 @@ function createPreview() {
     const essenceTintText2 = document.createElement("div");
     const essenceTintText3 = document.createElement("div");
 
-    const Txt1HexVal = window.SkinnerInstance.skin[_vd['nameTxt']];
-    essenceTintText1.appendChild(createKeyVal('name', `${essence['nameTxt']}`));
-    essenceTintText1.appendChild(createKeyVal('value', Txt1HexVal));
+    const Txt1HexVal = window.SkinnerInstance.skin[_vd["nameTxt"]];
+    essenceTintText1.appendChild(createKeyVal("name", `${essence["nameTxt"]}`));
+    essenceTintText1.appendChild(createKeyVal("value", Txt1HexVal));
 
-    const Txt2HexVal = window.SkinnerInstance.skin[_vd['nameTxt2']];
-    essenceTintText2.appendChild(createKeyVal('name', `${essence['nameTxt2']}`));
-    essenceTintText2.appendChild(createKeyVal('value', Txt2HexVal));
+    const Txt2HexVal = window.SkinnerInstance.skin[_vd["nameTxt2"]];
+    essenceTintText2.appendChild(
+      createKeyVal("name", `${essence["nameTxt2"]}`)
+    );
+    essenceTintText2.appendChild(createKeyVal("value", Txt2HexVal));
 
-    const Txt3HexVal = window.SkinnerInstance.skin[_vd['nameTxt3']];
-    essenceTintText3.appendChild(createKeyVal('name', `${essence['nameTxt3']}`));
-    essenceTintText3.appendChild(createKeyVal('value', Txt3HexVal));
+    const Txt3HexVal = window.SkinnerInstance.skin[_vd["nameTxt3"]];
+    essenceTintText3.appendChild(
+      createKeyVal("name", `${essence["nameTxt3"]}`)
+    );
+    essenceTintText3.appendChild(createKeyVal("value", Txt3HexVal));
 
     essenceTintText1.className = `sk_demo_essence_tint_text variant_1`;
     essenceTintText2.className = `sk_demo_essence_tint_text variant_2`;
