@@ -286,8 +286,8 @@ class Skinner {
 
     this.uiColors = {
       dark: {
-        bg: "#222f3e",
-        accent: "#ee5253",
+        bg: "#1a1a1a",
+        accent: "#10ac84",
       },
       light: {
         bg: "#fff",
@@ -829,13 +829,14 @@ class Skinner {
       .toRgbString();
 
     if (this.variant === "casino") {
-      let mixTint = _isDark ? "#fff" : "#000";
+      // let mixTint = _isDark ? "#fff" : "#000";
+      let mixTint = "#000";
       this.skin[`${_vb.name}Shadow`] = tinycolor
-        .mix(mixTint, this.skin[_vb.nameBg], 60)
-        .setAlpha(this.defaults.alpha.bg)
+        .mix(mixTint, this.skin[_vb.nameBg], 80)
+        .setAlpha(80)
         .toRgbString();
       this.skin[`${_vb.name}ShadowFade`] = tinycolor
-        .mix(mixTint, this.skin[_vb.nameBg], 60)
+        .mix(mixTint, this.skin[_vb.nameBg], 80)
         .setAlpha(0)
         .toRgbString();
     }
@@ -1156,7 +1157,7 @@ class Skinner {
       const { movementY, clientX } = e;
       const pathBound = box.getBoundingClientRect();
       x = (clientX - pathBound.left) / pathBound.width;
-      progress += movementY * 0.1;
+      progress += movementY * 0.2;
       setPath(progress);
     };
 
@@ -2502,7 +2503,7 @@ class Skinner {
   position: relative;
   width: 100%;
   position: absolute;
-  top: 5px;
+  top: 4px;
 }
 
 .sk_path_string_box {
@@ -2979,13 +2980,14 @@ body {
   column-gap: 6px;
   padding: 0 8px;
   height: var(--skinnerToolboxFooterHeight);
-  background: var(--skinnerBg2);
+  background: var(--shadow);
   position: absolute;
-  border-top: 1px solid var(--skinnerBg);
+  border-top: 1px solid var(--skinnerBg2);
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 100;
+  backdrop-filter: blur(5px);
 }
 
 .nik_root_mobile {
@@ -3219,15 +3221,17 @@ body {
   width: var(--skinnerToolboxHeight);
   height: var(--skinnerToolboxHeight);
   color: var(--skinnerTxt);
-  background: inherit;
+  background: var(--skinnerBg);
   position: relative;
   z-index: 10;
+  border-radius: 50%;
   transition: transform 0.5s;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 0;
+  border: 1px solid var(--skinnerAccent);
+
 }
 
 .color_controls_toggle {
@@ -3507,17 +3511,16 @@ body {
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
-  background-color: var(--skinnerBg3);
+  background-color: var(--skinnerBg2);
   color: var(--skinnerTxt2);
   display: block;
-  transition: all 0.2s;
   text-transform: capitalize;
   font-size: 12px;
   position: relative;
   font-weight: 500;
   padding: 0 12px;
   border-radius: 4px;
-  transition: all 0.5s;
+  transition: all 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3525,18 +3528,15 @@ body {
 }
 
 .skinner_btn-icon {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--skinnerBg2);
-  border: 1px solid var(--skinnerBg3);
-  border-top-color: var(--skinnerBg);
-  border-bottom-color: var(--skinnerBg6);
-  box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
-  color: var(--skinnerTxt2);
+      width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--skinnerBg2);
+    border: 1px solid var(--skinnerBg3);
+    color: var(--skinnerTxt2);
 }
 
 .skinner_btn-50 {
@@ -3573,16 +3573,12 @@ body {
 }
 
 .skinner_btn:hover {
-  background-color: var(--skinnerToolboxBg3);
-  border-color: var(--skinnerToolboxBg2);
-  position: relative;
-  z-index: 10;
+  background-color: var(--skinnerBg3);
 }
 
 .skinner_btn-accent {
   background-color: var(--skinnerAccent);
-  border-color: var(--skinnerAccentDark);
-  border-top-color: var(--skinnerAccentLight);
+  border-color: var(--skinnerAccent);
   color: var(--skinnerAccentTxt);
   position: relative;
   padding-inline-start: 6px;
@@ -3590,7 +3586,7 @@ body {
 
 .skinner_btn-accent:hover {
   border-color: var(--skinnerAccent);
-  background-color: var(--skinnerAccent2);
+  background-color: var(--skinnerAccentDark);
   color: var(--skinnerAccentTxt);
 }
 /* view switchers */
@@ -3645,6 +3641,7 @@ body {
   border-top-right-radius: 2px;
   border-bottom: 1px solid var(--skinnerBg2);
   column-gap: 4px;
+  height: var(--skinnerToolboxHeight);
 }
 
 .nik_skinner_load_config {
@@ -3742,9 +3739,6 @@ body {
   column-gap: 4px;
   padding: 8px;
   border-radius: 4px;
-  transition: all 0.05s cubic-bezier(0.53, 1.14, 0.83, 1.21);
-
-  transform: translateY(var(--grp_pos));
 }
 
 .nik_skinner_checkbox_wrapper > .pickr {
@@ -3779,7 +3773,7 @@ body {
   position: relative;
 }
 
-.state_delay_2 {
+/*.state_delay_2 {
   transition-delay: 0.1s;
 }
 .state_delay_3 {
@@ -3790,7 +3784,7 @@ body {
 }
 .state_delay_5 {
   transition-delay: 0.4s;
-}
+}*/
 
 .nik_skinner_control_group_checkbox_wrapper
   > input:disabled
@@ -3854,7 +3848,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.314s;
+  transition: all 0.1s;
 }
 
 .skinner_ui_toggler_wrapper input {
@@ -3934,7 +3928,7 @@ input[type="range"]:focus {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: var(--skinnerTxt);
+  background: var(--skinnerBg);
   border-radius: 0px;
   width: 100%;
   height: 2px;
@@ -3942,21 +3936,21 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  margin-top: -8px;
-  width: 8px;
-  height: 18px;
-  background-color: var(--skinnerBg6);
+  margin-top: -6px;
+  width: 6px;
+  height: 14px;
+  background-color: var(--skinnerAccent);
   border-radius: 2px;
   cursor: pointer;
   -webkit-appearance: none;
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: var(--skinnerAccent);
+  background: var(--skinnerBg);
 }
 
 input[type="range"]::-moz-range-track {
-  background: var(--skinnerTxt2);
+  background: var(--skinnerBg);
   border: 0.2px solid #010101;
   border-radius: 1.3px;
   width: 100%;
@@ -3967,7 +3961,7 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
-  background: var(--skinnerAccent);
+  background: var(--skinnerBg);
   border: 0.2px solid rgba(0, 0, 0, 0);
   border-radius: 18px;
   cursor: pointer;
@@ -4153,7 +4147,7 @@ border-radius: 50%;*/
   text-transform: capitalize;
   display: block;
   cursor: pointer;
-  transition: all 0.314s;
+  transition: height 0.2s;
   resize: none;
   position: absolute;
   bottom: 0;
@@ -4252,23 +4246,34 @@ border-radius: 50%;*/
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.1s;
 }
 
 .sk_ui_controls {
-  display: flex;
-  align-items: center;
-  column-gap: 6px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10;
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+    position: absolute;
+    top: calc(-1* var(--skinnerToolboxHeight) + -12px);
+    right: 0;
+    z-index: 10;
+    height: calc(var(--skinnerToolboxHeight) + 8px);
+    padding: 4px 8px;
+    background: var(--shadow);
+    opacity: 0.2;
+    border-radius: 8px;
+    border: 1px solid var(--skinnerBg);
+    transition: opacity 0.2s;
+}
+
+.sk_ui_controls:hover{
+opacity: 1;
 }
 
 .skinner_ui_switcher > i {
   display: relative;
   z-index: 10;
-  transition: color 0.3s;
+  transition: color 0.1s;
 }
 
 .skinner_ui_switcher > input {
@@ -4281,16 +4286,16 @@ border-radius: 50%;*/
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: var(--skinnerAccent);
+  background: var(--skinnerAccent);
   position: absolute;
-  left: 1px;
+  left: 2px;
   top: 1px;
   transform: translateX(0);
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.1s, transform 0.1s;
 }
 
 .skinner_ui_switcher > input:checked ~ span {
-  transform: translateX(24px);
+  transform: translateX(22px);
 }
 
 .skinner_settings_wrapper {
@@ -4431,7 +4436,7 @@ border-radius: 50%;*/
     this.skinnerUIStyles = document.createElement("style");
     this.skinnerUIStyles.innerHTML = css;
     this.skinnerRoot.appendChild(this.skinnerUIStyles);
-    const fontURL = `https://cdn-sp.totogaming.am/assets/fonts/sport-ui-icons/style.css?`;
+    const fontURL = `https://cdn-sp-bn.kertn.net/assets/fonts/sport-ui-icons/style.css?`;
     this.iconsLink = document.createElement("link");
     this.iconsLink.rel = "stylesheet";
     this.iconsLink.href = fontURL;
@@ -4724,7 +4729,7 @@ function createPreview() {
   isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-        background: var(--skinnerBg2);
+        background: var(--cwModalShadow);
     color: var(--skinnerTxt);
     border-radius: var(--radius);
     border: 2px solid var(--skinnerBg3);
