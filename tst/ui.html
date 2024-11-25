@@ -145,6 +145,11 @@
           Draw Skinner Essence Ui
         </button>
       </div>
+      <div class="sk_controls_footer">
+        <button class="sk_fg_btn sk_fg_btn_accent" id="generateVariables">
+          Generate Variables
+        </button>
+      </div>
       <div class="sk_controls_clear">
         <button class="sk_fg_btn" id="clearStyles">
           Clear Existing Styles
@@ -169,6 +174,19 @@
           {
             pluginMessage: {
               type: "generate-styles",
+              cssTheme: cssTheme,
+            },
+          },
+          "*"
+        );
+      };
+      document.getElementById("generateVariables").onclick = () => {
+        const cssTheme = document.getElementById("cssSkinInput").value;
+
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "generate-variables",
               cssTheme: cssTheme,
             },
           },
