@@ -286,12 +286,14 @@ class Skinner {
 
     this.uiColors = {
       dark: {
-        bg: "#1a1a1a",
-        accent: "#10ac84",
+        name: "dark",
+        bg: "#1F2122",
+        accent: "#A8D5BA",
       },
       light: {
-        bg: "#fff",
-        accent: "#10ac84",
+        name: "light",
+        bg: "#e1e8ed",
+        accent: "#003d7a",
       },
     };
 
@@ -2407,26 +2409,42 @@ class Skinner {
 
   generateUiPalette(colors) {
     //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
-    let step = 6;
+    let step = 4;
 
     let bg = colors.bg;
-    let islight = tinycolor(bg).isLight;
+    let islight = colors.name === "light" ? true : false;
 
     let bg2 = islight
       ? tinycolor(bg).darken(step).toHexString()
       : tinycolor(bg).lighten(step).toHexString();
     let bg3 = islight
-      ? tinycolor(bg2).darken(step).toHexString()
-      : tinycolor(bg2).lighten(step).toHexString();
+      ? tinycolor(bg)
+          .darken(step * 2)
+          .toHexString()
+      : tinycolor(bg)
+          .lighten(step * 2)
+          .toHexString();
     let bg4 = islight
-      ? tinycolor(bg3).darken(step).toHexString()
-      : tinycolor(bg3).lighten(step).toHexString();
+      ? tinycolor(bg)
+          .darken(step * 3)
+          .toHexString()
+      : tinycolor(bg)
+          .lighten(step * 3)
+          .toHexString();
     let bg5 = islight
-      ? tinycolor(bg4).darken(step).toHexString()
-      : tinycolor(bg4).lighten(step).toHexString();
+      ? tinycolor(bg)
+          .darken(step * 4)
+          .toHexString()
+      : tinycolor(bg)
+          .lighten(step * 4)
+          .toHexString();
     let bg6 = islight
-      ? tinycolor(bg5).darken(step).toHexString()
-      : tinycolor(bg5).lighten(step).toHexString();
+      ? tinycolor(bg)
+          .darken(step * 4)
+          .toHexString()
+      : tinycolor(bg)
+          .lighten(step * 4)
+          .toHexString();
 
     let accent = tinycolor(colors.accent).lighten(step).toHexString();
     let accent2 = tinycolor(accent).lighten(step).toHexString();
@@ -2488,7 +2506,7 @@ class Skinner {
   --skinnerHeaderTogglerSize: 50px;
   --skinnerToolboxHeight: 24px;
   --skinnerToolboxFooterHeight: 48px;
-  --skinnerBtnHeight: 32px;
+  --skinnerBtnHeight: 26px;
   --skinnerToolboxCollapserSize: 42px;
   --control-picker-size: 24px;
   --control-picker-size-border: calc(var(--control-picker-size) - 4px);
@@ -3081,7 +3099,7 @@ body {
 }
 
 body {
-  background-color: var(--skinnerBg);
+  background-color: var(--skinnerBg3);
   color: var(--skinnerTxt);
   font-family: "Roboto", sans-serif;
 }
@@ -3528,8 +3546,8 @@ body {
 }
 
 .skinner_btn-icon {
-      width: 32px;
-    height: 32px;
+      width: var(--skinnerAccent);
+    height: var(--skinnerAccent);
     padding: 0;
     display: flex;
     align-items: center;
@@ -4260,14 +4278,8 @@ border-radius: 50%;*/
     height: calc(var(--skinnerToolboxHeight) + 8px);
     padding: 4px 8px;
     background: var(--shadow);
-    opacity: 0.2;
     border-radius: 8px;
     border: 1px solid var(--skinnerBg);
-    transition: opacity 0.2s;
-}
-
-.sk_ui_controls:hover{
-opacity: 1;
 }
 
 .skinner_ui_switcher > i {
@@ -4729,13 +4741,11 @@ function createPreview() {
   isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-        background: var(--cwModalShadow);
-    color: var(--skinnerTxt);
+    olor: var(--skinnerTxt);
     border-radius: var(--radius);
-    border: 2px solid var(--skinnerBg3);
-    padding: 6px 8px;
+    border: 2px solid var(--skinnerBg);
+    padding: 16px 16px;
     width: 20%;
-    /*box-shadow: 0 0 0px 5px var(--shadow);*/
   }
   .sk_demo_root{
     --card_width: 60px;
