@@ -207,9 +207,8 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
     res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
     res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${
-      skin[`${value.name}ShadowFade`]
-    };\n`;
+    res += `    --cw${essence.name}ShadowFade: ${skin[`${value.name}ShadowFade`]
+      };\n`;
     res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
@@ -272,28 +271,30 @@ class Skinner {
       uiLabelSm: "skinner_ui_label_sm",
     };
     this.icons = {
-      burger: `<svg width="22" height="18" viewBox="0 0 22 18"><path d="M20.6 0H1.39995C0.737209 0 0.199951 0.537258 0.199951 1.2V2.4C0.199951 3.06274 0.737209 3.6 1.39995 3.6H20.6C21.2627 3.6 21.8 3.06274 21.8 2.4V1.2C21.8 0.537258 21.2627 0 20.6 0Z" /><path d="M20.6 7.2H1.39995C0.737209 7.2 0.199951 7.73726 0.199951 8.4V9.6C0.199951 10.2627 0.737209 10.8 1.39995 10.8H20.6C21.2627 10.8 21.8 10.2627 21.8 9.6V8.4C21.8 7.73726 21.2627 7.2 20.6 7.2Z" /><path d="M20.6 14.4H1.39995C0.737209 14.4 0.199951 14.9373 0.199951 15.6V16.8C0.199951 17.4627 0.737209 18 1.39995 18H20.6C21.2627 18 21.8 17.4627 21.8 16.8V15.6C21.8 14.9373 21.2627 14.4 20.6 14.4Z"/></svg>`,
-      save: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M4.7,24.1h14.7c2.4,0,4.4-2,4.4-4.4V7.7c0-1-0.4-1.9-1.1-2.6l-3.5-3.5c-0.7-0.7-1.6-1.1-2.6-1.1H4.7 c-2.4,0-4.4,2-4.4,4.4v14.7C0.3,22.1,2.2,24.1,4.7,24.1L4.7,24.1z M3.2,5c0-0.8,0.7-1.5,1.5-1.5c0,0,0,0,0,0h5.9v4.9L9,6.9l0,0 C8.5,6.4,7.8,6.3,7.2,6.7C6.5,7.1,6.3,8,6.7,8.7c0.1,0.1,0.1,0.2,0.2,0.2l2.2,2.2l0,0c1.6,1.6,4.2,1.6,5.8,0c0,0,0,0,0,0l2.2-2.2 l0,0c0.6-0.6,0.6-1.5,0-2.1c-0.1-0.1-0.1-0.1-0.2-0.2c-0.6-0.4-1.4-0.3-1.9,0.2l-1.5,1.5V3.5h3.1c0.2,0,0.4,0.1,0.5,0.2l3.5,3.5 c0.1,0.1,0.2,0.3,0.2,0.5v11.9c0,0.8-0.7,1.5-1.5,1.5c0,0,0,0,0,0H4.7c-0.8,0-1.5-0.7-1.5-1.5c0,0,0,0,0,0V5z"/> <path d="M8,18.2H16c0.8,0,1.4-0.7,1.4-1.5c0-0.8-0.6-1.4-1.4-1.4H8c-0.8,0-1.4,0.7-1.4,1.5 C6.6,17.5,7.2,18.2,8,18.2z"/> </svg>`,
-      load: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="17.3px" height="17.8px" viewBox="0 0 17.3 17.8" style="overflow:visible;enable-background:new 0 0 17.3 17.8;" xml:space="preserve"><path d="M8.6,0C8,0,7.5,0.5,7.5,1.2l0,0v8.2L6,7.9C5.6,7.4,4.9,7.4,4.4,7.8C3.9,8.2,3.9,8.9,4.3,9.4c0,0,0,0,0,0 l2.5,2.5l0,0c1,1,2.6,1,3.6,0c0,0,0,0,0,0l2.4-2.4c0.5-0.4,0.5-1.1,0.1-1.6c-0.4-0.5-1.2-0.5-1.6-0.1c0,0,0,0,0,0L9.8,9.3V1.2 C9.8,0.5,9.3,0,8.6,0L8.6,0L8.6,0z"/><path d="M17.3,12.7c0-0.6-0.5-1.2-1.1-1.2c-0.6,0-1.2,0.5-1.2,1.1c0,0,0,0.1,0,0.1v1.7l0,0 c0,0.6-0.5,1.2-1.2,1.2l0,0H3.5c-0.6,0-1.2-0.5-1.2-1.2l0,0v-1.7c0-0.6-0.5-1.2-1.1-1.2c-0.6,0-1.2,0.5-1.2,1.1c0,0,0,0.1,0,0.1v1.7 l0,0c0,1.9,1.5,3.5,3.5,3.5l0,0h10.4c1.9,0,3.5-1.5,3.5-3.5l0,0L17.3,12.7z"/></svg>`,
-      eye: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M12,6.1c-4.1,0-7.7,2.2-10.4,5.8c-0.2,0.3-0.2,0.7,0,1c2.7,3.6,6.4,5.8,10.4,5.8s7.7-2.2,10.4-5.8 c0.2-0.3,0.2-0.7,0-1C19.7,8.3,16.1,6.1,12,6.1z M12.3,16.9c-2.5,0.2-4.6-1.7-4.7-4.2s1.7-4.6,4.2-4.7c2.5-0.2,4.6,1.7,4.7,4.2 c0,0.2,0,0.4,0,0.6C16.3,14.9,14.5,16.7,12.3,16.9z M12.2,14.8c-1.3,0.1-2.5-0.9-2.5-2.2c-0.1-1.3,0.9-2.5,2.2-2.5 c1.3-0.1,2.5,0.9,2.5,2.2c0,0.1,0,0.2,0,0.3C14.3,13.8,13.4,14.7,12.2,14.8L12.2,14.8z"/></svg>`,
-      sun: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M18.3,12c0,3.5-2.8,6.3-6.3,6.3S5.7,15.5,5.7,12c0-3.5,2.8-6.3,6.3-6.3C15.5,5.7,18.3,8.5,18.3,12L18.3,12" /> <path d="M12.9,3.9V1.2c0-0.5-0.4-0.9-0.9-0.9c-0.5,0-0.9,0.4-0.9,0.9c0,0,0,0,0,0v2.7c0,0.5,0.4,0.9,0.9,0.9 C12.5,4.8,12.9,4.4,12.9,3.9C12.9,3.9,12.9,3.9,12.9,3.9z"/> <path d="M12.9,22.8v-2.7c0-0.5-0.4-0.9-0.9-0.9c-0.5,0-0.9,0.4-0.9,0.9c0,0,0,0,0,0v2.7c0,0.5,0.4,0.9,0.9,0.9 C12.5,23.7,12.9,23.3,12.9,22.8z"/> <path id="Path_41477" d="M22.8,11.1h-2.7c-0.5,0-0.9,0.4-0.9,0.9c0,0.5,0.4,0.9,0.9,0.9c0,0,0,0,0,0h2.7c0.5,0,0.9-0.4,0.9-0.9 C23.7,11.5,23.3,11.1,22.8,11.1z"/><path d="M1.2,12.9h2.7c0.5,0,0.9-0.4,0.9-0.9c0-0.5-0.4-0.9-0.9-0.9c0,0,0,0,0,0H1.2c-0.5,0-0.9,0.4-0.9,0.9 C0.3,12.5,0.7,12.9,1.2,12.9C1.2,12.9,1.2,12.9,1.2,12.9z"/><path d="M5,3.7c-0.4-0.3-0.9-0.3-1.3,0C3.4,4.1,3.4,4.7,3.7,5l1.9,1.9c0.4,0.3,0.9,0.3,1.3,0c0.3-0.3,0.3-0.9,0-1.2 L5,3.7z"/> <path id="Path_41480" d="M20.3,19l-1.9-1.9c-0.4-0.3-0.9-0.3-1.3,0c-0.3,0.3-0.3,0.9,0,1.2l1.9,1.9c0.4,0.3,0.9,0.3,1.3,0 C20.6,19.9,20.6,19.3,20.3,19L20.3,19z"/> <path id="Path_41481" d="M20.3,3.7c-0.4-0.4-0.9-0.4-1.3,0l-1.9,1.9c-0.4,0.3-0.4,0.9,0,1.3c0.3,0.4,0.9,0.4,1.3,0c0,0,0,0,0,0 L20.3,5C20.6,4.7,20.6,4.1,20.3,3.7z"/><path d="M3.7,20.3c0.4,0.4,0.9,0.4,1.3,0l1.9-1.9c0.3-0.4,0.3-0.9,0-1.3c-0.3-0.3-0.9-0.3-1.2,0L3.7,19 C3.4,19.3,3.4,19.9,3.7,20.3z"/></svg>`,
-      moon: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M22.2,16.6c-1.7,3-4.7,5.1-8.1,5.5c-0.5,0.1-1,0.1-1.5,0.1c-6.1,0-11-5-10.9-11.1 c0-3.7,1.9-7.2,5.1-9.2c0.4-0.2,0.9-0.1,1.1,0.3C8,2.4,8,2.7,7.9,3C5.3,7.5,7,13.3,11.5,15.8c1.8,1,3.8,1.4,5.8,1.1 c1.3-0.2,2.6-0.6,3.7-1.4c0.4-0.2,0.9-0.1,1.1,0.2C22.4,16,22.4,16.3,22.2,16.6L22.2,16.6z"/> </svg>`,
+      moon: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M22.2,16.6c-1.7,3-4.7,5.1-8.1,5.5c-0.5,0.1-1,0.1-1.5,0.1c-6.1,0-11-5-10.9-11.1 c0-3.7,1.9-7.2,5.1-9.2c0.4-0.2,0.9-0.1,1.1,0.3C8,2.4,8,2.7,7.9,3C5.3,7.5,7,13.3,11.5,15.8c1.8,1,3.8,1.4,5.8,1.1 c1.3-0.2,2.6-0.6,3.7-1.4c0.4-0.2,0.9-0.1,1.1,0.2C22.4,16,22.4,16.3,22.2,16.6L22.2,16.6z"/></svg>`,
+      chb: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><polyline class="sk_svg_path_checkbox" points="4.5,9.4 8.6,13.6 15.7,6.5 "/></svg>`,
+      copy: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_copy" d="M13.5,16.9H9.5c-1.5,0-2.8-1.2-2.8-2.8V8.9c0-1.5,1.2-2.8,2.8-2.8h3.9c1.5,0,2.8,1.2,2.8,2.8v5.3 C16.2,15.7,15,16.9,13.5,16.9z M12.6,4.2c-0.5-0.6-1.3-1-2.1-1H6.5C5,3.1,3.8,4.3,3.8,5.9v5.3c0,0.9,0.4,1.6,1,2.1"/></svg>`,
+      download: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_copy" d="M13.1,9.8l-2.7,2.7c-0.1,0.1-0.3,0.1-0.4,0L7.4,9.8 M10.2,4.2v8.2 M4.5,11.5v3.9c0,0.4,0.4,0.8,0.8,0.8h9.3 c0.4,0,0.8-0.4,0.8-0.8v-3.9"/></svg>`,
+      saveToDb: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_save" d="M9.8,15.8V9.1 M11.6,10.7l-1.6-1.6C9.9,9,9.7,9,9.5,9.2l-1.6,1.6 M12.7,13c0.4,0.2,0.8,0.3,1.2,0.3 c1.4,0,2.4-1.1,2.4-2.4s-1.1-2.4-2.4-2.4c-0.4,0-0.7,0.1-1,0.2c0-2.1-1.6-3.9-3.5-3.9S5.8,6.4,5.8,8.5c-1.2,0.2-2.1,1.2-2.1,2.4 c0,1.4,1.1,2.4,2.4,2.4c0.4,0,0.8-0.1,1.1-0.3"/></svg>`,
+      recolor: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><g class="sk_svg_path_load"><path class="st0" d="M10,14.2c1.6,0,2.8-1.3,2.8-2.8S11.4,7.7,10,5.2c-1.4,2.5-2.8,4.6-2.8,6.2S8.4,14.2,10,14.2z"/> <line class="st0" x1="15.7" y1="16.4" x2="4.3" y2="16.4"/><g></svg>`,
+      showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
     this.skinnerContainer = this.createControlsWrapper();
 
     this.essenceGroups = {};
 
+
     this.uiColors = {
       dark: {
         name: "dark",
         bg: "#1F2122",
-        accent: "#A8D5BA",
+        accent: "#1696a5",
       },
       light: {
         name: "light",
-        bg: "#e1e8ed",
-        accent: "#003d7a",
+        bg: "#e9edef",
+        accent: "#1696a5",
       },
     };
 
@@ -735,19 +736,19 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+        .darken(this.defaults.dark.bg2)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+        .lighten(this.defaults.light.bg2)
+        .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg3)
-          .toString()
+        .darken(this.defaults.dark.bg3)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg3)
-          .toString();
+        .lighten(this.defaults.light.bg3)
+        .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -798,27 +799,27 @@ class Skinner {
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -850,9 +851,8 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${
-        this.skin[_vb.gradientAngle]
-      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
+        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -907,7 +907,7 @@ class Skinner {
     if (_isCustomBorderActive) {
       this.skin[_vb.nameBorder] = _customBorderColor;
     } else {
-      this.skin[_vb.nameBorder] = this.skin.bodyBg;
+      this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
     }
   }
 
@@ -1030,6 +1030,7 @@ class Skinner {
     this.applyTheme();
 
     this.cssCb(this.skin);
+    this.appendCssToSkinnerInstanceRoot(this.skin);
   }
 
   applyTheme() {
@@ -1211,32 +1212,76 @@ class Skinner {
     return name === "body" || name === "accent" ? true : false;
   }
 
+  createCssForSkinnerInstance(skin) {
+    let res = ``;
+    this.configOrder.forEach((c, i) => {
+      let value = verbalData(c.name);
+
+      res += `    --${value.nameG}: ${skin[value.nameG]};\n`;
+      res += `    --${value.nameBg}: ${skin[value.nameBg]};\n`;
+      res += `    --${value.nameBg2}: ${skin[value.nameBg2]};\n`;
+      res += `    --${value.nameBg3}: ${skin[value.nameBg3]};\n`;
+      res += `    --${value.nameBgHov}: ${skin[value.nameBgHov]};\n`;
+      res += `    --${value.nameBg2Hov}: ${skin[value.nameBg2Hov]};\n`;
+      res += `    --${value.nameBg3Hov}: ${skin[value.nameBg3Hov]};\n`;
+      res += `    --${value.nameTxt}: ${skin[value.nameTxt]};\n`;
+      res += `    --${value.nameTxt2}: ${skin[value.nameTxt2]};\n`;
+      res += `    --${value.nameTxt3}: ${skin[value.nameTxt3]};\n`;
+      res += `    --${value.nameAccent}: ${skin[value.nameAccent]};\n`;
+      res += `    --${value.nameAccentTxt}: ${skin[value.nameAccentTxt]};\n`;
+      res += `    --${value.nameRGBA}: ${skin[value.nameRGBA]};\n`;
+      res += `    --${value.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
+      res += `    --${value.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
+
+      res += `    --${value.nameRadius}: ${skin[value.nameRadius]}px;\n`;
+      res += `    --${value.nameBorder}: ${skin[value.nameBorder]};`;
+
+      if (i !== configOrderCasino.length - 1) {
+        res += `\n\n`;
+      }
+    });
+
+    return res;
+  }
+
   modifyKey(key, value) {
     let self = this;
     this.skin[key] = value;
     this.generateTheme();
     this.updateAllControls();
     this.cssCb(this.skin);
+    this.appendCssToSkinnerInstanceRoot(this.skin);
 
-    var isAccentReadableOnBody = tinycolor.isReadable(
-      this.skin["bodyBg"],
-      this.skin["accentBg"],
-      {}
-    );
-    console.log(isAccentReadableOnBody);
-    if (!isAccentReadableOnBody) {
-      self.message(
-        "'Accent' color is not readable on 'Body' color try to make it brighter",
-        true
-      );
-      let timeout = null;
-      if (!timeout) {
-        timeout = window.setTimeout(() => {
-          self.message("", false);
-          clearTimeout(timeout);
-        }, 3000);
+    for (let i = 0; i < this.activeEssences.length; i++) {
+
+      let _essence = this.activeEssences[i].name;
+      let vd = this.verbalData(_essence);
+
+      const isAccentVisible = tinycolor.isReadable(this.skin[vd.nameBg], this.skin[vd.nameAccent]);
+      if (!isAccentVisible) {
+        this.essenceGroups[_essence].classList.toggle('state_not_readable');
+        this.essenceGroups[_essence].title = `Accent of ${_essence} will not be Readable on its Background`;
       }
+
     }
+  }
+
+  appendCssToSkinnerInstanceRoot(c) {
+    let css = `
+    #skinner_ui_root_id{
+    ${this.createCssForSkinnerInstance(c)}
+    }`;
+    var styleId = "skinner_style_tag";
+    let skinnerStyleTag = document.getElementById(styleId);
+
+    if (!skinnerStyleTag) {
+      // Create the style element if it doesn't exist
+      skinnerStyleTag = document.createElement("style");
+      skinnerStyleTag.setAttribute("id", styleId);
+      this.skinnerRoot.appendChild(skinnerStyleTag);
+    }
+
+    skinnerStyleTag.innerHTML = css;
   }
 
   verbalData(name) {
@@ -1670,8 +1715,8 @@ class Skinner {
 
   createControlsWrapper() {
     const skinnerRoot = this.skinnerRoot;
-    const skinnerUITogglerWrapper = document.createElement("div");
-    skinnerUITogglerWrapper.className = "skinner_ui_toggler_wrapper";
+    skinnerRoot.id = 'skinner_ui_root_id'
+
     const skinnerUITogglerLabel = document.createElement("label");
     skinnerUITogglerLabel.id = "skinner_ui_toggler";
     const skinnerUITogglerImitator = document.createElement("i");
@@ -1681,11 +1726,9 @@ class Skinner {
     this.skinnerUIToggler.type = "checkbox";
     this.skinnerUIToggler.id = "skinner_ui_toggler";
 
-    skinnerUITogglerWrapper.appendChild(skinnerUITogglerLabel);
     skinnerUITogglerLabel.appendChild(this.skinnerUIToggler);
 
     skinnerUITogglerLabel.appendChild(skinnerUITogglerImitator);
-    this.header.appendChild(skinnerUITogglerWrapper);
 
     this.skinnerUIToggler.addEventListener("change", this.toggleUi);
     this.overlay = document.createElement("div");
@@ -1702,9 +1745,7 @@ class Skinner {
     main.className = "nik_skinner_control_wrapper nik_skinner_scrollbar";
     let header = document.createElement("div");
     header.className = "nik_skinner_header_controls";
-    this.toolbox = toolbox;
     toolbox.appendChild(toolboxWrapper);
-
     toolboxWrapper.appendChild(header);
 
     let tableHeaders = [
@@ -1761,21 +1802,44 @@ class Skinner {
     let btn = document.createElement("button");
     btn.innerText = name;
     btn.className = `skinner_btn ${_class}`;
+    let txt = document.createElement("span");
+    let icon = document.createElement("i");
+    icon.innerHTML = this.icons.download;
+    txt.innerText = name;
+    btn.append(icon);
+    btn.append(txt);
 
     return btn;
   }
 
-  createDownloadBtn(name, className, number) {
-    let _dn = "download " + name;
-    let i = document.createElement("i");
-    i.className = "dg_icon_24_download";
-    let s = document.createElement("span");
-    s.innerText = "download css";
-    s.className = "";
+  createIconBtn(className, iconName) {
+    let _iconName = iconName || "download"
+    let _class = className || "";
     let btn = document.createElement("button");
-    btn.className = `skinner_btn ${className}`;
-    btn.appendChild(i);
-    btn.appendChild(s);
+    let icon = document.createElement("i");
+    icon.innerHTML = this.icons[_iconName];
+    btn.append(icon);
+    btn.className = `skinner_btn ${_class}`;
+
+    return btn;
+  }
+
+  createIconBtn(className, iconName) {
+    let _iconName = iconName || "download"
+    let _class = className || "";
+    let btn = document.createElement("button");
+    let icon = document.createElement("i");
+    icon.innerHTML = this.icons[_iconName];
+    btn.append(icon);
+    btn.className = `skinner_btn ${_class}`;
+
+    return btn;
+  }
+  createDownloadBtn(name, className, number) {
+    let _dn = "" + name;
+
+    let btn = this.createBtn(_dn, className);
+
     btn.addEventListener("click", () => {
       this.makeDownloadRequest(_dn, number);
     });
@@ -1803,10 +1867,7 @@ class Skinner {
     let name = config.name;
     let name2 = config.name2;
 
-    let saveConfigBtn = this.createBtn("", "skinner_btn-icon");
-    let saveIcoWrapper = document.createElement("i");
-    saveIcoWrapper.className = "dg_icon_24_copy";
-    saveConfigBtn.appendChild(saveIcoWrapper);
+    let saveConfigBtn = this.createIconBtn("skinner_btn-icon", "copy");
 
     let loadConfigInput = document.createElement("textarea");
     loadConfigInput.spellcheck = false;
@@ -1816,10 +1877,7 @@ class Skinner {
     let loadConfigInputWrapper = document.createElement("div");
     loadConfigInputWrapper.className = "nik_skinner_input_wrapper";
 
-    let loadConfigButton = this.createBtn("", "skinner_btn-icon");
-    let loadIcoWrapper = document.createElement("i");
-    loadIcoWrapper.className = "dg_icon_reload";
-    loadConfigButton.appendChild(loadIcoWrapper);
+    let loadConfigButton = this.createIconBtn("skinner_btn-icon", "recolor");
 
     loadConfigButton.addEventListener("click", () => {
       let _config = loadConfigInput.value
@@ -1844,11 +1902,7 @@ class Skinner {
     );
     if (name2) {
       actionsWrapper.appendChild(
-        this.createDownloadBtn(
-          name2,
-          `${this.classNames.btn50} skinner_btn-accent`,
-          2
-        )
+        this.createDownloadBtn(name2, "skinner_btn-accent", 2)
       );
     }
 
@@ -1908,17 +1962,26 @@ class Skinner {
 
   createCloseButton() {
     this.toolBox = document.querySelector(".skinner_toolbox");
-    this.closeBtn = document.createElement("button");
-    let arrow = document.createElement("div");
+    this.closeBtn = document.createElement("input");
+    this.closeBtn.type = "checkbox";
+    this.closeBtn.id = "skToggleUi";
     this.closeBtn.className = "skinner_toolbox_toggler";
-    arrow.className = "dg_icon_angle_bottom";
+    this.closeBtnLabel = document.createElement("label");
+    this.closeBtnLabel.className = "sk_chb_base";
+    this.closeBtnIcon = document.createElement("i");
+    this.closeBtnIcon.className = "sk_chb_base_ico";
+    this.closeBtnIcon.innerHTML = this.icons.showHide;
+    this.closeBtnLabel.htmlFor = 'skToggleUi';
 
-    this.closeBtn.addEventListener("click", () => {
+    this.closeBtn.addEventListener("change", () => {
       this.toolBox.classList.toggle("skinner_toolbox-hide");
-      arrow.classList.toggle("skinner_ico_arrow-rotated");
     });
-    this.closeBtn.appendChild(arrow);
-    this.skinnerUiControls.appendChild(this.closeBtn);
+    this.closeBtnLabel.appendChild(this.closeBtn);
+    this.closeBtnLabel.appendChild(this.closeBtnIcon);
+    let chbWrapper = document.createElement('div');
+    chbWrapper.className = 'skinner_ui_control_wrapper';
+    chbWrapper.appendChild(this.closeBtnLabel);
+    this.skinnerUiControls.appendChild(chbWrapper);
   }
 
   showOverlay() {
@@ -2064,15 +2127,15 @@ class Skinner {
       let tintsArr = [
         {
           name: vb.nameBg,
-          val: this.skin[verbalData.nameBg],
+          val: this.skin[vb.nameBg],
         },
         {
           name: vb.nameBg2,
-          val: this.skin[verbalData.nameBg2],
+          val: this.skin[vb.nameBg2],
         },
         {
           name: vb.nameBg3,
-          val: this.skin[verbalData.nameBg3],
+          val: this.skin[vb.nameBg3],
         },
       ];
       const onDarkChange = function (e) {
@@ -2344,7 +2407,10 @@ class Skinner {
     label.className = "skinner_custom_chb_label " + (_cn ? _cn : "");
     label.htmlFor = _id;
     icon = document.createElement("i");
-    icon.className = "skinner_custom_chb dg_icon_check " + (_cn ? _cn : "");
+    icon.className = "skinner_custom_chb " + (_cn ? _cn : "");
+    if (!tints) {
+      icon.innerHTML = this.icons.chb;
+    }
     checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = _id;
@@ -2419,32 +2485,32 @@ class Skinner {
       : tinycolor(bg).lighten(step).toHexString();
     let bg3 = islight
       ? tinycolor(bg)
-          .darken(step * 2)
-          .toHexString()
+        .darken(step * 2)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 2)
-          .toHexString();
+        .lighten(step * 2)
+        .toHexString();
     let bg4 = islight
       ? tinycolor(bg)
-          .darken(step * 3)
-          .toHexString()
+        .darken(step * 3)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 3)
-          .toHexString();
+        .lighten(step * 3)
+        .toHexString();
     let bg5 = islight
       ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
+        .darken(step * 4)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
+        .lighten(step * 4)
+        .toHexString();
     let bg6 = islight
       ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
+        .darken(step * 4)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
+        .lighten(step * 4)
+        .toHexString();
 
     let accent = tinycolor(colors.accent).lighten(step).toHexString();
     let accent2 = tinycolor(accent).lighten(step).toHexString();
@@ -2462,7 +2528,9 @@ class Skinner {
       .setAlpha(0.8)
       .toRgbString();
 
-    let shadow = tinycolor(bg).setAlpha(0.3).toRgbString();
+    let shadow = islight
+      ? tinycolor(bg).lighten(6).toHexString()
+      : tinycolor(bg).darken(6).toHexString();
 
     document.documentElement.style.setProperty("--skinnerBg", bg);
     document.documentElement.style.setProperty("--skinnerBg2", bg2);
@@ -2478,7 +2546,7 @@ class Skinner {
     document.documentElement.style.setProperty("--skinnerTxt2", txt2);
 
     document.documentElement.style.setProperty("--skinnerToolboxTxt", txt);
-    document.documentElement.style.setProperty("--shadow", shadow);
+    document.documentElement.style.setProperty("--skinnerShadow", shadow);
 
     document.documentElement.style.setProperty("--skinnerAccentLight", accentL);
     document.documentElement.style.setProperty("--skinnerAccentDark", accentD);
@@ -3109,22 +3177,24 @@ body {
 }
 
 .nik_skinner_header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  transform: translateY(0);
-  height: var(--skinnerHeaderHeight);
-  z-index: 100;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--skinnerBg);
-  color: var(--skinnerTxt);
-  border-bottom: 1px solid var(--skinnerAccent);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
+    position: fixed;
+    top: 0px;
+    left: 50%;
+    width: auto;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: var(--skinnerBg);
+    color: var(--skinnerTxt);
+    border-radius: 8px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border: 1px solid var(--skinnerBg2);
+        box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+        display: none;
 }
 
 .skinner_ico {
@@ -3144,14 +3214,7 @@ body {
 }
 
 .nik_skinner_versioning {
-  background-color: var(--skinnerBg);
-  color: var(--skinnerAccent);
-  font-size: 14px;
-  padding: 2px 4px;
-  border: 1px solid var(--skinnerBg2);
-  border-radius: 5px;
-  font-weight: bold;
-  letter-spacing: 1.7px;
+  font-size: 12px;
 }
 
 .nik_skinner_link_wrapper {
@@ -3213,7 +3276,7 @@ body {
   border: 1px solid var(--skinnerBg2);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
 .pcr-app {
@@ -3221,7 +3284,7 @@ body {
 }
 
 .skinner_toolbox-hide {
-  transform: translate(-50%, calc(100% - 24px));
+  transform: translate(-50%, 100%);
 }
 
 .skinner_ico_arrow {
@@ -3546,8 +3609,8 @@ body {
 }
 
 .skinner_btn-icon {
-      width: var(--skinnerAccent);
-    height: var(--skinnerAccent);
+      width: var(--skinnerBtnHeight);
+    height: var(--skinnerBtnHeight);
     padding: 0;
     display: flex;
     align-items: center;
@@ -3721,9 +3784,9 @@ body {
   font-size: 11px;
   height: 24px;
   font-weight: 500;
-  background: var(--skinnerBg);
+  background: var(--skinnerShadow);
   color: var(--skinnerTxt2);
-  border-radius: 0px;
+  border-radius: 2px;
   text-align: right;
   border: 0;
   border: 1px solid var(--skinnerBg3);
@@ -3946,21 +4009,21 @@ input[type="range"]:focus {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: var(--skinnerBg);
+  background: var(--skinnerShadow);
   border-radius: 0px;
   width: 100%;
-  height: 2px;
+  height: 8px;
   cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  margin-top: -6px;
-  width: 6px;
-  height: 14px;
-  background-color: var(--skinnerAccent);
-  border-radius: 2px;
-  cursor: pointer;
-  -webkit-appearance: none;
+  margin-top: -2px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--skinnerAccent);
+    border-radius: 7px;
+    cursor: pointer;
+    -webkit-appearance: none;
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
@@ -4056,11 +4119,12 @@ how to remove the virtical space around the range input in IE*/
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: var(--skinnerBg);
+  background-color: var(--skinnerShadow);
   cursor: pointer;
   border: var(--chbSizeBorder) solid var(--skinnerBg3);
   border-radius: 2px;
   color: var(--skinnerBg);
+  transition: background 0.2s;
 }
 
 .skinner_custom_chb_label.variant_tone {
@@ -4108,6 +4172,23 @@ input[type="number"] {
   background: var(--skinnerAccent);
   color: var(--skinnerAccentTxt);
   border-color: var(--skinnerToolboxAccentHover);
+  --stroke_dash_arr: 16;
+  --stroke_dash_off: 0;
+}
+
+.skinner_custom_chb{
+  --stroke_dash_arr: 16;
+  --stroke_dash_off: 16;
+}
+
+.sk_svg_path_checkbox {
+    fill: none;
+    stroke: var(--skinnerAccentTxt);
+    stroke-width: 2;
+    stroke-dasharray: var(--stroke_dash_arr);
+    stroke-dashoffset: var(--stroke_dash_off);
+    transition: stroke-dashoffset 0.2s;
+    transition-delay: 0.1s;
 }
 
 /*picker*/
@@ -4155,7 +4236,7 @@ border-radius: 50%;*/
 .nik_skinner_input {
   margin: 0;
   padding: 0 8px;
-  background-color: var(--skinnerBg);
+  background-color: var(--skinnerShadow);
   color: var(--skinnerTxt2);
   border: 0;
   border-radius: 2px;
@@ -4185,23 +4266,21 @@ border-radius: 50%;*/
 }
 
 .nik_skinner_message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--skinnerBg);
-  border: 1px solid var(--skinnerAccent);
-  color: var(--skinnerTxt2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 200px;
-  border-radius: 10px;
-  z-index: 12;
-  padding: 10px;
-  box-shadow: 0 1px 9px 3px var(--shadow);
-  letter-spacing: 1.3px;
-  backdrop-filter: blur(1px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--skinnerBg);
+    border: 1px solid var(--skinnerAccent);
+    color: var(--skinnerTxt2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    border-radius: 2px;
+    z-index: 12;
+    padding: 8px;
+    font-size: 12px;
 }
 
 .nik_skinner_message.hide {
@@ -4277,9 +4356,10 @@ border-radius: 50%;*/
     z-index: 10;
     height: calc(var(--skinnerToolboxHeight) + 8px);
     padding: 4px 8px;
-    background: var(--shadow);
+    background: var(--skinnerBg);
+    color: var(--skinnerTxt2);
     border-radius: 8px;
-    border: 1px solid var(--skinnerBg);
+    border: 1px solid var(--skinnerBg2);
 }
 
 .skinner_ui_switcher > i {
@@ -4369,23 +4449,45 @@ border-radius: 50%;*/
   font-size: 10px;
 }
 
+.cms_row{
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  column-gap: 8px;
+}
+
 .cms_btn {
   appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
   border: 0;
   outline: 0;
-  min-width: 80px;
-  height: 36px;
+  height: 26px;
   border-radius: 4px;
-  background: var(--skinnerAccent);
-  color: var(--skinnerAccentTxt);
-  font-size: 14px;
+  background-color: var(--skinnerBg4);
+  color: var(--skinnerTxt2);
+  font-size: 12px;
   font-weight: 500;
   transition: all 0.314s;
-  padding: 10px 25px;
+  padding: 0 8px;
+  column-gap: 4px;
 }
 
 .cms_btn:hover {
-  background: var(--skinnerAccent2);
+  background-color: var(--skinnerBg3);
+  color: var(--skinnerTxt);
+}
+
+.cms_btn.variant_accent{
+    background: var(--skinnerAccent);
+  color: var(--skinnerAccentTxt);
+}
+
+.cms_btn.variant_accent:hover{
+    background: var(--skinnerAccent2);
   color: var(--skinnerAccentTxt);
 }
 
@@ -4443,6 +4545,82 @@ border-radius: 50%;*/
 
 .skinner_ui_label_sm {
   display: none;
+}
+
+
+.dg_sport_icons_tiny [class^="dg_icon_"],
+.dg_sport_icons_tiny [class*=" dg_icon_"] {
+    --imageSize: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 19px;
+    font-size: 29px;
+}
+
+.sk_svg{
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    width: 22px;
+    height: 22px;
+}
+.sk_chb_base{
+    cursor: pointer;
+}
+
+.sk_chb_base > input {
+    display: none;
+}
+
+.sk_chb_base .sk_chb_base_ico{
+    --activeDisplay: none;
+    --passiveDisplay: block;
+}
+
+.sk_chb_base > input:checked + .sk_chb_base_ico{
+    --activeDisplay: block;
+    --passiveDisplay: none;
+}
+
+.svg_path_top{
+    display: var(--activeDisplay);
+}
+
+.svg_path_bot{
+    display: var(--activeDisplay);
+}
+
+.svg_path_bot_t{
+    display: var(--passiveDisplay);
+}
+
+.skinner_ui_control_wrapper{
+        width: var(--skinnerBtnHeight);
+    height: var(--skinnerBtnHeight);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--skinnerBg2);
+    border: 1px solid var(--skinnerBg3);
+    border-radius: 4px;
+    color: var(--skinnerTxt2);
+}
+
+.nik_skinner_control_group{
+    position: relative;
+}
+
+.nik_skinner_control_group.state_not_readable::after {
+    content:'';
+    position: absolute;
+    top:0;
+    left:0;
+    right: 0;
+    bottom:0;
+    z-index: 20;
+    background: linear-gradient(90deg, rgb(189 24 7 / 17%), rgb(189 24 7 / 0%) 50%);
+    pointer-events: none;
 }
 `;
     this.skinnerUIStyles = document.createElement("style");
