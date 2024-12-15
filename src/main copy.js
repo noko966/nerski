@@ -5163,55 +5163,9 @@ class MouseIntersectStyler {
     this.init(selector); // Initialize event listeners and UI
     this.pickers = [];
     this.state = {};
-    this.activeSelectorId = null;
-    this.skin = {};
   }
 
-  modifyKey(name, value) {
-    const selectedRuleState = this.skin[this.activeSelectorId];
-
-    if (selectedRuleState) {
-      // Update the rule and state
-      selectedRuleState[name] = value;
-      console.log(selectedRuleState[name]);
-
-      let css = this.createCss();
-      this.setOrUpdateIframeCustomCss(css);
-    }
-  }
-
-  createCss() {
-    let css = "";
-    console.log(this.skin);
-
-    for (const key in this.skin) {
-      console.log(key);
-
-      css += `${key} {
-        background-color: ${this.skin[key].bg} !important;
-        padding: ${this.skin[key].padding} !important;
-      }`;
-    }
-
-    return css;
-  }
-
-  createKey(name, el) {
-    this.skin[name] = {};
-
-    let cs = getComputedStyle(el);
-    let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
-    let padding = cs.padding;
-    this.skin[name]["bg"] = backgroundColor;
-    this.skin[name]["padding"] = padding;
-  }
-
-  createControl() {
-    let c = document.createElement("div");
-    c.className = "nik_skinner_checkbox_wrapper";
-
-    return c;
-  }
+  modifyKey() {}
 
   createUI() {
     let self = this;
@@ -5221,9 +5175,9 @@ class MouseIntersectStyler {
       .sk_ui_custom_change_root {
         position: fixed;
         padding: 20px;
-        background: var(--skinnerBg2);
-        color: var(--skinnerTxt);
-        border: 1px solid var(--skinnerBg3);
+        background: var(--skinnerBg2, #f0f0f0);
+        color: var(--skinnerTxt, #333);
+        border: 1px solid #ccc;
         z-index: 1000;
       }
     `;
@@ -5234,35 +5188,20 @@ class MouseIntersectStyler {
     root.style.top = "50%";
 
     const handlePickerCallBack = (e) => {
-      this.handlePicker(e, (color) =>
-        this.modifyKey("bg", color.toHEXA().toString())
+      this.handlePicker(
+        e,
+        "Bg",
+        (color) => (this.state.Bg = color.toHEXA().toString())
       );
     };
 
     this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "skinner_btn skinner_btn-accent";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
-    let controlWrapperBg = this.createControl();
-    let controlWrapperPadding = this.createControl();
-
-    this.paddingInput = document.createElement("input");
-    this.paddingInput.className = "nik_skinner_radius_amount";
-    this.paddingInput.type = "number";
-    this.paddingInput.addEventListener("change", (e) => {
-      self.modifyKey("padding", e.target.value + "px");
-    });
-
-    this.BgPicker = this.createColorBox(
-      "nik_skinner_control_group_picker",
-      handlePickerCallBack
-    );
-
-    root.appendChild(controlWrapperBg);
-    root.appendChild(controlWrapperPadding);
-    controlWrapperBg.appendChild(this.BgPicker);
-    controlWrapperPadding.appendChild(this.paddingInput);
-
+    this.BgPicker = document.createElement("div");
+    this.BgPicker.addEventListener("click", handlePickerCallBack);
+    this.BgPicker.className = "nik_skinner_control_group_picker";
+    root.appendChild(this.BgPicker);
     root.appendChild(this.hideUITrigger);
     document.body.appendChild(style);
     document.body.appendChild(root);
@@ -5271,29 +5210,17 @@ class MouseIntersectStyler {
     this.UIRoot.style.display = "none";
   }
 
-  createColorBox(className, callBack) {
-    let div = document.createElement("div");
-    div.className = className;
-
-    // div.style.background = color;
-    div.addEventListener("click", callBack);
-
-    return div;
-  }
-
   showUI(x, y, currentElement) {
-    if (!this.UIRoot) return;
+    console.log(this.rules);
 
+    if (!this.UIRoot) return;
     this.UIRoot.style.left = `${x}px`;
     this.UIRoot.style.top = `${y}px`;
     this.UIRoot.style.display = "block";
 
-    let selector = this.generateCssPath(currentElement);
-    this.activeSelectorId = selector;
+    this.createRule(currentElement);
 
-    // this.createRule(currentElement, bg);
-
-    this.createKey(selector, currentElement);
+    this.BgPicker.background = getComputedStyle(currentElement).backgroundColor;
   }
 
   hideUI() {
@@ -5303,11 +5230,31 @@ class MouseIntersectStyler {
     }
   }
 
-  updateControls() {
-    console.log(this.BgPicker);
+  createRule(element) {
+    // Generate a unique selector for the element
+    const sel = this.generateCssPath(element);
+
+    let styleBlueprint = {
+      bg: getComputedStyle(element).backgroundColor,
+      pad: getComputedStyle(element).padding,
+    };
+
+    let rule = `${sel}{
+    background-color: ${styleBlueprint.bg} !important;
+    padding: ${styleBlueprint.pad} !important;
+    }`;
+
+    this.rules.push({
+      id: Date.now().toString(),
+      cssSel: sel,
+      css: rule,
+      style: styleBlueprint,
+    });
+
+    this.setOrUpdateIframeCustomCss();
   }
 
-  setOrUpdateIframeCustomCss(css) {
+  setOrUpdateIframeCustomCss() {
     const styleId = "css-as-custom-stylesheet";
     let styleElement = document.getElementById(styleId);
 
@@ -5319,7 +5266,7 @@ class MouseIntersectStyler {
     }
 
     // Inject all the CSS rules into the <style> element
-    styleElement.innerHTML = css;
+    styleElement.innerHTML = this.rules.map((r) => r.css).join("\n");
   }
 
   init(selector) {
@@ -5353,12 +5300,16 @@ class MouseIntersectStyler {
   onClick(event) {
     if (this.currentElement) {
       this.isStopped = true;
-
       this.clickCallback(this.currentElement);
       const bounds = this.currentElement.getBoundingClientRect();
       this.showUI(bounds.left, bounds.top, this.currentElement);
+
+      // setTimeout(() => {
+      //   this.isStopped = false;
+      // }, 500);
     }
   }
+
   applyStyles(element) {
     this.styleCallback(element);
     this.currentElement = element;
@@ -5428,16 +5379,10 @@ class MouseIntersectStyler {
   removePicker(instance) {
     this.pickers = this.pickers.filter((p) => p !== instance);
   }
-
-  handlePicker(event, onChangeCallback) {
-    const selectedRuleState = this.skin[this.activeSelectorId];
-    // const selectedRule = this.rules.find(
-    //   (r) => r.cssSel === this.activeSelectorId
-    // );
-
+  handlePicker(event, skinKey, onChangeCallback) {
     let picker = this.createPickerAndTrigger(
       event.target.parentElement,
-      selectedRuleState.bg // Default to "red" for the picker
+      this.rules[skinKey]
     );
 
     picker.show();
@@ -5458,8 +5403,8 @@ class MouseIntersectStyler {
 // Usage
 const styler = new MouseIntersectStyler(
   "*",
-  (element) => (element.style.outline = "1px solid red"),
-  (element) => (element.style.outline = "none"),
+  (element) => (element.style.border = "2px solid red"),
+  (element) => (element.style.border = "none"),
   (element) => {
     console.log("Element selected:", element);
   }
