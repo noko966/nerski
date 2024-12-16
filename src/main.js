@@ -2304,7 +2304,7 @@ class Skinner {
 
     let isDarkChb;
     {
-      let n = label.charAt(0).toUpperCase() + label.slice(1);
+      let n = label;
 
       let vb = this.verbalData(n);
 
@@ -2604,7 +2604,7 @@ class Skinner {
 
     if (tints && tints.length > 0) {
       tints.forEach((t, i) => {
-        label.style.setProperty(`--bg${i + 1}`, `var(--cw${t.name})`);
+        label.style.setProperty(`--bg${i + 1}`, `var(--${t.name})`);
       });
     }
 
@@ -5441,19 +5441,48 @@ function destroyPreview() {
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
   constructor(selector, styleCallback, resetCallback, clickCallback) {
-    this.styleCallback = styleCallback; // Function to apply styles
-    this.resetCallback = resetCallback; // Function to reset styles
-    this.clickCallback = clickCallback; // Function to handle click and stop interaction
-    this.currentElement = null; // Track the currently hovered element
-    this.isStopped = false; // State to track if interaction is stopped
-    this.mouseLeaveHandler = null; // Track mouseleave handler for cleanup
-    this.rules = []; // Store CSS rules
-    this.UIRoot = null; // UI root element
-    this.init(selector); // Initialize event listeners and UI
+    this.styleCallback = styleCallback;
+    this.resetCallback = resetCallback;
+    this.clickCallback = clickCallback;
+    this.currentElement = null;
+    this.isStopped = false;
+    this.isRunning = false; // Track if the styler is active
+    this.mouseLeaveHandler = null;
+    this.rules = [];
+    this.UIRoot = null;
+    this.init(selector);
     this.pickers = [];
     this.state = {};
     this.activeSelectorId = null;
     this.skin = {};
+  }
+
+  toggleStyler() {
+    if (this.isRunning) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  }
+
+  start() {
+    if (!this.isRunning) {
+      this.isRunning = true;
+      this.boundMouseMove = (event) => this.onMouseMove(event, "*");
+      this.boundClick = (event) => this.oonClick(event);
+      document.addEventListener("mousemove", this.boundMouseMove);
+      document.addEventListener("click", this.boundClick);
+      console.log("MouseIntersectStyler started");
+    }
+  }
+
+  stop() {
+    if (this.isRunning) {
+      this.isRunning = false;
+      document.removeEventListener("mousemove", this.boundMouseMove);
+      document.removeEventListener("click", this.boundClick);
+      console.log("MouseIntersectStyler stopped");
+    }
   }
 
   modifyKey(name, value) {
@@ -5526,7 +5555,7 @@ class MouseIntersectStyler {
         background: var(--skinnerBg2);
         color: var(--skinnerTxt);
         border: 1px solid var(--skinnerBg3);
-        z-index: 9000000;
+        z-index: var(--sk_zind2);
       }
 
       .sk_ui_custom_change_root.state-reveal {
@@ -5749,17 +5778,14 @@ class MouseIntersectStyler {
   init(selector) {
     this.createUI();
     this.boundMouseMove = (event) => this.onMouseMove(event, selector);
-    this.boundClick = (event) => this.onClick(event);
+    this.boundClick = (event) => this.oonClick(event);
     document.addEventListener("mousemove", this.boundMouseMove);
     document.addEventListener("click", this.boundClick);
   }
 
   onMouseMove(event, selector) {
-    if (this.isStopped) return;
-    const hoveredElement = document.elementFromPoint(
-      event.clientX,
-      event.clientY
-    );
+    if (this.isStopped || !this.isRunning) return;
+    const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
     if (
       hoveredElement &&
       hoveredElement.matches(selector) &&
@@ -5774,25 +5800,20 @@ class MouseIntersectStyler {
     }
   }
 
-  onClick(event) {
-    
-
-    // Check if the click happened inside the UI
+  oonClick(event) {
     if (this.UIRoot && this.UIRoot.contains(event.target)) {
-      // Allow interaction with the UI (e.g., checkboxes, inputs)
-      return;
-    }
-
-    if (this.currentElement) {
-      this.isStopped = true;
-
-      this.clickCallback(this.currentElement);
-      const bounds = this.currentElement.getBoundingClientRect();
-      this.showUI(bounds.left, bounds.top, this.currentElement);
+      return; // Allow interaction with the UI
     }
 
     event.stopPropagation();
     event.preventDefault();
+
+    if (this.currentElement) {
+      this.isStopped = true;
+      this.clickCallback(this.currentElement);
+      const bounds = this.currentElement.getBoundingClientRect();
+      this.showUI(bounds.left, bounds.top, this.currentElement);
+    }
   }
 
   applyStyles(element) {
@@ -5824,6 +5845,8 @@ class MouseIntersectStyler {
   }
 
   generateCssPath(element) {
+    console.log({element});
+    
     const path = [];
     while (element && element.tagName !== "BODY") {
       const selector = element.className
@@ -5894,13 +5917,21 @@ class MouseIntersectStyler {
 // Usage
 const styler = new MouseIntersectStyler(
   "*",
-  (element) => (
-    element.style.outline = "1px solid red"
-  ),
-  (element) => (element.style.outline = "none"),
+  (element) => (element.style.outline = "1px solid red"),
+  (element) => (element.style.outline = ""),
   (element) => {
     console.log("Element selected:", element);
   }
 );
+
+const triggerEditor = document.createElement('button')
+triggerEditor.className = ''
+triggerEditor.id = 'toggleButton'
+triggerEditor.innerText = 'toggle Editor'
+document.body.appendChild(triggerEditor)
+
+document.getElementById("toggleButton").addEventListener("click", () => {
+  styler.toggleStyler();
+});
 
 export { init, destroy, createPreview, destroyPreview };
