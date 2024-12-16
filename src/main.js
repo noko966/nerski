@@ -141,6 +141,153 @@ const configOrderCasino = [
   },
 ];
 
+
+const configOrderSport = [
+  {
+    name: "body",
+    inherits: null,
+  },
+  {
+    name: "accent",
+    inherits: null,
+  },
+  {
+    name: "dominant",
+    inherits: ["body"],
+  },
+  {
+    name: "button",
+    inherits: ["accent"],
+  },
+  {
+    name: "buttonSecondary",
+    inherits: ["body"],
+    variation: 5,
+  },
+  {
+    name: "navbar",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "slider",
+    inherits: ["body"],
+  },
+  {
+    name: "header",
+    inherits: ["dominant", "body"],
+    variation: 5,
+  },
+  {
+    name: "subHeader",
+    inherits: ["header", "dominant", "body"],
+  },
+  {
+    name: "event",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "eventLive",
+    inherits: ["event", "body"],
+    variation: 5,
+  },
+  {
+    name: "odd",
+    inherits: ["body"],
+  },
+  {
+    name: "oddActive",
+    inherits: ["accent"],
+  },
+  {
+    name: "showMore",
+    inherits: ["body"],
+  },
+  {
+    name: "marketHeader",
+    inherits: ["body", "header"],
+  },
+  {
+    name: "collapse",
+    inherits: ["header", "dominant", "body"],
+  },
+  {
+    name: "tab",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "tabActive",
+    inherits: ["tab", "dominant", "body"],
+  },
+  {
+    name: "tabSecondaryActive",
+    inherits: ["tab", "dominant", "body"],
+  },
+  {
+    name: "menu_1",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "menu_2",
+    inherits: ["menu_1", "dominant", "body"],
+  },
+  {
+    name: "menu_3",
+    inherits: ["menu_2", "menu_1", "dominant", "body"],
+  },
+  {
+    name: "input",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "inputSecondary",
+    inherits: ["input", "dominant", "body"],
+  },
+  {
+    name: "filter",
+    inherits: ["input", "dominant", "body"],
+  },
+  {
+    name: "tooltip",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "modal",
+    inherits: ["body"],
+  },
+  {
+    name: "betSlip",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "betSlipStake",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "betSlipInput",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "betSlipButton",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "betSlipHeader",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "betSlipTab",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "betSlipTabActive",
+    inherits: ["betSlip", "dominant", "body"],
+  },
+  {
+    name: "tmLogo",
+    inherits: ["dominant", "body"],
+  },
+];
+
 function verbalData(name) {
   let data = {};
   data.name = name;
@@ -183,6 +330,41 @@ function verbalData(name) {
   return data;
 }
 
+function createCssStringSport(skin) {
+  let res = ``;
+
+  configOrderSport.forEach((c, i) => {
+    let essence = verbalData(c.name);
+
+    res += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
+    res += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
+    res += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+    res += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+    res += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
+    res += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
+    res += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
+    res += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+    res += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+    res += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
+    res += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
+    res += `    --${essence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`;
+    res += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
+    res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
+    res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
+    res += `    --${essence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`;
+    res += `    --${essence.name}ShadowFade: ${skin[`${essence.name}ShadowFade`]
+      };\n`;
+    res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
+    res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
+
+    if (i !== configOrderSport.length - 1) {
+      res += `\n\n`;
+    }
+  });
+
+  return res;
+}
+
 function createCssStringCasino(skin) {
   let res = ``;
 
@@ -207,9 +389,8 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
     res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
     res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${
-      skin[`${value.name}ShadowFade`]
-    };\n`;
+    res += `    --cw${essence.name}ShadowFade: ${skin[`${value.name}ShadowFade`]
+      };\n`;
     res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
@@ -224,7 +405,7 @@ var dd = "";
 function createCss(c) {
   let css = `
         :root{
-        ${createCssStringCasino(c)}
+        ${createCssStringSport(c)}
         }`;
 
   let results = {
@@ -736,19 +917,19 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+        .darken(this.defaults.dark.bg2)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+        .lighten(this.defaults.light.bg2)
+        .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg3)
-          .toString()
+        .darken(this.defaults.dark.bg3)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg3)
-          .toString();
+        .lighten(this.defaults.light.bg3)
+        .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -799,27 +980,27 @@ class Skinner {
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -851,9 +1032,8 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${
-        this.skin[_vb.gradientAngle]
-      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
+        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -2489,32 +2669,32 @@ class Skinner {
       : tinycolor(bg).lighten(step).toHexString();
     let bg3 = islight
       ? tinycolor(bg)
-          .darken(step * 2)
-          .toHexString()
+        .darken(step * 2)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 2)
-          .toHexString();
+        .lighten(step * 2)
+        .toHexString();
     let bg4 = islight
       ? tinycolor(bg)
-          .darken(step * 3)
-          .toHexString()
+        .darken(step * 3)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 3)
-          .toHexString();
+        .lighten(step * 3)
+        .toHexString();
     let bg5 = islight
       ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
+        .darken(step * 4)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
+        .lighten(step * 4)
+        .toHexString();
     let bg6 = islight
       ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
+        .darken(step * 4)
+        .toHexString()
       : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
+        .lighten(step * 4)
+        .toHexString();
 
     let accent = tinycolor(colors.accent).lighten(step).toHexString();
     let accent2 = tinycolor(accent).lighten(step).toHexString();
@@ -2572,7 +2752,7 @@ class Skinner {
   addCss() {
     const css = `
 :root {
-  --sk_zind: 1000000;
+  --sk_zind: 90000000;
   --sk_zind2: calc(var(--sk_zind) + 10);
   --skinnerHeaderHeight: 32px;
   --skinnerHeaderTogglerSize: 50px;
@@ -4896,7 +5076,7 @@ function init() {
     colorsCasweb,
     null,
     null,
-    "casino"
+    "sport"
   );
   window.SkinnerInstance.init();
   console.log("SkinnerInstance initialized");
@@ -5130,30 +5310,28 @@ function createPreview() {
     return root;
   }
 
-  configOrderCasino.forEach((c, i) => {
-    let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
-    let essence = verbalData(n);
+  configOrderSport.forEach((c, i) => {
     let _vd = verbalData(c.name);
     const essenceRoot = document.createElement("div");
     essenceRoot.className = "sk_demo_essence_root";
 
     const essenceRootTitle = document.createElement("h3");
     essenceRootTitle.className = "sk_demo_essence_title";
-    essenceRootTitle.innerText = n;
-    essenceRoot.style.setProperty("--bgG", `var(--cw${essence.nameG})`);
-    essenceRoot.style.setProperty("--bg1", `var(--cw${essence.nameBg})`);
-    essenceRoot.style.setProperty("--bg2", `var(--cw${essence.nameBgHov})`);
-    essenceRoot.style.setProperty("--bg3", `var(--cw${essence.nameBg2})`);
-    essenceRoot.style.setProperty("--bg4", `var(--cw${essence.nameBg2Hov})`);
-    essenceRoot.style.setProperty("--bg5", `var(--cw${essence.nameBg3})`);
-    essenceRoot.style.setProperty("--bg6", `var(--cw${essence.nameBg3Hov})`);
-    essenceRoot.style.setProperty("--txt", `var(--cw${essence.nameTxt})`);
-    essenceRoot.style.setProperty("--txt2", `var(--cw${essence.nameTxt2})`);
-    essenceRoot.style.setProperty("--txt3", `var(--cw${essence.nameTxt3})`);
-    essenceRoot.style.setProperty("--radius", `var(--cw${essence.nameRadius})`);
-    essenceRoot.style.setProperty("--shadow", `var(--cw${essence.name}Shadow)`);
-    essenceRoot.style.setProperty("--ab", `var(--cw${essence.nameAccent})`);
-    essenceRoot.style.setProperty("--at", `var(--cw${essence.nameAccentTxt})`);
+    essenceRootTitle.innerText = c.name;
+    essenceRoot.style.setProperty("--bgG", `var(--${_vd.nameG})`);
+    essenceRoot.style.setProperty("--bg1", `var(--${_vd.nameBg})`);
+    essenceRoot.style.setProperty("--bg2", `var(--${_vd.nameBgHov})`);
+    essenceRoot.style.setProperty("--bg3", `var(--${_vd.nameBg2})`);
+    essenceRoot.style.setProperty("--bg4", `var(--${_vd.nameBg2Hov})`);
+    essenceRoot.style.setProperty("--bg5", `var(--${_vd.nameBg3})`);
+    essenceRoot.style.setProperty("--bg6", `var(--${_vd.nameBg3Hov})`);
+    essenceRoot.style.setProperty("--txt", `var(--${_vd.nameTxt})`);
+    essenceRoot.style.setProperty("--txt2", `var(--${_vd.nameTxt2})`);
+    essenceRoot.style.setProperty("--txt3", `var(--${_vd.nameTxt3})`);
+    essenceRoot.style.setProperty("--radius", `var(--${_vd.nameRadius})`);
+    essenceRoot.style.setProperty("--shadow", `var(--${_vd.name}Shadow)`);
+    essenceRoot.style.setProperty("--ab", `var(--${_vd.nameAccent})`);
+    essenceRoot.style.setProperty("--at", `var(--${_vd.nameAccentTxt})`);
 
     essenceRoot.appendChild(essenceRootTitle);
 
@@ -5175,7 +5353,7 @@ function createPreview() {
 
       const b = document.createElement("div");
       const v = document.createElement("span");
-      b.innerText = essence[tintsArr[i]];
+      b.innerText = _vd[tintsArr[i]];
       v.innerText = hexVal;
       essenceTint.appendChild(b);
       essenceTint.appendChild(v);
@@ -5194,7 +5372,7 @@ function createPreview() {
 
     const tb1 = document.createElement("div");
     const tv1 = document.createElement("span");
-    tb1.innerText = essence["nameTxt"];
+    tb1.innerText = _vd["nameTxt"];
     tv1.innerText = Txt1HexVal;
     tb1.className = "sk_demo_blob";
     tv1.className = "sk_demo_val";
@@ -5205,7 +5383,7 @@ function createPreview() {
 
     const tb2 = document.createElement("div");
     const tv2 = document.createElement("span");
-    tb2.innerText = essence["nameTxt2"];
+    tb2.innerText = _vd["nameTxt2"];
     tv2.innerText = Txt2HexVal;
     tb2.className = "sk_demo_blob";
     tv2.className = "sk_demo_val";
@@ -5215,7 +5393,7 @@ function createPreview() {
     const Txt3HexVal = window.SkinnerInstance.skin[_vd["nameTxt3"]];
     const tb3 = document.createElement("div");
     const tv3 = document.createElement("span");
-    tb3.innerText = essence["nameTxt3"];
+    tb3.innerText = _vd["nameTxt3"];
     tv3.innerText = Txt3HexVal;
     tb3.className = "sk_demo_blob";
     tv3.className = "sk_demo_val";
@@ -5234,7 +5412,7 @@ function createPreview() {
 
     const ab2 = document.createElement("div");
     const av2 = document.createElement("span");
-    ab2.innerText = essence["nameTxt2"];
+    ab2.innerText = _vd["nameTxt2"];
     av2.innerText = Txt2HexVal;
     ab2.className = "sk_demo_blob";
     av2.className = "sk_demo_val";
@@ -5301,6 +5479,11 @@ class MouseIntersectStyler {
       css += `${key} {
         background-color: ${this.skin[key].bg} !important;
         padding: ${this.skin[key].padding} !important;
+        border-radius: ${this.skin[key].borderRadius} !important;
+        width: ${this.skin[key].width} !important;
+        height: ${this.skin[key].height} !important;
+        display: flex !important;
+        flex-direction: ${this.skin[key].flexDirection} !important;
       }`;
     }
 
@@ -5313,8 +5496,16 @@ class MouseIntersectStyler {
     let cs = getComputedStyle(el);
     let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
     let padding = cs.padding;
+    let width = cs.width;
+    let height = cs.height;
+    let borderRadius = cs.borderRadius;
+    let flexDirection = cs.flexDirection;
     this.skin[name]["bg"] = backgroundColor;
     this.skin[name]["padding"] = padding;
+    this.skin[name]["width"] = width;
+    this.skin[name]["height"] = height;
+    this.skin[name]["borderRadius"] = borderRadius;
+    this.skin[name]["flexDirection"] = flexDirection;
   }
 
   createControl() {
@@ -5335,7 +5526,7 @@ class MouseIntersectStyler {
         background: var(--skinnerBg2);
         color: var(--skinnerTxt);
         border: 1px solid var(--skinnerBg3);
-        z-index: 1000;
+        z-index: 9000000;
       }
 
       .sk_ui_custom_change_root.state-reveal {
@@ -5352,19 +5543,27 @@ class MouseIntersectStyler {
     root.style.top = "50%";
     root.style.opacity = 0;
 
+    // Callback for color picker
     const handlePickerCallBack = (e) => {
       this.handlePicker(e, (color) =>
         this.modifyKey("bg", color.toHEXA().toString())
       );
     };
 
+    // Apply button
     this.hideUITrigger = document.createElement("button");
     this.hideUITrigger.className = "skinner_btn skinner_btn-accent";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
+
+    // Control wrappers for various properties
     let controlWrapperBg = this.createControl();
     let controlWrapperPadding = this.createControl();
+    let controlWrapperFlex = this.createControl();
+    let controlWrapperRadius = this.createControl();
+    let controlWrapperWidthHeight = this.createControl();
 
+    // Padding input
     this.paddingInput = document.createElement("input");
     this.paddingInput.className = "nik_skinner_radius_amount";
     this.paddingInput.type = "number";
@@ -5372,13 +5571,92 @@ class MouseIntersectStyler {
       self.modifyKey("padding", e.target.value + "px");
     });
 
+    // Background picker
     this.BgPicker = this.createColorBox(
       "nik_skinner_control_group_picker",
       handlePickerCallBack
     );
 
+    // Flex-direction radio buttons
+    const flexDirectionWrapper = document.createElement("div");
+    flexDirectionWrapper.className = "nik_skinner_flex_direction_wrapper";
+
+    const flexRowRadio = document.createElement("input");
+    flexRowRadio.type = "radio";
+    flexRowRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
+    flexRowRadio.id = "flexRowRadio";
+    flexRowRadio.value = "row";
+    flexRowRadio.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        self.modifyKey("flexDirection", "row");
+      }
+    });
+    const flexRowLabel = document.createElement("label");
+    flexRowLabel.setAttribute("for", "flexRowRadio");
+    flexRowLabel.innerText = "Flex Row";
+
+    const flexColumnRadio = document.createElement("input");
+    flexColumnRadio.type = "radio";
+    flexColumnRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
+    flexColumnRadio.id = "flexColumnRadio";
+    flexColumnRadio.value = "column";
+    flexColumnRadio.addEventListener("change", (e) => {
+      console.log(e);
+      
+      if (e.target.checked) {
+        self.modifyKey("flexDirection", "column");
+      }
+    });
+    const flexColumnLabel = document.createElement("label");
+    flexColumnLabel.setAttribute("for", "flexColumnRadio");
+    flexColumnLabel.innerText = "Flex Column";
+
+    // Append radios and labels to the wrapper
+    flexDirectionWrapper.appendChild(flexRowRadio);
+    flexDirectionWrapper.appendChild(flexRowLabel);
+    flexDirectionWrapper.appendChild(flexColumnRadio);
+    flexDirectionWrapper.appendChild(flexColumnLabel);
+
+    // Append to the control wrapper for flex direction
+    controlWrapperFlex.appendChild(flexDirectionWrapper);
+
+
+    // Border-radius input
+    const borderRadiusInput = document.createElement("input");
+    borderRadiusInput.type = "number";
+    borderRadiusInput.className = "nik_skinner_border_radius";
+    borderRadiusInput.placeholder = "Border Radius (px)";
+    borderRadiusInput.addEventListener("change", (e) => {
+      self.modifyKey("borderRadius", e.target.value + "px");
+    });
+    controlWrapperRadius.appendChild(borderRadiusInput);
+
+    // Width and height inputs
+    const widthInput = document.createElement("input");
+    widthInput.type = "number";
+    widthInput.className = "nik_skinner_width";
+    widthInput.placeholder = "Width (px)";
+    widthInput.addEventListener("change", (e) => {
+      self.modifyKey("width", e.target.value + "px");
+    });
+
+    const heightInput = document.createElement("input");
+    heightInput.type = "number";
+    heightInput.className = "nik_skinner_height";
+    heightInput.placeholder = "Height (px)";
+    heightInput.addEventListener("change", (e) => {
+      self.modifyKey("height", e.target.value + "px");
+    });
+
+    controlWrapperWidthHeight.appendChild(widthInput);
+    controlWrapperWidthHeight.appendChild(heightInput);
+
+    // Append controls to root
     root.appendChild(controlWrapperBg);
     root.appendChild(controlWrapperPadding);
+    root.appendChild(controlWrapperFlex);
+    root.appendChild(controlWrapperRadius);
+    root.appendChild(controlWrapperWidthHeight);
     controlWrapperBg.appendChild(this.BgPicker);
     controlWrapperPadding.appendChild(this.paddingInput);
 
@@ -5388,6 +5666,7 @@ class MouseIntersectStyler {
 
     this.UIRoot = root;
   }
+
 
   createColorBox(className, callBack) {
     let div = document.createElement("div");
@@ -5402,23 +5681,44 @@ class MouseIntersectStyler {
   showUI(x, y, currentElement) {
     if (!this.UIRoot) return;
 
+    // Get the window dimensions
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // Get the UIRoot dimensions
+    const uiWidth = this.UIRoot.offsetWidth || 300; // Default to a sensible width if not rendered yet
+    const uiHeight = this.UIRoot.offsetHeight || 150; // Default to a sensible height if not rendered yet
+
+    // Adjust x and y to ensure the UI fits within the window
+    if (x + uiWidth > windowWidth) {
+        x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
+    }
+    if (y + uiHeight > windowHeight) {
+        y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
+    }
+
+    // Prevent negative positions
+    x = Math.max(x, 10); // Minimum padding of 10px
+    y = Math.max(y, 10);
+
+    // Set the adjusted position
     this.UIRoot.style.left = `${x}px`;
     this.UIRoot.style.top = `${y}px`;
-    // this.UIRoot.style.display = "block";
     this.UIRoot.style.opacity = "1";
 
     let selector = this.generateCssPath(currentElement);
     this.activeSelectorId = selector;
 
-    // this.createRule(currentElement, bg);
+    // Add reveal animation
     this.UIRoot.classList.add("state-reveal");
     let timeoutId = setTimeout(() => {
-      this.UIRoot.classList.remove("state-reveal");
-      timeoutId = null;
+        this.UIRoot.classList.remove("state-reveal");
+        timeoutId = null;
     }, 3000);
 
     this.createKey(selector, currentElement);
-  }
+}
+
 
   hideUI() {
     if (this.UIRoot) {
@@ -5475,6 +5775,14 @@ class MouseIntersectStyler {
   }
 
   onClick(event) {
+    
+
+    // Check if the click happened inside the UI
+    if (this.UIRoot && this.UIRoot.contains(event.target)) {
+      // Allow interaction with the UI (e.g., checkboxes, inputs)
+      return;
+    }
+
     if (this.currentElement) {
       this.isStopped = true;
 
@@ -5482,7 +5790,11 @@ class MouseIntersectStyler {
       const bounds = this.currentElement.getBoundingClientRect();
       this.showUI(bounds.left, bounds.top, this.currentElement);
     }
+
+    event.stopPropagation();
+    event.preventDefault();
   }
+
   applyStyles(element) {
     this.styleCallback(element);
     this.currentElement = element;
@@ -5582,7 +5894,9 @@ class MouseIntersectStyler {
 // Usage
 const styler = new MouseIntersectStyler(
   "*",
-  (element) => (element.style.outline = "1px solid red"),
+  (element) => (
+    element.style.outline = "1px solid red"
+  ),
   (element) => (element.style.outline = "none"),
   (element) => {
     console.log("Element selected:", element);
