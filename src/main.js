@@ -3171,7 +3171,7 @@ body {
 }
 
 body {
-  background-color: var(--skinnerBg3);
+  background-color: var(--skinnerBg6);
   color: var(--skinnerTxt);
   font-family: "Roboto", sans-serif;
 }
@@ -4923,11 +4923,48 @@ function createPreview() {
   isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-    olor: var(--skinnerTxt);
+    color: var(--skinnerTxt);
     border-radius: var(--radius);
     border: 2px solid var(--skinnerBg);
-    padding: 16px 16px;
-    width: 20%;
+    background: var(--skinnerBg4);
+    padding: 12px 24px;
+    width: calc((100% - 48px) / 4);
+    position: relative;
+    overflow: hidden;
+  }
+    .sk_demo_essence_root::before,
+    .sk_demo_essence_root::after {
+    content: '';
+    --size: 600px;
+    position: absolute;
+    width: var(--size);
+    display: block;
+    background: var(--cwBodyBg);
+    height: var(--size);
+    border-radius: 50%;
+    filter: blur(36px);
+    z-index: 1;
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+    .sk_demo_essence_root::after {
+    left: auto;
+    top: auto;
+    background: var(--cwBodyBg3);
+    transform: translate(50%, 50%);
+    bottom: 0;
+    right: 0;
+}
+    .sk_demo_value_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 20px;
+        position: relative;
+    z-index: 3;
+
   }
   .sk_demo_root{
     --card_width: 60px;
@@ -4939,11 +4976,27 @@ function createPreview() {
     padding: 16px;
   }
   .sk_demo_essence_tint{
-    padding: 6px;
     font-size: 12px;
     width: 100%;
     height: auto;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  --sk_blob_size: 48px;
+  --sk_blob_radius: 24px;
   }  
+
+  .sk_demo_essence_text_tints_wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 12px;
+  }
+
+  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_blob,
+  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_val{
+      --txt: var(--bg1);
+  }
 
   .sk_demo_essence_tint_text{
   padding: 6px;
@@ -4953,30 +5006,30 @@ function createPreview() {
   }
 
   
-  .sk_demo_essence_tint.variant_0{
-    background: var(--bg1);
+  .sk_demo_essence_tint.variant_0 {
+    --Bg: var(--bg1);
   }
-  .sk_demo_essence_tint.variant_1{
-    background: var(--bg2);
+  .sk_demo_essence_tint.variant_1 {
+    --Bg: var(--bg2);
   }
-    .sk_demo_essence_tint.variant_2{
-    background: var(--bg3);
+    .sk_demo_essence_tint.variant_2 {
+    --Bg: var(--bg3);
   }
-    .sk_demo_essence_tint.variant_3{
-    background: var(--bg4);
+    .sk_demo_essence_tint.variant_3 {
+    --Bg: var(--bg4);
   }
-    .sk_demo_essence_tint.variant_4{
-    background: var(--bg5);
+    .sk_demo_essence_tint.variant_4 {
+    --Bg: var(--bg5);
   }
-    .sk_demo_essence_tint.variant_5{
-    background: var(--bg6);
+    .sk_demo_essence_tint.variant_5 {
+    --Bg: var(--bg6);
   }
     .sk_demo_essence_title {
         margin: 0;
     font-size: 19px;
     text-align: center;
     color: var(--skinnerTxt);
-    margin-bottom: 6px;
+    margin-bottom: 20px;
     }
 
     .sk_demo_essence_tint_text{
@@ -4991,25 +5044,53 @@ function createPreview() {
       --txt: var(--bg1);
     }
 
+    .sk_demo_blob{
+            flex-grow: 1;
+    min-width: 1px;
+    height: var(--sk_blob_size);
+    border-radius: var(--sk_blob_radius);
+    background: var(--Bg);
+    color: var(--txt);
+    border: 2px solid var(--txt);
+    display: flex
+;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 300;
+    }
+
+    .sk_demo_val{
+        flex-shrink: 0;
+    width: 80px;
+    height: var(--sk_blob_size);
+    border-radius: var(--sk_blob_radius);
+    background: var(--Bg);
+    border: 2px solid var(--txt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    }
+
     .sk_demo_essence_accent{
-          background: var(--ab);
-    color: var(--at);
-    font-weight: 500;
-            padding: 8px;
+          --Bg: var(--ab);
+          --txt: var(--at);
     }
 
     .sk_demo_essence_text {
         display: flex;
       flex-direction: column;
     }
-    .sk_demo_essence_tint_text.variant_1{
-    background: var(--txt);
+    .sk_demo_essence_tint.variant_T1{
+    --Bg: var(--txt);
     }
-    .sk_demo_essence_tint_text.variant_2{
-    background: var(--txt2);
+    .sk_demo_essence_tint.variant_T2{
+    --Bg: var(--txt2);
     }
-    .sk_demo_essence_tint_text.variant_3{
-    background: var(--txt3);
+    .sk_demo_essence_tint.variant_T3{
+    --Bg: var(--txt3);
     }
     .sk_demo_key_val_root {
         display: flex;
@@ -5017,15 +5098,11 @@ function createPreview() {
         column-gap: 4px;
         height: 24px;
     }
-    .sk_demo_key {
-        color: var(--txt2);
-        flex-grow: 1;
-        min-width: 1px;
-    }
     .sk_demo_val {
         color: var(--txt);
-        font-weight: bold;
+        font-weight: 500;
     }
+        
   `;
 
   const demoStyle = document.createElement("style");
@@ -5089,51 +5166,85 @@ function createPreview() {
       "nameBg3Hov",
     ];
 
+    let wrapper = document.createElement("div");
+    wrapper.className = "sk_demo_value_wrapper";
     for (i = 0; i < tintsArr.length; i++) {
       const essenceTint = document.createElement("div");
       essenceTint.className = `sk_demo_essence_tint variant_${i}`;
       const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
 
-      essenceTint.appendChild(createKeyVal("name", `${essence[tintsArr[i]]}`));
-      essenceTint.appendChild(createKeyVal("value", hexVal));
+      const b = document.createElement("div");
+      const v = document.createElement("span");
+      b.innerText = essence[tintsArr[i]];
+      v.innerText = hexVal;
+      essenceTint.appendChild(b);
+      essenceTint.appendChild(v);
+      b.className = "sk_demo_blob";
+      v.className = "sk_demo_val";
 
-      essenceRoot.appendChild(essenceTint);
+      wrapper.appendChild(essenceTint);
     }
     const essenceText = document.createElement("div");
-    essenceText.className = `sk_demo_essence_text`;
+    essenceText.className = `sk_demo_essence_text_tints_wrapper`;
     const essenceTintText1 = document.createElement("div");
     const essenceTintText2 = document.createElement("div");
     const essenceTintText3 = document.createElement("div");
 
     const Txt1HexVal = window.SkinnerInstance.skin[_vd["nameTxt"]];
-    essenceTintText1.appendChild(createKeyVal("name", `${essence["nameTxt"]}`));
-    essenceTintText1.appendChild(createKeyVal("value", Txt1HexVal));
+
+    const tb1 = document.createElement("div");
+    const tv1 = document.createElement("span");
+    tb1.innerText = essence["nameTxt"];
+    tv1.innerText = Txt1HexVal;
+    tb1.className = "sk_demo_blob";
+    tv1.className = "sk_demo_val";
+    essenceTintText1.appendChild(tb1);
+    essenceTintText1.appendChild(tv1);
 
     const Txt2HexVal = window.SkinnerInstance.skin[_vd["nameTxt2"]];
-    essenceTintText2.appendChild(
-      createKeyVal("name", `${essence["nameTxt2"]}`)
-    );
-    essenceTintText2.appendChild(createKeyVal("value", Txt2HexVal));
+
+    const tb2 = document.createElement("div");
+    const tv2 = document.createElement("span");
+    tb2.innerText = essence["nameTxt2"];
+    tv2.innerText = Txt2HexVal;
+    tb2.className = "sk_demo_blob";
+    tv2.className = "sk_demo_val";
+    essenceTintText2.appendChild(tb2);
+    essenceTintText2.appendChild(tv2);
 
     const Txt3HexVal = window.SkinnerInstance.skin[_vd["nameTxt3"]];
-    essenceTintText3.appendChild(
-      createKeyVal("name", `${essence["nameTxt3"]}`)
-    );
-    essenceTintText3.appendChild(createKeyVal("value", Txt3HexVal));
+    const tb3 = document.createElement("div");
+    const tv3 = document.createElement("span");
+    tb3.innerText = essence["nameTxt3"];
+    tv3.innerText = Txt3HexVal;
+    tb3.className = "sk_demo_blob";
+    tv3.className = "sk_demo_val";
+    essenceTintText3.appendChild(tb3);
+    essenceTintText3.appendChild(tv3);
 
-    essenceTintText1.className = `sk_demo_essence_tint_text variant_1`;
-    essenceTintText2.className = `sk_demo_essence_tint_text variant_2`;
-    essenceTintText3.className = `sk_demo_essence_tint_text variant_3`;
+    essenceTintText1.className = `sk_demo_essence_tint variant_T1`;
+    essenceTintText2.className = `sk_demo_essence_tint variant_T2`;
+    essenceTintText3.className = `sk_demo_essence_tint variant_T3`;
     essenceText.appendChild(essenceTintText1);
     essenceText.appendChild(essenceTintText2);
     essenceText.appendChild(essenceTintText3);
 
     const essenceAccent = document.createElement("div");
-    essenceAccent.className = `sk_demo_essence_accent`;
-    essenceAccent.innerText = `${essence.nameAccent}`;
+    essenceAccent.className = `sk_demo_essence_accent sk_demo_essence_tint `;
 
-    essenceRoot.appendChild(essenceText);
-    essenceRoot.appendChild(essenceAccent);
+    const ab2 = document.createElement("div");
+    const av2 = document.createElement("span");
+    ab2.innerText = essence["nameTxt2"];
+    av2.innerText = Txt2HexVal;
+    ab2.className = "sk_demo_blob";
+    av2.className = "sk_demo_val";
+    essenceAccent.appendChild(ab2);
+    essenceAccent.appendChild(av2);
+
+    wrapper.appendChild(essenceText);
+    wrapper.appendChild(essenceAccent);
+    essenceRoot.appendChild(wrapper);
+
     demoRoot.appendChild(essenceRoot);
   });
   document.body.appendChild(demoRoot);
@@ -5226,12 +5337,20 @@ class MouseIntersectStyler {
         border: 1px solid var(--skinnerBg3);
         z-index: 1000;
       }
+
+      .sk_ui_custom_change_root.state-reveal {
+        animation: appear 0.3s;
+      }
+        @keyframes appear {
+          0%   { opacity: 0; }
+          100% { opacity: 1; }
+        }
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
-    root.innerText = "UI Active"; // Example UI content
     root.style.left = "50%";
     root.style.top = "50%";
+    root.style.opacity = 0;
 
     const handlePickerCallBack = (e) => {
       this.handlePicker(e, (color) =>
@@ -5268,7 +5387,6 @@ class MouseIntersectStyler {
     document.body.appendChild(root);
 
     this.UIRoot = root;
-    this.UIRoot.style.display = "none";
   }
 
   createColorBox(className, callBack) {
@@ -5286,12 +5404,18 @@ class MouseIntersectStyler {
 
     this.UIRoot.style.left = `${x}px`;
     this.UIRoot.style.top = `${y}px`;
-    this.UIRoot.style.display = "block";
+    // this.UIRoot.style.display = "block";
+    this.UIRoot.style.opacity = "1";
 
     let selector = this.generateCssPath(currentElement);
     this.activeSelectorId = selector;
 
     // this.createRule(currentElement, bg);
+    this.UIRoot.classList.add("state-reveal");
+    let timeoutId = setTimeout(() => {
+      this.UIRoot.classList.remove("state-reveal");
+      timeoutId = null;
+    }, 3000);
 
     this.createKey(selector, currentElement);
   }
@@ -5299,7 +5423,7 @@ class MouseIntersectStyler {
   hideUI() {
     if (this.UIRoot) {
       this.isStopped = false;
-      this.UIRoot.style.display = "none";
+      this.UIRoot.style.opacity = "0";
     }
   }
 
