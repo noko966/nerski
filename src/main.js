@@ -141,7 +141,6 @@ const configOrderCasino = [
   },
 ];
 
-
 const configOrderSport = [
   {
     name: "body",
@@ -352,8 +351,9 @@ function createCssStringSport(skin) {
     res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
     res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
     res += `    --${essence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`;
-    res += `    --${essence.name}ShadowFade: ${skin[`${essence.name}ShadowFade`]
-      };\n`;
+    res += `    --${essence.name}ShadowFade: ${
+      skin[`${essence.name}ShadowFade`]
+    };\n`;
     res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
     res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
 
@@ -389,8 +389,9 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
     res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
     res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${skin[`${value.name}ShadowFade`]
-      };\n`;
+    res += `    --cw${essence.name}ShadowFade: ${
+      skin[`${value.name}ShadowFade`]
+    };\n`;
     res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
@@ -917,19 +918,19 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg2)
-        .toString()
+          .darken(this.defaults.dark.bg2)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg2)
-        .toString();
+          .lighten(this.defaults.light.bg2)
+          .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg3)
-        .toString()
+          .darken(this.defaults.dark.bg3)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg3)
-        .toString();
+          .lighten(this.defaults.light.bg3)
+          .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -980,27 +981,27 @@ class Skinner {
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -1032,8 +1033,9 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
-        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${
+        this.skin[_vb.gradientAngle]
+      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -2090,9 +2092,41 @@ class Skinner {
       );
     }
 
+    let customDownloadBtn = document.createElement("button");
+    customDownloadBtn.className = "skinner_btn skinner_btn-accent";
+    customDownloadBtn.innerText = "custom css";
+    customDownloadBtn.addEventListener("click", () => {
+      this.makeCustomDownloadRequest();
+    });
+    actionsWrapper.appendChild(customDownloadBtn);
+
+    // ----- On-demand Custom CSS Download Button End -----
+
     this.messageWrapper = document.createElement("div");
     this.messageWrapper.className = "nik_skinner_message hide";
     document.body.appendChild(this.messageWrapper);
+  }
+
+  async makeCustomDownloadRequest() {
+    let css = styler.createCss();
+    var element = document.createElement("a");
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var fileNameSuffix = hours + "-" + minutes;
+    element.setAttribute(
+      "href",
+      "data:text/css;charset=utf-8," + encodeURIComponent(css)
+    );
+    element.setAttribute(
+      "download",
+      "sk_custom_css" + "_" + fileNameSuffix + ".css"
+    );
+    element.style.display = "none";
+
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 
   async makeDownloadRequest(name, number) {
@@ -2138,10 +2172,23 @@ class Skinner {
       let uiTheme = e.currentTarget.checked ? darkColors : lightColors;
       this.updateUiPalette(uiTheme);
     });
+
     switcherWrapper.appendChild(inp);
     switcherWrapper.appendChild(thumb);
-
     this.skinnerUiControls.appendChild(switcherWrapper);
+
+    // Create the toggle button in the same area as the theme switcher
+    let toggleBtn = document.createElement("button");
+    toggleBtn.id = "toggleEditorBtn";
+    toggleBtn.className = "skinner_btn skinner_btn-icon";
+    toggleBtn.innerText = "toggle Editor";
+
+    // Replace the previous document.getElementById('toggleButton') logic with this:
+    toggleBtn.addEventListener("click", () => {
+      styler.toggleStyler();
+    });
+    this.skinnerUiControls.appendChild(toggleBtn);
+    // ----- New Toggle Button End -----
   }
 
   createCloseButton() {
@@ -2669,32 +2716,32 @@ class Skinner {
       : tinycolor(bg).lighten(step).toHexString();
     let bg3 = islight
       ? tinycolor(bg)
-        .darken(step * 2)
-        .toHexString()
+          .darken(step * 2)
+          .toHexString()
       : tinycolor(bg)
-        .lighten(step * 2)
-        .toHexString();
+          .lighten(step * 2)
+          .toHexString();
     let bg4 = islight
       ? tinycolor(bg)
-        .darken(step * 3)
-        .toHexString()
+          .darken(step * 3)
+          .toHexString()
       : tinycolor(bg)
-        .lighten(step * 3)
-        .toHexString();
+          .lighten(step * 3)
+          .toHexString();
     let bg5 = islight
       ? tinycolor(bg)
-        .darken(step * 4)
-        .toHexString()
+          .darken(step * 4)
+          .toHexString()
       : tinycolor(bg)
-        .lighten(step * 4)
-        .toHexString();
+          .lighten(step * 4)
+          .toHexString();
     let bg6 = islight
       ? tinycolor(bg)
-        .darken(step * 4)
-        .toHexString()
+          .darken(step * 4)
+          .toHexString()
       : tinycolor(bg)
-        .lighten(step * 4)
-        .toHexString();
+          .lighten(step * 4)
+          .toHexString();
 
     let accent = tinycolor(colors.accent).lighten(step).toHexString();
     let accent2 = tinycolor(accent).lighten(step).toHexString();
@@ -5119,7 +5166,7 @@ function createPreview() {
     position: absolute;
     width: var(--size);
     display: block;
-    background: var(--cwBodyBg);
+    background: var(--bodyBg);
     height: var(--size);
     border-radius: 50%;
     filter: blur(36px);
@@ -5132,7 +5179,7 @@ function createPreview() {
     .sk_demo_essence_root::after {
     left: auto;
     top: auto;
-    background: var(--cwBodyBg3);
+    background: var(--bodyBg3);
     transform: translate(50%, 50%);
     bottom: 0;
     right: 0;
@@ -5571,6 +5618,7 @@ class MouseIntersectStyler {
     root.style.left = "50%";
     root.style.top = "50%";
     root.style.opacity = 0;
+    root.style.pointerEvents = "none";
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
@@ -5631,7 +5679,7 @@ class MouseIntersectStyler {
     flexColumnRadio.value = "column";
     flexColumnRadio.addEventListener("change", (e) => {
       console.log(e);
-      
+
       if (e.target.checked) {
         self.modifyKey("flexDirection", "column");
       }
@@ -5648,7 +5696,6 @@ class MouseIntersectStyler {
 
     // Append to the control wrapper for flex direction
     controlWrapperFlex.appendChild(flexDirectionWrapper);
-
 
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
@@ -5696,7 +5743,6 @@ class MouseIntersectStyler {
     this.UIRoot = root;
   }
 
-
   createColorBox(className, callBack) {
     let div = document.createElement("div");
     div.className = className;
@@ -5720,10 +5766,10 @@ class MouseIntersectStyler {
 
     // Adjust x and y to ensure the UI fits within the window
     if (x + uiWidth > windowWidth) {
-        x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
+      x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
     }
     if (y + uiHeight > windowHeight) {
-        y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
+      y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
     }
 
     // Prevent negative positions
@@ -5734,6 +5780,7 @@ class MouseIntersectStyler {
     this.UIRoot.style.left = `${x}px`;
     this.UIRoot.style.top = `${y}px`;
     this.UIRoot.style.opacity = "1";
+    this.UIRoot.style.pointerEvents = "";
 
     let selector = this.generateCssPath(currentElement);
     this.activeSelectorId = selector;
@@ -5741,18 +5788,18 @@ class MouseIntersectStyler {
     // Add reveal animation
     this.UIRoot.classList.add("state-reveal");
     let timeoutId = setTimeout(() => {
-        this.UIRoot.classList.remove("state-reveal");
-        timeoutId = null;
+      this.UIRoot.classList.remove("state-reveal");
+      timeoutId = null;
     }, 3000);
 
     this.createKey(selector, currentElement);
-}
-
+  }
 
   hideUI() {
     if (this.UIRoot) {
       this.isStopped = false;
       this.UIRoot.style.opacity = "0";
+      this.UIRoot.style.pointerEvents = "none";
     }
   }
 
@@ -5785,7 +5832,10 @@ class MouseIntersectStyler {
 
   onMouseMove(event, selector) {
     if (this.isStopped || !this.isRunning) return;
-    const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+    const hoveredElement = document.elementFromPoint(
+      event.clientX,
+      event.clientY
+    );
     if (
       hoveredElement &&
       hoveredElement.matches(selector) &&
@@ -5805,14 +5855,25 @@ class MouseIntersectStyler {
       return; // Allow interaction with the UI
     }
 
-    event.stopPropagation();
-    event.preventDefault();
+    // If click is inside the Skinner UI root:
+    if (this.toolboxWrapper && this.toolboxWrapper.contains(event.target)) {
+      // Check if the clicked element is our toggle button near the theme switcher
+      if (event.target.matches("#toggleEditorBtn")) {
+        // Deactivate or toggle the styler
+        if (typeof styler !== "undefined" && styler) {
+          styler.toggleStyler();
+        }
+      }
+      return; // Don’t show UI or do anything else
+    }
 
     if (this.currentElement) {
       this.isStopped = true;
       this.clickCallback(this.currentElement);
       const bounds = this.currentElement.getBoundingClientRect();
       this.showUI(bounds.left, bounds.top, this.currentElement);
+      event.stopPropagation();
+      event.preventDefault();
     }
   }
 
@@ -5845,8 +5906,8 @@ class MouseIntersectStyler {
   }
 
   generateCssPath(element) {
-    console.log({element});
-    
+    console.log({ element });
+
     const path = [];
     while (element && element.tagName !== "BODY") {
       const selector = element.className
@@ -5923,15 +5984,5 @@ const styler = new MouseIntersectStyler(
     console.log("Element selected:", element);
   }
 );
-
-const triggerEditor = document.createElement('button')
-triggerEditor.className = ''
-triggerEditor.id = 'toggleButton'
-triggerEditor.innerText = 'toggle Editor'
-document.body.appendChild(triggerEditor)
-
-document.getElementById("toggleButton").addEventListener("click", () => {
-  styler.toggleStyler();
-});
 
 export { init, destroy, createPreview, destroyPreview };
