@@ -5717,6 +5717,7 @@ class MouseIntersectStyler {
     this.state = {};
     this.activeSelectorId = null;
     this.skin = {};
+    
   }
 
   
@@ -5762,13 +5763,12 @@ toggleStyler() {
 
   createCss() {
     let css = "";
-    console.log(this.skin);
 
     for (const key in this.skin) {
       console.log(key);
 
       css += `${key} {
-        background-color: ${this.skin[key].bg} !important;
+        background-color: ${this.skin[key].backgroundColor} !important;
         color: ${this.skin[key].color} !important;
         padding: ${this.skin[key].padding} !important;
         border-radius: ${this.skin[key].borderRadius} !important;
@@ -5786,13 +5786,15 @@ toggleStyler() {
     this.skin[name] = {};
 
     let cs = getComputedStyle(el);
+    let color = tinycolor(cs.color).toHexString();
     let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
     let padding = cs.padding;
     let width = cs.width;
     let height = cs.height;
     let borderRadius = cs.borderRadius;
     let flexDirection = cs.flexDirection;
-    this.skin[name]["bg"] = backgroundColor;
+    this.skin[name]["color"] = color;
+    this.skin[name]["backgroundColor"] = backgroundColor;
     this.skin[name]["padding"] = padding;
     this.skin[name]["width"] = width;
     this.skin[name]["height"] = height;
@@ -5965,7 +5967,7 @@ toggleStyler() {
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
     borderRadiusInput.type = "number";
-    borderRadiusInput.className = "nik_skinner_border_radius";
+    borderRadiusInput.className = "nik_skinner_radius_amount";
     borderRadiusInput.placeholder = "Border Radius (px)";
     borderRadiusInput.addEventListener("change", (e) => {
       self.modifyKey("borderRadius", e.target.value + "px");
@@ -5974,7 +5976,7 @@ toggleStyler() {
     // Width and height inputs
     const widthInput = document.createElement("input");
     widthInput.type = "number";
-    widthInput.className = "nik_skinner_width";
+    widthInput.className = "nik_skinner_radius_amount";
     widthInput.placeholder = "Width (px)";
     widthInput.addEventListener("change", (e) => {
       self.modifyKey("width", e.target.value + "px");
@@ -5982,7 +5984,7 @@ toggleStyler() {
 
     const heightInput = document.createElement("input");
     heightInput.type = "number";
-    heightInput.className = "nik_skinner_height";
+    heightInput.className = "nik_skinner_radius_amount";
     heightInput.placeholder = "Height (px)";
     heightInput.addEventListener("change", (e) => {
       self.modifyKey("height", e.target.value + "px");
@@ -6010,6 +6012,12 @@ toggleStyler() {
     document.body.appendChild(style);
     document.body.appendChild(root);
 
+    this.stylerControls = {};
+    this.stylerControls.background = this.BgPicker;
+    this.stylerControls.color = this.TextColorPicker;
+    this.stylerControls.padding = this.paddingInput;
+    this.stylerControls.borderRadius = borderRadiusInput;
+
     this.UIRoot = root;
   }
 
@@ -6023,8 +6031,30 @@ toggleStyler() {
     return div;
   }
 
+  extractPxValues(pxString) {
+    // Split the string by spaces to handle multiple values
+    let parts = pxString.trim().split(/\s+/);
+  
+    // Map each part, remove 'px' and convert to number
+    let values = parts.map(part => {
+      return parseFloat(part.replace('px', ''));
+    });
+  
+    return values;
+  }
+
   showUI(x, y, currentElement) {
     if (!this.UIRoot) return;
+    const elementStyles = getComputedStyle(currentElement);
+    const backgroundColor = elementStyles.backgroundColor;
+    const color = elementStyles.color;
+    const padding = this.extractPxValues(elementStyles.padding);
+    const bordeRadius = this.extractPxValues(elementStyles.borderRadius);
+
+    this.stylerControls.background.style.background = backgroundColor;
+    this.stylerControls.color.style.background = color;
+    this.stylerControls.padding.value = padding[0];
+    this.stylerControls.borderRadius.value = bordeRadius[0];
 
     // Get the window dimensions
     const windowWidth = window.innerWidth;
@@ -6061,6 +6091,8 @@ toggleStyler() {
       this.UIRoot.classList.remove("state-reveal");
       timeoutId = null;
     }, 3000);
+
+    
 
     this.createKey(selector, currentElement);
   }
@@ -6227,7 +6259,7 @@ toggleStyler() {
 
     let picker = this.createPickerAndTrigger(
       event.target.parentElement,
-      selectedRuleState.bg // Default to "red" for the picker
+      selectedRuleState.backgroundColor // Default to "red" for the picker
     );
 
     picker.show();
