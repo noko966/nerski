@@ -463,6 +463,9 @@ class Skinner {
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
+    this.isStylerToggledOn = false;
+    this.isPickerOpen  = false;
+
     this.skinnerContainer = this.createControlsWrapper();
 
     this.essenceGroups = {};
@@ -738,28 +741,6 @@ class Skinner {
 
     this.localStorage = {};
 
-    /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
     this.defaults = {
       dark: {
         bg2: 6,
@@ -933,28 +914,7 @@ class Skinner {
           .toString();
 
     if (this.variant === "casino") {
-      /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
+      
       this.defaults = {
         dark: {
           bg2: 6,
@@ -1266,6 +1226,39 @@ class Skinner {
     this.addUiThemeSwitcher();
     this.addStringAnim();
     this.cssCb(this.skin);
+
+    // **Initialize the MouseIntersectStyler here**
+    // Callback for when the user hovers over elements
+    const styleCallback = (el) => {
+      el.style.outline = "2px solid red";
+    };
+    // Callback to reset when mouse leaves element
+    const resetCallback = (el) => {
+      el.style.outline = "";
+    };
+    // Callback on click - show the styler UI and stop scanning
+    const clickCallback = (el) => {
+      // The styler internally handles showing UI, so we don't need to do much here.
+      console.log("Element selected:", el);
+    };
+
+    this.customStyler = new MouseIntersectStyler("*", styleCallback, resetCallback, clickCallback);
+
+    if (this.toolBox) {
+      this.toolBox.addEventListener("mouseover", () => {
+        // If styler is running, stop it when entering toolbox
+        if (this.customStyler && this.customStyler.isRunning) {
+          this.customStyler.stop();
+        }
+      });
+
+      this.toolBox.addEventListener("mouseout", () => {
+        // Only restart if styler is toggled on AND not running
+        if (this.isStylerToggledOn && !this.isPickerOpen && this.customStyler && !this.customStyler.isRunning) {
+          this.customStyler.start();
+        }
+      });
+    }
   }
 
   destroy() {
@@ -1870,16 +1863,22 @@ class Skinner {
       this.skin[skinKey]
     );
 
-    picker.show();
+    picker.on("show", (instance) => {
+      this.isPickerOpen = true;
+    });
 
     picker.on("change", (color, source, instance) => {
       onChangeCallback(color);
     });
 
     picker.on("hide", (instance) => {
+      this.isPickerOpen = false;
       instance.destroyAndRemove();
       this.removePicker(instance); // Remove from pickers array
     });
+
+    picker.show();
+
 
     this.pickers.push(picker); // Store picker instance
   }
@@ -2185,7 +2184,11 @@ class Skinner {
 
     // Replace the previous document.getElementById('toggleButton') logic with this:
     toggleBtn.addEventListener("click", () => {
-      styler.toggleStyler();
+      if (this.customStyler) {
+        // Toggle the boolean flag
+        this.isStylerToggledOn = !this.isStylerToggledOn;
+        this.customStyler.toggleStyler();
+      }
     });
     this.skinnerUiControls.appendChild(toggleBtn);
     // ----- New Toggle Button End -----
@@ -5328,8 +5331,7 @@ function createPreview() {
     .sk_demo_val {
         color: var(--txt);
         font-weight: 500;
-    }
-        
+    }  
   `;
 
   const demoStyle = document.createElement("style");
@@ -5504,7 +5506,8 @@ class MouseIntersectStyler {
     this.skin = {};
   }
 
-  toggleStyler() {
+  
+toggleStyler() {
     if (this.isRunning) {
       this.stop();
     } else {
@@ -5538,7 +5541,6 @@ class MouseIntersectStyler {
     if (selectedRuleState) {
       // Update the rule and state
       selectedRuleState[name] = value;
-      console.log(selectedRuleState[name]);
 
       let css = this.createCss();
       this.setOrUpdateIframeCustomCss(css);
@@ -5974,15 +5976,5 @@ class MouseIntersectStyler {
     this.pickers.push(picker); // Store picker instance
   }
 }
-
-// Usage
-const styler = new MouseIntersectStyler(
-  "*",
-  (element) => (element.style.outline = "1px solid red"),
-  (element) => (element.style.outline = ""),
-  (element) => {
-    console.log("Element selected:", element);
-  }
-);
 
 export { init, destroy, createPreview, destroyPreview };

@@ -738,28 +738,6 @@ class Skinner {
 
     this.localStorage = {};
 
-    /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
     this.defaults = {
       dark: {
         bg2: 6,
@@ -933,28 +911,7 @@ class Skinner {
           .toString();
 
     if (this.variant === "casino") {
-      /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
+      
       this.defaults = {
         dark: {
           bg2: 6,
@@ -5328,8 +5285,7 @@ function createPreview() {
     .sk_demo_val {
         color: var(--txt);
         font-weight: 500;
-    }
-        
+    }  
   `;
 
   const demoStyle = document.createElement("style");
@@ -5538,7 +5494,6 @@ class MouseIntersectStyler {
     if (selectedRuleState) {
       // Update the rule and state
       selectedRuleState[name] = value;
-      console.log(selectedRuleState[name]);
 
       let css = this.createCss();
       this.setOrUpdateIframeCustomCss(css);
