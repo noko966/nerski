@@ -5115,6 +5115,219 @@ window.colorsCasweb = {
   },
 };
 
+window.colorsSport = {
+  body:{
+    Background: {
+        color: "#111111"
+    },
+    borderRadius: 8,
+  },
+  accent:{
+    Background: {
+        color: "#ffb700"
+    }
+
+  },
+  dominant:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  button:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  buttonSecondary:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  navbar:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  slider:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  header:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  subHeader:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  event:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  eventLive:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  odd:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  oddActive:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  showMore:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  marketHeader:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  collapse:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  tab:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  tabActive:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  tabSecondaryActive:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  menu_1:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  menu_2:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  menu_3:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  input:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  inputSecondary:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  filter:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  tooltip:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  modal:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlip:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipStake:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipInput:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipButton:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipHeader:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipTab:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  betSlipTabActive:{
+    Background: {
+        color: "#111111"
+    }
+
+  },
+  tmLogo:{
+    Background: {
+        color: "#111111"
+    }
+
+  }
+}
+
 function init() {
   if (window.SkinnerInstance) {
     console.warn("SkinnerInstance already exists!");
@@ -5123,7 +5336,7 @@ function init() {
 
   window.SkinnerInstance = new Skinner(
     createCss,
-    colorsCasweb,
+    colorsSport,
     null,
     null,
     "sport"
@@ -5556,6 +5769,7 @@ toggleStyler() {
 
       css += `${key} {
         background-color: ${this.skin[key].bg} !important;
+        color: ${this.skin[key].color} !important;
         padding: ${this.skin[key].padding} !important;
         border-radius: ${this.skin[key].borderRadius} !important;
         width: ${this.skin[key].width} !important;
@@ -5586,11 +5800,20 @@ toggleStyler() {
     this.skin[name]["flexDirection"] = flexDirection;
   }
 
-  createControl() {
+  createControl(label) {
+    let d = document.createElement('div');
+    let s = document.createElement('span');
+    s.innerText = label || 'control name';
     let c = document.createElement("div");
-    c.className = "nik_skinner_checkbox_wrapper";
-
-    return c;
+    d.className = "sk_styler_control_row";
+    s.className = "sk_styler_control_row_label";
+    c.className = "sk_styler_control_holder";
+    d.appendChild(s);
+    d.appendChild(c);
+    return {
+      element: d,
+      inside: c,
+    };
   }
 
   createUI() {
@@ -5600,11 +5823,15 @@ toggleStyler() {
     style.innerHTML = `
       .sk_ui_custom_change_root {
         position: fixed;
-        padding: 20px;
-        background: var(--skinnerBg2);
-        color: var(--skinnerTxt);
-        border: 1px solid var(--skinnerBg3);
-        z-index: var(--sk_zind2);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    background: var(--skinnerBg2);
+    color: var(--skinnerTxt);
+    border: 1px solid var(--skinnerBg3);
+    z-index: var(--sk_zind2);
+    row-gap: 4px;
       }
 
       .sk_ui_custom_change_root.state-reveal {
@@ -5614,6 +5841,29 @@ toggleStyler() {
           0%   { opacity: 0; }
           100% { opacity: 1; }
         }
+          .sk_styler_control_row {
+    border: 1px solid var(--skinnerBg2);
+    display: flex;
+    padding: 0 var(--controls-ui-pad-x);
+    align-items: center;
+    column-gap: var(--controls-ui-gap);
+    height: var(--controls-row-height);
+    background-color: var(--skinnerBg);
+    color: var(--skinnerTxt) !important;
+    border-radius: 4px;
+}
+    .sk_styler_control_row_label {
+    flex-grow: 1;
+    min-width: 1px;
+    font-size: 12px;
+}
+    .sk_styler_control_holder{
+    
+    }
+
+    .sk_styler_control_holder > .pickr {
+    position: absolute;
+}
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
@@ -5629,6 +5879,13 @@ toggleStyler() {
       );
     };
 
+    // **New** callback for Text Color
+  const handleTextColorPickerCallBack = (e) => {
+    this.handlePicker(e, (color) =>
+      this.modifyKey("color", color.toHEXA().toString())
+    );
+  };
+
     // Apply button
     this.hideUITrigger = document.createElement("button");
     this.hideUITrigger.className = "skinner_btn skinner_btn-accent";
@@ -5636,11 +5893,12 @@ toggleStyler() {
     this.hideUITrigger.innerText = "apply";
 
     // Control wrappers for various properties
-    let controlWrapperBg = this.createControl();
-    let controlWrapperPadding = this.createControl();
-    let controlWrapperFlex = this.createControl();
-    let controlWrapperRadius = this.createControl();
-    let controlWrapperWidthHeight = this.createControl();
+    let controlWrapperBg = this.createControl('background-color');
+    let controlWrapperColor = this.createControl('text-color');
+    let controlWrapperPadding = this.createControl('padding');
+    let controlWrapperFlex = this.createControl('padding');
+    let controlWrapperRadius = this.createControl('border-radius');
+    let controlWrapperWidthHeight = this.createControl('width/height');
 
     // Padding input
     this.paddingInput = document.createElement("input");
@@ -5655,6 +5913,12 @@ toggleStyler() {
       "nik_skinner_control_group_picker",
       handlePickerCallBack
     );
+
+    // **New** text color picker
+  this.TextColorPicker = this.createColorBox(
+    "nik_skinner_control_group_picker",
+    handleTextColorPickerCallBack
+  );
 
     // Flex-direction radio buttons
     const flexDirectionWrapper = document.createElement("div");
@@ -5696,8 +5960,7 @@ toggleStyler() {
     flexDirectionWrapper.appendChild(flexColumnRadio);
     flexDirectionWrapper.appendChild(flexColumnLabel);
 
-    // Append to the control wrapper for flex direction
-    controlWrapperFlex.appendChild(flexDirectionWrapper);
+    
 
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
@@ -5707,7 +5970,6 @@ toggleStyler() {
     borderRadiusInput.addEventListener("change", (e) => {
       self.modifyKey("borderRadius", e.target.value + "px");
     });
-    controlWrapperRadius.appendChild(borderRadiusInput);
 
     // Width and height inputs
     const widthInput = document.createElement("input");
@@ -5725,18 +5987,24 @@ toggleStyler() {
     heightInput.addEventListener("change", (e) => {
       self.modifyKey("height", e.target.value + "px");
     });
-
-    controlWrapperWidthHeight.appendChild(widthInput);
-    controlWrapperWidthHeight.appendChild(heightInput);
+    controlWrapperBg.inside.appendChild(this.BgPicker);
+    controlWrapperColor.inside.appendChild(this.TextColorPicker);
+    controlWrapperPadding.inside.appendChild(this.paddingInput);
+    controlWrapperRadius.inside.appendChild(borderRadiusInput);
+    controlWrapperFlex.inside.appendChild(flexDirectionWrapper);
+    controlWrapperWidthHeight.inside.appendChild(widthInput);
+    controlWrapperWidthHeight.inside.appendChild(heightInput);
 
     // Append controls to root
-    root.appendChild(controlWrapperBg);
-    root.appendChild(controlWrapperPadding);
-    root.appendChild(controlWrapperFlex);
-    root.appendChild(controlWrapperRadius);
-    root.appendChild(controlWrapperWidthHeight);
-    controlWrapperBg.appendChild(this.BgPicker);
-    controlWrapperPadding.appendChild(this.paddingInput);
+    
+
+    root.appendChild(controlWrapperBg.element);
+    root.appendChild(controlWrapperColor.element);
+    root.appendChild(controlWrapperPadding.element);
+    root.appendChild(controlWrapperFlex.element);
+    root.appendChild(controlWrapperRadius.element);
+    root.appendChild(controlWrapperWidthHeight.element);
+    
 
     root.appendChild(this.hideUITrigger);
     document.body.appendChild(style);

@@ -1442,6 +1442,120 @@ const configOrderCasino = [
   },
 ];
 
+this.configOrderSport = [
+  {
+    name: "body",
+    inherits: null,
+  },
+  {
+    name: "accent",
+    inherits: null,
+  },
+  {
+    name: "dominant",
+    inherits: ["body"],
+  },
+  {
+    name: "button",
+    inherits: ["accent"],
+  },
+  {
+    name: "buttonSecondary",
+    inherits: ["body"],
+    variation: 5,
+  },
+  {
+    name: "navbar",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "slider",
+    inherits: ["body"],
+  },
+  {
+    name: "header",
+    inherits: ["dominant", "body"],
+    variation: 5,
+  },
+  {
+    name: "subHeader",
+    inherits: ["header", "dominant", "body"],
+  },
+  {
+    name: "event",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "eventLive",
+    inherits: ["event", "body"],
+    variation: 5,
+  },
+  {
+    name: "odd",
+    inherits: ["body"],
+  },
+  {
+    name: "oddActive",
+    inherits: ["accent"],
+  },
+  {
+    name: "showMore",
+    inherits: ["body"],
+  },
+  {
+    name: "marketHeader",
+    inherits: ["body", "header"],
+  },
+  {
+    name: "collapse",
+    inherits: ["header", "dominant", "body"],
+  },
+  {
+    name: "tab",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "tabActive",
+    inherits: ["tab", "dominant", "body"],
+  },
+  {
+    name: "tabSecondaryActive",
+    inherits: ["tab", "dominant", "body"],
+  },
+  {
+    name: "menu_1",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "menu_2",
+    inherits: ["menu_1", "dominant", "body"],
+  },
+  {
+    name: "menu_3",
+    inherits: ["menu_2", "menu_1", "dominant", "body"],
+  },
+  {
+    name: "input",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "inputSecondary",
+    inherits: ["input", "dominant", "body"],
+  },
+  {
+    name: "filter",
+    inherits: ["input", "dominant", "body"],
+  },
+  {
+    name: "tooltip",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "modal",
+    inherits: ["body"],
+  },
+];
+
 function verbalData(name) {
   let data = {};
   data.name = name;
@@ -1526,9 +1640,9 @@ async function drawElements() {
   let xOffset = 0;
   let yOffset = 50;
 
-  for (const c of configOrderCasino) {
-    let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
-    let essence = verbalData(n);
+  for (const c of configOrderSport) {
+    // let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
+    let essence = verbalData(c.name);
 
     // Process tints
 
@@ -1653,27 +1767,27 @@ figma.ui.onmessage = async (message) => {
       }
     };
 
-    for (const c of configOrderCasino) {
-      let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
-      let essence = verbalData(n);
+    for (const c of configOrderSport) {
+      // let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
+      let essence = verbalData(c.name);
 
       // Process tints
       for (const t of tintsArr) {
-        const tint = cssObject[`cw${essence[`name${t}`]}`];
+        const tint = cssObject[`${essence[`name${t}`]}`];
         const styleName = `${essence.name}/Bg/${t}`;
         await updateOrCreateStyle(styleName, tint);
       }
 
       // Process text colors
       for (const t of txtsArr) {
-        const tint = cssObject[`cw${essence[`name${t}`]}`];
+        const tint = cssObject[`${essence[`name${t}`]}`];
         const styleName = `${essence.name}/Txt/${t}`;
         await updateOrCreateStyle(styleName, tint);
       }
 
       // Process accents
       for (const t of AccentsArr) {
-        const tint = cssObject[`cw${essence[`name${t}`]}`];
+        const tint = cssObject[`${essence[`name${t}`]}`];
         const styleName = `${essence.name}/Accents/${t}`;
         await updateOrCreateStyle(styleName, tint);
       }
@@ -1778,13 +1892,13 @@ figma.ui.onmessage = async (message) => {
       }
     };
 
-    for (const c of configOrderCasino) {
-      let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
-      let essence = verbalData(n);
+    for (const c of configOrderSport) {
+      // let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
+      let essence = verbalData(c.name);
 
       // Process tints
       for (const t of tintsArr) {
-        const tint = cssObject[`cw${essence[`name${t}`]}`];
+        const tint = cssObject[`${essence[`name${t}`]}`];
         const variableName = `${essence.name}/Bg/${t}`;
 
         await updateOrCreateVariable(variableName, tint);
@@ -1792,20 +1906,20 @@ figma.ui.onmessage = async (message) => {
 
       // Process text colors
       for (const t of txtsArr) {
-        const textColor = cssObject[`cw${essence[`name${t}`]}`];
+        const textColor = cssObject[`${essence[`name${t}`]}`];
         const variableName = `${essence.name}/Txt/${t}`;
         await updateOrCreateVariable(variableName, textColor);
       }
 
       // Process accents
       for (const t of AccentsArr) {
-        const accentColor = cssObject[`cw${essence[`name${t}`]}`];
+        const accentColor = cssObject[`${essence[`name${t}`]}`];
         const variableName = `${essence.name}/Accents/${t}`;
         await updateOrCreateVariable(variableName, accentColor);
       }
 
       // Process radius
-      const radiusValue = cssObject[`cw${essence.nameRadius}`];
+      const radiusValue = cssObject[`${essence.nameRadius}`];
       if (radiusValue) {
         const variableName = `${essence.name}/Radius`;
         await updateOrCreateRadiusVariable(variableName, radiusValue);
