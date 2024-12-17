@@ -464,7 +464,7 @@ class Skinner {
     };
 
     this.isStylerToggledOn = false;
-    this.isPickerOpen  = false;
+    this.isPickerOpen = false;
 
     this.skinnerContainer = this.createControlsWrapper();
 
@@ -914,7 +914,6 @@ class Skinner {
           .toString();
 
     if (this.variant === "casino") {
-      
       this.defaults = {
         dark: {
           bg2: 6,
@@ -1242,7 +1241,12 @@ class Skinner {
       console.log("Element selected:", el);
     };
 
-    this.customStyler = new MouseIntersectStyler("*", styleCallback, resetCallback, clickCallback);
+    this.customStyler = new MouseIntersectStyler(
+      "*",
+      styleCallback,
+      resetCallback,
+      clickCallback
+    );
 
     if (this.toolBox) {
       this.toolBox.addEventListener("mouseover", () => {
@@ -1254,7 +1258,12 @@ class Skinner {
 
       this.toolBox.addEventListener("mouseout", () => {
         // Only restart if styler is toggled on AND not running
-        if (this.isStylerToggledOn && !this.isPickerOpen && this.customStyler && !this.customStyler.isRunning) {
+        if (
+          this.isStylerToggledOn &&
+          !this.isPickerOpen &&
+          this.customStyler &&
+          !this.customStyler.isRunning
+        ) {
           this.customStyler.start();
         }
       });
@@ -1879,7 +1888,6 @@ class Skinner {
 
     picker.show();
 
-
     this.pickers.push(picker); // Store picker instance
   }
 
@@ -2107,7 +2115,7 @@ class Skinner {
   }
 
   async makeCustomDownloadRequest() {
-    let css = styler.createCss();
+    let css = this.customStyler.createCss();
     var element = document.createElement("a");
     var date = new Date();
     var hours = date.getHours();
@@ -5116,217 +5124,183 @@ window.colorsCasweb = {
 };
 
 window.colorsSport = {
-  body:{
+  body: {
     Background: {
-        color: "#111111"
+      color: "#111111",
     },
     borderRadius: 8,
   },
-  accent:{
+  accent: {
     Background: {
-        color: "#ffb700"
-    }
-
+      color: "#ffb700",
+    },
   },
-  dominant:{
+  dominant: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  button:{
+  button: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  buttonSecondary:{
+  buttonSecondary: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  navbar:{
+  navbar: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  slider:{
+  slider: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  header:{
+  header: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  subHeader:{
+  subHeader: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  event:{
+  event: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  eventLive:{
+  eventLive: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  odd:{
+  odd: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  oddActive:{
+  oddActive: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  showMore:{
+  showMore: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  marketHeader:{
+  marketHeader: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  collapse:{
+  collapse: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  tab:{
+  tab: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  tabActive:{
+  tabActive: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  tabSecondaryActive:{
+  tabSecondaryActive: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  menu_1:{
+  menu_1: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  menu_2:{
+  menu_2: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  menu_3:{
+  menu_3: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  input:{
+  input: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  inputSecondary:{
+  inputSecondary: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  filter:{
+  filter: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  tooltip:{
+  tooltip: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  modal:{
+  modal: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlip:{
+  betSlip: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipStake:{
+  betSlipStake: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipInput:{
+  betSlipInput: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipButton:{
+  betSlipButton: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipHeader:{
+  betSlipHeader: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipTab:{
+  betSlipTab: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  betSlipTabActive:{
+  betSlipTabActive: {
     Background: {
-        color: "#111111"
-    }
-
+      color: "#111111",
+    },
   },
-  tmLogo:{
+  tmLogo: {
     Background: {
-        color: "#111111"
-    }
-
-  }
-}
+      color: "#111111",
+    },
+  },
+};
 
 function init() {
   if (window.SkinnerInstance) {
@@ -5382,7 +5356,7 @@ function createPreview() {
     position: absolute;
     width: var(--size);
     display: block;
-    background: var(--bodyBg);
+    background: var(--accentBg);
     height: var(--size);
     border-radius: 50%;
     filter: blur(36px);
@@ -5393,12 +5367,14 @@ function createPreview() {
     transform: translate(-50%, -50%);
 }
     .sk_demo_essence_root::after {
+    --size: 1300px;
     left: auto;
     top: auto;
-    background: var(--bodyBg3);
+    background: var(--bodyBg);
     transform: translate(50%, 50%);
     bottom: 0;
     right: 0;
+    opacity: 1;
 }
     .sk_demo_value_wrapper {
     display: flex;
@@ -5473,6 +5449,8 @@ function createPreview() {
     text-align: center;
     color: var(--skinnerTxt);
     margin-bottom: 20px;
+    position: relative;
+    z-index: 4;
     }
 
     .sk_demo_essence_tint_text{
@@ -5717,11 +5695,9 @@ class MouseIntersectStyler {
     this.state = {};
     this.activeSelectorId = null;
     this.skin = {};
-    
   }
 
-  
-toggleStyler() {
+  toggleStyler() {
     if (this.isRunning) {
       this.stop();
     } else {
@@ -5763,49 +5739,52 @@ toggleStyler() {
 
   createCss() {
     let css = "";
-
     for (const key in this.skin) {
-      console.log(key);
-
       css += `${key} {
-        background-color: ${this.skin[key].backgroundColor} !important;
-        color: ${this.skin[key].color} !important;
-        padding: ${this.skin[key].padding} !important;
-        border-radius: ${this.skin[key].borderRadius} !important;
-        width: ${this.skin[key].width} !important;
-        height: ${this.skin[key].height} !important;
-        display: flex !important;
-        flex-direction: ${this.skin[key].flexDirection} !important;
-      }`;
+  background-color: ${this.skin[key].backgroundColor}!important;
+  color: ${this.skin[key].color} !important;
+  padding-top: ${this.skin[key]["padding-top"]}px !important;
+  padding-right: ${this.skin[key]["padding-right"]}px !important;
+  padding-bottom: ${this.skin[key]["padding-bottom"]}px !important;
+  padding-left: ${this.skin[key]["padding-left"]}px !important;
+  border-radius: ${this.skin[key].borderRadius} !important;
+}\n\n`;
     }
+
+    // width: ${this.skin[key].width} !important;
+    //   height: ${this.skin[key].height} !important;
+
+    // display: flex !important;
+    //   flex-direction: ${this.skin[key].flexDirection} !important;
 
     return css;
   }
 
   createKey(name, el) {
     this.skin[name] = {};
-
-    let cs = getComputedStyle(el);
+    let cs = this.getSelectorAffectedCssStyles(el);
     let color = tinycolor(cs.color).toHexString();
     let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
-    let padding = cs.padding;
-    let width = cs.width;
-    let height = cs.height;
-    let borderRadius = cs.borderRadius;
-    let flexDirection = cs.flexDirection;
-    this.skin[name]["color"] = color;
+
+    const padding = this.parseProp(cs.padding);
+
     this.skin[name]["backgroundColor"] = backgroundColor;
-    this.skin[name]["padding"] = padding;
-    this.skin[name]["width"] = width;
-    this.skin[name]["height"] = height;
-    this.skin[name]["borderRadius"] = borderRadius;
-    this.skin[name]["flexDirection"] = flexDirection;
+    this.skin[name]["color"] = color;
+    this.skin[name]["padding-top"] = padding.top.value;
+    this.skin[name]["padding-right"] = padding.right.value;
+    this.skin[name]["padding-bottom"] = padding.bottom.value;
+    this.skin[name]["padding-left"] = padding.left.value;
+
+    this.skin[name]["width"] = cs.width;
+    this.skin[name]["height"] = cs.height;
+    this.skin[name]["borderRadius"] = cs.borderRadius;
+    this.skin[name]["flexDirection"] = cs.flexDirection;
   }
 
   createControl(label) {
-    let d = document.createElement('div');
-    let s = document.createElement('span');
-    s.innerText = label || 'control name';
+    let d = document.createElement("div");
+    let s = document.createElement("span");
+    s.innerText = label || "control name";
     let c = document.createElement("div");
     d.className = "sk_styler_control_row";
     s.className = "sk_styler_control_row_label";
@@ -5866,6 +5845,51 @@ toggleStyler() {
     .sk_styler_control_holder > .pickr {
     position: absolute;
 }
+
+.sk_editor_input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 50px;
+    font-size: 11px;
+    height: 24px;
+    font-weight: 500;
+    background: var(--skinnerShadow);
+    color: var(--skinnerTxt2);
+    border-radius: 2px;
+    text-align: right;
+    border: 0;
+    border: 1px solid var(--skinnerBg3);
+    outline: 0;
+    padding: 0 6px;
+}
+    .sk_editor_button{
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--skinnerBg3);
+    text-align: center;
+    height: var(--skinnerBtnHeight);
+    text-decoration: none;
+    background-color: var(--skinnerBg2);
+    color: var(--skinnerTxt2);
+    display: block;
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 12px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+    }
+    .sk_editor_button.variant_ok{
+        background-color: var(--skinnerAccent);
+    border-color: var(--skinnerAccent);
+    color: var(--skinnerAccentTxt);
+    position: relative;
+    }
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
@@ -5876,38 +5900,44 @@ toggleStyler() {
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
-      this.handlePicker(e, (color) =>
-        this.modifyKey("bg", color.toHEXA().toString())
-      );
+      this.handlePicker(e, (color) => {
+        this.modifyKey("backgroundColor", color.toHEXA().toString());
+        this.updateControl("backgroundColor", color.toHEXA().toString());
+      });
     };
 
     // **New** callback for Text Color
-  const handleTextColorPickerCallBack = (e) => {
-    this.handlePicker(e, (color) =>
-      this.modifyKey("color", color.toHEXA().toString())
-    );
-  };
+    const handleTextColorPickerCallBack = (e) => {
+      this.handlePicker(e, (color) => {
+        this.modifyKey("color", color.toHEXA().toString());
+        this.updateControl("color", color.toHEXA().toString());
+      });
+    };
 
     // Apply button
     this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "skinner_btn skinner_btn-accent";
+    this.hideUITrigger.className = "sk_editor_button variant_ok";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
 
     // Control wrappers for various properties
-    let controlWrapperBg = this.createControl('background-color');
-    let controlWrapperColor = this.createControl('text-color');
-    let controlWrapperPadding = this.createControl('padding');
-    let controlWrapperFlex = this.createControl('padding');
-    let controlWrapperRadius = this.createControl('border-radius');
-    let controlWrapperWidthHeight = this.createControl('width/height');
+    let controlWrapperBg = this.createControl("background-color");
+    let controlWrapperColor = this.createControl("text-color");
+    let controlWrapperPadding = this.createControl("padding");
+    let controlWrapperFlex = this.createControl("padding");
+    let controlWrapperRadius = this.createControl("border-radius");
+    let controlWrapperWidthHeight = this.createControl("width/height");
 
     // Padding input
-    this.paddingInput = document.createElement("input");
-    this.paddingInput.className = "nik_skinner_radius_amount";
-    this.paddingInput.type = "number";
-    this.paddingInput.addEventListener("change", (e) => {
-      self.modifyKey("padding", e.target.value + "px");
+    let padInputVariants = ["top", "right", "left", "bottom"];
+    let paddingInputs = {};
+    padInputVariants.forEach((v) => {
+      paddingInputs[v] = document.createElement("input");
+      paddingInputs[v].className = "nik_skinner_radius_amount";
+      paddingInputs[v].type = "number";
+      paddingInputs[v].addEventListener("change", (e) => {
+        self.modifyKey(`padding-${v}`, e.target.value);
+      });
     });
 
     // Background picker
@@ -5917,10 +5947,10 @@ toggleStyler() {
     );
 
     // **New** text color picker
-  this.TextColorPicker = this.createColorBox(
-    "nik_skinner_control_group_picker",
-    handleTextColorPickerCallBack
-  );
+    this.TextColorPicker = this.createColorBox(
+      "nik_skinner_control_group_picker",
+      handleTextColorPickerCallBack
+    );
 
     // Flex-direction radio buttons
     const flexDirectionWrapper = document.createElement("div");
@@ -5962,12 +5992,10 @@ toggleStyler() {
     flexDirectionWrapper.appendChild(flexColumnRadio);
     flexDirectionWrapper.appendChild(flexColumnLabel);
 
-    
-
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
     borderRadiusInput.type = "number";
-    borderRadiusInput.className = "nik_skinner_radius_amount";
+    borderRadiusInput.className = "sk_editor_input";
     borderRadiusInput.placeholder = "Border Radius (px)";
     borderRadiusInput.addEventListener("change", (e) => {
       self.modifyKey("borderRadius", e.target.value + "px");
@@ -5976,7 +6004,7 @@ toggleStyler() {
     // Width and height inputs
     const widthInput = document.createElement("input");
     widthInput.type = "number";
-    widthInput.className = "nik_skinner_radius_amount";
+    widthInput.className = "sk_editor_input";
     widthInput.placeholder = "Width (px)";
     widthInput.addEventListener("change", (e) => {
       self.modifyKey("width", e.target.value + "px");
@@ -5984,21 +6012,24 @@ toggleStyler() {
 
     const heightInput = document.createElement("input");
     heightInput.type = "number";
-    heightInput.className = "nik_skinner_radius_amount";
+    heightInput.className = "sk_editor_input";
     heightInput.placeholder = "Height (px)";
     heightInput.addEventListener("change", (e) => {
       self.modifyKey("height", e.target.value + "px");
     });
     controlWrapperBg.inside.appendChild(this.BgPicker);
     controlWrapperColor.inside.appendChild(this.TextColorPicker);
-    controlWrapperPadding.inside.appendChild(this.paddingInput);
+
+    controlWrapperPadding.inside.appendChild(paddingInputs.top);
+    controlWrapperPadding.inside.appendChild(paddingInputs.right);
+    controlWrapperPadding.inside.appendChild(paddingInputs.bottom);
+    controlWrapperPadding.inside.appendChild(paddingInputs.left);
     controlWrapperRadius.inside.appendChild(borderRadiusInput);
     controlWrapperFlex.inside.appendChild(flexDirectionWrapper);
     controlWrapperWidthHeight.inside.appendChild(widthInput);
     controlWrapperWidthHeight.inside.appendChild(heightInput);
 
     // Append controls to root
-    
 
     root.appendChild(controlWrapperBg.element);
     root.appendChild(controlWrapperColor.element);
@@ -6006,16 +6037,15 @@ toggleStyler() {
     root.appendChild(controlWrapperFlex.element);
     root.appendChild(controlWrapperRadius.element);
     root.appendChild(controlWrapperWidthHeight.element);
-    
 
     root.appendChild(this.hideUITrigger);
     document.body.appendChild(style);
     document.body.appendChild(root);
 
     this.stylerControls = {};
-    this.stylerControls.background = this.BgPicker;
+    this.stylerControls.backgroundColor = this.BgPicker;
     this.stylerControls.color = this.TextColorPicker;
-    this.stylerControls.padding = this.paddingInput;
+    this.stylerControls.padding = paddingInputs;
     this.stylerControls.borderRadius = borderRadiusInput;
 
     this.UIRoot = root;
@@ -6031,30 +6061,99 @@ toggleStyler() {
     return div;
   }
 
+  parsePropValue(valueStr) {
+    // Extract numeric value
+    const numericValue = parseFloat(valueStr);
+
+    // Extract unit by removing the numeric part from the end
+    // Anything after the number is considered the unit
+    const unit = valueStr.replace(/[0-9.\-]+/, "").trim() || "px";
+
+    return { value: numericValue, unit: unit };
+  }
+
+  parseProp(paddingStr) {
+    // Split string by whitespace
+    const parts = paddingStr.trim().split(/\s+/).filter(Boolean);
+
+    // Parse each value and its unit
+    const parsedValues = parts.map(this.parsePropValue);
+
+    let top, right, bottom, left;
+
+    switch (parsedValues.length) {
+      case 1:
+        // 1 value: top=right=bottom=left
+        top = right = bottom = left = parsedValues[0];
+        break;
+      case 2:
+        // 2 values: top=bottom = first value, right=left = second value
+        top = bottom = parsedValues[0];
+        right = left = parsedValues[1];
+        break;
+      case 3:
+        // 3 values: top = first, left=right = second, bottom = third
+        top = parsedValues[0];
+        right = left = parsedValues[1];
+        bottom = parsedValues[2];
+        break;
+      case 4:
+        // 4 values: top, right, bottom, left
+        [top, right, bottom, left] = parsedValues;
+        break;
+      default:
+        // No values or more than 4 is invalid or not supported by CSS shorthand
+        // Decide how to handle. For now, return defaults (0px).
+        top = right = bottom = left = { value: 0, unit: "px" };
+        break;
+    }
+
+    return { top, right, bottom, left };
+  }
+
   extractPxValues(pxString) {
     // Split the string by spaces to handle multiple values
     let parts = pxString.trim().split(/\s+/);
-  
+
     // Map each part, remove 'px' and convert to number
-    let values = parts.map(part => {
-      return parseFloat(part.replace('px', ''));
+    let values = parts.map((part) => {
+      return parseFloat(part.replace("px", ""));
     });
-  
+
     return values;
+  }
+
+  getSelectorAffectedCssStyles(selector) {
+    if (!selector) return;
+    let computedStyles = getComputedStyle(selector);
+    let styles = {
+      backgroundColor: computedStyles.backgroundColor,
+      color: computedStyles.color,
+      padding: computedStyles.padding,
+      borderRadius: computedStyles.borderRadius,
+      width: computedStyles.width,
+      height: computedStyles.height,
+    };
+
+    return styles;
   }
 
   showUI(x, y, currentElement) {
     if (!this.UIRoot) return;
-    const elementStyles = getComputedStyle(currentElement);
+
+    const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
     const backgroundColor = elementStyles.backgroundColor;
     const color = elementStyles.color;
-    const padding = this.extractPxValues(elementStyles.padding);
-    const bordeRadius = this.extractPxValues(elementStyles.borderRadius);
+    const padding = this.parseProp(elementStyles.padding);
+    const bordeRadius = this.parseProp(elementStyles.borderRadius);
 
-    this.stylerControls.background.style.background = backgroundColor;
+    this.stylerControls.backgroundColor.style.background = backgroundColor;
     this.stylerControls.color.style.background = color;
-    this.stylerControls.padding.value = padding[0];
-    this.stylerControls.borderRadius.value = bordeRadius[0];
+    this.stylerControls.padding.top.value = padding.top.value;
+    this.stylerControls.padding.right.value = padding.right.value;
+    this.stylerControls.padding.bottom.value = padding.bottom.value;
+    this.stylerControls.padding.left.value = padding.left.value;
+    this.stylerControls.borderRadius.value = bordeRadius.top.value;
 
     // Get the window dimensions
     const windowWidth = window.innerWidth;
@@ -6092,8 +6191,6 @@ toggleStyler() {
       timeoutId = null;
     }, 3000);
 
-    
-
     this.createKey(selector, currentElement);
   }
 
@@ -6105,8 +6202,8 @@ toggleStyler() {
     }
   }
 
-  updateControls() {
-    console.log(this.BgPicker);
+  updateControl(control, value) {
+    this.stylerControls[control].style.background = value;
   }
 
   setOrUpdateIframeCustomCss(css) {
@@ -6265,6 +6362,8 @@ toggleStyler() {
     picker.show();
 
     picker.on("change", (color, source, instance) => {
+      console.log(instance);
+
       onChangeCallback(color);
     });
 
