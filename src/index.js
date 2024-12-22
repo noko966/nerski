@@ -1,6 +1,6 @@
 import { Skinner } from "./main.js";
-const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
-// const target = document;
+// const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
+const target = document;
 
 const configOrderCasino = [
   {
@@ -633,47 +633,22 @@ function createPreview() {
   isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-    color: var(--skinnerTxt);
+        color: var(--skinnerTxt);
     border-radius: var(--radius);
-    border: 2px solid var(--skinnerBg);
-    background: var(--skinnerBg4);
-    padding: 12px 24px;
-    width: calc((100% - 48px) / 4);
+    border: 2px solid var(--skinnerBg2);
+    background: var(--skinnerBg);
+    padding: 50px 50px;
+    width: calc((100% - 63px) / 5);
     position: relative;
     overflow: hidden;
+        border-radius: 8px;
   }
-    .sk_demo_essence_root::before,
-    .sk_demo_essence_root::after {
-    content: '';
-    --size: 600px;
-    position: absolute;
-    width: var(--size);
-    display: block;
-    background: var(--accentBg);
-    height: var(--size);
-    border-radius: 50%;
-    filter: blur(36px);
-    z-index: 1;
-    opacity: 0.5;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-}
-    .sk_demo_essence_root::after {
-    --size: 1300px;
-    left: auto;
-    top: auto;
-    background: var(--bodyBg);
-    transform: translate(50%, 50%);
-    bottom: 0;
-    right: 0;
-    opacity: 1;
-}
+
     .sk_demo_value_wrapper {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    row-gap: 20px;
+    row-gap: 8px;
         position: relative;
     z-index: 3;
 
@@ -684,8 +659,8 @@ function createPreview() {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px;
-    padding: 16px;
+    gap: 32px;
+    padding: 32px;
   }
   .sk_demo_essence_tint{
     font-size: 12px;
@@ -694,8 +669,8 @@ function createPreview() {
     display: flex;
     align-items: center;
     column-gap: 10px;
-  --sk_blob_size: 48px;
-  --sk_blob_radius: 24px;
+  --sk_blob_size: 32px;
+  --sk_blob_radius: 4px;
   }  
 
   .sk_demo_essence_text_tints_wrapper{
@@ -759,20 +734,19 @@ function createPreview() {
     }
 
     .sk_demo_blob{
-            flex-grow: 1;
+    flex-grow: 1;
     min-width: 1px;
     height: var(--sk_blob_size);
     border-radius: var(--sk_blob_radius);
     background: var(--Bg);
     color: var(--txt);
-    border: 2px solid var(--txt);
-    display: flex
-;
+    border: 2px solid var(--Bg);
+    display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 16px;
-    font-size: 13px;
-    font-weight: 300;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 500;
     }
 
     .sk_demo_val{
@@ -780,12 +754,14 @@ function createPreview() {
     width: 80px;
     height: var(--sk_blob_size);
     border-radius: var(--sk_blob_radius);
-    background: var(--Bg);
-    border: 2px solid var(--txt);
+    background: var(--skinnerBg2);
+    color: var(--skinnerTxt);
+    border: 2px solid var(--skinnerBg3);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 500;
     }
 
     .sk_demo_essence_accent{
@@ -813,7 +789,7 @@ function createPreview() {
         height: 24px;
     }
     .sk_demo_val {
-        color: var(--txt);
+        /* color: var(--txt);*/
         font-weight: 500;
     }  
   `;

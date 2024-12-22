@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title></head
+  ><style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1a1a1a;
+    }
+
+    .resize-handle {
+      width: 20px;
+      height: 20px;
+      background-color: #333;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .ui_hand_root {
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  </style>
+  <body>
+    <div id="app">
+      <div id="editable"></div>
+    </div>
+  </body>
+
+  <script>
+    class UIHand {
+      constructor(root, onChangeCallback) {
+        this.element = null; // Element to be manipulated
+        this.root = root || document.body;
+        this.onChangeCallback = onChangeCallback || (() => {}); // Callback for changes
+
+        this.properties = {
+          width: "200px",
+          height: "100px",
+          padding: "10px",
+          "border-width": "2px",
+          color: "#ffffff",
+          background: "#007bff",
+        };
+        this.rootElement = document.createElement("div");
+        this.rootElement.className = "ui_hand_root";
+        this.propertyContainers = this.createPropertyContainers();
+        this.rootElement.appendChild(this.propertyContainers);
+        this.root.appendChild(this.rootElement);
+        this.initEvents();
+      }
+
+      createPropertyContainers() {
+        const container = document.createElement("div");
+        container.className = "property-containers";
+
+        this.inputs = {};
+
+        Object.keys(this.properties).forEach((property) => {
+          const propertyContainer = document.createElement("div");
+          propertyContainer.className = "property-container";
+
+          const label = document.createElement("label");
+          label.textContent = property;
+          propertyContainer.appendChild(label);
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = this.properties[property];
+          input.dataset.property = property;
+
+          propertyContainer.appendChild(input);
+          container.appendChild(propertyContainer);
+
+          this.inputs[property] = input;
+        });
+
+        this.rootElement.appendChild(container);
+
+        return container;
+      }
+
+      initEvents() {
+        Object.keys(this.inputs).forEach((property) => {
+          const input = this.inputs[property];
+          input.addEventListener("change", (e) => this.handleInputChange(e));
+        });
+
+        this.handle = this.createResizeHandle();
+        this.handle.addEventListener("mousedown", (e) => this.startResize(e));
+        window.addEventListener("mousemove", (e) => this.resize(e));
+        window.addEventListener("mouseup", () => this.stopResize());
+      }
+
+      handleInputChange(event) {
+        const property = event.target.dataset.property;
+        const value = event.target.value;
+
+        if (property && value !== undefined) {
+          this.applyProperty(property, value);
+          this.triggerChange();
+        }
+      }
+
+      createResizeHandle() {
+        const handle = document.createElement("div");
+        handle.className = "resize-handle";
+        this.rootElement.appendChild(handle);
+        return handle;
+      }
+
+      startResize(event) {
+        if (!this.element) return;
+
+        this.isResizing = true;
+        this.startX = event.clientX;
+        this.startY = event.clientY;
+        this.startWidth = this.element.offsetWidth;
+        this.startHeight = this.element.offsetHeight;
+        event.preventDefault(); // Prevent text selection
+      }
+
+      resize(event) {
+        if (!this.isResizing || !this.element) return;
+
+        const deltaX = event.clientX - this.startX;
+        const deltaY = event.clientY - this.startY;
+
+        this.setDimensions(this.startWidth + deltaX, this.startHeight + deltaY);
+        this.triggerChange();
+      }
+
+      stopResize() {
+        this.isResizing = false;
+      }
+
+      applyProperty(property, value) {
+        // Validate and apply the property
+        this.properties[property] = value;
+
+        // Apply the style to the element
+        if (this.element) {
+          this.element.style[property] = value;
+        }
+      }
+
+      setDimensions(width, height) {
+        const minSize = 50; // Minimum size constraint
+        if (this.element) {
+          if (typeof width === "number") {
+            this.element.style.width = `${Math.max(width, minSize)}px`;
+          }
+          if (typeof height === "number") {
+            this.element.style.height = `${Math.max(height, minSize)}px`;
+          }
+        }
+      }
+
+      triggerChange() {
+        // Notify about the change
+        this.onChangeCallback(this.properties);
+      }
+
+      attachElement(element) {
+        // Attach an element to be manipulated
+        this.element = element;
+        Object.keys(this.properties).forEach((property) => {
+          this.element.style[property] = this.properties[property];
+        });
+      }
+    }
+
+    const root = document.getElementById("app");
+    const elementToEdit = document.getElementById("editable");
+
+    const onChange = (properties) => {
+      console.log("Updated properties:", properties);
+    };
+
+    const uiHand = new UIHand(root, onChange);
+    uiHand.attachElement(elementToEdit);
+  </script>
+</html>

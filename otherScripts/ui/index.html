@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resizable Element</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f5f5f5;
+      }
+      .resizable {
+        position: relative;
+        width: 200px;
+        height: 100px;
+        background-color: #007bff;
+        border: 2px solid #0056b3;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .resize-handle {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 2px solid #0056b3;
+        border-radius: 50%;
+        cursor: nwse-resize;
+      }
+      .input-container {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 4px;
+      }
+      .input-container input {
+        width: 80px;
+        padding: 2px;
+        text-align: center;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div tabindex="0" class="resizable" id="resizableElement">
+      Width: 200px, Height: 100px
+      <div class="resize-handle"></div>
+      <div class="input-container" id="inputContainer">
+        <input type="text" id="dimensionInput" />
+      </div>
+    </div>
+
+    <script>
+      class ResizableElement {
+        constructor(element) {
+          this.element = element;
+          this.resizeHandle = element.querySelector(".resize-handle");
+          this.inputContainer = element.querySelector("#inputContainer");
+          this.dimensionInput = element.querySelector("#dimensionInput");
+          this.isResizing = false;
+          this.startWidth = this.element.offsetWidth;
+          this.startHeight = this.element.offsetHeight;
+          this.startX = 0;
+          this.startY = 0;
+          this.isEditingWidth = false;
+          this.editingActive = false; // Track if editing is active
+
+          this.initEvents();
+        }
+
+        initEvents() {
+          // Attach mouse resize events
+          this.resizeHandle.addEventListener("mousedown", (e) =>
+            this.startResize(e)
+          );
+          window.addEventListener("mousemove", (e) => this.resize(e));
+          window.addEventListener("mouseup", () => this.stopResize());
+
+          // Attach keyboard events to the main element
+          this.element.addEventListener("keydown", (e) =>
+            this.handleKeyPress(e)
+          );
+
+          // Handle input submission
+          this.dimensionInput.addEventListener("keydown", (e) =>
+            this.handleInputKeyPress(e)
+          );
+        }
+
+        startResize(event) {
+          this.isResizing = true;
+          this.startX = event.clientX;
+          this.startY = event.clientY;
+          this.startWidth = this.element.offsetWidth;
+          this.startHeight = this.element.offsetHeight;
+          event.preventDefault(); // Prevent text selection
+        }
+
+        resize(event) {
+          if (!this.isResizing) return;
+
+          const deltaX = event.clientX - this.startX;
+          const deltaY = event.clientY - this.startY;
+
+          this.setDimensions(
+            this.startWidth + deltaX,
+            this.startHeight + deltaY
+          );
+        }
+
+        stopResize() {
+          this.isResizing = false;
+        }
+
+        handleKeyPress(event) {
+          if (event.key.toLowerCase() === "w") {
+            this.isEditingWidth = true;
+            this.editingActive = true;
+            this.showInput();
+          } else if (event.key.toLowerCase() === "h") {
+            this.isEditingWidth = false;
+            this.editingActive = true;
+            this.showInput();
+          } else if (this.editingActive && event.key.toLowerCase() === "f") {
+            this.applySpecialValue("100%");
+          } else if (this.editingActive && event.key.toLowerCase() === "a") {
+            this.applySpecialValue("auto");
+          }
+        }
+
+        handleInputKeyPress(event) {
+          if (event.key === "Enter") {
+            const value = this.dimensionInput.value;
+            if (!isNaN(value) && value !== "") {
+              const numericValue = parseInt(value);
+              if (this.isEditingWidth) {
+                this.setDimensions(numericValue, this.element.offsetHeight);
+              } else {
+                this.setDimensions(this.element.offsetWidth, numericValue);
+              }
+            }
+            this.hideInput();
+          } else if (event.key === "Escape") {
+            this.hideInput();
+          }
+        }
+
+        showInput() {
+          this.inputContainer.style.display = "block";
+          this.dimensionInput.focus();
+        }
+
+        hideInput() {
+          this.inputContainer.style.display = "none";
+          this.dimensionInput.value = "";
+          this.editingActive = false; // Disable editing mode
+        }
+
+        applySpecialValue(value) {
+          if (this.isEditingWidth) {
+            this.element.style.width = value;
+          } else {
+            this.element.style.height = value;
+          }
+          this.hideInput();
+          this.updateLabel();
+        }
+
+        setDimensions(width, height) {
+          const minSize = 50; // Minimum size constraint
+          if (typeof width === "number")
+            this.element.style.width = `${Math.max(width, minSize)}px`;
+          if (typeof height === "number")
+            this.element.style.height = `${Math.max(height, minSize)}px`;
+          this.updateLabel();
+        }
+
+        updateLabel() {
+          const computedWidth =
+            this.element.style.width || `${this.element.offsetWidth}px`;
+          const computedHeight =
+            this.element.style.height || `${this.element.offsetHeight}px`;
+          this.element.innerHTML = `Width: ${computedWidth}, Height: ${computedHeight}`;
+          this.element.appendChild(this.resizeHandle);
+          this.element.appendChild(this.inputContainer);
+        }
+      }
+
+      // Initialize the resizable element
+      const resizableElement = document.getElementById("resizableElement");
+      new ResizableElement(resizableElement);
+    </script>
+  </body>
+</html>
+
+

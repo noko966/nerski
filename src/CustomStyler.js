@@ -62,24 +62,25 @@ class MouseIntersectStyler {
   }
 
   oonClick(event) {
-    console.log(event);
+    if (this.isStopped || !this.isRunning) return;
+    // console.log(event);
 
     // If user clicks inside the custom UI
-    if (this.UIRoot && this.UIRoot.contains(event.target)) {
-      return;
-    }
+    // if (this.UIRoot && this.UIRoot.contains(event.target)) {
+    //   return;
+    // }
 
-    // If click is inside the toolbox wrapper
-    if (this.toolboxWrapper && this.toolboxWrapper.contains(event.target)) {
-      // If the clicked element is our toggle button
-      if (event.target.matches("#toggleEditorBtn")) {
-        // Deactivate or toggle the styler
-        if (typeof styler !== "undefined" && styler) {
-          styler.toggleStyler();
-        }
-      }
-      return;
-    }
+    // // If click is inside the toolbox wrapper
+    // if (this.toolboxWrapper && this.toolboxWrapper.contains(event.target)) {
+    //   // If the clicked element is our toggle button
+    //   if (event.target.matches("#toggleEditorBtn")) {
+    //     // Deactivate or toggle the styler
+    //     if (typeof styler !== "undefined" && styler) {
+    //       styler.toggleStyler();
+    //     }
+    //   }
+    //   return;
+    // }
 
     if (this.isRunning) {
       // Prevent default actions and stop propagation
@@ -143,7 +144,7 @@ class MouseIntersectStyler {
       selectedRuleState[name] = value;
 
       let css = this.createCss();
-      this.setOrUpdateIframeCustomCss(css);
+      this.setOrUpdateIframeCustomCss(css, this.root);
     }
   }
 
@@ -152,8 +153,8 @@ class MouseIntersectStyler {
     for (const key in this.skin) {
       css += `${key} {
   background-color: ${this.skin[key].backgroundColor};
-  color: ${this.skin[key].color} ;
-  padding-top: ${this.skin[key]["padding-top"]}px ;
+  color: ${this.skin[key].color}b;
+  padding-top: ${this.skin[key]["padding-top"]}px;
   padding-right: ${this.skin[key]["padding-right"]}px;
   padding-bottom: ${this.skin[key]["padding-bottom"]}px;
   padding-left: ${this.skin[key]["padding-left"]}px;
@@ -386,8 +387,6 @@ class MouseIntersectStyler {
     flexColumnRadio.id = "flexColumnRadio";
     flexColumnRadio.value = "column";
     flexColumnRadio.addEventListener("change", (e) => {
-      console.log(e);
-
       if (e.target.checked) {
         self.modifyKey("flexDirection", "column");
       }
@@ -616,18 +615,28 @@ class MouseIntersectStyler {
     this.stylerControls[control].style.background = value;
   }
 
-  setOrUpdateIframeCustomCss(css) {
-    const styleId = "css-as-custom-stylesheet";
-    let styleElement = this.root.getElementById(styleId);
+  setOrUpdateIframeCustomCss(css, target) {
+    var styleId = "css-as-custom-stylesheet";
+    var styleElement = document.getElementById(styleId);
 
-    // If the style element doesn't exist, create it
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.setAttribute("id", styleId);
-      this.root.appendChild(styleElement);
+    if (target instanceof ShadowRoot) {
+      styleElement = target.querySelector(`#${styleId}`);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", styleId);
+        target.appendChild(styleElement);
+      }
+    } else {
+      // Otherwise, assume the target is `document`
+      styleElement = document.getElementById(styleId);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", styleId);
+        document.head.appendChild(styleElement);
+      }
     }
 
-    // Inject all the CSS rules into the <style> element
+    // Update the inner HTML of the style element with the new CSS
     styleElement.innerHTML = css;
   }
 
@@ -761,8 +770,6 @@ class MouseIntersectStyler {
   }
 
   createPickerAndTrigger(parent, color) {
-    console.log({ color });
-
     let _triggerEl = document.createElement("div");
     _triggerEl.className = "skinner_picker_trigger_hide";
     parent.appendChild(_triggerEl);
@@ -804,8 +811,6 @@ class MouseIntersectStyler {
     picker.show();
 
     picker.on("change", (color, source, instance) => {
-      console.log(instance);
-
       onChangeCallback(color);
     });
 
