@@ -3,189 +3,411 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title></head
-  ><style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #1a1a1a;
-    }
-
-    .resize-handle {
-      width: 20px;
-      height: 20px;
-      background-color: #333;
-      position: absolute;
-      bottom: 0;
-      right: 0;
-    }
-
-    .ui_hand_root {
-      position: relative;
-      background-color: rgba(0, 0, 0, 0.2);
-    }
-  </style>
+    <title>Document</title>
+    <style>
+      .color-gradient-picker {
+        font-family: sans-serif;
+        border: 1px solid #ccc;
+        padding: 8px;
+        width: 220px;
+      }
+      .tabs {
+        display: flex;
+        margin-bottom: 8px;
+      }
+      .tab-button {
+        flex: 1;
+        padding: 4px;
+        cursor: pointer;
+      }
+      .tab-button.active {
+        background-color: #eee;
+      }
+      .tab-content {
+      }
+      .color-tab,
+      .gradient-tab {
+      }
+      .gradient-preview {
+        margin-bottom: 8px;
+      }
+      .stops-container {
+        margin-bottom: 8px;
+      }
+      .stop-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .stop-item input[type="number"] {
+        width: 50px;
+        margin-right: 4px;
+      }
+      .stop-item button {
+        margin-left: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
   <body>
-    <div id="app">
-      <div id="editable"></div>
-    </div>
+    <div id="color-gradient-picker-container"></div>
   </body>
 
   <script>
-    class UIHand {
-      constructor(root, onChangeCallback) {
-        this.element = null; // Element to be manipulated
-        this.root = root || document.body;
-        this.onChangeCallback = onChangeCallback || (() => {}); // Callback for changes
+    class ColorGradientPicker {
+      /**
+       * @param {Object} options
+       * @param {HTMLElement} options.container - The container to render the picker in.
+       * @param {Function} [options.onOpen]   - Callback fired when the picker is opened.
+       * @param {Function} [options.onClose]  - Callback fired when the picker is closed.
+       * @param {Function} [options.onEnter]  - Callback fired when user presses enter on color input.
+       * @param {Function} [options.onChange] - Callback fired when user picks a new color or gradient.
+       * @param {Function} [options.onDestroy] - Callback fired when the picker is destroyed.
+       */
+      constructor(options) {
+        this.container = options.container;
+        this.onOpen = options.onOpen;
+        this.onClose = options.onClose;
+        this.onEnter = options.onEnter;
+        this.onChange = options.onChange;
+        this.onDestroy = options.onDestroy;
 
-        this.properties = {
-          width: "200px",
-          height: "100px",
-          padding: "10px",
-          "border-width": "2px",
-          color: "#ffffff",
-          background: "#007bff",
-        };
-        this.rootElement = document.createElement("div");
-        this.rootElement.className = "ui_hand_root";
-        this.propertyContainers = this.createPropertyContainers();
-        this.rootElement.appendChild(this.propertyContainers);
-        this.root.appendChild(this.rootElement);
-        this.initEvents();
+        // internal state
+        this.activeTab = "color"; // or 'gradient'
+        this.selectedColor = "#ff0000";
+        this.gradientStops = [
+          { offset: 0, color: "#ff0000" },
+          { offset: 100, color: "#0000ff" },
+        ];
+
+        // Initialize the picker UI
+        this.initPicker();
       }
 
-      createPropertyContainers() {
-        const container = document.createElement("div");
-        container.className = "property-containers";
+      /**
+       * Initialize picker DOM elements and attach event listeners.
+       */
+      initPicker() {
+        // Main wrapper
+        this.pickerWrapper = document.createElement("div");
+        this.pickerWrapper.className = "color-gradient-picker";
 
-        this.inputs = {};
+        // Tabs (Color / Gradient)
+        this.tabsWrapper = document.createElement("div");
+        this.tabsWrapper.className = "tabs";
 
-        Object.keys(this.properties).forEach((property) => {
-          const propertyContainer = document.createElement("div");
-          propertyContainer.className = "property-container";
-
-          const label = document.createElement("label");
-          label.textContent = property;
-          propertyContainer.appendChild(label);
-
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = this.properties[property];
-          input.dataset.property = property;
-
-          propertyContainer.appendChild(input);
-          container.appendChild(propertyContainer);
-
-          this.inputs[property] = input;
+        this.colorTabButton = document.createElement("button");
+        this.colorTabButton.textContent = "Color";
+        this.colorTabButton.className = "tab-button active";
+        this.colorTabButton.addEventListener("click", () => {
+          this.switchTab("color");
         });
 
-        this.rootElement.appendChild(container);
-
-        return container;
-      }
-
-      initEvents() {
-        Object.keys(this.inputs).forEach((property) => {
-          const input = this.inputs[property];
-          input.addEventListener("change", (e) => this.handleInputChange(e));
+        this.gradientTabButton = document.createElement("button");
+        this.gradientTabButton.textContent = "Gradient";
+        this.gradientTabButton.className = "tab-button";
+        this.gradientTabButton.addEventListener("click", () => {
+          this.switchTab("gradient");
         });
 
-        this.handle = this.createResizeHandle();
-        this.handle.addEventListener("mousedown", (e) => this.startResize(e));
-        window.addEventListener("mousemove", (e) => this.resize(e));
-        window.addEventListener("mouseup", () => this.stopResize());
-      }
+        this.tabsWrapper.appendChild(this.colorTabButton);
+        this.tabsWrapper.appendChild(this.gradientTabButton);
 
-      handleInputChange(event) {
-        const property = event.target.dataset.property;
-        const value = event.target.value;
+        // Content area
+        this.contentWrapper = document.createElement("div");
+        this.contentWrapper.className = "tab-content";
 
-        if (property && value !== undefined) {
-          this.applyProperty(property, value);
-          this.triggerChange();
-        }
-      }
+        // =========== COLOR TAB ===========
+        this.colorTab = document.createElement("div");
+        this.colorTab.className = "color-tab";
+        this.colorTab.style.display = "block"; // default visible
 
-      createResizeHandle() {
-        const handle = document.createElement("div");
-        handle.className = "resize-handle";
-        this.rootElement.appendChild(handle);
-        return handle;
-      }
+        // Canvas for color wheel (or color square)
+        this.colorCanvas = document.createElement("canvas");
+        this.colorCanvas.width = 200;
+        this.colorCanvas.height = 200;
+        this.drawColorWheel();
 
-      startResize(event) {
-        if (!this.element) return;
+        this.colorCanvas.addEventListener("click", (evt) => {
+          this.handleColorSelection(evt);
+        });
 
-        this.isResizing = true;
-        this.startX = event.clientX;
-        this.startY = event.clientY;
-        this.startWidth = this.element.offsetWidth;
-        this.startHeight = this.element.offsetHeight;
-        event.preventDefault(); // Prevent text selection
-      }
-
-      resize(event) {
-        if (!this.isResizing || !this.element) return;
-
-        const deltaX = event.clientX - this.startX;
-        const deltaY = event.clientY - this.startY;
-
-        this.setDimensions(this.startWidth + deltaX, this.startHeight + deltaY);
-        this.triggerChange();
-      }
-
-      stopResize() {
-        this.isResizing = false;
-      }
-
-      applyProperty(property, value) {
-        // Validate and apply the property
-        this.properties[property] = value;
-
-        // Apply the style to the element
-        if (this.element) {
-          this.element.style[property] = value;
-        }
-      }
-
-      setDimensions(width, height) {
-        const minSize = 50; // Minimum size constraint
-        if (this.element) {
-          if (typeof width === "number") {
-            this.element.style.width = `${Math.max(width, minSize)}px`;
+        // Color input
+        this.colorInput = document.createElement("input");
+        this.colorInput.type = "text";
+        this.colorInput.value = this.selectedColor;
+        this.colorInput.addEventListener("keydown", (evt) => {
+          if (evt.key === "Enter") {
+            this.selectedColor = this.colorInput.value;
+            if (typeof this.onEnter === "function") {
+              this.onEnter(this.selectedColor);
+            }
+            if (typeof this.onChange === "function") {
+              this.onChange({ type: "color", color: this.selectedColor });
+            }
           }
-          if (typeof height === "number") {
-            this.element.style.height = `${Math.max(height, minSize)}px`;
-          }
+        });
+
+        this.colorTab.appendChild(this.colorCanvas);
+        this.colorTab.appendChild(this.colorInput);
+
+        // =========== GRADIENT TAB ===========
+        this.gradientTab = document.createElement("div");
+        this.gradientTab.className = "gradient-tab";
+        this.gradientTab.style.display = "none";
+
+        // Gradient preview block
+        this.gradientPreview = document.createElement("div");
+        this.gradientPreview.className = "gradient-preview";
+        this.gradientPreview.style.width = "200px";
+        this.gradientPreview.style.height = "40px";
+        this.updateGradientPreview();
+
+        // Color stops container
+        this.stopsContainer = document.createElement("div");
+        this.stopsContainer.className = "stops-container";
+        this.renderGradientStops();
+
+        // Button to add a new stop
+        this.addStopButton = document.createElement("button");
+        this.addStopButton.textContent = "Add Stop";
+        this.addStopButton.addEventListener("click", () => {
+          this.addGradientStop();
+        });
+
+        this.gradientTab.appendChild(this.gradientPreview);
+        this.gradientTab.appendChild(this.stopsContainer);
+        this.gradientTab.appendChild(this.addStopButton);
+
+        // Append tabs to content wrapper
+        this.contentWrapper.appendChild(this.colorTab);
+        this.contentWrapper.appendChild(this.gradientTab);
+
+        // Put everything together
+        this.pickerWrapper.appendChild(this.tabsWrapper);
+        this.pickerWrapper.appendChild(this.contentWrapper);
+        this.container.appendChild(this.pickerWrapper);
+
+        // Optionally call onOpen callback
+        if (typeof this.onOpen === "function") {
+          this.onOpen();
         }
       }
 
-      triggerChange() {
-        // Notify about the change
-        this.onChangeCallback(this.properties);
+      /**
+       * Switch between color and gradient tabs
+       * @param {string} tab - 'color' or 'gradient'
+       */
+      switchTab(tab) {
+        this.activeTab = tab;
+        if (tab === "color") {
+          this.colorTabButton.classList.add("active");
+          this.gradientTabButton.classList.remove("active");
+          this.colorTab.style.display = "block";
+          this.gradientTab.style.display = "none";
+        } else {
+          this.colorTabButton.classList.remove("active");
+          this.gradientTabButton.classList.add("active");
+          this.colorTab.style.display = "none";
+          this.gradientTab.style.display = "block";
+        }
       }
 
-      attachElement(element) {
-        // Attach an element to be manipulated
-        this.element = element;
-        Object.keys(this.properties).forEach((property) => {
-          this.element.style[property] = this.properties[property];
+      /**
+       * Draw a basic color wheel or square on the canvas.
+       */
+      drawColorWheel() {
+        const ctx = this.colorCanvas.getContext("2d");
+        const width = this.colorCanvas.width;
+        const height = this.colorCanvas.height;
+
+        // Simple horizontal gradient from red to green to blue for demo
+        const grd = ctx.createLinearGradient(0, 0, width, 0);
+        grd.addColorStop(0, "#ff0000");
+        grd.addColorStop(0.5, "#00ff00");
+        grd.addColorStop(1, "#0000ff");
+
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, width, height);
+
+        // Create a vertical gradient overlay from transparent to black
+        const grd2 = ctx.createLinearGradient(0, 0, 0, height);
+        grd2.addColorStop(0, "rgba(255, 255, 255, 0)");
+        grd2.addColorStop(1, "rgba(0, 0, 0, 1)");
+
+        ctx.fillStyle = grd2;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      /**
+       * Handle canvas click to pick color from the pixel data.
+       */
+      handleColorSelection(evt) {
+        const rect = this.colorCanvas.getBoundingClientRect();
+        const x = evt.clientX - rect.left;
+        const y = evt.clientY - rect.top;
+        const ctx = this.colorCanvas.getContext("2d");
+        const pixel = ctx.getImageData(x, y, 1, 1).data;
+        const [r, g, b] = pixel;
+        const color = this.rgbToHex(r, g, b);
+
+        this.selectedColor = color;
+        this.colorInput.value = color;
+
+        if (typeof this.onChange === "function") {
+          this.onChange({ type: "color", color: this.selectedColor });
+        }
+      }
+
+      /**
+       * Convert RGB to Hex string.
+       */
+      rgbToHex(r, g, b) {
+        return (
+          "#" +
+          [r, g, b]
+            .map((x) => {
+              const hex = x.toString(16);
+              return hex.length === 1 ? "0" + hex : hex;
+            })
+            .join("")
+        );
+      }
+
+      /**
+       * Update the gradient preview block with current stops.
+       */
+      updateGradientPreview() {
+        // Build a linear-gradient string
+        const stopsString = this.gradientStops
+          .map((stop) => `${stop.color} ${stop.offset}%`)
+          .join(", ");
+
+        this.gradientPreview.style.background = `linear-gradient(to right, ${stopsString})`;
+      }
+
+      /**
+       * Render the gradient stops UI in the stopsContainer.
+       */
+      renderGradientStops() {
+        // Clear existing
+        this.stopsContainer.innerHTML = "";
+
+        this.gradientStops.forEach((stop, index) => {
+          const stopItem = document.createElement("div");
+          stopItem.className = "stop-item";
+
+          // Offset input
+          const offsetInput = document.createElement("input");
+          offsetInput.type = "number";
+          offsetInput.min = 0;
+          offsetInput.max = 100;
+          offsetInput.value = stop.offset;
+          offsetInput.addEventListener("input", (evt) => {
+            this.gradientStops[index].offset = parseInt(evt.target.value, 10);
+            this.updateGradientPreview();
+            if (typeof this.onChange === "function") {
+              this.onChange({ type: "gradient", stops: this.gradientStops });
+            }
+          });
+
+          // Color input
+          const colorInput = document.createElement("input");
+          colorInput.type = "color";
+          colorInput.value = stop.color;
+          colorInput.addEventListener("input", (evt) => {
+            this.gradientStops[index].color = evt.target.value;
+            this.updateGradientPreview();
+            if (typeof this.onChange === "function") {
+              this.onChange({ type: "gradient", stops: this.gradientStops });
+            }
+          });
+
+          // Remove button
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "×";
+          removeBtn.addEventListener("click", () => {
+            this.removeGradientStop(index);
+          });
+
+          stopItem.appendChild(offsetInput);
+          stopItem.appendChild(colorInput);
+          stopItem.appendChild(removeBtn);
+
+          this.stopsContainer.appendChild(stopItem);
         });
+      }
+
+      /**
+       * Add a new gradient stop.
+       */
+      addGradientStop() {
+        // Add default new stop at 50% with white color
+        this.gradientStops.push({ offset: 50, color: "#ffffff" });
+        this.updateGradientPreview();
+        this.renderGradientStops();
+        if (typeof this.onChange === "function") {
+          this.onChange({ type: "gradient", stops: this.gradientStops });
+        }
+      }
+
+      /**
+       * Remove a gradient stop at a given index.
+       * @param {number} index
+       */
+      removeGradientStop(index) {
+        if (this.gradientStops.length > 2) {
+          this.gradientStops.splice(index, 1);
+          this.updateGradientPreview();
+          this.renderGradientStops();
+          if (typeof this.onChange === "function") {
+            this.onChange({ type: "gradient", stops: this.gradientStops });
+          }
+        } else {
+          alert("You must have at least 2 stops");
+        }
+      }
+
+      /**
+       * Open the picker (e.g., if you have it hidden or in a dialog).
+       */
+      open() {
+        this.pickerWrapper.style.display = "block";
+        if (typeof this.onOpen === "function") {
+          this.onOpen();
+        }
+      }
+
+      /**
+       * Close the picker (e.g., hide it).
+       */
+      close() {
+        this.pickerWrapper.style.display = "none";
+        if (typeof this.onClose === "function") {
+          this.onClose();
+        }
+      }
+
+      /**
+       * Destroy the picker and remove it from the DOM.
+       */
+      destroy() {
+        if (this.pickerWrapper && this.container.contains(this.pickerWrapper)) {
+          this.container.removeChild(this.pickerWrapper);
+        }
+        if (typeof this.onDestroy === "function") {
+          this.onDestroy();
+        }
       }
     }
 
-    const root = document.getElementById("app");
-    const elementToEdit = document.getElementById("editable");
-
-    const onChange = (properties) => {
-      console.log("Updated properties:", properties);
-    };
-
-    const uiHand = new UIHand(root, onChange);
-    uiHand.attachElement(elementToEdit);
+    const picker = new ColorGradientPicker({
+      container: document.getElementById("color-gradient-picker-container"),
+      onOpen: () => console.log("Picker opened"),
+      onClose: () => console.log("Picker closed"),
+      onEnter: (color) => console.log("Enter pressed with color:", color),
+      onChange: (value) => console.log("Changed:", value),
+      onDestroy: () => console.log("Picker destroyed"),
+    });
   </script>
 </html>

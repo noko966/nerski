@@ -1,443 +1,11 @@
 import guessVisibleColor from "./neuron.js";
 var tinycolor = require("tinycolor2");
+import chroma from "chroma-js";
 import Pickr from "@simonwep/pickr";
-
-function verbalDataCasino(name) {
-  let data = {};
-  data.name = name;
-  data.nameBg = data.name + "Bg";
-  data.nameBg_g = data.nameBg + "_g";
-  data.nameG = data.name + "G";
-  data.nameRGBA = data.name + "RGBA";
-  data.nameRGBA2 = data.name + "RGBA2";
-  data.nameRGBA3 = data.name + "RGBA3";
-  data.nameG2 = data.nameG + "2";
-  data.nameBgHov = data.nameBg + "Hover";
-  data.nameBg2 = data.nameBg + "2";
-  data.nameBg2Hov = data.nameBg2 + "Hover";
-  data.nameBg3 = data.nameBg + "3";
-  data.nameBg3Hov = data.nameBg3 + "Hover";
-  data.upperCaseName = data.name[0].toUpperCase() + data.name.substring(1);
-  data.isName = "is" + data.upperCaseName + "Bg";
-  data.isGradient = "is" + data.upperCaseName + "Gradient";
-  data.isGradientReversed = data.isGradient + "Reversed";
-  data.gradientAngle = data.upperCaseName + "GradientAngle";
-
-  data.isDark = "is" + data.upperCaseName + "BgDark";
-
-  data.nameTxt = data.name + "Txt";
-  data.nameTxt2 = data.nameTxt + "2";
-  data.nameTxt3 = data.nameTxt + "3";
-  data.nameTxtInverse = data.nameTxt + "Inverse";
-
-  data.isCustomTxt = "isCustom" + data.upperCaseName + "Txt";
-
-  data.nameBorder = data.name + "Border";
-  data.isCustomBorder = "isCustom" + data.upperCaseName + "Border";
-
-  data.nameAccent = data.name + "Accent";
-  data.isCustomAccent = "isCustom" + data.upperCaseName + "Accent";
-  data.nameAccentTxt = data.name + "AccentTxt";
-
-  data.nameRadius = data.name + "Radius";
-
-  return data;
-}
-
-const configOrderCasino = [
-  {
-    name: "body",
-    inherits: null,
-  },
-  {
-    name: "accent",
-    inherits: null,
-  },
-
-  {
-    name: "dominant",
-    inherits: ["body"],
-  },
-  {
-    name: "card",
-    inherits: ["body"],
-  },
-  {
-    name: "game",
-    inherits: ["body"],
-  },
-  {
-    name: "jackpot",
-    inherits: ["body"],
-  },
-  {
-    name: "button",
-    inherits: ["accent"],
-  },
-  {
-    name: "buttonSecondary",
-    inherits: ["dominant", "body"],
-    // variation: 5,
-  },
-  {
-    name: "navbar",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "slider",
-    inherits: ["body"],
-  },
-  {
-    name: "header",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "headerSecondary",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "footer",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "subHeader",
-    inherits: ["header", "dominant", "body"],
-  },
-  {
-    name: "tab",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "tabActive",
-    inherits: ["tab", "dominant", "body"],
-  },
-  {
-    name: "input",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "inputSecondary",
-    inherits: ["input", "dominant", "body"],
-  },
-  {
-    name: "filter",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "tooltip",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "modal",
-    inherits: ["body"],
-  },
-  {
-    name: "login",
-    inherits: ["modal", "body"],
-  },
-  {
-    name: "register",
-    inherits: ["modal", "body"],
-  },
-];
-
-const configOrderSport = [
-  {
-    name: "body",
-    inherits: null,
-  },
-  {
-    name: "accent",
-    inherits: null,
-  },
-  {
-    name: "dominant",
-    inherits: ["body"],
-  },
-  {
-    name: "button",
-    inherits: ["accent"],
-  },
-  {
-    name: "buttonSecondary",
-    inherits: ["body"],
-    variation: 5,
-  },
-  {
-    name: "navbar",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "slider",
-    inherits: ["body"],
-  },
-  {
-    name: "header",
-    inherits: ["dominant", "body"],
-    variation: 5,
-  },
-  {
-    name: "subHeader",
-    inherits: ["header", "dominant", "body"],
-  },
-  {
-    name: "event",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "eventLive",
-    inherits: ["event", "body"],
-    variation: 5,
-  },
-  {
-    name: "odd",
-    inherits: ["body"],
-  },
-  {
-    name: "oddActive",
-    inherits: ["accent"],
-  },
-  {
-    name: "showMore",
-    inherits: ["body"],
-  },
-  {
-    name: "marketHeader",
-    inherits: ["body", "header"],
-  },
-  {
-    name: "collapse",
-    inherits: ["header", "dominant", "body"],
-  },
-  {
-    name: "tab",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "tabActive",
-    inherits: ["tab", "dominant", "body"],
-  },
-  {
-    name: "tabSecondaryActive",
-    inherits: ["tab", "dominant", "body"],
-  },
-  {
-    name: "menu_1",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "menu_2",
-    inherits: ["menu_1", "dominant", "body"],
-  },
-  {
-    name: "menu_3",
-    inherits: ["menu_2", "menu_1", "dominant", "body"],
-  },
-  {
-    name: "input",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "inputSecondary",
-    inherits: ["input", "dominant", "body"],
-  },
-  {
-    name: "filter",
-    inherits: ["input", "dominant", "body"],
-  },
-  {
-    name: "tooltip",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "modal",
-    inherits: ["body"],
-  },
-  {
-    name: "betSlip",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "betSlipStake",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "betSlipInput",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "betSlipButton",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "betSlipHeader",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "betSlipTab",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "betSlipTabActive",
-    inherits: ["betSlip", "dominant", "body"],
-  },
-  {
-    name: "tmLogo",
-    inherits: ["dominant", "body"],
-  },
-];
-
-function verbalData(name) {
-  let data = {};
-  data.name = name;
-  data.nameBg = data.name + "Bg";
-  data.nameBg_g = data.nameBg + "_g";
-  data.nameG = data.name + "G";
-  data.nameRGBA = data.name + "RGBA";
-  data.nameRGBA2 = data.name + "RGBA2";
-  data.nameRGBA3 = data.name + "RGBA3";
-  data.nameG2 = data.nameG + "2";
-  data.nameBgHov = data.nameBg + "Hover";
-  data.nameBg2 = data.nameBg + "2";
-  data.nameBg2Hov = data.nameBg2 + "Hover";
-  data.nameBg3 = data.nameBg + "3";
-  data.nameBg3Hov = data.nameBg3 + "Hover";
-  data.upperCaseName = data.name[0].toUpperCase() + data.name.substring(1);
-  data.isName = "is" + data.upperCaseName + "Bg";
-  data.isGradient = "is" + data.upperCaseName + "Gradient";
-  data.isGradientReversed = data.isGradient + "Reversed";
-  data.gradientAngle = data.upperCaseName + "GradientAngle";
-
-  data.isDark = "is" + data.upperCaseName + "BgDark";
-
-  data.nameTxt = data.name + "Txt";
-  data.nameTxt2 = data.nameTxt + "2";
-  data.nameTxt3 = data.nameTxt + "3";
-  data.nameTxtInverse = data.nameTxt + "Inverse";
-
-  data.isCustomTxt = "isCustom" + data.upperCaseName + "Txt";
-
-  data.nameBorder = data.name + "Border";
-  data.isCustomBorder = "isCustom" + data.upperCaseName + "Border";
-
-  data.nameAccent = data.name + "Accent";
-  data.isCustomAccent = "isCustom" + data.upperCaseName + "Accent";
-  data.nameAccentTxt = data.name + "AccentTxt";
-
-  data.nameRadius = data.name + "Radius";
-
-  return data;
-}
-
-function createCssStringSport(skin) {
-  let res = ``;
-
-  configOrderSport.forEach((c, i) => {
-    let essence = verbalData(c.name);
-
-    res += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
-    res += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
-    res += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-    res += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-    res += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
-    res += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
-    res += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
-    res += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-    res += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
-    res += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
-    res += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
-    res += `    --${essence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`;
-    res += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
-    res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
-    res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
-    res += `    --${essence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`;
-    res += `    --${essence.name}ShadowFade: ${
-      skin[`${essence.name}ShadowFade`]
-    };\n`;
-    res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
-    res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
-
-    if (i !== configOrderSport.length - 1) {
-      res += `\n\n`;
-    }
-  });
-
-  return res;
-}
-
-function createCssStringCasino(skin) {
-  let res = ``;
-
-  configOrderCasino.forEach((c, i) => {
-    let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
-    let essence = verbalData(n);
-    let value = verbalData(c.name);
-
-    res += `    --cw${essence.nameG}: ${skin[value.nameG]};\n`;
-    res += `    --cw${essence.nameBg}: ${skin[value.nameBg]};\n`;
-    res += `    --cw${essence.nameBg2}: ${skin[value.nameBg2]};\n`;
-    res += `    --cw${essence.nameBg3}: ${skin[value.nameBg3]};\n`;
-    res += `    --cw${essence.nameBgHov}: ${skin[value.nameBgHov]};\n`;
-    res += `    --cw${essence.nameBg2Hov}: ${skin[value.nameBg2Hov]};\n`;
-    res += `    --cw${essence.nameBg3Hov}: ${skin[value.nameBg3Hov]};\n`;
-    res += `    --cw${essence.nameTxt}: ${skin[value.nameTxt]};\n`;
-    res += `    --cw${essence.nameTxt2}: ${skin[value.nameTxt2]};\n`;
-    res += `    --cw${essence.nameTxt3}: ${skin[value.nameTxt3]};\n`;
-    res += `    --cw${essence.nameAccent}: ${skin[value.nameAccent]};\n`;
-    res += `    --cw${essence.nameAccentTxt}: ${skin[value.nameAccentTxt]};\n`;
-    res += `    --cw${essence.nameRGBA}: ${skin[value.nameRGBA]};\n`;
-    res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
-    res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
-    res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${
-      skin[`${value.name}ShadowFade`]
-    };\n`;
-    res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
-    res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
-
-    if (i !== configOrderCasino.length - 1) {
-      res += `\n\n`;
-    }
-  });
-
-  return res;
-}
-var dd = "";
-function createCss(c) {
-  let css = `
-        :root{
-        ${createCssStringSport(c)}
-        }`;
-
-  let results = {
-    css: css,
-    name: "casWeb",
-  };
-
-  let target = document.getElementById("sk_css_selector");
-  setOrUpdateIframeCss(css, target);
-  //style.innerHTML = css;
-  dd = results.css;
-  return results;
-}
-
-function setOrUpdateIframeCss(cssStyle, target) {
-  var styleId = "css-as-test-stylesheet";
-  var styleElement = document.getElementById(styleId);
-
-  if (!styleElement) {
-    // Create the style element if it doesn't exist
-    styleElement = document.createElement("style");
-    styleElement.setAttribute("id", styleId);
-    document.head.appendChild(styleElement);
-  }
-
-  // Update the inner HTML of the style element with the new CSS
-  styleElement.innerHTML = cssStyle;
-}
+import { MouseIntersectStyler } from "./CustomStyler.js";
 
 class Skinner {
-  constructor(cssCb, starterConfig, header, root, variant) {
+  constructor(cssCb, starterConfig, header, root, variant, patientRoot) {
     this.pickers = [];
     this.eventListeners = [];
     this.variant = variant || "sport";
@@ -463,6 +31,11 @@ class Skinner {
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
+    this.patientRoot = patientRoot || document.body;
+
+    this.isStylerToggledOn = false;
+    this.isPickerOpen = false;
+
     this.skinnerContainer = this.createControlsWrapper();
 
     this.essenceGroups = {};
@@ -479,6 +52,54 @@ class Skinner {
         accent: "#1696a5",
       },
     };
+
+    if (this.variant === "casino") {
+      this.defaults = {
+        dark: {
+          bg2: 6,
+          bg3: 14,
+          bgHov: 4,
+        },
+        light: {
+          bg2: 11,
+          bg3: 19,
+          bgHov: 5,
+        },
+        alpha: {
+          bg: 0.7,
+          bg2: 0.5,
+          bg3: 0.3,
+        },
+        txt: {
+          txt: 0.9,
+          txt2: 0.6,
+          txt3: 0.4,
+        },
+      };
+    } else {
+      this.defaults = {
+        dark: {
+          bg2: 6,
+          bg3: 12,
+          bgHov: 3,
+        },
+        light: {
+          bg2: 10,
+          bg3: 15,
+          bgHov: 3,
+        },
+        alpha: {
+          bg: 0.7,
+          bg2: 0.5,
+          bg3: 0.3,
+        },
+        txt: {
+          txt: 0.9,
+          txt2: 0.6,
+          txt3: 0.4,
+        },
+      };
+    }
 
     if (this.variant === "casino") {
       this.configOrder = [
@@ -598,7 +219,6 @@ class Skinner {
         {
           name: "buttonSecondary",
           inherits: ["body"],
-          variation: 5,
         },
         {
           name: "navbar",
@@ -611,7 +231,6 @@ class Skinner {
         {
           name: "header",
           inherits: ["dominant", "body"],
-          variation: 5,
         },
         {
           name: "subHeader",
@@ -624,7 +243,6 @@ class Skinner {
         {
           name: "eventLive",
           inherits: ["event", "body"],
-          variation: 5,
         },
         {
           name: "odd",
@@ -738,51 +356,6 @@ class Skinner {
 
     this.localStorage = {};
 
-    /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
-    this.defaults = {
-      dark: {
-        bg2: 6,
-        bg3: 12,
-        bgHov: 3,
-      },
-      light: {
-        bg2: 10,
-        bg3: 15,
-        bgHov: 3,
-      },
-      alpha: {
-        bg: 0.7,
-        bg2: 0.5,
-        bg3: 0.3,
-      },
-      txt: {
-        txt: 0.9,
-        txt2: 0.6,
-        txt3: 0.4,
-      },
-    };
-
     this.mergedConfig = this.mergeConfig(this._config);
     this.generateInitialSkin();
 
@@ -798,6 +371,7 @@ class Skinner {
     this.message = this.message.bind(this);
 
     this.generateBackgrounds = this.generateBackgrounds.bind(this);
+
     this.generateGradientss = this.generateGradientss.bind(this);
     this.generateTextss = this.generateTextss.bind(this);
     this.generateAccentss = this.generateAccentss.bind(this);
@@ -912,7 +486,7 @@ class Skinner {
     return _mergedConfig;
   }
 
-  generateBackgrounds(essence) {
+  generateBackgrounds2(essence) {
     let _essence = essence;
     let _vb = this.verbalData(_essence);
     let _isDark = this.skin[_vb.isDark];
@@ -931,53 +505,6 @@ class Skinner {
       : tinycolor(this.skin[_vb.nameBg])
           .lighten(this.defaults.light.bg3)
           .toString();
-
-    if (this.variant === "casino") {
-      /* 
-        dark 
-        {
-        bg: 0,
-        bgHov: 4
-        bg2: 6
-        bg2Hov: 10
-        bg3: 14
-        bg3Hov: 18
-        }
-
-        light 
-        {
-        bg: 0,
-        bgHov: 5
-        bg2: 7
-        bg2Hov: 11
-        bg3: 15
-        bg3Hov: 19
-        }
-        */
-
-      this.defaults = {
-        dark: {
-          bg2: 6,
-          bg3: 14,
-          bgHov: 4,
-        },
-        light: {
-          bg2: 11,
-          bg3: 19,
-          bgHov: 5,
-        },
-        alpha: {
-          bg: 0.7,
-          bg2: 0.5,
-          bg3: 0.3,
-        },
-        txt: {
-          txt: 0.9,
-          txt2: 0.6,
-          txt3: 0.4,
-        },
-      };
-    }
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
@@ -1025,6 +552,36 @@ class Skinner {
         .setAlpha(0)
         .toRgbString();
     }
+  }
+
+  generateBackgrounds(essence) {
+    let _vb = this.verbalData(essence);
+    let isDark = this.skin[_vb.isDark];
+    const bgKeyNames = [
+      _vb.nameBgHov,
+      _vb.nameBg2,
+      _vb.nameBg2Hov,
+      _vb.nameBg3,
+      _vb.nameBg3Hov,
+    ];
+
+    const bgAKeyNames = [_vb.nameRGBA, _vb.nameRGBA2, _vb.nameRGBA3];
+
+    let colorStops = 6;
+
+    let firstColor = this.skin[_vb.nameBg];
+
+    bgKeyNames.forEach((bgName, i) => {
+      this.skin[bgName] = isDark
+        ? chroma(firstColor).darken(0.2 * i)
+        : chroma(firstColor).brighten(0.2 * i);
+    });
+
+    bgAKeyNames.forEach((bgName, i) => {
+      this.skin[bgName] = chroma(firstColor)
+        .alpha(i * 0.5)
+        .css();
+    });
   }
 
   generateGradientss(essence) {
@@ -1266,6 +823,50 @@ class Skinner {
     this.addUiThemeSwitcher();
     this.addStringAnim();
     this.cssCb(this.skin);
+
+    // **Initialize the MouseIntersectStyler here**
+    // Callback for when the user hovers over elements
+    const styleCallback = (el) => {
+      el.style.outline = "2px solid red";
+    };
+    // Callback to reset when mouse leaves element
+    const resetCallback = (el) => {
+      el.style.outline = "";
+    };
+    // Callback on click - show the styler UI and stop scanning
+    const clickCallback = (el) => {
+      // The styler internally handles showing UI, so we don't need to do much here.
+      console.log("Element selected:", el);
+    };
+
+    this.customStyler = new MouseIntersectStyler(
+      "*",
+      styleCallback,
+      resetCallback,
+      clickCallback,
+      this.patientRoot
+    );
+
+    if (this.toolBox) {
+      this.toolBox.addEventListener("mouseover", () => {
+        // If styler is running, stop it when entering toolbox
+        if (this.customStyler && this.customStyler.isRunning) {
+          this.customStyler.stop();
+        }
+      });
+
+      this.toolBox.addEventListener("mouseout", () => {
+        // Only restart if styler is toggled on AND not running
+        if (
+          this.isStylerToggledOn &&
+          !this.isPickerOpen &&
+          this.customStyler &&
+          !this.customStyler.isRunning
+        ) {
+          this.customStyler.start();
+        }
+      });
+    }
   }
 
   destroy() {
@@ -1398,7 +999,7 @@ class Skinner {
   createCssForSkinnerInstance(skin) {
     let res = ``;
     this.configOrder.forEach((c, i) => {
-      let value = verbalData(c.name);
+      let value = this.verbalData(c.name);
 
       res += `    --${value.nameG}: ${skin[value.nameG]};\n`;
       res += `    --${value.nameBg}: ${skin[value.nameBg]};\n`;
@@ -1419,7 +1020,7 @@ class Skinner {
       res += `    --${value.nameRadius}: ${skin[value.nameRadius]}px;\n`;
       res += `    --${value.nameBorder}: ${skin[value.nameBorder]};`;
 
-      if (i !== configOrderCasino.length - 1) {
+      if (i !== this.configOrder.length - 1) {
         res += `\n\n`;
       }
     });
@@ -1556,6 +1157,9 @@ class Skinner {
         variation,
         fbLength
       );
+
+      console.log(_vd.nameBg, _fbEssence);
+
       this.generateBackgrounds(_essence);
 
       this.skin[_vd.isDark] = this.skin[_vdf.isDark];
@@ -1870,16 +1474,21 @@ class Skinner {
       this.skin[skinKey]
     );
 
-    picker.show();
+    picker.on("show", (instance) => {
+      this.isPickerOpen = true;
+    });
 
     picker.on("change", (color, source, instance) => {
       onChangeCallback(color);
     });
 
     picker.on("hide", (instance) => {
+      this.isPickerOpen = false;
       instance.destroyAndRemove();
       this.removePicker(instance); // Remove from pickers array
     });
+
+    picker.show();
 
     this.pickers.push(picker); // Store picker instance
   }
@@ -1932,6 +1541,7 @@ class Skinner {
     let header = document.createElement("div");
     header.className = "nik_skinner_header_controls";
     toolbox.appendChild(toolboxWrapper);
+    this.toolbox = toolbox;
     toolboxWrapper.appendChild(header);
 
     let tableHeaders = [
@@ -2108,7 +1718,7 @@ class Skinner {
   }
 
   async makeCustomDownloadRequest() {
-    let css = styler.createCss();
+    let css = this.customStyler.createCss();
     var element = document.createElement("a");
     var date = new Date();
     var hours = date.getHours();
@@ -2185,7 +1795,11 @@ class Skinner {
 
     // Replace the previous document.getElementById('toggleButton') logic with this:
     toggleBtn.addEventListener("click", () => {
-      styler.toggleStyler();
+      if (this.customStyler) {
+        // Toggle the boolean flag
+        this.isStylerToggledOn = !this.isStylerToggledOn;
+        this.customStyler.toggleStyler();
+      }
     });
     this.skinnerUiControls.appendChild(toggleBtn);
     // ----- New Toggle Button End -----
@@ -4853,6 +4467,7 @@ border-radius: 50%;*/
     background: linear-gradient(90deg, rgb(189 24 7 / 17%), rgb(189 24 7 / 0%) 50%);
     pointer-events: none;
 }
+
 `;
     this.skinnerUIStyles = document.createElement("style");
     this.skinnerUIStyles.innerHTML = css;
@@ -5112,877 +4727,183 @@ window.colorsCasweb = {
   },
 };
 
-function init() {
-  if (window.SkinnerInstance) {
-    console.warn("SkinnerInstance already exists!");
-    return;
-  }
-
-  window.SkinnerInstance = new Skinner(
-    createCss,
-    colorsCasweb,
-    null,
-    null,
-    "sport"
-  );
-  window.SkinnerInstance.init();
-  console.log("SkinnerInstance initialized");
-}
-
-function destroy() {
-  if (!window.SkinnerInstance) {
-    console.warn("No SkinnerInstance to destroy");
-    return;
-  }
-
-  if (typeof window.SkinnerInstance.destroy === "function") {
-    window.SkinnerInstance.destroy(); // Call destroy method if it exists
-  }
-
-  delete window.SkinnerInstance; // Remove the instance from the global object
-  console.log("SkinnerInstance destroyed");
-}
-
-let isPreviewInitialized = false;
-
-function createPreview() {
-  if (isPreviewInitialized) return;
-  isPreviewInitialized = true;
-  let style = `
-  .sk_demo_essence_root{
-    color: var(--skinnerTxt);
-    border-radius: var(--radius);
-    border: 2px solid var(--skinnerBg);
-    background: var(--skinnerBg4);
-    padding: 12px 24px;
-    width: calc((100% - 48px) / 4);
-    position: relative;
-    overflow: hidden;
-  }
-    .sk_demo_essence_root::before,
-    .sk_demo_essence_root::after {
-    content: '';
-    --size: 600px;
-    position: absolute;
-    width: var(--size);
-    display: block;
-    background: var(--bodyBg);
-    height: var(--size);
-    border-radius: 50%;
-    filter: blur(36px);
-    z-index: 1;
-    opacity: 0.5;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-}
-    .sk_demo_essence_root::after {
-    left: auto;
-    top: auto;
-    background: var(--bodyBg3);
-    transform: translate(50%, 50%);
-    bottom: 0;
-    right: 0;
-}
-    .sk_demo_value_wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    row-gap: 20px;
-        position: relative;
-    z-index: 3;
-
-  }
-  .sk_demo_root{
-    --card_width: 60px;
-    font-size: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-    padding: 16px;
-  }
-  .sk_demo_essence_tint{
-    font-size: 12px;
-    width: 100%;
-    height: auto;
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-  --sk_blob_size: 48px;
-  --sk_blob_radius: 24px;
-  }  
-
-  .sk_demo_essence_text_tints_wrapper{
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    row-gap: 12px;
-  }
-
-  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_blob,
-  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_val{
-      --txt: var(--bg1);
-  }
-
-  .sk_demo_essence_tint_text{
-  padding: 6px;
-    font-size: 12px;
-    width: 100%;
-    height: auto;
-  }
-
-  
-  .sk_demo_essence_tint.variant_0 {
-    --Bg: var(--bg1);
-  }
-  .sk_demo_essence_tint.variant_1 {
-    --Bg: var(--bg2);
-  }
-    .sk_demo_essence_tint.variant_2 {
-    --Bg: var(--bg3);
-  }
-    .sk_demo_essence_tint.variant_3 {
-    --Bg: var(--bg4);
-  }
-    .sk_demo_essence_tint.variant_4 {
-    --Bg: var(--bg5);
-  }
-    .sk_demo_essence_tint.variant_5 {
-    --Bg: var(--bg6);
-  }
-    .sk_demo_essence_title {
-        margin: 0;
-    font-size: 19px;
-    text-align: center;
-    color: var(--skinnerTxt);
-    margin-bottom: 20px;
-    }
-
-    .sk_demo_essence_tint_text{
-            padding: 8px;
-    font-size: 12px;
-    }
-
-    .sk_demo_essence_tint_text .sk_demo_key{
-      --txt2: var(--bg2);
-    }
-      .sk_demo_essence_tint_text .sk_demo_val{
-      --txt: var(--bg1);
-    }
-
-    .sk_demo_blob{
-            flex-grow: 1;
-    min-width: 1px;
-    height: var(--sk_blob_size);
-    border-radius: var(--sk_blob_radius);
-    background: var(--Bg);
-    color: var(--txt);
-    border: 2px solid var(--txt);
-    display: flex
-;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 16px;
-    font-size: 13px;
-    font-weight: 300;
-    }
-
-    .sk_demo_val{
-        flex-shrink: 0;
-    width: 80px;
-    height: var(--sk_blob_size);
-    border-radius: var(--sk_blob_radius);
-    background: var(--Bg);
-    border: 2px solid var(--txt);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    }
-
-    .sk_demo_essence_accent{
-          --Bg: var(--ab);
-          --txt: var(--at);
-    }
-
-    .sk_demo_essence_text {
-        display: flex;
-      flex-direction: column;
-    }
-    .sk_demo_essence_tint.variant_T1{
-    --Bg: var(--txt);
-    }
-    .sk_demo_essence_tint.variant_T2{
-    --Bg: var(--txt2);
-    }
-    .sk_demo_essence_tint.variant_T3{
-    --Bg: var(--txt3);
-    }
-    .sk_demo_key_val_root {
-        display: flex;
-        align-items: center;
-        column-gap: 4px;
-        height: 24px;
-    }
-    .sk_demo_val {
-        color: var(--txt);
-        font-weight: 500;
-    }
-        
-  `;
-
-  const demoStyle = document.createElement("style");
-  demoStyle.innerHTML = style;
-  demoStyle.id = "sk_demo_style";
-
-  document.body.appendChild(demoStyle);
-
-  const demoRoot = document.createElement("div");
-  demoRoot.className = "sk_demo_root";
-  demoRoot.id = "sk_demo_root";
-
-  function createKeyVal(key, val) {
-    const root = document.createElement("div");
-    const k = document.createElement("span");
-    const v = document.createElement("span");
-    root.className = "sk_demo_key_val_root";
-    k.className = "sk_demo_key";
-    v.className = "sk_demo_val";
-    k.innerText = key;
-    v.innerText = val;
-    root.appendChild(k);
-    root.appendChild(v);
-
-    return root;
-  }
-
-  configOrderSport.forEach((c, i) => {
-    let _vd = verbalData(c.name);
-    const essenceRoot = document.createElement("div");
-    essenceRoot.className = "sk_demo_essence_root";
-
-    const essenceRootTitle = document.createElement("h3");
-    essenceRootTitle.className = "sk_demo_essence_title";
-    essenceRootTitle.innerText = c.name;
-    essenceRoot.style.setProperty("--bgG", `var(--${_vd.nameG})`);
-    essenceRoot.style.setProperty("--bg1", `var(--${_vd.nameBg})`);
-    essenceRoot.style.setProperty("--bg2", `var(--${_vd.nameBgHov})`);
-    essenceRoot.style.setProperty("--bg3", `var(--${_vd.nameBg2})`);
-    essenceRoot.style.setProperty("--bg4", `var(--${_vd.nameBg2Hov})`);
-    essenceRoot.style.setProperty("--bg5", `var(--${_vd.nameBg3})`);
-    essenceRoot.style.setProperty("--bg6", `var(--${_vd.nameBg3Hov})`);
-    essenceRoot.style.setProperty("--txt", `var(--${_vd.nameTxt})`);
-    essenceRoot.style.setProperty("--txt2", `var(--${_vd.nameTxt2})`);
-    essenceRoot.style.setProperty("--txt3", `var(--${_vd.nameTxt3})`);
-    essenceRoot.style.setProperty("--radius", `var(--${_vd.nameRadius})`);
-    essenceRoot.style.setProperty("--shadow", `var(--${_vd.name}Shadow)`);
-    essenceRoot.style.setProperty("--ab", `var(--${_vd.nameAccent})`);
-    essenceRoot.style.setProperty("--at", `var(--${_vd.nameAccentTxt})`);
-
-    essenceRoot.appendChild(essenceRootTitle);
-
-    const tintsArr = [
-      "nameBg",
-      "nameBgHov",
-      "nameBg2",
-      "nameBg2Hov",
-      "nameBg3",
-      "nameBg3Hov",
-    ];
-
-    let wrapper = document.createElement("div");
-    wrapper.className = "sk_demo_value_wrapper";
-    for (i = 0; i < tintsArr.length; i++) {
-      const essenceTint = document.createElement("div");
-      essenceTint.className = `sk_demo_essence_tint variant_${i}`;
-      const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
-
-      const b = document.createElement("div");
-      const v = document.createElement("span");
-      b.innerText = _vd[tintsArr[i]];
-      v.innerText = hexVal;
-      essenceTint.appendChild(b);
-      essenceTint.appendChild(v);
-      b.className = "sk_demo_blob";
-      v.className = "sk_demo_val";
-
-      wrapper.appendChild(essenceTint);
-    }
-    const essenceText = document.createElement("div");
-    essenceText.className = `sk_demo_essence_text_tints_wrapper`;
-    const essenceTintText1 = document.createElement("div");
-    const essenceTintText2 = document.createElement("div");
-    const essenceTintText3 = document.createElement("div");
-
-    const Txt1HexVal = window.SkinnerInstance.skin[_vd["nameTxt"]];
-
-    const tb1 = document.createElement("div");
-    const tv1 = document.createElement("span");
-    tb1.innerText = _vd["nameTxt"];
-    tv1.innerText = Txt1HexVal;
-    tb1.className = "sk_demo_blob";
-    tv1.className = "sk_demo_val";
-    essenceTintText1.appendChild(tb1);
-    essenceTintText1.appendChild(tv1);
-
-    const Txt2HexVal = window.SkinnerInstance.skin[_vd["nameTxt2"]];
-
-    const tb2 = document.createElement("div");
-    const tv2 = document.createElement("span");
-    tb2.innerText = _vd["nameTxt2"];
-    tv2.innerText = Txt2HexVal;
-    tb2.className = "sk_demo_blob";
-    tv2.className = "sk_demo_val";
-    essenceTintText2.appendChild(tb2);
-    essenceTintText2.appendChild(tv2);
-
-    const Txt3HexVal = window.SkinnerInstance.skin[_vd["nameTxt3"]];
-    const tb3 = document.createElement("div");
-    const tv3 = document.createElement("span");
-    tb3.innerText = _vd["nameTxt3"];
-    tv3.innerText = Txt3HexVal;
-    tb3.className = "sk_demo_blob";
-    tv3.className = "sk_demo_val";
-    essenceTintText3.appendChild(tb3);
-    essenceTintText3.appendChild(tv3);
-
-    essenceTintText1.className = `sk_demo_essence_tint variant_T1`;
-    essenceTintText2.className = `sk_demo_essence_tint variant_T2`;
-    essenceTintText3.className = `sk_demo_essence_tint variant_T3`;
-    essenceText.appendChild(essenceTintText1);
-    essenceText.appendChild(essenceTintText2);
-    essenceText.appendChild(essenceTintText3);
-
-    const essenceAccent = document.createElement("div");
-    essenceAccent.className = `sk_demo_essence_accent sk_demo_essence_tint `;
-
-    const ab2 = document.createElement("div");
-    const av2 = document.createElement("span");
-    ab2.innerText = _vd["nameTxt2"];
-    av2.innerText = Txt2HexVal;
-    ab2.className = "sk_demo_blob";
-    av2.className = "sk_demo_val";
-    essenceAccent.appendChild(ab2);
-    essenceAccent.appendChild(av2);
-
-    wrapper.appendChild(essenceText);
-    wrapper.appendChild(essenceAccent);
-    essenceRoot.appendChild(wrapper);
-
-    demoRoot.appendChild(essenceRoot);
-  });
-  document.body.appendChild(demoRoot);
-}
-
-function destroyPreview() {
-  const demoStyle = document.getElementById("sk_demo_style");
-  const demoRoot = document.getElementById("sk_demo_root");
-
-  if (demoStyle) demoStyle.remove();
-  if (demoRoot) demoRoot.remove();
-
-  isPreviewInitialized = false;
-}
-
-// Class to handle mouse move intersection with DOM elements and apply styles
-class MouseIntersectStyler {
-  constructor(selector, styleCallback, resetCallback, clickCallback) {
-    this.styleCallback = styleCallback;
-    this.resetCallback = resetCallback;
-    this.clickCallback = clickCallback;
-    this.currentElement = null;
-    this.isStopped = false;
-    this.isRunning = false; // Track if the styler is active
-    this.mouseLeaveHandler = null;
-    this.rules = [];
-    this.UIRoot = null;
-    this.init(selector);
-    this.pickers = [];
-    this.state = {};
-    this.activeSelectorId = null;
-    this.skin = {};
-  }
-
-  toggleStyler() {
-    if (this.isRunning) {
-      this.stop();
-    } else {
-      this.start();
-    }
-  }
-
-  start() {
-    if (!this.isRunning) {
-      this.isRunning = true;
-      this.boundMouseMove = (event) => this.onMouseMove(event, "*");
-      this.boundClick = (event) => this.oonClick(event);
-      document.addEventListener("mousemove", this.boundMouseMove);
-      document.addEventListener("click", this.boundClick);
-      console.log("MouseIntersectStyler started");
-    }
-  }
-
-  stop() {
-    if (this.isRunning) {
-      this.isRunning = false;
-      document.removeEventListener("mousemove", this.boundMouseMove);
-      document.removeEventListener("click", this.boundClick);
-      console.log("MouseIntersectStyler stopped");
-    }
-  }
-
-  modifyKey(name, value) {
-    const selectedRuleState = this.skin[this.activeSelectorId];
-
-    if (selectedRuleState) {
-      // Update the rule and state
-      selectedRuleState[name] = value;
-      console.log(selectedRuleState[name]);
-
-      let css = this.createCss();
-      this.setOrUpdateIframeCustomCss(css);
-    }
-  }
-
-  createCss() {
-    let css = "";
-    console.log(this.skin);
-
-    for (const key in this.skin) {
-      console.log(key);
-
-      css += `${key} {
-        background-color: ${this.skin[key].bg} !important;
-        padding: ${this.skin[key].padding} !important;
-        border-radius: ${this.skin[key].borderRadius} !important;
-        width: ${this.skin[key].width} !important;
-        height: ${this.skin[key].height} !important;
-        display: flex !important;
-        flex-direction: ${this.skin[key].flexDirection} !important;
-      }`;
-    }
-
-    return css;
-  }
-
-  createKey(name, el) {
-    this.skin[name] = {};
-
-    let cs = getComputedStyle(el);
-    let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
-    let padding = cs.padding;
-    let width = cs.width;
-    let height = cs.height;
-    let borderRadius = cs.borderRadius;
-    let flexDirection = cs.flexDirection;
-    this.skin[name]["bg"] = backgroundColor;
-    this.skin[name]["padding"] = padding;
-    this.skin[name]["width"] = width;
-    this.skin[name]["height"] = height;
-    this.skin[name]["borderRadius"] = borderRadius;
-    this.skin[name]["flexDirection"] = flexDirection;
-  }
-
-  createControl() {
-    let c = document.createElement("div");
-    c.className = "nik_skinner_checkbox_wrapper";
-
-    return c;
-  }
-
-  createUI() {
-    let self = this;
-    if (this.UIRoot) return; // Prevent duplicate UI creation
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .sk_ui_custom_change_root {
-        position: fixed;
-        padding: 20px;
-        background: var(--skinnerBg2);
-        color: var(--skinnerTxt);
-        border: 1px solid var(--skinnerBg3);
-        z-index: var(--sk_zind2);
-      }
-
-      .sk_ui_custom_change_root.state-reveal {
-        animation: appear 0.3s;
-      }
-        @keyframes appear {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-    `;
-    const root = document.createElement("div");
-    root.className = "sk_ui_custom_change_root";
-    root.style.left = "50%";
-    root.style.top = "50%";
-    root.style.opacity = 0;
-    root.style.pointerEvents = "none";
-
-    // Callback for color picker
-    const handlePickerCallBack = (e) => {
-      this.handlePicker(e, (color) =>
-        this.modifyKey("bg", color.toHEXA().toString())
-      );
-    };
-
-    // Apply button
-    this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "skinner_btn skinner_btn-accent";
-    this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
-    this.hideUITrigger.innerText = "apply";
-
-    // Control wrappers for various properties
-    let controlWrapperBg = this.createControl();
-    let controlWrapperPadding = this.createControl();
-    let controlWrapperFlex = this.createControl();
-    let controlWrapperRadius = this.createControl();
-    let controlWrapperWidthHeight = this.createControl();
-
-    // Padding input
-    this.paddingInput = document.createElement("input");
-    this.paddingInput.className = "nik_skinner_radius_amount";
-    this.paddingInput.type = "number";
-    this.paddingInput.addEventListener("change", (e) => {
-      self.modifyKey("padding", e.target.value + "px");
-    });
-
-    // Background picker
-    this.BgPicker = this.createColorBox(
-      "nik_skinner_control_group_picker",
-      handlePickerCallBack
-    );
-
-    // Flex-direction radio buttons
-    const flexDirectionWrapper = document.createElement("div");
-    flexDirectionWrapper.className = "nik_skinner_flex_direction_wrapper";
-
-    const flexRowRadio = document.createElement("input");
-    flexRowRadio.type = "radio";
-    flexRowRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
-    flexRowRadio.id = "flexRowRadio";
-    flexRowRadio.value = "row";
-    flexRowRadio.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        self.modifyKey("flexDirection", "row");
-      }
-    });
-    const flexRowLabel = document.createElement("label");
-    flexRowLabel.setAttribute("for", "flexRowRadio");
-    flexRowLabel.innerText = "Flex Row";
-
-    const flexColumnRadio = document.createElement("input");
-    flexColumnRadio.type = "radio";
-    flexColumnRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
-    flexColumnRadio.id = "flexColumnRadio";
-    flexColumnRadio.value = "column";
-    flexColumnRadio.addEventListener("change", (e) => {
-      console.log(e);
-
-      if (e.target.checked) {
-        self.modifyKey("flexDirection", "column");
-      }
-    });
-    const flexColumnLabel = document.createElement("label");
-    flexColumnLabel.setAttribute("for", "flexColumnRadio");
-    flexColumnLabel.innerText = "Flex Column";
-
-    // Append radios and labels to the wrapper
-    flexDirectionWrapper.appendChild(flexRowRadio);
-    flexDirectionWrapper.appendChild(flexRowLabel);
-    flexDirectionWrapper.appendChild(flexColumnRadio);
-    flexDirectionWrapper.appendChild(flexColumnLabel);
-
-    // Append to the control wrapper for flex direction
-    controlWrapperFlex.appendChild(flexDirectionWrapper);
-
-    // Border-radius input
-    const borderRadiusInput = document.createElement("input");
-    borderRadiusInput.type = "number";
-    borderRadiusInput.className = "nik_skinner_border_radius";
-    borderRadiusInput.placeholder = "Border Radius (px)";
-    borderRadiusInput.addEventListener("change", (e) => {
-      self.modifyKey("borderRadius", e.target.value + "px");
-    });
-    controlWrapperRadius.appendChild(borderRadiusInput);
-
-    // Width and height inputs
-    const widthInput = document.createElement("input");
-    widthInput.type = "number";
-    widthInput.className = "nik_skinner_width";
-    widthInput.placeholder = "Width (px)";
-    widthInput.addEventListener("change", (e) => {
-      self.modifyKey("width", e.target.value + "px");
-    });
-
-    const heightInput = document.createElement("input");
-    heightInput.type = "number";
-    heightInput.className = "nik_skinner_height";
-    heightInput.placeholder = "Height (px)";
-    heightInput.addEventListener("change", (e) => {
-      self.modifyKey("height", e.target.value + "px");
-    });
-
-    controlWrapperWidthHeight.appendChild(widthInput);
-    controlWrapperWidthHeight.appendChild(heightInput);
-
-    // Append controls to root
-    root.appendChild(controlWrapperBg);
-    root.appendChild(controlWrapperPadding);
-    root.appendChild(controlWrapperFlex);
-    root.appendChild(controlWrapperRadius);
-    root.appendChild(controlWrapperWidthHeight);
-    controlWrapperBg.appendChild(this.BgPicker);
-    controlWrapperPadding.appendChild(this.paddingInput);
-
-    root.appendChild(this.hideUITrigger);
-    document.body.appendChild(style);
-    document.body.appendChild(root);
-
-    this.UIRoot = root;
-  }
-
-  createColorBox(className, callBack) {
-    let div = document.createElement("div");
-    div.className = className;
-
-    // div.style.background = color;
-    div.addEventListener("click", callBack);
-
-    return div;
-  }
-
-  showUI(x, y, currentElement) {
-    if (!this.UIRoot) return;
-
-    // Get the window dimensions
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    // Get the UIRoot dimensions
-    const uiWidth = this.UIRoot.offsetWidth || 300; // Default to a sensible width if not rendered yet
-    const uiHeight = this.UIRoot.offsetHeight || 150; // Default to a sensible height if not rendered yet
-
-    // Adjust x and y to ensure the UI fits within the window
-    if (x + uiWidth > windowWidth) {
-      x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
-    }
-    if (y + uiHeight > windowHeight) {
-      y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
-    }
-
-    // Prevent negative positions
-    x = Math.max(x, 10); // Minimum padding of 10px
-    y = Math.max(y, 10);
-
-    // Set the adjusted position
-    this.UIRoot.style.left = `${x}px`;
-    this.UIRoot.style.top = `${y}px`;
-    this.UIRoot.style.opacity = "1";
-    this.UIRoot.style.pointerEvents = "";
-
-    let selector = this.generateCssPath(currentElement);
-    this.activeSelectorId = selector;
-
-    // Add reveal animation
-    this.UIRoot.classList.add("state-reveal");
-    let timeoutId = setTimeout(() => {
-      this.UIRoot.classList.remove("state-reveal");
-      timeoutId = null;
-    }, 3000);
-
-    this.createKey(selector, currentElement);
-  }
-
-  hideUI() {
-    if (this.UIRoot) {
-      this.isStopped = false;
-      this.UIRoot.style.opacity = "0";
-      this.UIRoot.style.pointerEvents = "none";
-    }
-  }
-
-  updateControls() {
-    console.log(this.BgPicker);
-  }
-
-  setOrUpdateIframeCustomCss(css) {
-    const styleId = "css-as-custom-stylesheet";
-    let styleElement = document.getElementById(styleId);
-
-    // If the style element doesn't exist, create it
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.setAttribute("id", styleId);
-      document.head.appendChild(styleElement);
-    }
-
-    // Inject all the CSS rules into the <style> element
-    styleElement.innerHTML = css;
-  }
-
-  init(selector) {
-    this.createUI();
-    this.boundMouseMove = (event) => this.onMouseMove(event, selector);
-    this.boundClick = (event) => this.oonClick(event);
-    document.addEventListener("mousemove", this.boundMouseMove);
-    document.addEventListener("click", this.boundClick);
-  }
-
-  onMouseMove(event, selector) {
-    if (this.isStopped || !this.isRunning) return;
-    const hoveredElement = document.elementFromPoint(
-      event.clientX,
-      event.clientY
-    );
-    if (
-      hoveredElement &&
-      hoveredElement.matches(selector) &&
-      this.isVisible(hoveredElement)
-    ) {
-      if (hoveredElement !== this.currentElement) {
-        if (this.currentElement) this.resetStyles();
-        this.applyStyles(hoveredElement);
-      }
-    } else {
-      this.resetStyles();
-    }
-  }
-
-  oonClick(event) {
-    if (this.UIRoot && this.UIRoot.contains(event.target)) {
-      return; // Allow interaction with the UI
-    }
-
-    // If click is inside the Skinner UI root:
-    if (this.toolboxWrapper && this.toolboxWrapper.contains(event.target)) {
-      // Check if the clicked element is our toggle button near the theme switcher
-      if (event.target.matches("#toggleEditorBtn")) {
-        // Deactivate or toggle the styler
-        if (typeof styler !== "undefined" && styler) {
-          styler.toggleStyler();
-        }
-      }
-      return; // Don’t show UI or do anything else
-    }
-
-    if (this.currentElement) {
-      this.isStopped = true;
-      this.clickCallback(this.currentElement);
-      const bounds = this.currentElement.getBoundingClientRect();
-      this.showUI(bounds.left, bounds.top, this.currentElement);
-      event.stopPropagation();
-      event.preventDefault();
-    }
-  }
-
-  applyStyles(element) {
-    this.styleCallback(element);
-    this.currentElement = element;
-    this.mouseLeaveHandler = () => this.resetStyles();
-    element.addEventListener("mouseleave", this.mouseLeaveHandler);
-  }
-
-  resetStyles() {
-    if (this.currentElement) {
-      this.resetCallback(this.currentElement);
-      if (this.mouseLeaveHandler) {
-        this.currentElement.removeEventListener(
-          "mouseleave",
-          this.mouseLeaveHandler
-        );
-        this.mouseLeaveHandler = null;
-      }
-      this.currentElement = null;
-    }
-  }
-
-  isVisible(element) {
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
-    );
-  }
-
-  generateCssPath(element) {
-    console.log({ element });
-
-    const path = [];
-    while (element && element.tagName !== "BODY") {
-      const selector = element.className
-        ? `.${element.className.trim().split(/\s+/).join(".")}`
-        : element.tagName.toLowerCase();
-      path.unshift(selector);
-      element = element.parentElement;
-    }
-    return path.join(" > ");
-  }
-
-  createPickerAndTrigger(parent, color) {
-    console.log({ color });
-
-    let _triggerEl = document.createElement("div");
-    _triggerEl.className = "skinner_picker_trigger_hide";
-    parent.appendChild(_triggerEl);
-
-    let _picker = Pickr.create({
-      el: _triggerEl,
-      theme: "classic",
-      comparison: false,
-      default: color,
-      components: {
-        preview: false,
-        hue: true,
-        interaction: {
-          //hex: false,
-          input: true,
-          save: false,
-        },
-      },
-    });
-
-    return _picker;
-  }
-
-  removePicker(instance) {
-    this.pickers = this.pickers.filter((p) => p !== instance);
-  }
-
-  handlePicker(event, onChangeCallback) {
-    const selectedRuleState = this.skin[this.activeSelectorId];
-    // const selectedRule = this.rules.find(
-    //   (r) => r.cssSel === this.activeSelectorId
-    // );
-
-    let picker = this.createPickerAndTrigger(
-      event.target.parentElement,
-      selectedRuleState.bg // Default to "red" for the picker
-    );
-
-    picker.show();
-
-    picker.on("change", (color, source, instance) => {
-      onChangeCallback(color);
-    });
-
-    picker.on("hide", (instance) => {
-      instance.destroyAndRemove();
-      this.removePicker(instance); // Remove from pickers array
-    });
-
-    this.pickers.push(picker); // Store picker instance
-  }
-}
-
-// Usage
-const styler = new MouseIntersectStyler(
-  "*",
-  (element) => (element.style.outline = "1px solid red"),
-  (element) => (element.style.outline = ""),
-  (element) => {
-    console.log("Element selected:", element);
-  }
-);
-
-export { init, destroy, createPreview, destroyPreview };
+window.colorsSport = {
+  body: {
+    Background: {
+      color: "#111111",
+    },
+    borderRadius: 8,
+  },
+  accent: {
+    Background: {
+      color: "#ffb700",
+    },
+  },
+  dominant: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  button: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  buttonSecondary: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  navbar: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  slider: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  header: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  subHeader: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  event: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  eventLive: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  odd: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  oddActive: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  showMore: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  marketHeader: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  collapse: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  tab: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  tabActive: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  tabSecondaryActive: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  menu_1: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  menu_2: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  menu_3: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  input: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  inputSecondary: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  filter: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  tooltip: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  modal: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlip: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipStake: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipInput: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipButton: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipHeader: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipTab: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  betSlipTabActive: {
+    Background: {
+      color: "#111111",
+    },
+  },
+  tmLogo: {
+    Background: {
+      color: "#111111",
+    },
+  },
+};
+
+export { Skinner };

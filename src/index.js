@@ -1,5 +1,7 @@
 import { Skinner } from "./main.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
+// const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
+
 const target = document;
 
 const configOrderCasino = [
@@ -633,10 +635,10 @@ function createPreview() {
   isPreviewInitialized = true;
   let style = `
   .sk_demo_essence_root{
-        color: var(--skinnerTxt);
+        color: var(--sk_dominantTxt);
     border-radius: var(--radius);
-    border: 2px solid var(--skinnerBg2);
-    background: var(--skinnerBg);
+    border: 2px solid var(--sk_dominantBgHover);
+    background: var(--sk_dominantBg2);
     padding: 50px 50px;
     width: calc((100% - 63px) / 5);
     position: relative;
@@ -715,7 +717,7 @@ function createPreview() {
         margin: 0;
     font-size: 19px;
     text-align: center;
-    color: var(--skinnerTxt);
+    color: var(--sk_dominantTxt);
     margin-bottom: 20px;
     position: relative;
     z-index: 4;
@@ -754,9 +756,9 @@ function createPreview() {
     width: 80px;
     height: var(--sk_blob_size);
     border-radius: var(--sk_blob_radius);
-    background: var(--skinnerBg2);
-    color: var(--skinnerTxt);
-    border: 2px solid var(--skinnerBg3);
+    background: var(--sk_dominantBgHover);
+    color: var(--sk_dominantTxt);
+    border: 2px solid var(--sk_dominant2);
     display: flex;
     align-items: center;
     justify-content: center;

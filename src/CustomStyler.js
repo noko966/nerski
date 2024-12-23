@@ -153,7 +153,7 @@ class MouseIntersectStyler {
     for (const key in this.skin) {
       css += `${key} {
   background-color: ${this.skin[key].backgroundColor};
-  color: ${this.skin[key].color}b;
+  color: ${this.skin[key].color};
   padding-top: ${this.skin[key]["padding-top"]}px;
   padding-right: ${this.skin[key]["padding-right"]}px;
   padding-bottom: ${this.skin[key]["padding-bottom"]}px;

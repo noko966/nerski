@@ -54,6 +54,54 @@ class Skinner {
     };
 
     if (this.variant === "casino") {
+      this.defaults = {
+        dark: {
+          bg2: 6,
+          bg3: 14,
+          bgHov: 4,
+        },
+        light: {
+          bg2: 11,
+          bg3: 19,
+          bgHov: 5,
+        },
+        alpha: {
+          bg: 0.7,
+          bg2: 0.5,
+          bg3: 0.3,
+        },
+        txt: {
+          txt: 0.9,
+          txt2: 0.6,
+          txt3: 0.4,
+        },
+      };
+    } else {
+      this.defaults = {
+        dark: {
+          bg2: 6,
+          bg3: 12,
+          bgHov: 3,
+        },
+        light: {
+          bg2: 10,
+          bg3: 15,
+          bgHov: 3,
+        },
+        alpha: {
+          bg: 0.7,
+          bg2: 0.5,
+          bg3: 0.3,
+        },
+        txt: {
+          txt: 0.9,
+          txt2: 0.6,
+          txt3: 0.4,
+        },
+      };
+    }
+
+    if (this.variant === "casino") {
       this.configOrder = [
         {
           name: "body",
@@ -171,7 +219,6 @@ class Skinner {
         {
           name: "buttonSecondary",
           inherits: ["body"],
-          variation: 5,
         },
         {
           name: "navbar",
@@ -184,7 +231,6 @@ class Skinner {
         {
           name: "header",
           inherits: ["dominant", "body"],
-          variation: 5,
         },
         {
           name: "subHeader",
@@ -197,7 +243,6 @@ class Skinner {
         {
           name: "eventLive",
           inherits: ["event", "body"],
-          variation: 5,
         },
         {
           name: "odd",
@@ -311,29 +356,6 @@ class Skinner {
 
     this.localStorage = {};
 
-    this.defaults = {
-      dark: {
-        bg2: 6,
-        bg3: 12,
-        bgHov: 3,
-      },
-      light: {
-        bg2: 10,
-        bg3: 15,
-        bgHov: 3,
-      },
-      alpha: {
-        bg: 0.7,
-        bg2: 0.5,
-        bg3: 0.3,
-      },
-      txt: {
-        txt: 0.9,
-        txt2: 0.6,
-        txt3: 0.4,
-      },
-    };
-
     this.mergedConfig = this.mergeConfig(this._config);
     this.generateInitialSkin();
 
@@ -349,8 +371,7 @@ class Skinner {
     this.message = this.message.bind(this);
 
     this.generateBackgrounds = this.generateBackgrounds.bind(this);
-    this.generateBackgroundsWithChroma =
-      this.generateBackgroundsWithChroma.bind(this);
+
     this.generateGradientss = this.generateGradientss.bind(this);
     this.generateTextss = this.generateTextss.bind(this);
     this.generateAccentss = this.generateAccentss.bind(this);
@@ -465,155 +486,10 @@ class Skinner {
     return _mergedConfig;
   }
 
-  generateBackgroundsWithChroma(essence) {
-    let _essence = essence;
-    let _vb = this.verbalData(_essence);
-    let isDark = this.skin[_vb.isDark];
-    const keys = [
-      _vb.nameBgHov,
-      _vb.nameBg2,
-      _vb.nameBg2Hov,
-      _vb.nameBg3,
-      _vb.nameBg3Hov,
-    ];
-
-    let colorStops = 6;
-
-    let firstColor = this.skin[_vb.nameBg];
-    let lastColor = getLastColorSingle(firstColor, isDark);
-
-    function getSingleColorScale(fc, lc, st) {
-      let _fc = fc;
-      let _lc = lc;
-      let _numStops = st;
-      let colorScale = chroma.scale([_fc, _lc]).mode("lch").colors(_numStops);
-
-      return colorScale;
-    }
-
-    function getLastColorSingle(fc, idDark) {
-      let firstColor = fc;
-      let _isDark = idDark;
-      let h = chroma(firstColor).get("lch.h");
-      let c = chroma(firstColor).get("lch.c");
-      let l = chroma(firstColor).get("lch.l");
-
-      // Adjust lightness and chroma based on the theme
-      let adjustedL = _isDark
-        ? Math.max(10, l - 20 - c / 5) // Dark palette
-        : Math.min(90, l + 20 + c / 5); // Light palette
-
-      let adjustedC = _isDark
-        ? Math.max(c * 0.7, 10) // Reduce chroma for dark palette
-        : Math.max(c * 0.8, 10); // Slightly reduce chroma for light palette
-
-      console.log(h, _essence, adjustedL, adjustedC);
-
-      // Generate the new color
-      let color = chroma.lch(adjustedL, adjustedC, h).hex();
-
-      return color;
-    }
-
-    // let palette = getSingleColorScale(firstColor, lastColor, colorStops);
-
-    function generateSteps(fc, isDark, steps = colorStops) {
-      let h = chroma(fc).get("lch.h"); // Hue
-      let c = chroma(fc).get("lch.c"); // Chroma (saturation)
-      let l = chroma(fc).get("lch.l"); // Lightness (brightness)
-
-      // Adjust step values for lightness and chroma
-      const lightnessAdjust = isDark ? -20 : 20;
-      const chromaMultiplier = isDark ? 1.2 : 0.8;
-      const hueTargets = isDark
-        ? ["red", "green", "blue"]
-        : ["cyan", "magenta", "yellow"];
-
-      // Adjust hue toward nearest target
-      h = shiftHueToNearest(h, hueTargets);
-
-      // Generate 5-step palette
-      const stepPalette = Array.from({ length: steps }, (_, i) => {
-        // Linearly interpolate lightness
-        const lStep = l + (i * lightnessAdjust) / (steps - 1);
-        // Adjust chroma for each step
-        const cStep = c * Math.pow(chromaMultiplier, i);
-
-        // Clamp lightness and chroma to valid ranges
-        const adjustedL = Math.min(90, Math.max(10, lStep));
-        const adjustedC = Math.min(100, Math.max(0, cStep));
-
-        return chroma.lch(adjustedL, adjustedC, h).hex();
-      });
-
-      return stepPalette;
-    }
-
-    function shiftHueToNearest(hue, targets) {
-      const targetHues = {
-        red: 0,
-        green: 120,
-        blue: 240,
-        cyan: 180,
-        magenta: 300,
-        yellow: 60,
-      };
-
-      // Find the nearest target hue
-      const nearestTarget = targets.reduce((nearest, current) => {
-        const currentDistance = Math.abs(hue - targetHues[current]) % 360;
-        const nearestDistance = Math.abs(hue - targetHues[nearest]) % 360;
-        return currentDistance < nearestDistance ? current : nearest;
-      });
-
-      return targetHues[nearestTarget];
-    }
-
-    const palette = generateSteps(firstColor, isDark);
-
-    this.skin[_vb.nameBgHov] = palette[1];
-    this.skin[_vb.nameBg2] = palette[2];
-    this.skin[_vb.nameBg2Hov] = palette[3];
-    this.skin[_vb.nameBg3] = palette[4];
-    this.skin[_vb.nameBg3Hov] = palette[5];
-
-    this.skin[_vb.nameRGBA] = palette[1];
-    this.skin[_vb.nameRGBA2] = palette[2];
-    this.skin[_vb.nameRGBA3] = palette[3];
-
-    // keys.forEach((key, index) => {
-    //   this.skin[key] = res[index];
-    // });
-
-    // this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
-    //   .setAlpha(this.defaults.alpha.bg)
-    //   .toRgbString();
-    // this.skin[_vb.nameRGBA2] = tinycolor(this.skin[_vb.nameBg])
-    //   .setAlpha(this.defaults.alpha.bg2)
-    //   .toRgbString();
-    // this.skin[_vb.nameRGBA3] = tinycolor(this.skin[_vb.nameBg])
-    //   .setAlpha(this.defaults.alpha.bg3)
-    //   .toRgbString();
-
-    if (this.variant === "casino") {
-      // let mixTint = _isDark ? "#fff" : "#000";
-      let mixTint = "#000";
-      this.skin[`${_vb.name}Shadow`] = tinycolor
-        .mix(mixTint, this.skin[_vb.nameBg], 80)
-        .setAlpha(80)
-        .toRgbString();
-      this.skin[`${_vb.name}ShadowFade`] = tinycolor
-        .mix(mixTint, this.skin[_vb.nameBg], 80)
-        .setAlpha(0)
-        .toRgbString();
-    }
-  }
-
-  generateBackgrounds(essence) {
+  generateBackgrounds2(essence) {
     let _essence = essence;
     let _vb = this.verbalData(_essence);
     let _isDark = this.skin[_vb.isDark];
-
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
           .darken(this.defaults.dark.bg2)
@@ -629,31 +505,6 @@ class Skinner {
       : tinycolor(this.skin[_vb.nameBg])
           .lighten(this.defaults.light.bg3)
           .toString();
-
-    if (this.variant === "casino") {
-      this.defaults = {
-        dark: {
-          bg2: 6,
-          bg3: 14,
-          bgHov: 4,
-        },
-        light: {
-          bg2: 11,
-          bg3: 19,
-          bgHov: 5,
-        },
-        alpha: {
-          bg: 0.7,
-          bg2: 0.5,
-          bg3: 0.3,
-        },
-        txt: {
-          txt: 0.9,
-          txt2: 0.6,
-          txt3: 0.4,
-        },
-      };
-    }
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
@@ -701,6 +552,36 @@ class Skinner {
         .setAlpha(0)
         .toRgbString();
     }
+  }
+
+  generateBackgrounds(essence) {
+    let _vb = this.verbalData(essence);
+    let isDark = this.skin[_vb.isDark];
+    const bgKeyNames = [
+      _vb.nameBgHov,
+      _vb.nameBg2,
+      _vb.nameBg2Hov,
+      _vb.nameBg3,
+      _vb.nameBg3Hov,
+    ];
+
+    const bgAKeyNames = [_vb.nameRGBA, _vb.nameRGBA2, _vb.nameRGBA3];
+
+    let colorStops = 6;
+
+    let firstColor = this.skin[_vb.nameBg];
+
+    bgKeyNames.forEach((bgName, i) => {
+      this.skin[bgName] = isDark
+        ? chroma(firstColor).darken(0.2 * i)
+        : chroma(firstColor).brighten(0.2 * i);
+    });
+
+    bgAKeyNames.forEach((bgName, i) => {
+      this.skin[bgName] = chroma(firstColor)
+        .alpha(i * 0.5)
+        .css();
+    });
   }
 
   generateGradientss(essence) {
@@ -787,8 +668,7 @@ class Skinner {
       if (isActive) {
         this.skin[_vd.nameBg] = _config[_essence].Background.color;
         this.skin[_vd.isDark] = _config[_essence].Background.isDark;
-        // this.generateBackgrounds(_essence);
-        this.generateBackgroundsWithChroma(_essence);
+        this.generateBackgrounds(_essence);
 
         this.skin[_vd.isGradient] = _config[_essence].Gradient.isActive;
         this.skin[_vd.nameBg_g] = _config[_essence].Gradient.color;
@@ -825,8 +705,7 @@ class Skinner {
           variation,
           fbLength
         );
-        // this.generateBackgrounds(_essence);
-        this.generateBackgroundsWithChroma(_essence);
+        this.generateBackgrounds(_essence);
 
         this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
         this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
@@ -1254,8 +1133,7 @@ class Skinner {
     let isActive = this.skin[_vd.isName];
 
     if (isActive) {
-      // this.generateBackgrounds(_essence);
-      this.generateBackgroundsWithChroma(_essence);
+      this.generateBackgrounds(_essence);
       this.generateGradientss(_essence);
       this.generateTextss(_essence);
       this.generateAccentss(_essence);
@@ -1279,8 +1157,10 @@ class Skinner {
         variation,
         fbLength
       );
-      // this.generateBackgrounds(_essence);
-      this.generateBackgroundsWithChroma(_essence);
+
+      console.log(_vd.nameBg, _fbEssence);
+
+      this.generateBackgrounds(_essence);
 
       this.skin[_vd.isDark] = this.skin[_vdf.isDark];
 
@@ -1498,30 +1378,6 @@ class Skinner {
     }
   }
 
-  createPickerAndTrigger(parent, color) {
-    let _triggerEl = document.createElement("div");
-    _triggerEl.className = "skinner_picker_trigger_hide";
-    parent.appendChild(_triggerEl);
-
-    let _picker = Pickr.create({
-      el: _triggerEl,
-      theme: "classic",
-      comparison: false,
-      default: color,
-      components: {
-        preview: false,
-        hue: true,
-        interaction: {
-          //hex: false,
-          input: true,
-          save: false,
-        },
-      },
-    });
-
-    return _picker;
-  }
-
   createHTML() {
     let _config = this.mergedConfig;
     for (let i = 0; i < this.configOrder.length; i++) {
@@ -1545,12 +1401,12 @@ class Skinner {
         },
         (e) => {
           this.handlePicker(e, _vd.nameBg, (color) =>
-            this.modifyKey(_vd.nameBg, color.toHEXA().toString())
+            this.modifyKey(_vd.nameBg, color)
           );
         },
         (e) => {
           this.handlePicker(e, _vd.nameBg_g, (color) =>
-            this.modifyKey(_vd.nameBg_g, color.toHEXA().toString())
+            this.modifyKey(_vd.nameBg_g, color)
           );
         },
         (e) => {
@@ -1561,7 +1417,7 @@ class Skinner {
         },
         (e) => {
           this.handlePicker(e, _vd.nameTxt, (color) =>
-            this.modifyKey(_vd.nameTxt, color.toHEXA().toString())
+            this.modifyKey(_vd.nameTxt, color)
           );
         },
         (e) => {
@@ -1569,7 +1425,7 @@ class Skinner {
         },
         (e) => {
           this.handlePicker(e, _vd.nameAccent, (color) =>
-            this.modifyKey(_vd.nameAccent, color.toHEXA().toString())
+            this.modifyhandlePickerKey(_vd.nameAccent, color)
           );
         },
         (e) => {
@@ -1577,7 +1433,7 @@ class Skinner {
         },
         (e) => {
           this.handlePicker(e, _vd.nameBorder, (color) =>
-            this.modifyKey(_vd.nameBorder, color.toHEXA().toString())
+            this.modifyKey(_vd.nameBorder, color)
           );
         },
         (e) => {
@@ -1588,40 +1444,22 @@ class Skinner {
     }
   }
 
-  handlePicker(event, skinKey, onChangeCallback) {
-    let picker = this.createPickerAndTrigger(
-      event.target.parentElement,
-      this.skin[skinKey]
-    );
-
-    picker.on("show", (instance) => {
-      this.isPickerOpen = true;
-    });
-
-    picker.on("change", (color, source, instance) => {
-      onChangeCallback(color);
-    });
-
-    picker.on("hide", (instance) => {
-      this.isPickerOpen = false;
-      instance.destroyAndRemove();
-      this.removePicker(instance); // Remove from pickers array
-    });
-
-    picker.show();
-
-    this.pickers.push(picker); // Store picker instance
-  }
-
-  // Method to remove a specific picker from the pickers array
-  removePicker(instance) {
-    this.pickers = this.pickers.filter((p) => p !== instance);
-  }
-
-  // Cleanup method to destroy all pickers
-  destroyPickers() {
-    this.pickers.forEach((picker) => picker.destroyAndRemove());
-    this.pickers = []; // Clear the array
+  handlePicker(event, key, onChangeCallback) {
+    if ("EyeDropper" in window) {
+      const ed = new EyeDropper();
+      ed.open()
+        .then((color) => {
+          if (color) {
+            // Trigger the callback with the selected color
+            onChangeCallback(color.sRGBHex);
+          }
+        })
+        .catch((error) => {
+          console.error("Error using EyeDropper:", error);
+        });
+    } else {
+      console.error("EyeDropper API is not supported in this browser.");
+    }
   }
 
   toggleUi() {
@@ -2395,32 +2233,6 @@ class Skinner {
     };
   }
 
-  createPicker(el, defaultColor, callback) {
-    let picker = Pickr.create({
-      el: el,
-      theme: "classic",
-      comparison: false,
-      default: defaultColor,
-      components: {
-        preview: false,
-        hue: true,
-        interaction: {
-          //hex: false,
-          input: true,
-          save: false,
-        },
-      },
-    });
-
-    picker.on("change", (color, source, instance) => {
-      callback(color);
-    });
-    picker.on("show", this.showOverlay);
-    picker.on("hide", this.hideOverlay);
-
-    return picker;
-  }
-
   message(text, show) {
     let t = this;
     let _text = text || "generic message";
@@ -2438,96 +2250,120 @@ class Skinner {
     this.generateUiPalette(colors);
   }
 
+  // generateUiPalette(colors) {}
+
   generateUiPalette(colors) {
+    const UISkin = {};
+    UISkin.order = ["dominant", "accent"];
+
     //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
     let step = 4;
+    const _vdDominant = this.verbalData("sk_dominant");
+    const _vdAccent = this.verbalData("sk_accent");
 
-    let bg = colors.bg;
-    let islight = colors.name === "light" ? true : false;
+    const dominantKeyNames = [
+      _vdDominant.nameBgHov,
+      _vdDominant.nameBg2,
+      _vdDominant.nameBg2Hov,
+      _vdDominant.nameBg3,
+      _vdDominant.nameBg3Hov,
+    ];
 
-    let bg2 = islight
-      ? tinycolor(bg).darken(step).toHexString()
-      : tinycolor(bg).lighten(step).toHexString();
-    let bg3 = islight
-      ? tinycolor(bg)
-          .darken(step * 2)
-          .toHexString()
-      : tinycolor(bg)
-          .lighten(step * 2)
-          .toHexString();
-    let bg4 = islight
-      ? tinycolor(bg)
-          .darken(step * 3)
-          .toHexString()
-      : tinycolor(bg)
-          .lighten(step * 3)
-          .toHexString();
-    let bg5 = islight
-      ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
-      : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
-    let bg6 = islight
-      ? tinycolor(bg)
-          .darken(step * 4)
-          .toHexString()
-      : tinycolor(bg)
-          .lighten(step * 4)
-          .toHexString();
+    let firstDominantBg = colors.bg;
+    let isDark = colors.name === "dark" ? true : true;
+    UISkin.dominant = {};
+    UISkin.dominant[_vdDominant.nameBg] = firstDominantBg;
+    dominantKeyNames.forEach((bgName, i) => {
+      UISkin.dominant[bgName] = isDark
+        ? chroma(firstDominantBg).darken(0.2 * (i + 1))
+        : chroma(firstDominantBg).brighten(0.2 * (i + 1));
+    });
 
-    let accent = tinycolor(colors.accent).lighten(step).toHexString();
-    let accent2 = tinycolor(accent).lighten(step).toHexString();
-    let accent3 = tinycolor(accent2).lighten(step).toHexString();
-    let accentL = tinycolor(accent)
-      .lighten(step * 2)
-      .toHexString();
-    let accentD = tinycolor(accent)
-      .darken(step * 2)
-      .toHexString();
+    const accentKeyNames = [
+      _vdAccent.nameBgHov,
+      _vdAccent.nameBg2,
+      _vdAccent.nameBg2Hov,
+      _vdAccent.nameBg3,
+      _vdAccent.nameBg3Hov,
+    ];
 
-    let txt = tinycolor(guessVisibleColor(bg)).setAlpha(0.8).toRgbString();
-    let txt2 = tinycolor(guessVisibleColor(bg)).setAlpha(0.7).toRgbString();
-    let accentTxt = tinycolor(guessVisibleColor(accent))
-      .setAlpha(0.8)
-      .toRgbString();
+    let firstAccentBg = colors.accent;
+    UISkin.accent = {};
+    UISkin.accent[_vdAccent.nameBg] = firstAccentBg;
+    accentKeyNames.forEach((bgName, i) => {
+      UISkin.accent[bgName] = isDark
+        ? chroma(firstAccentBg).darken(0.2 * (i + 1))
+        : chroma(firstAccentBg).brighten(0.2 * (i + 1));
+    });
 
-    let shadow = islight
-      ? tinycolor(bg).lighten(6).toHexString()
-      : tinycolor(bg).darken(6).toHexString();
+    const dominantTextKeyNames = [
+      _vdDominant.nameTxt,
+      _vdDominant.nameTxt2,
+      _vdDominant.nameTxt2,
+    ];
+    let firstDominantTxt = guessVisibleColor(firstDominantBg);
+    dominantTextKeyNames.forEach((TxtName, i) => {
+      UISkin.dominant[TxtName] = chroma(firstDominantTxt)
+        .alpha(1 - (i + 1) * 0.2)
+        .css();
+    });
 
-    document.documentElement.style.setProperty("--skinnerBg", bg);
-    document.documentElement.style.setProperty("--skinnerBg2", bg2);
-    document.documentElement.style.setProperty("--skinnerBg3", bg3);
-    document.documentElement.style.setProperty("--skinnerBg4", bg4);
-    document.documentElement.style.setProperty("--skinnerBg5", bg5);
-    document.documentElement.style.setProperty("--skinnerBg6", bg6);
-    document.documentElement.style.setProperty("--skinnerToolboxBg", bg4);
-    document.documentElement.style.setProperty("--skinnerToolboxBg2", bg5);
-    document.documentElement.style.setProperty("--skinnerToolboxBg3", bg6);
+    const accentTextKeyNames = [
+      _vdAccent.nameTxt,
+      _vdAccent.nameTxt2,
+      _vdAccent.nameTxt2,
+    ];
+    let firstAccentTxt = guessVisibleColor(firstAccentBg);
+    accentTextKeyNames.forEach((TxtName, i) => {
+      UISkin.accent[TxtName] = chroma(firstAccentTxt)
+        .alpha(1 - (i + 1) * 0.2)
+        .css();
+    });
 
-    document.documentElement.style.setProperty("--skinnerTxt", txt);
-    document.documentElement.style.setProperty("--skinnerTxt2", txt2);
+    // let shadow = islight
+    //   ? tinycolor(bg).lighten(6).toHexString()
+    //   : tinycolor(bg).darken(6).toHexString();
 
-    document.documentElement.style.setProperty("--skinnerToolboxTxt", txt);
-    document.documentElement.style.setProperty("--skinnerShadow", shadow);
+    UISkin.order.forEach((name, i) => {
+      let _vd = this.verbalData(`sk_${name}`);
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBg}`,
+        `${UISkin[name][_vd.nameBg]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBgHov}`,
+        `${UISkin[name][_vd.nameBgHov]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBg2}`,
+        `${UISkin[name][_vd.nameBg2]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBg2Hov}`,
+        `${UISkin[name][_vd.nameBg2Hov]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBg3}`,
+        `${UISkin[name][_vd.nameBg3]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameBg3Hov}`,
+        `${UISkin[name][_vd.nameBg3Hov]}`
+      );
 
-    document.documentElement.style.setProperty("--skinnerAccentLight", accentL);
-    document.documentElement.style.setProperty("--skinnerAccentDark", accentD);
-
-    document.documentElement.style.setProperty("--skinnerAccent", accent);
-    document.documentElement.style.setProperty("--skinnerAccent2", accent2);
-    document.documentElement.style.setProperty(
-      "--skinnerToolboxAccent",
-      accent
-    );
-    document.documentElement.style.setProperty(
-      "--skinnerToolboxAccentHover",
-      accent2
-    );
-
-    document.documentElement.style.setProperty("--skinnerAccentTxt", accentTxt);
+      document.documentElement.style.setProperty(
+        `--${_vd.nameTxt}`,
+        `${UISkin[name][_vd.nameTxt]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameTxt2}`,
+        `${UISkin[name][_vd.nameTxt2]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.nameTxt3}`,
+        `${UISkin[name][_vd.nameTxt3]}`
+      );
+    });
   }
 
   addCss() {
@@ -2568,7 +2404,7 @@ class Skinner {
   height: 40px;
   width: 100%;
   top: 0px;
-  stroke: var(--skinnerAccent);
+  stroke: var(--sk_accentBg);
   stroke-width: 1px;
   fill: none;
 }
@@ -3033,7 +2869,7 @@ body {
   height: var(--skinnerToolboxFooterHeight);
   background: var(--shadow);
   position: absolute;
-  border-top: 1px solid var(--skinnerBg2);
+  border-top: 1px solid var(--sk_dominantBgHover);
   bottom: 0;
   left: 0;
   right: 0;
@@ -3132,8 +2968,8 @@ body {
 }
 
 body {
-  background-color: var(--skinnerBg6);
-  color: var(--skinnerTxt);
+  background-color: var(--sk_dominantBg3);
+  color: var(--sk_dominantTxt);
   font-family: "Roboto", sans-serif;
 }
 
@@ -3152,12 +2988,12 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    background: var(--skinnerBg);
-    color: var(--skinnerTxt);
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt);
     border-radius: 8px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    border: 1px solid var(--skinnerBg2);
+    border: 1px solid var(--sk_dominantBgHover);
         box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
         display: none;
 }
@@ -3197,8 +3033,8 @@ body {
   display: flex;
   align-items: center;
   text-decoration: none;
-  background-color: var(--skinnerBg2);
-  color: var(--skinnerTxt);
+  background-color: var(--sk_dominantBgHover);
+  color: var(--sk_dominantTxt);
   transition: all 0.314s;
   text-transform: capitalize;
   font-size: 14px;
@@ -3221,8 +3057,8 @@ body {
 
 .nik_skinner_link:hover,
 .nik_skinner_link-active {
-  background-color: var(--skinnerAccent);
-  color: var(--skinnerAccentTxt);
+  background-color: var(--sk_accentBg);
+  color: var(--sk_accentTxt);
   position: relative;
   z-index: 10;
 }
@@ -3236,9 +3072,9 @@ body {
   z-index: var(--sk_zind);
   height: 320px;
   width: auto;
-  background-color: var(--skinnerBg);
-  color: var(--skinnerTxt);
-  border: 1px solid var(--skinnerBg2);
+  background-color: var(--sk_dominantBg);
+  color: var(--sk_dominantTxt);
+  border: 1px solid var(--sk_dominantBgHover);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
@@ -3266,8 +3102,8 @@ body {
   display: block;
   width: var(--skinnerToolboxHeight);
   height: var(--skinnerToolboxHeight);
-  color: var(--skinnerTxt);
-  background: var(--skinnerBg);
+  color: var(--sk_dominantTxt);
+  background: var(--sk_dominantBg);
   position: relative;
   z-index: 10;
   border-radius: 50%;
@@ -3276,7 +3112,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--skinnerAccent);
+  border: 1px solid var(--sk_accentBg);
 
 }
 
@@ -3287,8 +3123,8 @@ body {
   outline: none;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: var(--skinnerToolboxBg);
-  color: var(--skinnerToolboxTxt);
+  background-color: var(--sk_dominantBg);
+  color: var(--sk_dominantTxt);
   width: 100px;
   height: 30px;
   position: absolute;
@@ -3300,7 +3136,7 @@ body {
 }
 
 .color_controls_toggle:hover {
-  color: var(--skinnerToolboxAccent);
+  color: var(--sk_accentBg);
 }
 
 .skinner_toolbox_wrapper {
@@ -3320,14 +3156,14 @@ body {
 }
 
 .skn_controls_row {
-  border: 1px solid var(--skinnerBg3);
+  border: 1px solid var(--sk_dominantBg2);
   display: flex;
   padding: 0 var(--controls-ui-pad-x);
   align-items: center;
   column-gap: var(--controls-ui-gap);
   height: var(--controls-row-height);
-  background-color: var(--skinnerBg2);
-  color: var(--skinnerTxt) !important;
+  background-color: var(--sk_dominantBgHover);
+  color: var(--sk_dominantTxt) !important;
   border-radius: 4px;
 }
 
@@ -3340,11 +3176,11 @@ body {
   column-gap: 6px;
   position: relative;
   transition: box-shadow 0.2s;
-  box-shadow: -2px 0px 0 0px var(--skinnerBg4);
+  box-shadow: -2px 0px 0 0px var(--sk_dominantBg2Hover);
   box-shadow: none;
 
   flex-direction: row;
-  background-color: var(--skinnerBg);
+  background-color: var(--sk_dominantBg);
   flex-wrap: nowrap;
   margin-bottom: 1px;
   align-items: center;
@@ -3353,7 +3189,7 @@ body {
 }
 
 .nik_skinner_control_group.state_active {
-  box-shadow: -5px 0px 0 0px var(--skinnerAccent);
+  box-shadow: -5px 0px 0 0px var(--sk_accentBg);
   opacity: 1;
   --grp_opacity: 1;
   --grp_pos: 0;
@@ -3393,7 +3229,7 @@ body {
 
 .nik_skinner_control_group_picker.variant_border::before {
   content: "";
-  background: var(--skinnerBg);
+  background: var(--sk_dominantBg);
   width: var(--control-picker-size-border);
   height: var(--control-picker-size-border);
   flex-shrink: 0;
@@ -3476,7 +3312,7 @@ body {
 
 .nik_skinner_control_collapse_collapser > span {
   flex-grow: 1;
-  color: var(--skinnerTxt) !important;
+  color: var(--sk_dominantTxt) !important;
 }
 
 .nik_skinner_control_collapse_collapser-open {
@@ -3521,7 +3357,7 @@ body {
 
 .nik_skinner_control_collapse_content {
   max-height: 0;
-  background-color: var(--skinnerBg);
+  background-color: var(--sk_dominantBg);
   display: flex;
   column-gap: var(--controls-ui-gap);
   flex-direction: row;
@@ -3553,12 +3389,12 @@ body {
 
 .skinner_btn {
   appearance: none;
-  border: 1px solid var(--skinnerBg3);
+  border: 1px solid var(--sk_dominantBg2);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
-  background-color: var(--skinnerBg2);
-  color: var(--skinnerTxt2);
+  background-color: var(--sk_dominantBgHover);
+  color: var(--sk_dominantTxt2);
   display: block;
   text-transform: capitalize;
   font-size: 12px;
@@ -3580,9 +3416,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--skinnerBg2);
-    border: 1px solid var(--skinnerBg3);
-    color: var(--skinnerTxt2);
+    background-color: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
 }
 
 .skinner_btn-50 {
@@ -3619,21 +3455,21 @@ body {
 }
 
 .skinner_btn:hover {
-  background-color: var(--skinnerBg3);
+  background-color: var(--sk_dominantBg2);
 }
 
 .skinner_btn-accent {
-  background-color: var(--skinnerAccent);
-  border-color: var(--skinnerAccent);
-  color: var(--skinnerAccentTxt);
+  background-color: var(--sk_accentBg);
+  border-color: var(--sk_accentBg);
+  color: var(--sk_accentTxt);
   position: relative;
   padding-inline-start: 6px;
 }
 
 .skinner_btn-accent:hover {
-  border-color: var(--skinnerAccent);
-  background-color: var(--skinnerAccentDark);
-  color: var(--skinnerAccentTxt);
+  border-color: var(--sk_accentBg);
+  background-color: var(--sk_accentBg2);
+  color: var(--sk_accentTxt);
 }
 /* view switchers */
 .nik_sport_web_views_switchers_wrapper {
@@ -3681,11 +3517,11 @@ body {
   align-items: center;
   font-size: 11px;
   padding: var(--controls-ui-pad-y) var(--controls-ui-pad-x);
-  color: var(--skinnerTxt2);
+  color: var(--sk_dominantTxt2);
   z-index: 10;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
-  border-bottom: 1px solid var(--skinnerBg2);
+  border-bottom: 1px solid var(--sk_dominantBgHover);
   column-gap: 4px;
   height: var(--skinnerToolboxHeight);
 }
@@ -3693,10 +3529,10 @@ body {
 .nik_skinner_load_config {
   padding: 0 8px;
   height: 30px;
-  background-color: var(--skinnerBg3);
-  color: var(--skinnerTxt);
+  background-color: var(--sk_dominantBg2);
+  color: var(--sk_dominantTxt);
   border-radius: 2px;
-  border: 1px solid var(--skinnerBg2);
+  border: 1px solid var(--sk_dominantBgHover);
   outline: 0;
   text-transform: capitalize;
   cursor: pointer;
@@ -3709,7 +3545,7 @@ body {
 }
 
 .nik_skinner_load_config:hover {
-  border-color: var(--skinnerAccent);
+  border-color: var(--sk_accentBg);
 }
 
 .nik_skinner_header_control {
@@ -3749,12 +3585,12 @@ body {
   font-size: 11px;
   height: 24px;
   font-weight: 500;
-  background: var(--skinnerShadow);
-  color: var(--skinnerTxt2);
+  background: var(--sk_dominantBg);
+  color: var(--sk_dominantTxt2);
   border-radius: 2px;
   text-align: right;
   border: 0;
-  border: 1px solid var(--skinnerBg3);
+  border: 1px solid var(--sk_dominantBg2);
   outline: 0;
   padding: 0 6px;
 }
@@ -3772,11 +3608,11 @@ body {
 
 .nik_skinner_checkbox_wrapper {
   display: flex;
-  border: 1px solid var(--skinnerBg3);
+  border: 1px solid var(--sk_dominantBg2);
   height: var(--controls-row-height);
   align-items: center;
   justify-content: center;
-  background-color: var(--skinnerBg2);
+  background-color: var(--sk_dominantBgHover);
   flex-shrink: 0;
   position: relative;
   margin: 0;
@@ -3855,13 +3691,13 @@ body {
 }
 
 .nik_skinner_scrollbar::-webkit-scrollbar-thumb {
-  background: var(--skinnerBg3);
+  background: var(--sk_dominantBg2);
   border-radius: 2px;
 }
 
 /* Handle on hover */
 .nik_skinner_scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--skinnerBg3);
+  background: var(--sk_dominantBg2);
 }
 
 .nik_skinner_control_group_range {
@@ -3885,10 +3721,10 @@ body {
   width: 49px;
   height: 39px;
   z-index: 110;
-  background-color: var(--skinnerBg);
-  border: 1px solid var(--skinnerBg2);
+  background-color: var(--sk_dominantBg);
+  border: 1px solid var(--sk_dominantBgHover);
   border-right: 0;
-  color: var(--skinnerTxt);
+  color: var(--sk_dominantTxt);
   border-radius: 5px 0 0 5px;
   box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -3985,18 +3821,18 @@ input[type="range"]::-webkit-slider-thumb {
   margin-top: -2px;
     width: 12px;
     height: 12px;
-    background-color: var(--skinnerAccent);
+    background-color: var(--sk_accentBg);
     border-radius: 7px;
     cursor: pointer;
     -webkit-appearance: none;
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: var(--skinnerBg);
+  background: var(--sk_dominantBg);
 }
 
 input[type="range"]::-moz-range-track {
-  background: var(--skinnerBg);
+  background: var(--sk_dominantBg);
   border: 0.2px solid #010101;
   border-radius: 1.3px;
   width: 100%;
@@ -4007,7 +3843,7 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
-  background: var(--skinnerBg);
+  background: var(--sk_dominantBg);
   border: 0.2px solid rgba(0, 0, 0, 0);
   border-radius: 18px;
   cursor: pointer;
@@ -4024,13 +3860,13 @@ input[type="range"]::-ms-track {
 }
 
 input[type="range"]::-ms-fill-lower {
-  background: var(--skinnerTxt2);
+  background: var(--sk_dominantTxt2);
   border: 0.2px solid #010101;
   border-radius: 2.6px;
 }
 
 input[type="range"]::-ms-fill-upper {
-  background: var(--skinnerAccent);
+  background: var(--sk_accentBg);
   border: 0.2px solid #010101;
   border-radius: 2.6px;
 }
@@ -4038,7 +3874,7 @@ input[type="range"]::-ms-fill-upper {
 input[type="range"]::-ms-thumb {
   width: 20px;
   height: 20px;
-  background: var(--skinnerTxt2);
+  background: var(--sk_dominantTxt2);
   border: 0.2px solid rgba(0, 0, 0, 0);
   border-radius: 18px;
   cursor: pointer;
@@ -4047,11 +3883,11 @@ input[type="range"]::-ms-thumb {
 }
 
 input[type="range"]:focus::-ms-fill-lower {
-  background: var(--skinnerAccent);
+  background: var(--sk_accentBg);
 }
 
 input[type="range"]:focus::-ms-fill-upper {
-  background: var(--skinnerAccent);
+  background: var(--sk_accentBg);
 }
 /*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
 how to remove the virtical space around the range input in IE*/
@@ -4073,8 +3909,8 @@ how to remove the virtical space around the range input in IE*/
   --chbH: var(--chbSize);
   --wrapperChbSize: 42px;
   --chbSizeBorder: 1px;
-  --chbBg: var(--skinnerBg2);
-  --activeChbBg: var(--skinnerAccent2);
+  --chbBg: var(--sk_dominantBgHover);
+  --activeChbBg: var(--sk_AccentBgHover);
 }
 
 .skinner_custom_chb {
@@ -4086,9 +3922,9 @@ how to remove the virtical space around the range input in IE*/
   height: 100%;
   background-color: var(--skinnerShadow);
   cursor: pointer;
-  border: var(--chbSizeBorder) solid var(--skinnerBg3);
+  border: var(--chbSizeBorder) solid var(--sk_dominantBg2);
   border-radius: 2px;
-  color: var(--skinnerBg);
+  color: var(--sk_dominantBg);
   transition: background 0.2s;
 }
 
@@ -4134,9 +3970,9 @@ input[type="number"] {
 .skinner_custom_chb_label
   > input[type="checkbox"]:checked
   + .skinner_custom_chb {
-  background: var(--skinnerAccent);
-  color: var(--skinnerAccentTxt);
-  border-color: var(--skinnerToolboxAccentHover);
+  background: var(--sk_accentBg);
+  color: var(sk_accentTxt);
+  border-color: var(--sk_accentBgHover);
   --stroke_dash_arr: 16;
   --stroke_dash_off: 0;
 }
@@ -4148,7 +3984,7 @@ input[type="number"] {
 
 .sk_svg_path_checkbox {
     fill: none;
-    stroke: var(--skinnerAccentTxt);
+    stroke: var(sk_accentTxt);
     stroke-width: 2;
     stroke-dasharray: var(--stroke_dash_arr);
     stroke-dashoffset: var(--stroke_dash_off);
@@ -4176,14 +4012,14 @@ border-radius: 50%;*/
 }
 
 .pcr-app {
-  background-color: var(--skinnerBg);
+  background-color: var(--sk_dominantBg);
   border-radius: 6px;
-  border: 1px solid var(--skinnerTxt3);
+  border: 1px solid var(--sk_dominantTxt3);
 }
 
 .pcr-app .pcr-interaction .pcr-result {
-  background-color: var(--skinnerBg2);
-  color: var(--skinnerTxt);
+  background-color: var(--sk_dominantBgHover);
+  color: var(--sk_dominantTxt);
   border-radius: 4px;
 }
 
@@ -4201,11 +4037,11 @@ border-radius: 50%;*/
 .nik_skinner_input {
   margin: 0;
   padding: 0 8px;
-  background-color: var(--skinnerShadow);
-  color: var(--skinnerTxt2);
+  background-color: var(--sk_dominantBg);
+  color: var(--sk_dominantTxt2);
   border: 0;
   border-radius: 2px;
-  border: 1px solid var(--skinnerBg3);
+  border: 1px solid var(--sk_dominantBg2);
   outline: 0;
   font-size: 11px;
   text-transform: capitalize;
@@ -4235,9 +4071,9 @@ border-radius: 50%;*/
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--skinnerBg);
-    border: 1px solid var(--skinnerAccent);
-    color: var(--skinnerTxt2);
+    background-color: var(--sk_dominantBg);
+    border: 1px solid var(--sk_accentBg);
+    color: var(--sk_dominantTxt2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4270,9 +4106,9 @@ border-radius: 50%;*/
 .skinner_main_wrapper-mobile .nik_skinner_mobile_iframe_wrapper {
   width: 100%;
   box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(to right, var(--skinnerBg2), var(--skinnerBg3));
+  background: linear-gradient(to right, var(--sk_dominantBgHover), var(--sk_dominantBg2));
   border-radius: 20px;
-  border: 2px solid var(--skinnerBg3);
+  border: 2px solid var(--sk_dominantBg2);
 }
 
 .skinner_main_wrapper-mobile .nik_skinner_mobile_iframe_wrapper iframe {
@@ -4296,9 +4132,9 @@ border-radius: 50%;*/
 
 .skinner_ui_switcher {
   width: calc(var(--skinnerToolboxHeight) * 2);
-  background-color: var(--skinnerBg);
-  color: var(--skinnerTxt);
-  border: 1px solid var(--skinnerAccent);
+  background-color: var(--sk_dominantBg);
+  color: var(--sk_dominantTxt);
+  border: 1px solid var(--sk_accentBg);
   border-radius: 16px;
   padding: 2px;
   display: flex;
@@ -4321,10 +4157,10 @@ border-radius: 50%;*/
     z-index: 10;
     height: calc(var(--skinnerToolboxHeight) + 8px);
     padding: 4px 8px;
-    background: var(--skinnerBg);
-    color: var(--skinnerTxt2);
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
     border-radius: 8px;
-    border: 1px solid var(--skinnerBg2);
+    border: 1px solid var(--sk_dominantBgHover);
 }
 
 .skinner_ui_switcher > i {
@@ -4343,7 +4179,7 @@ border-radius: 50%;*/
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--skinnerAccent);
+  background: var(--sk_accentBg);
   position: absolute;
   left: 2px;
   top: 1px;
@@ -4385,7 +4221,7 @@ border-radius: 50%;*/
   width: var(--w);
   height: var(--w);
   border-radius: 50%;
-  background: var(--skinnerBg);
+  background: var(--sk_dominantBg);
   position: relative;
   display: flex;
   align-items: center;
@@ -4432,8 +4268,8 @@ border-radius: 50%;*/
   outline: 0;
   height: 26px;
   border-radius: 4px;
-  background-color: var(--skinnerBg4);
-  color: var(--skinnerTxt2);
+  background-color: var(--sk_dominantBg2Hover);
+  color: var(--sk_dominantTxt2);
   font-size: 12px;
   font-weight: 500;
   transition: all 0.314s;
@@ -4442,18 +4278,18 @@ border-radius: 50%;*/
 }
 
 .cms_btn:hover {
-  background-color: var(--skinnerBg3);
-  color: var(--skinnerTxt);
+  background-color: var(--sk_dominantBg2);
+  color: var(--sk_dominantTxt);
 }
 
 .cms_btn.variant_accent{
-    background: var(--skinnerAccent);
-  color: var(--skinnerAccentTxt);
+    background: var(--sk_accentBg);
+  color: var(--sk_accentTxt);
 }
 
 .cms_btn.variant_accent:hover{
-    background: var(--skinnerAccent2);
-  color: var(--skinnerAccentTxt);
+    background: var(--sk_AccentBgHover);
+  color: var(--sk_accentTxt);
 }
 
 .skinner_disabled {
@@ -4566,10 +4402,10 @@ border-radius: 50%;*/
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--skinnerBg2);
-    border: 1px solid var(--skinnerBg3);
+    background-color: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
     border-radius: 4px;
-    color: var(--skinnerTxt2);
+    color: var(--sk_dominantTxt2);
 }
 
 .nik_skinner_control_group{
