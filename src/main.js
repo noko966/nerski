@@ -1463,7 +1463,7 @@ class Skinner {
   }
 
   toggleUi() {
-    document.body.classList.toggle("nik_hide_ui");
+    document.body.classList.toggle("sk_hide_ui");
   }
 
   createControlsWrapper() {
@@ -3741,7 +3741,7 @@ body {
   cursor: pointer;
 }
 
-.nik_hide_ui .skinner_toolbox {
+.sk_hide_ui .skinner_toolbox {
   transform: translate(-50%, calc(100% + 30px));
 }
 

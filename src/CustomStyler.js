@@ -31,35 +31,40 @@ class MouseIntersectStyler {
     this.root.addEventListener("click", self.boundClick, true);
   }
 
-  onMouseMove(event, selector) {
+  onMouseMove(event) {
     if (this.isStopped || !this.isRunning) return;
-
+  
     let hoveredElement;
-
-    // If our root supports elementFromPoint, use that:
+  
+    // If our root supports elementFromPoint, use it:
     if (this.root && typeof this.root.elementFromPoint === "function") {
       hoveredElement = this.root.elementFromPoint(event.clientX, event.clientY);
     } else {
-      // Fallback: if the root is an element that doesn't have .elementFromPoint
+      // Fallback: use document.elementFromPoint
       hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
     }
-
+  
+    // Only proceed if the element has data-sk AND is visible
     if (
       hoveredElement &&
-      hoveredElement.matches(selector) &&
+      hoveredElement.hasAttribute("data-sk") &&
       this.isVisible(hoveredElement)
     ) {
-      // If we hovered over a new matching element
+      // If we hovered over a different element than before...
       if (hoveredElement !== this.currentElement) {
+        // First reset any previously styled element
         if (this.currentElement) {
           this.resetStyles();
         }
+        // Then apply styles to the new hovered element
         this.applyStyles(hoveredElement);
       }
     } else {
+      // If the new hover target doesn't have data-sk, reset
       this.resetStyles();
     }
   }
+  
 
   oonClick(event) {
     if (this.isStopped || !this.isRunning) return;
@@ -118,7 +123,7 @@ class MouseIntersectStyler {
       this.boundMouseMove = (event) => this.onMouseMove(event, "*");
       this.boundClick = (event) => this.oonClick(event);
 
-      this.root.addEventListener("mousemove", this.boundMouseMove);
+      this.root.addEventListener("mousemove", this.boundMouseMove, true);
       this.root.addEventListener("click", this.boundClick, true);
 
       console.log("MouseIntersectStyler started");
@@ -129,7 +134,7 @@ class MouseIntersectStyler {
     if (this.isRunning) {
       this.isRunning = false;
 
-      this.root.removeEventListener("mousemove", this.boundMouseMove);
+      this.root.removeEventListener("mousemove", this.boundMouseMove, true);
       this.root.removeEventListener("click", this.boundClick, true);
 
       console.log("MouseIntersectStyler stopped");
@@ -219,9 +224,9 @@ class MouseIntersectStyler {
     flex-direction: column;
     align-items: stretch;
     padding: 20px;
-    background: var(--skinnerBg2);
-    color: var(--skinnerTxt);
-    border: 1px solid var(--skinnerBg3);
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt);
+    border: 1px solid var(--sk_dominantBg3);
     z-index: var(--sk_zind2);
     row-gap: 4px;
       }
@@ -234,14 +239,14 @@ class MouseIntersectStyler {
           100% { opacity: 1; }
         }
           .sk_styler_control_row {
-    border: 1px solid var(--skinnerBg2);
+    border: 1px solid var(--sk_dominantBg2);
     display: flex;
     padding: 0 var(--controls-ui-pad-x);
     align-items: center;
     column-gap: var(--controls-ui-gap);
     height: var(--controls-row-height);
-    background-color: var(--skinnerBg);
-    color: var(--skinnerTxt) !important;
+    background-color: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt) !important;
     border-radius: 4px;
 }
     .sk_styler_control_row_label {
@@ -264,24 +269,24 @@ class MouseIntersectStyler {
     font-size: 11px;
     height: 24px;
     font-weight: 500;
-    background: var(--skinnerShadow);
-    color: var(--skinnerTxt2);
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
     border-radius: 2px;
     text-align: right;
     border: 0;
-    border: 1px solid var(--skinnerBg3);
+    border: 1px solid var(--sk_dominantBg3);
     outline: 0;
     padding: 0 6px;
 }
     .sk_editor_button{
     -webkit-appearance: none;
     appearance: none;
-    border: 1px solid var(--skinnerBg3);
+    border: 1px solid var(--sk_dominantBg3);
     text-align: center;
     height: var(--skinnerBtnHeight);
     text-decoration: none;
-    background-color: var(--skinnerBg2);
-    color: var(--skinnerTxt2);
+    background-color: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
     display: block;
     text-transform: capitalize;
     font-size: 12px;
@@ -296,9 +301,9 @@ class MouseIntersectStyler {
     column-gap: 4px;
     }
     .sk_editor_button.variant_ok{
-        background-color: var(--skinnerAccent);
-    border-color: var(--skinnerAccent);
-    color: var(--skinnerAccentTxt);
+        background-color: var(--sk_accentBg);
+    border-color: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
     position: relative;
     }
     `;

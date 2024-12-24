@@ -1,6 +1,7 @@
 import { Skinner } from "./main.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
+// const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
 
 const target = document;
 
@@ -650,8 +651,8 @@ function createPreview() {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    row-gap: 8px;
-        position: relative;
+    row-gap: 4px;
+    position: relative;
     z-index: 3;
 
   }
@@ -661,7 +662,8 @@ function createPreview() {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 32px;
+    column-gap: 32px;
+    row-gap: 32px;
     padding: 32px;
   }
   .sk_demo_essence_tint{
@@ -673,6 +675,11 @@ function createPreview() {
     column-gap: 10px;
   --sk_blob_size: 32px;
   --sk_blob_radius: 4px;
+    background-color: var(--sk_dominantBgHover);
+    color: var(--sk_dominantTxt);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--sk_dominantBg);
   }  
 
   .sk_demo_essence_text_tints_wrapper{
@@ -680,11 +687,6 @@ function createPreview() {
     flex-direction: column;
     align-items: stretch;
     row-gap: 12px;
-  }
-
-  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_blob,
-  .sk_demo_essence_text_tints_wrapper > .sk_demo_essence_tint .sk_demo_val{
-      --txt: var(--bg1);
   }
 
   .sk_demo_essence_tint_text{
@@ -696,22 +698,28 @@ function createPreview() {
 
   
   .sk_demo_essence_tint.variant_0 {
-    --Bg: var(--bg1);
+    --blobBg: var(--bg1);
+    --blobTxt: var(--txt);
   }
   .sk_demo_essence_tint.variant_1 {
-    --Bg: var(--bg2);
+    --blobBg: var(--bg2);
+    --blobTxt: var(--txt);
   }
     .sk_demo_essence_tint.variant_2 {
-    --Bg: var(--bg3);
+    --blobBg: var(--bg3);
+    --blobTxt: var(--txt);
   }
     .sk_demo_essence_tint.variant_3 {
-    --Bg: var(--bg4);
+    --blobBg: var(--bg4);
+    --blobTxt: var(--txt);
   }
     .sk_demo_essence_tint.variant_4 {
-    --Bg: var(--bg5);
+    --blobBg: var(--bg5);
+    --blobTxt: var(--txt);
   }
     .sk_demo_essence_tint.variant_5 {
-    --Bg: var(--bg6);
+    --blobBg: var(--bg6);
+    --blobTxt: var(--txt);
   }
     .sk_demo_essence_title {
         margin: 0;
@@ -740,9 +748,9 @@ function createPreview() {
     min-width: 1px;
     height: var(--sk_blob_size);
     border-radius: var(--sk_blob_radius);
-    background: var(--Bg);
-    color: var(--txt);
-    border: 2px solid var(--Bg);
+    background: var(--blobBg);
+    color: var(--blobTxt);
+    border: 2px solid var(--blobBorder);
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -767,8 +775,8 @@ function createPreview() {
     }
 
     .sk_demo_essence_accent{
-          --Bg: var(--ab);
-          --txt: var(--at);
+      --blobBg: var(--ab);
+      --blobTxt: var(--at);
     }
 
     .sk_demo_essence_text {
@@ -776,13 +784,16 @@ function createPreview() {
       flex-direction: column;
     }
     .sk_demo_essence_tint.variant_T1{
-    --Bg: var(--txt);
+        --blobBg: var(--txt);
+        --blobTxt: var(--bg1);
     }
     .sk_demo_essence_tint.variant_T2{
-    --Bg: var(--txt2);
+        --blobBg: var(--txt2);
+        --blobTxt: var(--bg1);
     }
     .sk_demo_essence_tint.variant_T3{
-    --Bg: var(--txt3);
+        --blobBg: var(--txt3);
+        --blobTxt: var(--bg1);
     }
     .sk_demo_key_val_root {
         display: flex;
@@ -825,6 +836,7 @@ function createPreview() {
     let _vd = verbalData(c.name);
     const essenceRoot = document.createElement("div");
     essenceRoot.className = "sk_demo_essence_root";
+    essenceRoot.setAttribute('data-sk', 'widget');
 
     const essenceRootTitle = document.createElement("h3");
     essenceRootTitle.className = "sk_demo_essence_title";
@@ -860,6 +872,7 @@ function createPreview() {
     for (i = 0; i < tintsArr.length; i++) {
       const essenceTint = document.createElement("div");
       essenceTint.className = `sk_demo_essence_tint variant_${i}`;
+      essenceTint.setAttribute('data-sk', 'list_item');
       const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
 
       const b = document.createElement("div");
@@ -873,8 +886,7 @@ function createPreview() {
 
       wrapper.appendChild(essenceTint);
     }
-    const essenceText = document.createElement("div");
-    essenceText.className = `sk_demo_essence_text_tints_wrapper`;
+
     const essenceTintText1 = document.createElement("div");
     const essenceTintText2 = document.createElement("div");
     const essenceTintText3 = document.createElement("div");
@@ -914,12 +926,18 @@ function createPreview() {
     essenceTintText1.className = `sk_demo_essence_tint variant_T1`;
     essenceTintText2.className = `sk_demo_essence_tint variant_T2`;
     essenceTintText3.className = `sk_demo_essence_tint variant_T3`;
-    essenceText.appendChild(essenceTintText1);
-    essenceText.appendChild(essenceTintText2);
-    essenceText.appendChild(essenceTintText3);
+
+    essenceTintText1.setAttribute('data-sk', 'list_item');
+    essenceTintText2.setAttribute('data-sk', 'list_item');
+    essenceTintText3.setAttribute('data-sk', 'list_item');
+    wrapper.appendChild(essenceTintText1);
+    wrapper.appendChild(essenceTintText2);
+    wrapper.appendChild(essenceTintText3);
 
     const essenceAccent = document.createElement("div");
     essenceAccent.className = `sk_demo_essence_accent sk_demo_essence_tint `;
+    essenceAccent.setAttribute('data-sk', 'list_item');
+
 
     const ab2 = document.createElement("div");
     const av2 = document.createElement("span");
@@ -930,7 +948,6 @@ function createPreview() {
     essenceAccent.appendChild(ab2);
     essenceAccent.appendChild(av2);
 
-    wrapper.appendChild(essenceText);
     wrapper.appendChild(essenceAccent);
     essenceRoot.appendChild(wrapper);
 
