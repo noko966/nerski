@@ -2,10 +2,12 @@ import guessVisibleColor from "./neuron.js";
 var tinycolor = require("tinycolor2");
 import chroma from "chroma-js";
 import Pickr from "@simonwep/pickr";
+import SKPicker from "./modules/picker.js";
 import { MouseIntersectStyler } from "./CustomStyler.js";
 
 class Skinner {
   constructor(cssCb, starterConfig, header, root, variant, patientRoot) {
+    this.skPickerInstance = null;
     this.pickers = [];
     this.eventListeners = [];
     this.variant = variant || "sport";
@@ -573,13 +575,19 @@ class Skinner {
 
     bgKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = isDark
-        ? chroma(firstColor).darken(0.2 * i)
-        : chroma(firstColor).brighten(0.2 * i);
+        ? chroma(firstColor)
+            .darken(0.2 * i + 1)
+            .hex()
+        : chroma(firstColor)
+            .brighten(0.2 * i + 1)
+            .hex();
     });
+
+    console.log(this.skin[_vb.nameBgHov]);
 
     bgAKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = chroma(firstColor)
-        .alpha(i * 0.5)
+        .alpha(i + 1 * 0.5)
         .css();
     });
   }
@@ -749,6 +757,7 @@ class Skinner {
       "Bg3",
       "Bg3Hover",
     ];
+    debugger;
     let _bg = _variation
       ? this.skin[_vb.name + _variationsArr[_variation]]
       : this.skin[_vb.name + _variationsArr[_lvl]];
@@ -1158,11 +1167,8 @@ class Skinner {
         fbLength
       );
 
-      console.log(_vd.nameBg, _fbEssence);
-
-      this.generateBackgrounds(_essence);
-
       this.skin[_vd.isDark] = this.skin[_vdf.isDark];
+      this.generateBackgrounds(_essence);
 
       this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
       this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
@@ -1396,7 +1402,6 @@ class Skinner {
           this.modifyKey(_vd.isGradient, e.target.checked);
         },
         (e) => {
-          console.log({ e });
           this.modifyKey(_vd.gradientAngle, e.data.angle);
         },
         (e) => {
@@ -1445,21 +1450,33 @@ class Skinner {
   }
 
   handlePicker(event, key, onChangeCallback) {
-    if ("EyeDropper" in window) {
-      const ed = new EyeDropper();
-      ed.open()
-        .then((color) => {
-          if (color) {
-            // Trigger the callback with the selected color
-            onChangeCallback(color.sRGBHex);
-          }
-        })
-        .catch((error) => {
-          console.error("Error using EyeDropper:", error);
-        });
-    } else {
-      console.error("EyeDropper API is not supported in this browser.");
+    let self = this;
+    let currentColor = self.skin[key];
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
     }
+    // 1. Create the instance
+    const SKPickerInstance = new SKPicker(null, currentColor);
+    SKPickerInstance.init();
+
+    // 2. Show the picker UI (assuming SKPicker has a .show() method)
+    SKPickerInstance.show();
+
+    self.pickerInstance = SKPickerInstance;
+
+    // 3. Listen for color change
+    SKPickerInstance.on("change", (color, source, instance) => {
+      console.log("Picker color changed:", color, "Source:", source);
+      onChangeCallback(color);
+
+      //
+      if (source === "input" || source === "outside") {
+        instance.hide();
+        instance.destroy();
+        self.pickerInstance = null;
+      }
+    });
   }
 
   toggleUi() {
@@ -2270,7 +2287,7 @@ class Skinner {
     ];
 
     let firstDominantBg = colors.bg;
-    let isDark = colors.name === "dark" ? true : true;
+    let isDark = colors.name === "dark" ? true : false;
     UISkin.dominant = {};
     UISkin.dominant[_vdDominant.nameBg] = firstDominantBg;
     dominantKeyNames.forEach((bgName, i) => {
@@ -2320,6 +2337,8 @@ class Skinner {
         .css();
     });
 
+    let dominantShadow = chroma(firstDominantBg).shade(0.3);
+
     // let shadow = islight
     //   ? tinycolor(bg).lighten(6).toHexString()
     //   : tinycolor(bg).darken(6).toHexString();
@@ -2362,6 +2381,10 @@ class Skinner {
       document.documentElement.style.setProperty(
         `--${_vd.nameTxt3}`,
         `${UISkin[name][_vd.nameTxt3]}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.name}Shadow`,
+        `${dominantShadow}`
       );
     });
   }
@@ -2968,7 +2991,7 @@ body {
 }
 
 body {
-  background-color: var(--sk_dominantBg3);
+  background-color: var(--sk_dominantBg);
   color: var(--sk_dominantTxt);
   font-family: "Roboto", sans-serif;
 }
@@ -3810,7 +3833,7 @@ input[type="range"]:focus {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: var(--skinnerShadow);
+  background: var(--sk_dominantShadow);
   border-radius: 0px;
   width: 100%;
   height: 8px;
@@ -3827,9 +3850,6 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
 }
 
-input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: var(--sk_dominantBg);
-}
 
 input[type="range"]::-moz-range-track {
   background: var(--sk_dominantBg);
@@ -3920,7 +3940,7 @@ how to remove the virtical space around the range input in IE*/
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: var(--skinnerShadow);
+  background-color: var(--sk_dominantShadow);
   cursor: pointer;
   border: var(--chbSizeBorder) solid var(--sk_dominantBg2);
   border-radius: 2px;

@@ -1,4 +1,5 @@
 import { Skinner } from "./main.js";
+import SKPicker from "./modules/picker.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
@@ -122,7 +123,6 @@ const configOrderSport = [
   {
     name: "buttonSecondary",
     inherits: ["body"],
-    variation: 5,
   },
   {
     name: "navbar",
@@ -135,7 +135,6 @@ const configOrderSport = [
   {
     name: "header",
     inherits: ["dominant", "body"],
-    variation: 5,
   },
   {
     name: "subHeader",
@@ -148,7 +147,6 @@ const configOrderSport = [
   {
     name: "eventLive",
     inherits: ["event", "body"],
-    variation: 5,
   },
   {
     name: "odd",
@@ -638,8 +636,8 @@ function createPreview() {
   .sk_demo_essence_root{
         color: var(--sk_dominantTxt);
     border-radius: var(--radius);
-    border: 2px solid var(--sk_dominantBgHover);
-    background: var(--sk_dominantBg2);
+    border: 2px solid var(--sk_dominantBg2);
+    background: var(--sk_dominantBgHover);
     padding: 50px 50px;
     width: calc((100% - 63px) / 5);
     position: relative;
@@ -675,11 +673,11 @@ function createPreview() {
     column-gap: 10px;
   --sk_blob_size: 32px;
   --sk_blob_radius: 4px;
-    background-color: var(--sk_dominantBgHover);
+    background-color: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt);
     padding: 8px;
     border-radius: 8px;
-    border: 1px solid var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominant2Hover);
   }  
 
   .sk_demo_essence_text_tints_wrapper{
@@ -836,7 +834,7 @@ function createPreview() {
     let _vd = verbalData(c.name);
     const essenceRoot = document.createElement("div");
     essenceRoot.className = "sk_demo_essence_root";
-    essenceRoot.setAttribute('data-sk', 'widget');
+    essenceRoot.setAttribute("data-sk", "widget");
 
     const essenceRootTitle = document.createElement("h3");
     essenceRootTitle.className = "sk_demo_essence_title";
@@ -872,7 +870,7 @@ function createPreview() {
     for (i = 0; i < tintsArr.length; i++) {
       const essenceTint = document.createElement("div");
       essenceTint.className = `sk_demo_essence_tint variant_${i}`;
-      essenceTint.setAttribute('data-sk', 'list_item');
+      essenceTint.setAttribute("data-sk", "list_item");
       const hexVal = window.SkinnerInstance.skin[_vd[tintsArr[i]]];
 
       const b = document.createElement("div");
@@ -927,17 +925,16 @@ function createPreview() {
     essenceTintText2.className = `sk_demo_essence_tint variant_T2`;
     essenceTintText3.className = `sk_demo_essence_tint variant_T3`;
 
-    essenceTintText1.setAttribute('data-sk', 'list_item');
-    essenceTintText2.setAttribute('data-sk', 'list_item');
-    essenceTintText3.setAttribute('data-sk', 'list_item');
+    essenceTintText1.setAttribute("data-sk", "list_item");
+    essenceTintText2.setAttribute("data-sk", "list_item");
+    essenceTintText3.setAttribute("data-sk", "list_item");
     wrapper.appendChild(essenceTintText1);
     wrapper.appendChild(essenceTintText2);
     wrapper.appendChild(essenceTintText3);
 
     const essenceAccent = document.createElement("div");
     essenceAccent.className = `sk_demo_essence_accent sk_demo_essence_tint `;
-    essenceAccent.setAttribute('data-sk', 'list_item');
-
+    essenceAccent.setAttribute("data-sk", "list_item");
 
     const ab2 = document.createElement("div");
     const av2 = document.createElement("span");
