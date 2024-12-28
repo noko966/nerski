@@ -1,8 +1,9 @@
 import { Skinner } from "./main.js";
-import SKPicker from "./modules/picker.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
+
+import ViewDemoEuropean from "./views/european.js";
 
 const target = document;
 
@@ -1119,6 +1120,8 @@ function destroy() {
   console.log("SkinnerInstance destroyed");
 }
 
+const demo = new ViewDemoEuropean();
+demo.init();
 // Add event listener for keydown event to trigger init on pressing "s"
 // and destroy SkinnerInstance on pressing "d"
 window.addEventListener("keydown", (event) => {
