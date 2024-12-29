@@ -31,88 +31,6 @@ class MouseIntersectStyler {
     // this.root.addEventListener("click", self.boundClick, true);
   }
 
-  // onMouseMove(event) {
-  //   if (this.isStopped || !this.isRunning) return;
-
-  //   let hoveredElement;
-
-  //   // If our root supports elementFromPoint, use it:
-  //   if (this.root && typeof this.root.elementFromPoint === "function") {
-  //     hoveredElement = this.root.elementFromPoint(event.clientX, event.clientY);
-  //   } else {
-  //     // Fallback: use document.elementFromPoint
-  //     hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
-  //   }
-
-  //   // Only proceed if the element has data-sk AND is visible
-  //   if (
-  //     hoveredElement &&
-  //     hoveredElement.hasAttribute("data-sk") &&
-  //     this.isVisible(hoveredElement)
-  //   ) {
-  //     // If we hovered over a different element than before...
-  //     if (hoveredElement !== this.currentElement) {
-  //       // First reset any previously styled element
-  //       if (this.currentElement) {
-  //         this.resetStyles();
-  //       }
-  //       // Then apply styles to the new hovered element
-  //       this.applyStyles(hoveredElement);
-  //     }
-  //   } else {
-  //     // If the new hover target doesn't have data-sk, reset
-  //     this.resetStyles();
-  //   }
-  // }
-
-  onMouseMove(evt) {
-    // console.log(evt.target);
-    let editableElements = this.root.querySelectorAll("[data-sk]");
-  }
-
-  oonClick(event) {
-    if (this.isStopped || !this.isRunning) return;
-    // console.log(event);
-
-    // If user clicks inside the custom UI
-    // if (this.UIRoot && this.UIRoot.contains(event.target)) {
-    //   return;
-    // }
-
-    // // If click is inside the toolbox wrapper
-    // if (this.toolboxWrapper && this.toolboxWrapper.contains(event.target)) {
-    //   // If the clicked element is our toggle button
-    //   if (event.target.matches("#toggleEditorBtn")) {
-    //     // Deactivate or toggle the styler
-    //     if (typeof styler !== "undefined" && styler) {
-    //       styler.toggleStyler();
-    //     }
-    //   }
-    //   return;
-    // }
-
-    if (this.isRunning) {
-      // Prevent default actions and stop propagation
-      event.preventDefault();
-      event.stopPropagation();
-
-      // Use composedPath to find if any element in the path matches the selector
-      const path = event.composedPath();
-      const clickedElement = path.find(
-        (el) => el.matches && el.matches(this.selector)
-      );
-
-      if (clickedElement && this.isVisible(clickedElement)) {
-        this.isStopped = true;
-        this.clickCallback(clickedElement);
-
-        // Show UI near the clicked element
-        const bounds = clickedElement.getBoundingClientRect();
-        this.showUI(bounds.left, bounds.top, clickedElement);
-      }
-    }
-  }
-
   toggleStyler() {
     if (this.isRunning) {
       this.stop();
@@ -124,10 +42,8 @@ class MouseIntersectStyler {
   start() {
     if (!this.isRunning) {
       this.isRunning = true;
-      // this.boundMouseMove = (event) => this.onMouseMove(event, "*");
       this.boundMouseOver = (event) => this.onMouseOver(event);
-      this.boundMouseՕut = (event) => this.onMouseՕut(event);
-      // this.boundClick = (event) => this.oonClick(event);
+      this.boundClick = (event) => this.onClick(event);
 
       // this.root.addEventListener("mousemove", this.boundMouseMove, true);
       // this.root.addEventListener("click", this.boundClick, true);
@@ -135,8 +51,11 @@ class MouseIntersectStyler {
       this.editableElements = this.root.querySelectorAll("[data-sk]");
 
       this.editableElements.forEach((el) => {
-        el.addEventListener("mouseover", this.boundMouseOver, true);
-        el.addEventListener("mouseout", this.boundMouseՕut, true);
+        el.addEventListener("mouseenter", this.boundMouseOver, true);
+      });
+
+      this.editableElements.forEach((el) => {
+        el.addEventListener("click", this.boundClick, true);
       });
 
       console.log("MouseIntersectStyler started");
@@ -148,10 +67,8 @@ class MouseIntersectStyler {
       this.isRunning = false;
       this.editableElements = this.root.querySelectorAll("[data-sk]");
       this.editableElements.forEach((el) => {
-        el.removeEventListener("mouseover", this.boundMouseOver, true);
-        el.removeEventListener("mouseout", this.boundMouseՕut, true);
+        el.removeEventListener("mouseenter", this.boundMouseOver);
       });
-
       console.log("MouseIntersectStyler stopped");
     }
   }
@@ -175,36 +92,93 @@ class MouseIntersectStyler {
     this.injectedStyle.innerHTML = css;
   }
 
-  onMouseOver(evt) {
-    let uniqueClass = evt.target.getAttribute("data-sk");
-    let specificCn = this.generateCssPath(evt.target);
-    let className = `${specificCn}[data-sk="${uniqueClass}"]`;
+  generateHoverStyle(cn) {
+    const selectGradient1 = `repeating-linear-gradient(45deg, var(--dominantBg), var(--dominantBg) 10px, var(--dominantBg2) 10px, var(--accentBg) 10px, var(--accentBg) 11px, var(--accentBg) 11px, var(--dominantBg2) 11px, var(--dominantBg2) 20px)`;
+
+    const selectGradient2 = `repeating-linear-gradient(45deg, var(--sk_dominantBg), var(--sk_dominantBg) 10px, var(--sk_dominantBg) 10px, var(--sk_accentBg) 10px, var(--sk_accentBg) 11px, var(--sk_accentBg) 11px, var(--sk_dominantBg2) 11px, var(--sk_dominantBg2) 20px)`;
     let css = `
 @keyframes sk_custom_hover_anim {
   from{
     background-position: 0 0;
   }
   to{
-    background-position: 100% 0;
+    background-position: 50% 0;
   }
 }
 
-${className}{
-  background: repeating-linear-gradient(45deg, var(--sk_dominantBg), var(--sk_dominantBg) 10px, var(--sk_accentBg) 10px, var(--sk_accentBg) 20px);
+
+${cn}{
+  background: ${selectGradient1};
+  color: var(--dominantTxt);
   background-size: 200% 200%;
   animation-duration: 10s;
   animation-direction: normal;
-  animation-iteration-count: 999;
+  animation-iteration-count: 88;
   animation-name: sk_custom_hover_anim;
   animation-timing-function: linear;
 }
-${className}:nth-child(even){
+${cn}:nth-child(even){
   animation-direction: reverse;
 }
+
+${cn} > * {
+    opacity: 0.8;
+}
 `;
+
+    return css;
+  }
+
+  onMouseOver(evt) {
+    let target = evt.target;
+    let uniqueClass = target.getAttribute("data-sk");
+    let specificCn = this.generateCssPath(evt.target);
+    let className = `${specificCn}[data-sk="${uniqueClass}"]`;
+    let css = this.generateHoverStyle(className);
     this.injectStyle(css);
 
+    // Define handler to clean up on click or mouseout
+    const cleanup = () => {
+      this.injectStyle(""); // Implement this method to remove the injected CSS
+      target.removeEventListener("mouseleave", handleMouseOut);
+    };
+
+    // Handler for mouseout event
+    const handleMouseOut = (mouseOutEvt) => {
+      cleanup();
+    };
+
+    target.addEventListener("mouseleave", handleMouseOut);
+
     evt.stopPropagation();
+  }
+
+  onClick(event) {
+    if (this.isStopped || !this.isRunning) return;
+
+    if (this.isRunning) {
+      // Prevent default actions and stop propagation
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Use composedPath to find if any element in the path matches the selector
+      const path = event.composedPath();
+      const clickedElement = path.find(
+        (el) => el.matches && el.matches("[data-sk]")
+      );
+
+      console.log(path);
+      console.log(clickedElement);
+
+      if (clickedElement) {
+        this.isStopped = true;
+        this.clickCallback(clickedElement);
+
+        // Show UI near the clicked element
+        const bounds = clickedElement.getBoundingClientRect();
+        this.showUI(bounds.left, bounds.top, clickedElement);
+      }
+    }
   }
 
   onMouseՕut(evt) {
@@ -665,7 +639,10 @@ ${className}:nth-child(even){
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
 
-    let selector = this.generateCssPath(currentElement);
+    let uniqueClass = currentElement.getAttribute("data-sk");
+    let specificCn = this.generateCssPath(currentElement);
+    let selector = `${specificCn}[data-sk="${uniqueClass}"]`;
+
     this.activeSelectorId = selector;
 
     // Add reveal animation
