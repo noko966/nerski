@@ -1,7 +1,6 @@
 import guessVisibleColor from "./neuron.js";
 var tinycolor = require("tinycolor2");
 import chroma from "chroma-js";
-import Pickr from "@simonwep/pickr";
 import SKPicker from "./modules/picker.js";
 import { MouseIntersectStyler } from "./CustomStyler.js";
 
@@ -576,10 +575,10 @@ class Skinner {
     bgKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = isDark
         ? chroma(firstColor)
-            .darken(0.2 * i + 1)
+            .darken(0.2 * (i + 1))
             .hex()
         : chroma(firstColor)
-            .brighten(0.2 * i + 1)
+            .brighten(0.2 * (i + 1))
             .hex();
     });
 
@@ -718,7 +717,6 @@ class Skinner {
         this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
         this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
         this.skin[_vd.gradientAngle] = this.skin[_vdf.gradientAngle];
-
         this.generateGradientss(_essence);
 
         this.skin[_vd.isCustomTxt] = this.skin[_vdf.isCustomTxt];
@@ -1430,7 +1428,7 @@ class Skinner {
         },
         (e) => {
           this.handlePicker(e, _vd.nameAccent, (color) =>
-            this.modifyhandlePickerKey(_vd.nameAccent, color)
+            this.modifyKey(_vd.nameAccent, color)
           );
         },
         (e) => {
@@ -1456,21 +1454,18 @@ class Skinner {
       console.log("A picker is already open. Please close it first.");
       return;
     }
-    // 1. Create the instance
+
     const SKPickerInstance = new SKPicker(null, currentColor);
     SKPickerInstance.init();
 
-    // 2. Show the picker UI (assuming SKPicker has a .show() method)
     SKPickerInstance.show();
 
     self.pickerInstance = SKPickerInstance;
 
-    // 3. Listen for color change
     SKPickerInstance.on("change", (color, source, instance) => {
       console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
 
-      //
       if (source === "input" || source === "outside") {
         instance.hide();
         instance.destroy();
@@ -1606,6 +1601,7 @@ class Skinner {
 
     return btn;
   }
+
   createDownloadBtn(name, className, number) {
     let _dn = "" + name;
 

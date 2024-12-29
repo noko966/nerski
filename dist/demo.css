@@ -1,7 +1,7 @@
 .demo_body {
   --demo_b_h: 40px;
   --demo_b_h_2: 46px;
-  --demo_i_s: 24px;
+  --demo_i_s: 20px;
   --demo_f_s: 14px;
   --demo_s_b_xxs: 4px;
   --demo_s_b_xs: 6px;
@@ -21,6 +21,7 @@
   width: 260px;
   flex-shrink: 0;
   height: 100%;
+  overflow-y: auto;
 }
 
 .demo_sidebar_root > .demo_list_wrapper {
@@ -31,18 +32,34 @@
   row-gap: var(--demo_s_b_m);
   height: 100%;
   overflow-y: auto;
+  flex: 1;
+}
+
+.variant_event {
+  background-color: var(--eventBorder);
 }
 
 .demo_main_root {
   flex-grow: 1;
   min-width: 1px;
   height: 100%;
+  flex-grow: 1;
+  min-width: 1px;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  column-gap: var(--demo_s_b_m);
 }
 
 .demo_aside_root {
-  width: 320px;
+  width: 360px;
   flex-shrink: 0;
   height: 100%;
+  row-gap: var(--demo_s_b_m);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
 }
 
 .demo_icon {
@@ -56,9 +73,16 @@
   font-size: var(--demo_f_s);
 }
 
+.demo_sidebar_items_list_group {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  row-gap: 1px;
+}
+
 .demo_sidebar_row {
-  background-color: var(--eventBg);
-  color: var(--eventTxt);
+  background: var(--menu_1G);
+  color: var(--menu_1Txt);
   padding: 0 var(--demo_s_b_s);
   height: var(--demo_b_h);
   display: flex;
@@ -66,8 +90,77 @@
   column-gap: var(--demo_s_b_xs);
 }
 
-.demo_sidebar_row .demo_icon {
-  background: var(--eventAccent);
+.demo_sidebar_items_list_group.variant_sport .demo_sidebar_row {
+  background: var(--menu_1G);
+  color: var(--menu_1Txt);
+}
+
+.demo_sidebar_items_list_group .demo_fill {
+  display: flex;
+  align-items: center;
+  column-gap: var(--demo_s_b_xs);
+}
+
+.demo_sidebar_items_list_group.variant_sport
+  .demo_sidebar_row
+  .demo_text.variant_count {
+  color: var(--menu_1Txt2);
+}
+
+.demo_sidebar_items_list_group.variant_country .demo_sidebar_row {
+  background: var(--menu_2G);
+  color: var(--menu_2Txt);
+}
+.demo_sidebar_items_list_group.variant_country
+  .demo_sidebar_row
+  .demo_text.variant_count {
+  color: var(--menu_2Txt2);
+}
+
+.demo_sidebar_items_list_group.variant_champ .demo_sidebar_row {
+  background: var(--menu_3G);
+  color: var(--menu_3Txt);
+}
+.demo_sidebar_items_list_group.variant_champ
+  .demo_sidebar_row
+  .demo_text.variant_count {
+  color: var(--menu_3Txt2);
+}
+
+.demo_sidebar_items_list_group.variant_sport {
+  background-color: var(--menu_1Border);
+}
+
+.demo_sidebar_items_list_group.variant_country {
+  background-color: var(--menu_2Border);
+}
+
+.demo_sidebar_items_list_group.variant_champ {
+  background-color: var(--menu_3Border);
+}
+
+.demo_sidebar_items_list_group.variant_sport .demo_icon.variant_icon {
+  background-color: var(--menu_1Accent);
+}
+
+.demo_sidebar_items_list_group.variant_country .demo_icon.variant_icon {
+  background-color: var(--menu_2Accent);
+}
+
+.demo_sidebar_items_list_group.variant_champ .demo_icon.variant_icon {
+  background-color: var(--menu_3Accent);
+}
+
+.demo_sidebar_items_list_group.variant_sport .demo_icon.variant_arrow {
+  background-color: var(--menu_1Txt3);
+}
+
+.demo_sidebar_items_list_group.variant_country .demo_icon.variant_arrow {
+  background-color: var(--menu_2Txt3);
+}
+
+.demo_sidebar_items_list_group.variant_champ .demo_icon.variant_arrow {
+  background-color: var(--menu_3Txt3);
 }
 
 .demo_row {
@@ -142,6 +235,12 @@
   flex-shrink: 0;
 }
 
+.demo_event_stake:hover {
+  background: var(--oddActiveG);
+  color: var(--oddActiveTxt);
+  border-radius: var(--oddActiveRadius);
+}
+
 .demo_event_stake_group {
   display: flex;
   align-items: center;
@@ -174,6 +273,10 @@
 
 .demo_event_header .demo_icon {
   background: var(--headerAccent);
+}
+
+.demo_event_header div:last-child.demo_icon {
+  background: var(--headerTxt2);
 }
 
 .demo_event_header > .demo_row {
@@ -230,4 +333,38 @@
 .demo_body ::-webkit-scrollbar-thumb {
   border-radius: 2px;
   background-color: var(--bodyBg2);
+}
+
+.demo_widget_root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.demo_widget_header {
+  background: var(--headerG);
+  color: var(--headerTxt);
+  display: flex;
+  align-items: center;
+  padding: var(--demo_s_b_s);
+  column-gap: var(--demo_s_b_xs);
+  border-top-left-radius: var(--headerRadius);
+  border-top-right-radius: var(--headerRadius);
+}
+
+.demo_widget_header > .demo_widget_header_title {
+  flex-grow: 1;
+  min-width: 1px;
+}
+
+.demo_widget_header > .demo_icon {
+  background-color: var(--headerTxt2);
+}
+
+.demo_widget_content {
+  background-color: var(--dominantBg);
+  color: var(--dominantTxt);
+  min-height: 150px;
+  border-bottom-left-radius: var(--dominantRadius);
+  border-bottom-right-radius: var(--dominantRadius);
 }

@@ -11,14 +11,29 @@ export default class SKPicker {
     this.input = null;
     this.events = {};
     this.solids = [
-      "#1a1a1a",
-      "#2b2b2b",
-      "#3c3c3c",
-      "#4a4a4a",
-      "#5b5b5b",
-      "#E2E2E2",
-      "#ff75c3",
-      "#ffa647",
+      "#1ABC9C",
+      "#3498DB",
+      "#FEE75C",
+      "#9B59B6",
+      "#E91E63",
+      "#F1C40F",
+      "#34495E",
+      "#11806A",
+      "#1F8B4C",
+      "#206694",
+      "#71368A",
+      "#AD1457",
+      "#C27C0E",
+      "#A84300",
+      "#992D22",
+      "#979C9F",
+      "#7F8C8D",
+      "#BCC0C0",
+      "#2C3E50",
+      "#5865F2",
+      "#99AAb5",
+      "#2C2F33",
+      "#23272A",
       "#ffe83f",
       "#9fff5b",
       "#70e2ff",
@@ -65,7 +80,7 @@ export default class SKPicker {
     top: 0px;
     transform: translate(543px, 137px);
     border: none;
-    background: var(--sk_dominantBg2);
+    background: var(--sk_dominantBg3);
     padding: 16px;
     border-radius: 8px;
     border: 1px solid var(--sk_dominantBg2Hover);}
@@ -81,14 +96,14 @@ export default class SKPicker {
     flex-grow: 1;
     min-width: 1px;
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantShadow);
     }
     .sk_picker_eyedropper_trigger{
     height: var(--input_size);
     width: var(--input_size);
     outline: 0;
     appearance: none;
-    border: 1px solid var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantShadow);
     background: var(--sk_dominantBg);
     border-radius: 4px;}
     .sk_picker_controls_row{
@@ -113,13 +128,13 @@ export default class SKPicker {
     padding: 2px;
     background: var(--sk_dominantBg);
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantShadow);
     }
     .sk_picker_canvas{
     width: 100%;
-    height: 100px;
+    height: auto;
     margin-bottom: 16px;
-    background-color: var(--sk_dominantBg2);
+    background-color: var(--sk_dominantBg);
     border-radius: 8px;
     }
     .sk_picker_scroll::-webkit-scrollbar {
@@ -210,15 +225,83 @@ export default class SKPicker {
 
     const { width, height } = this.canvasEl;
 
-    // Create a horizontal gradient from Red → Green → Blue for demonstration
-    const grad = this.ctx.createLinearGradient(0, 0, width, 0);
-    grad.addColorStop(0, "#ff0000"); // red
-    grad.addColorStop(0.5, "#00ff00"); // green
-    grad.addColorStop(1, "#0000ff"); // blue
-
     // Fill the canvas
-    this.ctx.fillStyle = grad;
-    this.ctx.fillRect(0, 0, width, height);
+
+    let radius = width / 2;
+    let image = this.ctx.createImageData(2 * radius, 2 * radius);
+    let data = image.data;
+
+    for (let x = -radius; x < radius; x++) {
+      for (let y = -radius; y < radius; y++) {
+        let [r, phi] = xy2polar(x, y);
+
+        if (r > radius) {
+          // skip all (x,y) coordinates that are outside of the circle
+          continue;
+        }
+
+        let deg = rad2deg(phi);
+
+        // Figure out the starting index of this pixel in the image data array.
+        let rowLength = 2 * radius;
+        let adjustedX = x + radius; // convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
+        let adjustedY = y + radius; // convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
+        let pixelWidth = 4; // each pixel requires 4 slots in the data array
+        let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
+
+        let hue = deg;
+        let saturation = r / radius;
+        let value = 1.0;
+
+        let [red, green, blue] = hsv2rgb(hue, saturation, value);
+        let alpha = 255;
+
+        data[index] = red;
+        data[index + 1] = green;
+        data[index + 2] = blue;
+        data[index + 3] = alpha;
+      }
+    }
+
+    this.ctx.putImageData(image, 0, 0);
+
+    function xy2polar(x, y) {
+      let r = Math.sqrt(x * x + y * y);
+      let phi = Math.atan2(y, x);
+      return [r, phi];
+    }
+
+    // rad in [-π, π] range
+    // return degree in [0, 360] range
+    function rad2deg(rad) {
+      return ((rad + Math.PI) / (2 * Math.PI)) * 360;
+    }
+
+    function hsv2rgb(hue, saturation, value) {
+      let chroma = value * saturation;
+      let hue1 = hue / 60;
+      let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
+      let r1, g1, b1;
+      if (hue1 >= 0 && hue1 <= 1) {
+        [r1, g1, b1] = [chroma, x, 0];
+      } else if (hue1 >= 1 && hue1 <= 2) {
+        [r1, g1, b1] = [x, chroma, 0];
+      } else if (hue1 >= 2 && hue1 <= 3) {
+        [r1, g1, b1] = [0, chroma, x];
+      } else if (hue1 >= 3 && hue1 <= 4) {
+        [r1, g1, b1] = [0, x, chroma];
+      } else if (hue1 >= 4 && hue1 <= 5) {
+        [r1, g1, b1] = [x, 0, chroma];
+      } else if (hue1 >= 5 && hue1 <= 6) {
+        [r1, g1, b1] = [chroma, 0, x];
+      }
+
+      let m = value - chroma;
+      let [r, g, b] = [r1 + m, g1 + m, b1 + m];
+
+      // Change r,g,b values from [0,1] to [0,255]
+      return [255 * r, 255 * g, 255 * b];
+    }
   }
 
   createUI() {
@@ -233,7 +316,7 @@ export default class SKPicker {
     // Create the actual <canvas> element for 2D drawing
     this.canvasEl = document.createElement("canvas");
     this.canvasEl.width = 216; // match the root width
-    this.canvasEl.height = 100; // same height as the .sk_picker_canvas
+    this.canvasEl.height = 216; // same height as the .sk_picker_canvas
     this.ctx = this.canvasEl.getContext("2d");
 
     this.drawChromaCanvas();

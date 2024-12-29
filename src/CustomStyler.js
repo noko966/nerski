@@ -1,5 +1,5 @@
 var tinycolor = require("tinycolor2");
-import Pickr from "@simonwep/pickr";
+import SKPicker from "./modules/picker.js";
 
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
@@ -25,46 +25,50 @@ class MouseIntersectStyler {
   init() {
     const self = this;
     this.createUI();
-    this.boundMouseMove = (event) => self.onMouseMove(event, self.selector);
-    this.boundClick = (event) => self.oonClick(event);
-    this.root.addEventListener("mousemove", self.boundMouseMove);
-    this.root.addEventListener("click", self.boundClick, true);
+    // this.boundMouseMove = (event) => self.onMouseMove(event, self.selector);
+    // this.boundClick = (event) => self.oonClick(event);
+    // this.root.addEventListener("mousemove", self.boundMouseMove);
+    // this.root.addEventListener("click", self.boundClick, true);
   }
 
-  onMouseMove(event) {
-    if (this.isStopped || !this.isRunning) return;
-  
-    let hoveredElement;
-  
-    // If our root supports elementFromPoint, use it:
-    if (this.root && typeof this.root.elementFromPoint === "function") {
-      hoveredElement = this.root.elementFromPoint(event.clientX, event.clientY);
-    } else {
-      // Fallback: use document.elementFromPoint
-      hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
-    }
-  
-    // Only proceed if the element has data-sk AND is visible
-    if (
-      hoveredElement &&
-      hoveredElement.hasAttribute("data-sk") &&
-      this.isVisible(hoveredElement)
-    ) {
-      // If we hovered over a different element than before...
-      if (hoveredElement !== this.currentElement) {
-        // First reset any previously styled element
-        if (this.currentElement) {
-          this.resetStyles();
-        }
-        // Then apply styles to the new hovered element
-        this.applyStyles(hoveredElement);
-      }
-    } else {
-      // If the new hover target doesn't have data-sk, reset
-      this.resetStyles();
-    }
+  // onMouseMove(event) {
+  //   if (this.isStopped || !this.isRunning) return;
+
+  //   let hoveredElement;
+
+  //   // If our root supports elementFromPoint, use it:
+  //   if (this.root && typeof this.root.elementFromPoint === "function") {
+  //     hoveredElement = this.root.elementFromPoint(event.clientX, event.clientY);
+  //   } else {
+  //     // Fallback: use document.elementFromPoint
+  //     hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+  //   }
+
+  //   // Only proceed if the element has data-sk AND is visible
+  //   if (
+  //     hoveredElement &&
+  //     hoveredElement.hasAttribute("data-sk") &&
+  //     this.isVisible(hoveredElement)
+  //   ) {
+  //     // If we hovered over a different element than before...
+  //     if (hoveredElement !== this.currentElement) {
+  //       // First reset any previously styled element
+  //       if (this.currentElement) {
+  //         this.resetStyles();
+  //       }
+  //       // Then apply styles to the new hovered element
+  //       this.applyStyles(hoveredElement);
+  //     }
+  //   } else {
+  //     // If the new hover target doesn't have data-sk, reset
+  //     this.resetStyles();
+  //   }
+  // }
+
+  onMouseMove(evt) {
+    // console.log(evt.target);
+    let editableElements = this.root.querySelectorAll("[data-sk]");
   }
-  
 
   oonClick(event) {
     if (this.isStopped || !this.isRunning) return;
@@ -120,11 +124,20 @@ class MouseIntersectStyler {
   start() {
     if (!this.isRunning) {
       this.isRunning = true;
-      this.boundMouseMove = (event) => this.onMouseMove(event, "*");
-      this.boundClick = (event) => this.oonClick(event);
+      // this.boundMouseMove = (event) => this.onMouseMove(event, "*");
+      this.boundMouseOver = (event) => this.onMouseOver(event);
+      this.boundMouseՕut = (event) => this.onMouseՕut(event);
+      // this.boundClick = (event) => this.oonClick(event);
 
-      this.root.addEventListener("mousemove", this.boundMouseMove, true);
-      this.root.addEventListener("click", this.boundClick, true);
+      // this.root.addEventListener("mousemove", this.boundMouseMove, true);
+      // this.root.addEventListener("click", this.boundClick, true);
+
+      this.editableElements = this.root.querySelectorAll("[data-sk]");
+
+      this.editableElements.forEach((el) => {
+        el.addEventListener("mouseover", this.boundMouseOver, true);
+        el.addEventListener("mouseout", this.boundMouseՕut, true);
+      });
 
       console.log("MouseIntersectStyler started");
     }
@@ -133,12 +146,69 @@ class MouseIntersectStyler {
   stop() {
     if (this.isRunning) {
       this.isRunning = false;
-
-      this.root.removeEventListener("mousemove", this.boundMouseMove, true);
-      this.root.removeEventListener("click", this.boundClick, true);
+      this.editableElements = this.root.querySelectorAll("[data-sk]");
+      this.editableElements.forEach((el) => {
+        el.removeEventListener("mouseover", this.boundMouseOver, true);
+        el.removeEventListener("mouseout", this.boundMouseՕut, true);
+      });
 
       console.log("MouseIntersectStyler stopped");
     }
+  }
+
+  injectStyle(css) {
+    const styleId = "sk_custom_styler_injected";
+
+    let styleElement = document.getElementById(styleId);
+
+    if (!styleElement) {
+      this.injectedStyle = document.createElement("style");
+
+      this.injectedStyle.id = styleId;
+      if (this.root === document) {
+        this.root.body.appendChild(this.injectedStyle);
+      } else {
+        this.root.appendChild(this.injectedStyle);
+      }
+    }
+
+    this.injectedStyle.innerHTML = css;
+  }
+
+  onMouseOver(evt) {
+    let uniqueClass = evt.target.getAttribute("data-sk");
+    let specificCn = this.generateCssPath(evt.target);
+    let className = `${specificCn}[data-sk="${uniqueClass}"]`;
+    let css = `
+@keyframes sk_custom_hover_anim {
+  from{
+    background-position: 0 0;
+  }
+  to{
+    background-position: 100% 0;
+  }
+}
+
+${className}{
+  background: repeating-linear-gradient(45deg, var(--sk_dominantBg), var(--sk_dominantBg) 10px, var(--sk_accentBg) 10px, var(--sk_accentBg) 20px);
+  background-size: 200% 200%;
+  animation-duration: 10s;
+  animation-direction: normal;
+  animation-iteration-count: 999;
+  animation-name: sk_custom_hover_anim;
+  animation-timing-function: linear;
+}
+${className}:nth-child(even){
+  animation-direction: reverse;
+}
+`;
+    this.injectStyle(css);
+
+    evt.stopPropagation();
+  }
+
+  onMouseՕut(evt) {
+    // this.injectStyle("");
   }
 
   modifyKey(name, value) {
@@ -317,16 +387,16 @@ class MouseIntersectStyler {
     // Callback for color picker
     const handlePickerCallBack = (e) => {
       this.handlePicker(e, (color) => {
-        this.modifyKey("backgroundColor", color.toHEXA().toString());
-        this.updateControl("backgroundColor", color.toHEXA().toString());
+        this.modifyKey("backgroundColor", color);
+        this.updateControl("backgroundColor", color);
       });
     };
 
     // **New** callback for Text Color
     const handleTextColorPickerCallBack = (e) => {
       this.handlePicker(e, (color) => {
-        this.modifyKey("color", color.toHEXA().toString());
-        this.updateControl("color", color.toHEXA().toString());
+        this.modifyKey("color", color);
+        this.updateControl("color", color);
       });
     };
 
@@ -774,57 +844,38 @@ class MouseIntersectStyler {
     return path.join(" > ");
   }
 
-  createPickerAndTrigger(parent, color) {
-    let _triggerEl = document.createElement("div");
-    _triggerEl.className = "skinner_picker_trigger_hide";
-    parent.appendChild(_triggerEl);
-
-    let _picker = Pickr.create({
-      el: _triggerEl,
-      theme: "classic",
-      comparison: false,
-      default: color,
-      components: {
-        preview: false,
-        hue: true,
-        interaction: {
-          //hex: false,
-          input: true,
-          save: false,
-        },
-      },
-    });
-
-    return _picker;
-  }
-
-  removePicker(instance) {
-    this.pickers = this.pickers.filter((p) => p !== instance);
-  }
-
   handlePicker(event, onChangeCallback) {
+    let self = this;
     const selectedRuleState = this.skin[this.activeSelectorId];
-    // const selectedRule = this.rules.find(
-    //   (r) => r.cssSel === this.activeSelectorId
-    // );
-
-    let picker = this.createPickerAndTrigger(
-      event.target.parentElement,
-      selectedRuleState.backgroundColor // Default to "red" for the picker
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+    // 1. Create the instance
+    const SKPickerInstance = new SKPicker(
+      null,
+      selectedRuleState.backgroundColor
     );
+    SKPickerInstance.init();
 
-    picker.show();
+    // 2. Show the picker UI (assuming SKPicker has a .show() method)
+    SKPickerInstance.show();
 
-    picker.on("change", (color, source, instance) => {
+    self.pickerInstance = SKPickerInstance;
+
+    // 3. Listen for color change
+    SKPickerInstance.on("change", (color, source, instance) => {
+      console.log({ instance });
+
+      console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
+      //
+      if (source === "input" || source === "outside") {
+        instance.hide();
+        instance.destroy();
+        self.pickerInstance = null;
+      }
     });
-
-    picker.on("hide", (instance) => {
-      instance.destroyAndRemove();
-      this.removePicker(instance); // Remove from pickers array
-    });
-
-    this.pickers.push(picker); // Store picker instance
   }
 }
 
