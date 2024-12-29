@@ -129,28 +129,44 @@ ${cn} > * {
     return css;
   }
 
-  onMouseOver(evt) {
-    let target = evt.target;
-    let uniqueClass = target.getAttribute("data-sk");
-    let specificCn = this.generateCssPath(evt.target);
-    let className = `${specificCn}[data-sk="${uniqueClass}"]`;
-    let css = this.generateHoverStyle(className);
-    this.injectStyle(css);
+  onMouseOver(event) {
+    if (this.isStopped || !this.isRunning) return;
 
-    // Define handler to clean up on click or mouseout
-    const cleanup = () => {
-      this.injectStyle(""); // Implement this method to remove the injected CSS
-      target.removeEventListener("mouseleave", handleMouseOut);
-    };
+    if (this.isRunning) {
+      event.preventDefault();
+      event.stopPropagation();
 
-    // Handler for mouseout event
-    const handleMouseOut = (mouseOutEvt) => {
-      cleanup();
-    };
+      // Use composedPath to find if any element in the path matches the selector
+      const path = event.composedPath();
+      const hoveredElement = path.find(
+        (el) => el.matches && el.matches("[data-sk]")
+      );
 
-    target.addEventListener("mouseleave", handleMouseOut);
+      console.log(path);
+      console.log(hoveredElement);
 
-    evt.stopPropagation();
+      if (hoveredElement) {
+        let target = hoveredElement;
+        let uniqueClass = target.getAttribute("data-sk");
+        let specificCn = this.generateCssPath(hoveredElement);
+        let className = `${specificCn}[data-sk="${uniqueClass}"]`;
+        let css = this.generateHoverStyle(className);
+        this.injectStyle(css);
+
+        // Define handler to clean up on click or mouseout
+        const cleanup = () => {
+          this.injectStyle(""); // Implement this method to remove the injected CSS
+          target.removeEventListener("mouseleave", handleMouseOut);
+        };
+
+        // Handler for mouseout event
+        const handleMouseOut = (mouseOutEvt) => {
+          cleanup();
+        };
+
+        target.addEventListener("mouseleave", handleMouseOut);
+      }
+    }
   }
 
   onClick(event) {
