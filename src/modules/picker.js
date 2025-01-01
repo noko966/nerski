@@ -1,3 +1,8 @@
+import * as _ from "./utils";
+import { parseToHSVA } from "./color";
+import { HSVaColor } from "./hsvacolor";
+import Moveable from "./moveable";
+
 export default class SKPicker {
   constructor(rootElement, currentColor) {
     this.rootElement = rootElement || document.body;
@@ -9,7 +14,24 @@ export default class SKPicker {
     this._outsideClickHandler = null; // ADDED
     this.colors = null;
     this.input = null;
-    this.events = {};
+
+    this._eventListener = {
+      init: [],
+      save: [],
+      hide: [],
+      show: [],
+      clear: [],
+      change: [],
+      changestop: [],
+      cancel: [],
+      swatchselect: [],
+    };
+
+    this._color = HSVaColor();
+    this._lastColor = HSVaColor();
+
+    this._recalc = true;
+
     this.solids = [
       "#1ABC9C",
       "#3498DB",
@@ -40,10 +62,9 @@ export default class SKPicker {
       "#cd93ff",
       "#09203f",
       "#092f2e",
-      "#092f2e",
-      "#092f2e",
-      "#092f2e",
-      "#092f2e",
+      "#DB3B61",
+      "#EF3F61",
+      "#3A3A59",
       "#092f2e",
     ];
 
@@ -67,10 +88,25 @@ export default class SKPicker {
     ];
   }
 
+  // Re-assign if null
+  getColor() {
+    return this._color || (this._color = this._lastColor.clone());
+  }
+
+  _rePositioningPicker() {
+    // No repositioning needed if inline
+
+    const el = this.root;
+    const eb = el.getBoundingClientRect();
+    el.style.top = `${(window.innerHeight - eb.height) / 2}px`;
+    el.style.left = `${(window.innerWidth - eb.width) / 2}px`;
+  }
+
   createStyle() {
     const styleEl = document.createElement("style");
     const style = `
     .sk_picker_root{
+    display: none;
     --input_size: 32px;
     --solid_size: 24px;
     position: fixed;
@@ -78,38 +114,48 @@ export default class SKPicker {
     height: auto;
     z-index: calc(var(--sk_zind) + 100);
     top: 0px;
-    transform: translate(543px, 137px);
+    transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantBg3);
+    background: var(--sk_dominantBg);
     padding: 16px;
     border-radius: 8px;
-    border: 1px solid var(--sk_dominantBg2Hover);}
+    border: 1px solid var(--sk_dominant2);}
+    .sk_picker_root.state_visible{
+    display: block;
+    }
     .sk_picker_input{
     appearance: none;
     height: var(--input_size);
     padding: 0 8px;
     outline: none;
     border: none;
-    background: var(--sk_dominantBg);
+    background: var(--sk_dominantShadow);
     color: var(--sk_dominantTxt);
     width: 100%;
     flex-grow: 1;
     min-width: 1px;
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantShadow);
+    border: 1px solid var(--sk_dominantBgHover);
     }
     .sk_picker_eyedropper_trigger{
     height: var(--input_size);
     width: var(--input_size);
     outline: 0;
     appearance: none;
-    border: 1px solid var(--sk_dominantShadow);
-    background: var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBgHover);
+    background: var(--sk_dominantShadow);
     border-radius: 4px;}
     .sk_picker_controls_row{
     display: flex;
     align-items: center;
     column-gap: 8px;
+    margin-top: 16px;
+    }
+    .sk_picker_sliders{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
     margin-top: 16px;
     }
     .sk_picker_solid{
@@ -126,17 +172,11 @@ export default class SKPicker {
     column-gap: 4px;
     max-height: 80px;
     padding: 2px;
-    background: var(--sk_dominantBg);
+    background: var(--sk_dominantShadow);
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantShadow);
+    border: 1px solid var(--sk_dominantBgHover);
     }
-    .sk_picker_canvas{
-    width: 100%;
-    height: auto;
-    margin-bottom: 16px;
-    background-color: var(--sk_dominantBg);
-    border-radius: 8px;
-    }
+
     .sk_picker_scroll::-webkit-scrollbar {
         scrollbar-width: thin;
         width: 4px;
@@ -149,6 +189,77 @@ export default class SKPicker {
         border-radius: 2px;
         background-color: var(--sk_dominantBg);
     }
+
+    .sk_picker_slider_track {
+      height: 32px;
+      border-radius: 4px;
+      background: var(--bg);
+    }
+
+    .sk_picker_slider_root.variant_hue{
+      --bg: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+    }
+    .sk_picker_slider_root.variant_alpha{
+      --bg: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+
+    .sk_picker_slider_root{
+      --bg: transparent;
+      position: relative;
+      width: 100%;
+    }
+    .sk_picker_slider_hand{
+      position: absolute;
+      width: 12px;
+      height: 40px;
+      border: 3px solid black;
+      border-radius: 6px;
+      z-index: 10;
+      top: 50%;
+    transform: translateY(-50%);yya
+    }
+
+    .sk_picker_canvas_root{
+        width: 100%;
+        height: 120px;
+        background: var(--sk_dominantShadow);
+        border-radius: 4px;
+        border: 1px solid var(--sk_dominantBgHover);
+    }
+
+    .sk_picker_canvas_hue{
+      position: relative;
+      height: 100%;
+    border-radius: 4px;
+    }
+
+    .sk_picker_canvas_white{
+    z-index: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0) 100%);
+    }
+
+    .sk_picker_canvas_black{
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(to bottom, transparent 0%, #000 100%);
+    }
+
+    .sk_picker_canvas_hand{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid black;
+    border-radius: 10px;
+    }
    
     `;
     styleEl.innerHTML = style;
@@ -158,25 +269,17 @@ export default class SKPicker {
     return style;
   }
 
-  // --- Event methods ---
-  on(eventName, callback) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = [];
-    }
-    this.events[eventName].push(callback);
-  }
-
-  trigger(eventName, ...args) {
-    if (this.events[eventName]) {
-      this.events[eventName].forEach((cb) => cb(...args));
-    }
+  isOpen() {
+    return this.root.classList.contains("state_visible");
   }
 
   show() {
-    if (this.root) {
+    if (!this.isOpen()) {
       this.updateControls();
-      this.root.style.display = "block";
-      this.trigger("show", this);
+      this.root.classList.add("state_visible");
+      this._rePositioningPicker();
+      this._emit("show", this);
+      return this;
     }
 
     // Attach a "click outside" listener the first time we show
@@ -194,10 +297,156 @@ export default class SKPicker {
   }
 
   hide() {
-    if (this.root) {
-      this.root.style.display = "none";
-      this.trigger("hide", this);
+    if (this.isOpen()) {
+      this.root.classList.remove("state_visible");
+      this._emit("hide", "close", this);
+      return true;
     }
+
+    return false;
+  }
+
+  // --- Event methods ---
+  on(eventName, callback) {
+    if (!this._eventListener[eventName]) {
+      this._eventListener[eventName] = [];
+    }
+    this._eventListener[eventName].push(callback);
+  }
+
+  _emit(event, ...args) {
+    this._eventListener[event].forEach((cb) => cb(...args, this));
+  }
+
+  _updateOutput(eventSource) {
+    const { _root, _color } = this;
+
+    // Fire listener if initialization is finish
+    if (this._recalc) {
+      this._emit("change", _color, eventSource, this);
+    }
+  }
+
+  createPicker() {
+    let _that = this;
+    const root = document.createElement("div");
+    root.className = "sk_picker_canvas_root";
+
+    const hue = document.createElement("div");
+    hue.className = "sk_picker_canvas_hue";
+
+    const white = document.createElement("div");
+    white.className = "sk_picker_canvas_white";
+
+    const black = document.createElement("div");
+    black.className = "sk_picker_canvas_black";
+    const hand = document.createElement("div");
+    hand.className = "sk_picker_canvas_hand";
+
+    root.appendChild(hue);
+    hue.appendChild(white);
+    hue.appendChild(black);
+    hue.appendChild(hand);
+
+    this.pickerRoot = root;
+
+    Moveable({
+      element: hand,
+      wrapper: root,
+
+      onstop: () => _that._emit("changestop", "slider", _that),
+      onchange(x, y) {
+        const color = _that.getColor();
+        const _root = _that.pickerRoot;
+        // const { lastColor, currentColor } = _root.preview;
+
+        // Update the input field only if the user is currently not typing
+        if (_that._recalc) {
+          // Calculate saturation based on the position
+          color.s = x * 100;
+
+          // Calculate the value
+          color.v = 100 - y * 100;
+
+          // Prevent falling under zero
+          color.v < 0 ? (color.v = 0) : 0;
+          _that._updateOutput("slider");
+        }
+
+        // Set picker and gradient color
+        const cssRGBaString = color.toRGBA().toString(0);
+        this.element.style.background = cssRGBaString;
+        this.wrapper.style.background = `
+              linear-gradient(to top, rgba(0, 0, 0, ${color.a}), transparent),
+              linear-gradient(to left, hsla(${color.h}, 100%, 50%, ${color.a}), rgba(255, 255, 255, ${color.a}))
+          `;
+        let hexColor = color.toHEXA().toString();
+        // Change current color
+        // currentColor.style.setProperty("--pcr-color", cssRGBaString);
+        _that.setBackground(hexColor, "picker_canvas");
+      },
+    });
+
+    return root;
+  }
+
+  createSlider(type) {
+    let _that = this;
+    const root = document.createElement("div");
+    const hand = document.createElement("div");
+    const track = document.createElement("div");
+    let variantCN;
+    switch (type) {
+      case "hue":
+        variantCN = "variant_hue";
+        break;
+
+      case "alpha":
+        variantCN = "variant_alpha";
+        break;
+
+      default:
+        variantCN = "";
+        break;
+    }
+
+    root.className = "sk_picker_slider_root " + variantCN;
+    hand.className = "sk_picker_slider_hand";
+    track.className = "sk_picker_slider_track";
+
+    root.appendChild(hand);
+    root.appendChild(track);
+    Moveable({
+      lock: "v",
+      element: hand,
+      wrapper: root,
+
+      onstop: () => _that._emit("changestop", "slider", _that),
+      onchange(v) {
+        const color = _that.getColor();
+        const _root = _that.hueRoot;
+        // const { lastColor, currentColor } = _root.preview;
+
+        // Update the input field only if the user is currently not typing
+        if (_that._recalc) {
+          // Calculate saturation based on the position
+          color.h = v * 360;
+
+          // Prevent falling under zero
+          _that._updateOutput("slider");
+        }
+
+        // Set picker and gradient color
+        const cssRGBaString = color.toRGBA().toString(0);
+
+        // Set picker and gradient color
+        this.element.style.background = `hsl(${color.h}, 100%, 50%)`;
+        let hexColor = color.toHEXA().toString();
+        _that.setBackground(hexColor, "picker_hue");
+      },
+    });
+
+    return root;
   }
 
   updateControls() {
@@ -210,97 +459,12 @@ export default class SKPicker {
     this.input.value = bg;
 
     // Trigger “change” event
-    this.trigger("change", bg, source, this);
+    this._emit("change", bg, source, this);
 
     // Destroy only for "input" or "outside"
 
     if (source === "outside") {
-      this.trigger("change", bg, "outside", this);
-    }
-  }
-
-  drawChromaCanvas() {
-    // Make sure we have a context and correct dimensions
-    if (!this.ctx || !this.canvasEl) return;
-
-    const { width, height } = this.canvasEl;
-
-    // Fill the canvas
-
-    let radius = width / 2;
-    let image = this.ctx.createImageData(2 * radius, 2 * radius);
-    let data = image.data;
-
-    for (let x = -radius; x < radius; x++) {
-      for (let y = -radius; y < radius; y++) {
-        let [r, phi] = xy2polar(x, y);
-
-        if (r > radius) {
-          // skip all (x,y) coordinates that are outside of the circle
-          continue;
-        }
-
-        let deg = rad2deg(phi);
-
-        // Figure out the starting index of this pixel in the image data array.
-        let rowLength = 2 * radius;
-        let adjustedX = x + radius; // convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
-        let adjustedY = y + radius; // convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
-        let pixelWidth = 4; // each pixel requires 4 slots in the data array
-        let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
-
-        let hue = deg;
-        let saturation = r / radius;
-        let value = 1.0;
-
-        let [red, green, blue] = hsv2rgb(hue, saturation, value);
-        let alpha = 255;
-
-        data[index] = red;
-        data[index + 1] = green;
-        data[index + 2] = blue;
-        data[index + 3] = alpha;
-      }
-    }
-
-    this.ctx.putImageData(image, 0, 0);
-
-    function xy2polar(x, y) {
-      let r = Math.sqrt(x * x + y * y);
-      let phi = Math.atan2(y, x);
-      return [r, phi];
-    }
-
-    // rad in [-π, π] range
-    // return degree in [0, 360] range
-    function rad2deg(rad) {
-      return ((rad + Math.PI) / (2 * Math.PI)) * 360;
-    }
-
-    function hsv2rgb(hue, saturation, value) {
-      let chroma = value * saturation;
-      let hue1 = hue / 60;
-      let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
-      let r1, g1, b1;
-      if (hue1 >= 0 && hue1 <= 1) {
-        [r1, g1, b1] = [chroma, x, 0];
-      } else if (hue1 >= 1 && hue1 <= 2) {
-        [r1, g1, b1] = [x, chroma, 0];
-      } else if (hue1 >= 2 && hue1 <= 3) {
-        [r1, g1, b1] = [0, chroma, x];
-      } else if (hue1 >= 3 && hue1 <= 4) {
-        [r1, g1, b1] = [0, x, chroma];
-      } else if (hue1 >= 4 && hue1 <= 5) {
-        [r1, g1, b1] = [x, 0, chroma];
-      } else if (hue1 >= 5 && hue1 <= 6) {
-        [r1, g1, b1] = [chroma, 0, x];
-      }
-
-      let m = value - chroma;
-      let [r, g, b] = [r1 + m, g1 + m, b1 + m];
-
-      // Change r,g,b values from [0,1] to [0,255]
-      return [255 * r, 255 * g, 255 * b];
+      this._emit("change", bg, "outside", this);
     }
   }
 
@@ -309,36 +473,6 @@ export default class SKPicker {
     this.root = document.createElement("div");
     this.root.className = "sk_picker_root";
 
-    // 2. Create an optional canvas area (placeholder)
-    this.canvas = document.createElement("div");
-    this.canvas.className = "sk_picker_canvas";
-
-    // Create the actual <canvas> element for 2D drawing
-    this.canvasEl = document.createElement("canvas");
-    this.canvasEl.width = 216; // match the root width
-    this.canvasEl.height = 216; // same height as the .sk_picker_canvas
-    this.ctx = this.canvasEl.getContext("2d");
-
-    this.drawChromaCanvas();
-
-    // Handle click on canvas to pick color
-    this._canvasClickHandler = (e) => {
-      const rect = this.canvasEl.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      // Read pixel [r,g,b,a]
-      const pixelData = this.ctx.getImageData(x, y, 1, 1).data;
-      const [r, g, b] = pixelData;
-      // Convert to hex
-      const color = `#${this.toHex(r)}${this.toHex(g)}${this.toHex(b)}`;
-
-      this.setBackground(color, "canvas");
-    };
-    this.canvasEl.addEventListener("click", this._canvasClickHandler);
-
-    // Add the <canvas> into the canvas DIV
-    this.canvas.appendChild(this.canvasEl);
     // 3. Create a container for color swatches
     this.colors = document.createElement("div");
     this.colors.className = "sk_picker_colors sk_picker_scroll";
@@ -370,7 +504,10 @@ export default class SKPicker {
 
     // 5. Create a row for input + eyedropper
     this.controls = document.createElement("div");
-    this.controls.className = "sk_picker_controls_row";
+    this.controls.className = "sk_picker_controls_root";
+
+    this.saturationControl = this.createPicker();
+    this.hueControl = this.createSlider("hue");
 
     // 6. Create an input field
     this.input = document.createElement("input");
@@ -445,11 +582,20 @@ export default class SKPicker {
     // Attach the click event
     this.eyedropperTrigger.addEventListener("click", this._eyedropperHandler);
 
+    const slidersWrapper = document.createElement("div");
+    slidersWrapper.className = "sk_picker_sliders";
+    slidersWrapper.appendChild(this.saturationControl);
+    slidersWrapper.appendChild(this.hueControl);
+
+    const inputsWrapper = document.createElement("div");
+    inputsWrapper.className = "sk_picker_controls_row";
+    inputsWrapper.appendChild(this.input);
+    inputsWrapper.appendChild(this.eyedropperTrigger);
+
     // 8. Append all elements to their containers
-    this.root.appendChild(this.canvas); // Canvas goes into the root
     this.root.appendChild(this.colors); // Swatches container
-    this.controls.appendChild(this.input); // Input goes into controls
-    this.controls.appendChild(this.eyedropperTrigger);
+    this.controls.appendChild(slidersWrapper); // Input goes into controls
+    this.controls.appendChild(inputsWrapper);
     this.root.appendChild(this.controls); // Controls row goes into root
 
     // Finally, attach the entire picker to the designated root element
@@ -467,10 +613,34 @@ export default class SKPicker {
 
   init() {
     this.createUI();
+    this._bindEvents();
     this.createStyle();
   }
 
+  _bindEvents() {
+    const eventBindings = [];
+    eventBindings.push(
+      // Save and hide / show picker
+      // _.on(_root.button, "click", () =>
+      //   this.isOpen() ? this.hide() : this.show()
+      // ),
+
+      // Close with escape key
+      _.on(
+        document,
+        "keyup",
+        (e) =>
+          this.isOpen() &&
+          (e.key === "Escape" || e.code === "Escape") &&
+          this.hide()
+      )
+    );
+
+    this._eventBindings = eventBindings;
+  }
+
   destroy() {
+    this._eventBindings.forEach((args) => _.off(...args));
     // 1. Remove swatch listeners
     if (this._swatchHandlers && this._swatchHandlers.length) {
       this._swatchHandlers.forEach(({ element, handler }) => {
@@ -520,15 +690,13 @@ export default class SKPicker {
 
     // 6. Clear out other references
     // 7. Clear references
-    this.canvas = null;
-    this.canvasEl = null;
     this.colors = null;
     this.input = null;
     this.controls = null;
     this.eyedropperTrigger = null;
 
     // 7. Clear event callback arrays
-    this.events = {};
+    this._eventListener = {};
   }
 
   toHex(num) {

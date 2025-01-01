@@ -854,20 +854,20 @@ ${cn} > * {
     // 2. Show the picker UI (assuming SKPicker has a .show() method)
     SKPickerInstance.show();
 
-    self.pickerInstance = SKPickerInstance;
-
-    // 3. Listen for color change
     SKPickerInstance.on("change", (color, source, instance) => {
-      console.log({ instance });
-
       console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
-      //
-      if (source === "input" || source === "outside") {
-        instance.hide();
-        instance.destroy();
-        self.pickerInstance = null;
-      }
+
+      // if (source === "input" || source === "outside") {
+      //   instance.hide();
+      //   instance.destroy();
+      //   self.pickerInstance = null;
+      // }
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
     });
   }
 }

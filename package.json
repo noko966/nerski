@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "@simonwep/pickr": "^1.9.1",
     "chroma-js": "^3.1.2",
     "tinycolor2": "^1.6.0"
   }

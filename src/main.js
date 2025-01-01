@@ -1466,11 +1466,16 @@ class Skinner {
       console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
 
-      if (source === "input" || source === "outside") {
-        instance.hide();
-        instance.destroy();
-        self.pickerInstance = null;
-      }
+      // if (source === "input" || source === "outside") {
+      //   instance.hide();
+      //   instance.destroy();
+      //   self.pickerInstance = null;
+      // }
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
     });
   }
 

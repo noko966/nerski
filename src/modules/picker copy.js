@@ -365,6 +365,8 @@ export default class SKPicker {
     return el;
   }
 
+  _bindEvents() {}
+
   init() {
     this.createUI();
     this.createStyle();
@@ -395,11 +397,6 @@ export default class SKPicker {
       );
     }
 
-    // 4. Remove canvas click handler
-    if (this.canvasEl && this._canvasClickHandler) {
-      this.canvasEl.removeEventListener("click", this._canvasClickHandler);
-    }
-
     // 4. Remove the root from the DOM
     if (this.root) {
       this.root.remove();
@@ -414,8 +411,6 @@ export default class SKPicker {
 
     // 6. Clear out other references
     // 7. Clear references
-    this.canvas = null;
-    this.canvasEl = null;
     this.colors = null;
     this.input = null;
     this.controls = null;
