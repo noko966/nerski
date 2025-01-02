@@ -14,6 +14,7 @@ export default class SKPicker {
     this._outsideClickHandler = null; // ADDED
     this.colors = null;
     this.input = null;
+    this._initializingActive = true;
 
     this._eventListener = {
       init: [],
@@ -94,8 +95,6 @@ export default class SKPicker {
   }
 
   _rePositioningPicker() {
-    // No repositioning needed if inline
-
     const el = this.root;
     const eb = el.getBoundingClientRect();
     el.style.top = `${(window.innerHeight - eb.height) / 2}px`;
@@ -117,11 +116,18 @@ export default class SKPicker {
     transform: translate(0, 0);
     border: none;
     background: var(--sk_dominantBg);
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid var(--sk_dominant2);}
+    border: 1px solid var(--sk_dominantBgHover);
+    backdrop-filter: blur(5px);
+
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    border-radius: 4px;
+    flex-direction: column;
+    row-gap: 8px;
+    }
     .sk_picker_root.state_visible{
-    display: block;
+    display: flex;
     }
     .sk_picker_input{
     appearance: none;
@@ -129,40 +135,36 @@ export default class SKPicker {
     padding: 0 8px;
     outline: none;
     border: none;
-    background: var(--sk_dominantShadow);
-    color: var(--sk_dominantTxt);
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
     width: 100%;
     flex-grow: 1;
     min-width: 1px;
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
     }
-    .sk_picker_eyedropper_trigger{
-    height: var(--input_size);
-    width: var(--input_size);
-    outline: 0;
-    appearance: none;
-    border: 1px solid var(--sk_dominantBgHover);
-    background: var(--sk_dominantShadow);
-    border-radius: 4px;}
     .sk_picker_controls_row{
     display: flex;
     align-items: center;
-    column-gap: 8px;
-    margin-top: 16px;
+    column-gap: 6px;
     }
     .sk_picker_sliders{
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    row-gap: 8px;
-    margin-top: 16px;
+    padding: 8px;
+    background: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
+    border-radius: 4px;
+    flex-direction: column;
+    row-gap: 6px;
     }
     .sk_picker_solid{
     height: var(--solid_size);
     width: var(--solid_size);
     border-radius: 4px;
     cursor: pointer;
+    border: 1px solid var(--sk_dominantTxt);
     }
     .sk_picker_colors{
     overflow-y: auto;
@@ -171,10 +173,11 @@ export default class SKPicker {
     row-gap: 4px;
     column-gap: 4px;
     max-height: 80px;
-    padding: 2px;
-    background: var(--sk_dominantShadow);
+    padding: 8px;
+    display: flex;
+    background: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantBgHover);
     }
 
     .sk_picker_scroll::-webkit-scrollbar {
@@ -189,22 +192,14 @@ export default class SKPicker {
         border-radius: 2px;
         background-color: var(--sk_dominantBg);
     }
-
     .sk_picker_slider_track {
-      height: 32px;
+      height: 16px;
       border-radius: 4px;
       background: var(--bg);
     }
-
     .sk_picker_slider_root.variant_hue{
       --bg: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
     }
-    .sk_picker_slider_root.variant_alpha{
-      --bg: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
-      background-size: 16px 16px;
-      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
-    }
-
     .sk_picker_slider_root{
       --bg: transparent;
       position: relative;
@@ -213,7 +208,7 @@ export default class SKPicker {
     .sk_picker_slider_hand{
       position: absolute;
       width: 12px;
-      height: 40px;
+      height: 24px;
       border: 3px solid black;
       border-radius: 6px;
       z-index: 10;
@@ -223,34 +218,16 @@ export default class SKPicker {
 
     .sk_picker_canvas_root{
         width: 100%;
-        height: 120px;
+        height: 80px;
         background: var(--sk_dominantShadow);
-        border-radius: 4px;
+        border-radius: 8px;
         border: 1px solid var(--sk_dominantBgHover);
     }
 
     .sk_picker_canvas_hue{
       position: relative;
       height: 100%;
-    border-radius: 4px;
-    }
-
-    .sk_picker_canvas_white{
-    z-index: 0;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0) 100%);
-    }
-
-    .sk_picker_canvas_black{
-    z-index: 1;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(to bottom, transparent 0%, #000 100%);
+      border-radius: inherit;
     }
 
     .sk_picker_canvas_hand{
@@ -260,7 +237,46 @@ export default class SKPicker {
     border: 3px solid black;
     border-radius: 10px;
     }
-   
+   .sk_picker_btn {
+    appearance: none;
+    border: 1px solid var(--sk_dominantBg2);
+    text-align: center;
+    height: var(--input_size);
+    text-decoration: none;
+    background-color: var(--sk_dominantBgHover);
+    color: var(--sk_dominantTxt2);
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 4px;
+    }
+    .sk_picker_btn.variant_primary{
+    width: 100%;
+    background-color: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
+    }
+    .sk_picker_btn.variant_icon{
+    height: var(--input_size);
+    width: var(--input_size);
+    }
+    .sk_picker_actions_wrapper {
+    padding: 8px;
+    display: flex;
+    background: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg2);
+    border-radius: 4px;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 6px;
+}
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -280,19 +296,6 @@ export default class SKPicker {
       this._rePositioningPicker();
       this._emit("show", this);
       return this;
-    }
-
-    // Attach a "click outside" listener the first time we show
-    if (!this._outsideClickHandler) {
-      this._outsideClickHandler = (e) => {
-        // If the click is completely outside the .sk_picker_root
-        if (this.root && !this.root.contains(e.target)) {
-          const color = this.input.value.trim() || this.currentColor;
-          this.setBackground(color, "outside");
-        }
-      };
-      // Listen for clicks anywhere on the document
-      document.addEventListener("mousedown", this._outsideClickHandler);
     }
   }
 
@@ -321,8 +324,7 @@ export default class SKPicker {
   _updateOutput(eventSource) {
     const { _root, _color } = this;
 
-    // Fire listener if initialization is finish
-    if (this._recalc) {
+    if (!this._initializingActive && this._recalc) {
       this._emit("change", _color, eventSource, this);
     }
   }
@@ -335,22 +337,15 @@ export default class SKPicker {
     const hue = document.createElement("div");
     hue.className = "sk_picker_canvas_hue";
 
-    const white = document.createElement("div");
-    white.className = "sk_picker_canvas_white";
-
-    const black = document.createElement("div");
-    black.className = "sk_picker_canvas_black";
     const hand = document.createElement("div");
     hand.className = "sk_picker_canvas_hand";
 
     root.appendChild(hue);
-    hue.appendChild(white);
-    hue.appendChild(black);
     hue.appendChild(hand);
 
     this.pickerRoot = root;
 
-    Moveable({
+    this.slSlider = Moveable({
       element: hand,
       wrapper: root,
 
@@ -401,10 +396,6 @@ export default class SKPicker {
         variantCN = "variant_hue";
         break;
 
-      case "alpha":
-        variantCN = "variant_alpha";
-        break;
-
       default:
         variantCN = "";
         break;
@@ -416,7 +407,7 @@ export default class SKPicker {
 
     root.appendChild(hand);
     root.appendChild(track);
-    Moveable({
+    this.hSlider = Moveable({
       lock: "v",
       element: hand,
       wrapper: root,
@@ -437,9 +428,9 @@ export default class SKPicker {
         }
 
         // Set picker and gradient color
-        const cssRGBaString = color.toRGBA().toString(0);
 
         // Set picker and gradient color
+        _that.slSlider.trigger();
         this.element.style.background = `hsl(${color.h}, 100%, 50%)`;
         let hexColor = color.toHEXA().toString();
         _that.setBackground(hexColor, "picker_hue");
@@ -502,10 +493,6 @@ export default class SKPicker {
       this.colors.appendChild(swatch);
     });
 
-    // 5. Create a row for input + eyedropper
-    this.controls = document.createElement("div");
-    this.controls.className = "sk_picker_controls_root";
-
     this.saturationControl = this.createPicker();
     this.hueControl = this.createSlider("hue");
 
@@ -556,7 +543,7 @@ export default class SKPicker {
 
     // 7. Create an eyedropper button (optional)
     this.eyedropperTrigger = document.createElement("button");
-    this.eyedropperTrigger.className = "sk_picker_eyedropper_trigger";
+    this.eyedropperTrigger.className = "sk_picker_btn variant_icon";
     this.eyedropperTrigger.innerText = "🎨";
 
     // If you have an eyedropper handler, store it similarly
@@ -587,16 +574,25 @@ export default class SKPicker {
     slidersWrapper.appendChild(this.saturationControl);
     slidersWrapper.appendChild(this.hueControl);
 
+    const actionsWrapper = document.createElement("div");
+    actionsWrapper.className = "sk_picker_actions_wrapper";
+
     const inputsWrapper = document.createElement("div");
     inputsWrapper.className = "sk_picker_controls_row";
     inputsWrapper.appendChild(this.input);
     inputsWrapper.appendChild(this.eyedropperTrigger);
 
+    this.applyAndClose = document.createElement("button");
+    this.applyAndClose.className = "sk_picker_btn variant_primary";
+    this.applyAndClose.innerText = "Apply";
+
+    actionsWrapper.appendChild(inputsWrapper);
+    actionsWrapper.appendChild(this.applyAndClose);
+
     // 8. Append all elements to their containers
+    this.root.appendChild(slidersWrapper); // Input goes into controls
     this.root.appendChild(this.colors); // Swatches container
-    this.controls.appendChild(slidersWrapper); // Input goes into controls
-    this.controls.appendChild(inputsWrapper);
-    this.root.appendChild(this.controls); // Controls row goes into root
+    this.root.appendChild(actionsWrapper); // Actions
 
     // Finally, attach the entire picker to the designated root element
     this.rootElement.appendChild(this.root);
@@ -615,15 +611,18 @@ export default class SKPicker {
     this.createUI();
     this._bindEvents();
     this.createStyle();
+    this._initializingActive = false;
+    this._emit("init");
   }
 
   _bindEvents() {
+    const { root, applyAndClose } = this;
     const eventBindings = [];
     eventBindings.push(
       // Save and hide / show picker
-      // _.on(_root.button, "click", () =>
-      //   this.isOpen() ? this.hide() : this.show()
-      // ),
+      _.on(this.applyAndClose, "click", () =>
+        this.isOpen() ? this.hide() : this.show()
+      ),
 
       // Close with escape key
       _.on(
@@ -633,6 +632,19 @@ export default class SKPicker {
           this.isOpen() &&
           (e.key === "Escape" || e.code === "Escape") &&
           this.hide()
+      ),
+      _.on(
+        document,
+        ["touchstart", "mousedown"],
+        (e) => {
+          if (
+            this.isOpen() &&
+            !_.eventPath(e).some((el) => el === root || el === applyAndClose)
+          ) {
+            this.hide();
+          }
+        },
+        { capture: true }
       )
     );
 
@@ -692,7 +704,6 @@ export default class SKPicker {
     // 7. Clear references
     this.colors = null;
     this.input = null;
-    this.controls = null;
     this.eyedropperTrigger = null;
 
     // 7. Clear event callback arrays
