@@ -12,10 +12,13 @@ export default class SKPicker {
     this.ctx = null;
     this.currentColor = currentColor || "#ffffff";
     this._outsideClickHandler = null; // ADDED
-    this.colors = null;
+    this.swatchesWrapper = null;
+    this.swatchColors = [];
     this.input = null;
+    this.defaultColor = "#34495E";
     this._initializingActive = true;
-
+    this.swatches = null;
+    this._eventBindings = [];
     this._eventListener = {
       init: [],
       save: [],
@@ -465,33 +468,13 @@ export default class SKPicker {
     this.root.className = "sk_picker_root";
 
     // 3. Create a container for color swatches
-    this.colors = document.createElement("div");
-    this.colors.className = "sk_picker_colors sk_picker_scroll";
+    this.swatchesWrapper = document.createElement("div");
+    this.swatchesWrapper.className = "sk_picker_colors sk_picker_scroll";
 
     // We’ll store swatch listeners in an array so we can remove them later
     this._swatchHandlers = [];
 
-    // 4. Loop through solids array to create each swatch
-    this.solids.forEach((color) => {
-      const swatch = document.createElement("div");
-      swatch.className = "sk_picker_solid";
-      swatch.style.background = color;
-
-      // Create a click handler reference
-      const swatchClickHandler = () => {
-        this.setBackground(color, "swatch");
-      };
-
-      swatch.addEventListener("click", swatchClickHandler);
-
-      // Store it so we can remove it in destroy()
-      this._swatchHandlers.push({
-        element: swatch,
-        handler: swatchClickHandler,
-      });
-
-      this.colors.appendChild(swatch);
-    });
+    this.solids.forEach((color) => this.addSwatch(color));
 
     this.saturationControl = this.createPicker();
     this.hueControl = this.createSlider("hue");
@@ -591,7 +574,7 @@ export default class SKPicker {
 
     // 8. Append all elements to their containers
     this.root.appendChild(slidersWrapper); // Input goes into controls
-    this.root.appendChild(this.colors); // Swatches container
+    this.root.appendChild(this.swatchesWrapper); // Swatches container
     this.root.appendChild(actionsWrapper); // Actions
 
     // Finally, attach the entire picker to the designated root element
@@ -617,8 +600,7 @@ export default class SKPicker {
 
   _bindEvents() {
     const { root, applyAndClose } = this;
-    const eventBindings = [];
-    eventBindings.push(
+    this._eventBindings.push(
       // Save and hide / show picker
       _.on(this.applyAndClose, "click", () =>
         this.isOpen() ? this.hide() : this.show()
@@ -647,8 +629,6 @@ export default class SKPicker {
         { capture: true }
       )
     );
-
-    this._eventBindings = eventBindings;
   }
 
   destroy() {
@@ -702,12 +682,95 @@ export default class SKPicker {
 
     // 6. Clear out other references
     // 7. Clear references
-    this.colors = null;
+    this.swatchesWrapper = null;
     this.input = null;
     this.eyedropperTrigger = null;
 
     // 7. Clear event callback arrays
     this._eventListener = {};
+  }
+
+  _parseLocalColor(str) {
+    const { values, type, a } = parseToHSVA(str);
+    const alphaMakesAChange = a !== undefined && a !== 1;
+
+    // If no opacity is applied, add undefined at the very end which gets
+    // Set to 1 in setHSVA
+    if (values && values.length === 3) {
+      values[3] = undefined;
+    }
+
+    return {
+      values: !values || alphaMakesAChange ? null : values,
+      type,
+    };
+  }
+
+  addSwatch(color) {
+    const { values } = this._parseLocalColor(color);
+
+    if (values) {
+      const { swatchColors, swatchesWrapper } = this;
+      const color = HSVaColor(...values);
+
+      const el = document.createElement("div");
+      el.className = "sk_picker_solid";
+      const hex = color.toHEXA().toString();
+      el.style.background = hex;
+
+      // Append element and save swatch data
+      swatchesWrapper.appendChild(el);
+      swatchColors.push({ el, color });
+
+      // Bind event
+      this._eventBindings.push(
+        _.on(el, "click", () => {
+          this.setHSVA(...color.toHSVA(), true);
+          this._emit("swatchselect", hex);
+          this._emit("change", hex, "swatch", this);
+        })
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  setHSVA(h = 360, s = 0, v = 0, a = 1, silent = false) {
+    // Deactivate color calculation
+    const recalc = this._recalc; // Save state
+    this._recalc = false;
+
+    // Validate input
+    if (
+      h < 0 ||
+      h > 360 ||
+      s < 0 ||
+      s > 100 ||
+      v < 0 ||
+      v > 100 ||
+      a < 0 ||
+      a > 1
+    ) {
+      return false;
+    }
+
+    // Override current color and re-active color calculation
+    this._color = HSVaColor(h, s, v, a);
+
+    // Update slider and palette
+    this.hSlider.update(h / 360);
+    this.slSlider.update(s / 100, 1 - v / 100);
+
+    // Update output if recalculation is enabled
+    if (recalc) {
+      this._updateOutput();
+    }
+
+    // Restore old state
+    this._recalc = recalc;
+    return true;
   }
 
   toHex(num) {
