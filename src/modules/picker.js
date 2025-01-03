@@ -10,12 +10,12 @@ export default class SKPicker {
     this.canvas = null; // <div> container
     this.canvasEl = null; // actual <canvas>
     this.ctx = null;
-    this.currentColor = currentColor || "#ffffff";
+    this.currentColor = currentColor;
+
     this._outsideClickHandler = null; // ADDED
     this.swatchesWrapper = null;
     this.swatchColors = [];
-    this.input = null;
-    this.defaultColor = "#34495E";
+    this.inputEl = null;
     this._initializingActive = true;
     this.swatches = null;
     this._eventBindings = [];
@@ -167,7 +167,7 @@ export default class SKPicker {
     width: var(--solid_size);
     border-radius: 4px;
     cursor: pointer;
-    border: 1px solid var(--sk_dominantTxt);
+    border: 2px solid var(--sk_dominantTxt);
     }
     .sk_picker_colors{
     overflow-y: auto;
@@ -279,7 +279,7 @@ export default class SKPicker {
     flex-direction: column;
     align-items: stretch;
     row-gap: 6px;
-}
+    }
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -312,12 +312,20 @@ export default class SKPicker {
     return false;
   }
 
-  // --- Event methods ---
-  on(eventName, callback) {
-    if (!this._eventListener[eventName]) {
-      this._eventListener[eventName] = [];
+  on(event, cb) {
+    this._eventListener[event].push(cb);
+    return this;
+  }
+
+  off(event, cb) {
+    const callBacks = this._eventListener[event] || [];
+    const index = callBacks.indexOf(cb);
+
+    if (~index) {
+      callBacks.splice(index, 1);
     }
-    this._eventListener[eventName].push(callback);
+
+    return this;
   }
 
   _emit(event, ...args) {
@@ -326,7 +334,7 @@ export default class SKPicker {
 
   _updateOutput(eventSource) {
     const { _root, _color } = this;
-
+    this.inputEl.value = _color.toHEXA().toString();
     if (!this._initializingActive && this._recalc) {
       this._emit("change", _color, eventSource, this);
     }
@@ -436,7 +444,7 @@ export default class SKPicker {
         _that.slSlider.trigger();
         this.element.style.background = `hsl(${color.h}, 100%, 50%)`;
         let hexColor = color.toHEXA().toString();
-        _that.setBackground(hexColor, "picker_hue");
+        // _that.setBackground(hexColor, "picker_hue");
       },
     });
 
@@ -444,22 +452,17 @@ export default class SKPicker {
   }
 
   updateControls() {
-    this.input.value = this.currentColor;
+    // this.input.value = this.currentColor;
   }
 
   // ADDED: auto-destroy for "input" or "outside"
   setBackground(bg, source = "swatch") {
     // Set input’s value
-    this.input.value = bg;
+    // this.inputEl.value = bg;
 
     // Trigger “change” event
     this._emit("change", bg, source, this);
-
-    // Destroy only for "input" or "outside"
-
-    if (source === "outside") {
-      this._emit("change", bg, "outside", this);
-    }
+    return true;
   }
 
   createUI() {
@@ -472,7 +475,6 @@ export default class SKPicker {
     this.swatchesWrapper.className = "sk_picker_colors sk_picker_scroll";
 
     // We’ll store swatch listeners in an array so we can remove them later
-    this._swatchHandlers = [];
 
     this.solids.forEach((color) => this.addSwatch(color));
 
@@ -480,49 +482,9 @@ export default class SKPicker {
     this.hueControl = this.createSlider("hue");
 
     // 6. Create an input field
-    this.input = document.createElement("input");
-    this.input.type = "text";
-    this.input.className = "sk_picker_input";
-
-    // We'll store these input handlers as properties
-    const applyColorIfValid = () => {
-      let val = this.input.value.trim();
-
-      // Regex to match optional '#' then exactly 3 or 6 hex digits
-      // e.g., #FFF, FFF, #FFFFFF, or FFFFFF
-      const pattern = /^#?([\da-fA-F]{3}|[\da-fA-F]{6})$/;
-
-      if (pattern.test(val)) {
-        // Remove a leading '#' if present
-        val = val.replace(/^#/, "");
-
-        // If it's a 3-digit hex (e.g. "FFF"), expand to 6-digit ("FFFFFF")
-        if (val.length === 3) {
-          val = val[0] + val[0] + val[1] + val[1] + val[2] + val[2];
-        }
-
-        // Now prepend '#'
-        const color = "#" + val;
-
-        // Update the picker’s color (and fire "change" if you do so in setBackground)
-        this.setBackground(color, "input");
-      }
-      // else: do nothing on invalid color
-    };
-
-    // Create references for our blur and keydown handlers
-    this._inputBlurHandler = applyColorIfValid;
-    this._inputKeydownHandler = (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault(); // stop form submission if in a form
-        applyColorIfValid();
-        // optionally: this.input.blur();
-      }
-    };
-
-    // Add the listeners
-    this.input.addEventListener("blur", this._inputBlurHandler);
-    this.input.addEventListener("keydown", this._inputKeydownHandler);
+    this.inputEl = document.createElement("input");
+    this.inputEl.type = "text";
+    this.inputEl.className = "sk_picker_input";
 
     // 7. Create an eyedropper button (optional)
     this.eyedropperTrigger = document.createElement("button");
@@ -562,7 +524,7 @@ export default class SKPicker {
 
     const inputsWrapper = document.createElement("div");
     inputsWrapper.className = "sk_picker_controls_row";
-    inputsWrapper.appendChild(this.input);
+    inputsWrapper.appendChild(this.inputEl);
     inputsWrapper.appendChild(this.eyedropperTrigger);
 
     this.applyAndClose = document.createElement("button");
@@ -595,15 +557,23 @@ export default class SKPicker {
     this._bindEvents();
     this.createStyle();
     this._initializingActive = false;
+    // this.setColor(this.currentColor);
     this._emit("init");
   }
 
   _bindEvents() {
-    const { root, applyAndClose } = this;
+    let that = this;
+    const { root, applyAndClose, inputEl } = this;
     this._eventBindings.push(
       // Save and hide / show picker
-      _.on(this.applyAndClose, "click", () =>
-        this.isOpen() ? this.hide() : this.show()
+      _.on(
+        this.applyAndClose,
+        "click",
+        () => {
+          let hexColor = that._color.toHEXA().toString();
+          !this.setBackground(hexColor) && this.hide();
+        }
+        // this.isOpen() ? this.hide() : this.show()
       ),
 
       // Close with escape key
@@ -627,27 +597,30 @@ export default class SKPicker {
           }
         },
         { capture: true }
-      )
+      ),
+
+      // User input
+      _.on(inputEl, ["keyup", "input"], (e) => {
+        // Fire listener if initialization is finish and changed color was valid
+        if (this.setColor(e.target.value) && !this._initializingActive) {
+          this._emit("change", this._color, "input", this);
+          this._emit("changestop", "input", this);
+        }
+
+        e.stopImmediatePropagation();
+      }),
+
+      // Detect user input and disable auto-recalculation
+      _.on(inputEl, ["focus", "blur"], (e) => {
+        this._recalc = e.type === "blur";
+        this._recalc && this._updateOutput(null);
+      })
     );
   }
 
   destroy() {
+    const root = this.root;
     this._eventBindings.forEach((args) => _.off(...args));
-    // 1. Remove swatch listeners
-    if (this._swatchHandlers && this._swatchHandlers.length) {
-      this._swatchHandlers.forEach(({ element, handler }) => {
-        element.removeEventListener("click", handler);
-      });
-      this._swatchHandlers = [];
-    }
-
-    // 2. Remove input listeners if they exist
-    if (this.input && this._inputBlurHandler) {
-      this.input.removeEventListener("blur", this._inputBlurHandler);
-    }
-    if (this.input && this._inputKeydownHandler) {
-      this.input.removeEventListener("keydown", this._inputKeydownHandler);
-    }
 
     // 3. Remove eyedropper listener if present
     if (this.eyedropperTrigger && this._eyedropperHandler) {
@@ -657,21 +630,9 @@ export default class SKPicker {
       );
     }
 
-    // 4. Remove canvas click handler
-    if (this.canvasEl && this._canvasClickHandler) {
-      this.canvasEl.removeEventListener("click", this._canvasClickHandler);
-    }
-
-    // Remove outside click listener
-    if (this._outsideClickHandler) {
-      document.removeEventListener("mousedown", this._outsideClickHandler);
-      this._outsideClickHandler = null;
-    }
-
     // 4. Remove the root from the DOM
-    if (this.root) {
-      this.root.remove();
-      this.root = null;
+    if (this.root.parentElement) {
+      this.root.parentElement.removeChild(root);
     }
 
     // 5. Remove the style element if you appended one with a known ID
@@ -680,19 +641,11 @@ export default class SKPicker {
       styleEl.remove();
     }
 
-    // 6. Clear out other references
-    // 7. Clear references
-    this.swatchesWrapper = null;
-    this.input = null;
-    this.eyedropperTrigger = null;
-
-    // 7. Clear event callback arrays
-    this._eventListener = {};
+    Object.keys(this).forEach((key) => (this[key] = null));
   }
 
   _parseLocalColor(str) {
-    const { values, type, a } = parseToHSVA(str);
-    const alphaMakesAChange = a !== undefined && a !== 1;
+    const { values, type } = parseToHSVA(str);
 
     // If no opacity is applied, add undefined at the very end which gets
     // Set to 1 in setHSVA
@@ -701,9 +654,31 @@ export default class SKPicker {
     }
 
     return {
-      values: !values || alphaMakesAChange ? null : values,
+      values: values,
       type,
     };
+  }
+
+  setColor(string) {
+    // Check if null
+    if (string === null) {
+      return true;
+    }
+
+    const values = this._parseLocalColor(string).value;
+
+    // Check if color is ok
+    if (values) {
+      // Update color (fires 'save' event if silent is 'false')
+      if (!this.setHSVA(...values)) {
+        return false;
+      }
+
+      // Update representation (fires 'change' event)
+      return true;
+    }
+
+    return false;
   }
 
   addSwatch(color) {
@@ -737,7 +712,7 @@ export default class SKPicker {
     return false;
   }
 
-  setHSVA(h = 360, s = 0, v = 0, a = 1, silent = false) {
+  setHSVA(h = 360, s = 0, v = 0, a = 1) {
     // Deactivate color calculation
     const recalc = this._recalc; // Save state
     this._recalc = false;
