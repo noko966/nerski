@@ -582,8 +582,6 @@ class Skinner {
             .hex();
     });
 
-    console.log(this.skin[_vb.nameBgHov]);
-
     bgAKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = chroma(firstColor)
         .alpha(i + 1 * 0.5)

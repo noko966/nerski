@@ -855,7 +855,7 @@ ${cn} > * {
     SKPickerInstance.show();
 
     SKPickerInstance.on("change", (color, source, instance) => {
-      console.log("Picker color changed:", color, "Source:", source);
+      // console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
 
       // if (source === "input" || source === "outside") {

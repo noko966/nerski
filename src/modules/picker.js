@@ -1,7 +1,6 @@
 import * as _ from "./utils";
-import { parseToHSVA } from "./color";
-import { HSVaColor } from "./hsvacolor";
 import Moveable from "./moveable";
+const tinycolor = require("tinycolor2");
 
 export default class SKPicker {
   constructor(rootElement, currentColor) {
@@ -10,7 +9,7 @@ export default class SKPicker {
     this.canvas = null; // <div> container
     this.canvasEl = null; // actual <canvas>
     this.ctx = null;
-    this.currentColor = currentColor;
+    this.currentColor = tinycolor(currentColor).toHexString();
 
     this._outsideClickHandler = null; // ADDED
     this.swatchesWrapper = null;
@@ -31,8 +30,7 @@ export default class SKPicker {
       swatchselect: [],
     };
 
-    this._color = HSVaColor();
-    this._lastColor = HSVaColor();
+    this._color = tinycolor(currentColor).toHexString();
 
     this._recalc = true;
 
@@ -90,11 +88,6 @@ export default class SKPicker {
       "linear-gradient(to bottom right,#fcc5e4,#fda34b,#ff7882,#c8699e,#7046aa,#0c1db8,#020f75)",
       "linear-gradient(to bottom right,#ff75c3,#ffa647,#ffe83f,#9fff5b,#70e2ff,#cd93ff)",
     ];
-  }
-
-  // Re-assign if null
-  getColor() {
-    return this._color || (this._color = this._lastColor.clone());
   }
 
   _rePositioningPicker() {
@@ -294,7 +287,6 @@ export default class SKPicker {
 
   show() {
     if (!this.isOpen()) {
-      this.updateControls();
       this.root.classList.add("state_visible");
       this._rePositioningPicker();
       this._emit("show", this);
@@ -333,10 +325,11 @@ export default class SKPicker {
   }
 
   _updateOutput(eventSource) {
-    const { _root, _color } = this;
-    this.inputEl.value = _color.toHEXA().toString();
+    const _c = this._color;
+
+    this.inputEl.value = tinycolor(_c).toHexString();
     if (!this._initializingActive && this._recalc) {
-      this._emit("change", _color, eventSource, this);
+      this._emit("change", _c, eventSource, this);
     }
   }
 
@@ -362,34 +355,33 @@ export default class SKPicker {
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(x, y) {
-        const color = _that.getColor();
-        const _root = _that.pickerRoot;
+        const c = _that._color;
         // const { lastColor, currentColor } = _root.preview;
-
+        const _sv = tinycolor(c).toHsv();
         // Update the input field only if the user is currently not typing
         if (_that._recalc) {
           // Calculate saturation based on the position
-          color.s = x * 100;
+          _sv.s = x * 100;
 
           // Calculate the value
-          color.v = 100 - y * 100;
+          _sv.v = 100 - y * 100;
 
           // Prevent falling under zero
-          color.v < 0 ? (color.v = 0) : 0;
+          _sv.v < 0 ? (_sv.v = 0) : 0;
           _that._updateOutput("slider");
         }
 
         // Set picker and gradient color
-        const cssRGBaString = color.toRGBA().toString(0);
-        this.element.style.background = cssRGBaString;
+        const _chl = tinycolor(_sv).toHsl();
+        this.element.style.background = _chl;
         this.wrapper.style.background = `
-              linear-gradient(to top, rgba(0, 0, 0, ${color.a}), transparent),
-              linear-gradient(to left, hsla(${color.h}, 100%, 50%, ${color.a}), rgba(255, 255, 255, ${color.a}))
+              linear-gradient(to top, rgba(0, 0, 0, ${_chl.a}), transparent),
+              linear-gradient(to left, hsla(${_chl.h}, 100%, 50%, ${_chl.a}), rgba(255, 255, 255, ${_chl.a}))
           `;
-        let hexColor = color.toHEXA().toString();
+        let _chx = tinycolor(_chl).toHexString();
         // Change current color
         // currentColor.style.setProperty("--pcr-color", cssRGBaString);
-        _that.setBackground(hexColor, "picker_canvas");
+        _that.setBackground(_chx, "picker_canvas");
       },
     });
 
@@ -425,26 +417,24 @@ export default class SKPicker {
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(v) {
-        const color = _that.getColor();
-        const _root = _that.hueRoot;
-        // const { lastColor, currentColor } = _root.preview;
-
+        let hsl = tinycolor(_that._color).toHsl();
         // Update the input field only if the user is currently not typing
         if (_that._recalc) {
           // Calculate saturation based on the position
-          color.h = v * 360;
+
+          hsl.h = v * 360;
 
           // Prevent falling under zero
           _that._updateOutput("slider");
         }
-
+        let _chx = tinycolor(hsl).toHexString();
         // Set picker and gradient color
 
         // Set picker and gradient color
+
         _that.slSlider.trigger();
-        this.element.style.background = `hsl(${color.h}, 100%, 50%)`;
-        let hexColor = color.toHEXA().toString();
-        // _that.setBackground(hexColor, "picker_hue");
+        this.element.style.background = _chx;
+        _that.setBackground(_chx, "picker_hue");
       },
     });
 
@@ -456,12 +446,15 @@ export default class SKPicker {
   }
 
   // ADDED: auto-destroy for "input" or "outside"
-  setBackground(bg, source = "swatch") {
-    // Set input’s value
-    // this.inputEl.value = bg;
+  setBackground(color, source = "no") {
+    let _color = tinycolor(color).toHexString();
 
-    // Trigger “change” event
-    this._emit("change", bg, source, this);
+    // Update output if recalculation is enabled
+    // Restore old state
+
+    this._color = _color;
+    this._emit("change", _color, source, this);
+
     return true;
   }
 
@@ -557,7 +550,11 @@ export default class SKPicker {
     this._bindEvents();
     this.createStyle();
     this._initializingActive = false;
-    // this.setColor(this.currentColor);
+    this.setBackground(this.currentColor);
+    // Update slider and palette
+    let _hsv = tinycolor(this._color).toHsv();
+    this.hSlider.update(_hsv.h / 360);
+    this.slSlider.update(_hsv.s / 100, 1 - _hsv.v / 100);
     this._emit("init");
   }
 
@@ -570,8 +567,9 @@ export default class SKPicker {
         this.applyAndClose,
         "click",
         () => {
-          let hexColor = that._color.toHEXA().toString();
-          !this.setBackground(hexColor) && this.hide();
+          // let hexColor = that._color.toHEXA().toString();
+          // !this.setBackground(hexColor) && this.hide();
+          this.isOpen() ? this.hide() : this.show();
         }
         // this.isOpen() ? this.hide() : this.show()
       ),
@@ -602,7 +600,9 @@ export default class SKPicker {
       // User input
       _.on(inputEl, ["keyup", "input"], (e) => {
         // Fire listener if initialization is finish and changed color was valid
-        if (this.setColor(e.target.value) && !this._initializingActive) {
+        let _c = tinycolor(e.target.value).toHexString();
+        this._color = _c;
+        if (this.setBackground(_c) && !this._initializingActive) {
           this._emit("change", this._color, "input", this);
           this._emit("changestop", "input", this);
         }
@@ -644,65 +644,26 @@ export default class SKPicker {
     Object.keys(this).forEach((key) => (this[key] = null));
   }
 
-  _parseLocalColor(str) {
-    const { values, type } = parseToHSVA(str);
-
-    // If no opacity is applied, add undefined at the very end which gets
-    // Set to 1 in setHSVA
-    if (values && values.length === 3) {
-      values[3] = undefined;
-    }
-
-    return {
-      values: values,
-      type,
-    };
-  }
-
-  setColor(string) {
-    // Check if null
-    if (string === null) {
-      return true;
-    }
-
-    const values = this._parseLocalColor(string).value;
-
-    // Check if color is ok
-    if (values) {
-      // Update color (fires 'save' event if silent is 'false')
-      if (!this.setHSVA(...values)) {
-        return false;
-      }
-
-      // Update representation (fires 'change' event)
-      return true;
-    }
-
-    return false;
-  }
-
   addSwatch(color) {
-    const { values } = this._parseLocalColor(color);
+    const _c = tinycolor(color).toHexString();
 
-    if (values) {
+    if (_c) {
       const { swatchColors, swatchesWrapper } = this;
-      const color = HSVaColor(...values);
 
       const el = document.createElement("div");
       el.className = "sk_picker_solid";
-      const hex = color.toHEXA().toString();
-      el.style.background = hex;
+      el.style.background = _c;
 
       // Append element and save swatch data
       swatchesWrapper.appendChild(el);
-      swatchColors.push({ el, color });
+      swatchColors.push({ el, _c });
 
       // Bind event
       this._eventBindings.push(
         _.on(el, "click", () => {
-          this.setHSVA(...color.toHSVA(), true);
-          this._emit("swatchselect", hex);
-          this._emit("change", hex, "swatch", this);
+          this.setBackground(_c);
+          this._emit("swatchselect", _c);
+          this._emit("change", _c, "swatch", this);
         })
       );
 
@@ -710,46 +671,5 @@ export default class SKPicker {
     }
 
     return false;
-  }
-
-  setHSVA(h = 360, s = 0, v = 0, a = 1) {
-    // Deactivate color calculation
-    const recalc = this._recalc; // Save state
-    this._recalc = false;
-
-    // Validate input
-    if (
-      h < 0 ||
-      h > 360 ||
-      s < 0 ||
-      s > 100 ||
-      v < 0 ||
-      v > 100 ||
-      a < 0 ||
-      a > 1
-    ) {
-      return false;
-    }
-
-    // Override current color and re-active color calculation
-    this._color = HSVaColor(h, s, v, a);
-
-    // Update slider and palette
-    this.hSlider.update(h / 360);
-    this.slSlider.update(s / 100, 1 - v / 100);
-
-    // Update output if recalculation is enabled
-    if (recalc) {
-      this._updateOutput();
-    }
-
-    // Restore old state
-    this._recalc = recalc;
-    return true;
-  }
-
-  toHex(num) {
-    const hex = num.toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
   }
 }
