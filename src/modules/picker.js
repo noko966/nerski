@@ -288,23 +288,7 @@ export default class SKPicker {
     align-items: stretch;
     row-gap: 6px;
     }
-    .sk_picker_gradient_stops_wrapper{
-    display: flex;
-    align-items: center;
-    }
-    .sk_picker_gradient_stop {
-    position: relative;
-    width: 24px;
-    height: 24px;
-    border: 2px solid black;
-    border-radius: 6px;
-    z-index: 10;
-    }.sk_picker_gradient_root {
-    height: 50px;
-    border-radius: 4px;
-    position: relative;
-    background-image: var(--grad);
-    }
+    
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -357,73 +341,7 @@ export default class SKPicker {
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
 
-  generateGradientString() {
-    let str = "";
-    this.gradientType = "linear";
-    this.gradientDirection = "90deg";
-    const stopsString = this.gradientStops.map((stop) => stop.color).join(", ");
-    str = `${this.gradientType}-gradient(${this.gradientDirection}, ${stopsString})`;
-    return str;
-  }
-
-  createGradientSlider() {
-    let _that = this;
-    this.gradientStops = [
-      {
-        color: "#FF00BB",
-      },
-      {
-        color: "#FFFFBB",
-      },
-    ];
-
-    const stops = this.gradientStops;
-    this.gradientRoot = document.createElement("div");
-    this.gradientRoot.className = "sk_picker_gradient_root";
-    this.gradientStopsWrapper = document.createElement("div");
-    this.gradientStopsWrapper.className = "sk_picker_gradient_stops_wrapper";
-
-    this.gradientRoot.style.setProperty(
-      "--grad",
-      this.generateGradientString()
-    );
-
-    stops.forEach((s) => {
-      this.addGradientSwatch(s.color);
-    });
-
-    this.root.appendChild(this.gradientRoot);
-    this.root.appendChild(this.gradientStopsWrapper);
-  }
-
-  addGradientSwatch(color) {
-    const _c = tinycolor(color).toHexString();
-
-    if (_c) {
-      const { gradientColorStops, gradientStopsWrapper } = this;
-
-      const el = document.createElement("div");
-      el.className = "sk_picker_gradient_stop";
-      el.style.background = _c;
-
-      // Append element and save swatch data
-      gradientStopsWrapper.appendChild(el);
-      gradientColorStops.push({ el, _c });
-
-      // Bind event
-      this._eventBindings.push(
-        _.on(el, "click", () => {
-          // l
-          // this.updateSliders();
-          // this._emit("swatchselect", _c);
-        })
-      );
-
-      return true;
-    }
-
-    return false;
-  }
+  
 
   createPicker() {
     let _that = this;
@@ -542,8 +460,6 @@ export default class SKPicker {
     // 1. Create the picker’s root container
     this.root = document.createElement("div");
     this.root.className = "sk_picker_root";
-
-    this.createGradientSlider();
 
     // 3. Create a container for color swatches
     this.swatchesWrapper = document.createElement("div");

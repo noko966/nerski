@@ -32,6 +32,15 @@ class Skinner {
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
+    this.gradient = {
+      wrapperEl: null,
+      previewEl: null,
+      stopsWrapperEl: null,
+      type: 'linear',
+      angle: 90,
+      stops: [],
+    }
+
     this.patientRoot = patientRoot || document.body;
 
     this.isStylerToggledOn = false;
@@ -493,43 +502,43 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+        .darken(this.defaults.dark.bg2)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+        .lighten(this.defaults.light.bg2)
+        .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg3)
-          .toString()
+        .darken(this.defaults.dark.bg3)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg3)
-          .toString();
+        .lighten(this.defaults.light.bg3)
+        .toString();
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -575,11 +584,11 @@ class Skinner {
     bgKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = isDark
         ? chroma(firstColor)
-            .darken(0.2 * (i + 1))
-            .hex()
+          .darken(0.2 * (i + 1))
+          .hex()
         : chroma(firstColor)
-            .brighten(0.2 * (i + 1))
-            .hex();
+          .brighten(0.2 * (i + 1))
+          .hex();
     });
 
     bgAKeyNames.forEach((bgName, i) => {
@@ -595,9 +604,8 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${
-        this.skin[_vb.gradientAngle]
-      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
+        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -1406,8 +1414,8 @@ class Skinner {
           );
         },
         (e) => {
-          this.handlePicker(e, _vd.nameBg_g, (color) =>
-            this.modifyKey(_vd.nameBg_g, color)
+          this.showGradientSlider(e, _essence, (grad) => 
+            this.modifyKey(_vd.nameBg_g, grad)
           );
         },
         (e) => {
@@ -1444,8 +1452,88 @@ class Skinner {
       ]);
     }
   }
+  generateGradientString() {
+    let str = "";
+    this.gradient.type = "linear";
+    this.gradient.angle = "90deg";
+    const stopsString = this.gradient.stops.map((stop) => stop).join(", ");
+    str = `${this.gradient.type}-gradient(${this.gradient.angle}, ${stopsString})`;
+    return str;
+  }
 
-  handleGradientPicker(event, key, onChangeCallback) {}
+  addGradientSwatch(color, index, key) {
+    const c = tinycolor(color).toHexString();
+
+    if (c) {
+      const el = document.createElement("div");
+      el.className = "sk_picker_gradient_stop";
+      el.style.background = `var(--${[key][index]})`;
+
+      // Append element and save swatch data
+      this.gradient.stopsWrapperEl.appendChild(el);
+      // gradientColorStops.push({ el, c });
+
+      // Bind event
+      el.addEventListener('click', (e) => {
+        this.handlePicker(e, c, (color)=> {
+          this.modifyKey(this.skin[key][index], color)
+        })
+      })
+
+      return true;
+    }
+
+    return false;
+  }
+
+  showGradientSlider(event, essence, onChangeCallback){
+    const _vd = this.verbalData(essence);
+    const parent = event.target.parentElement;
+    const key = `${_vd.name}GradStops`
+    this.createGradientSlider(parent);
+    if(!this.skin[key]) {
+      this.skin[key] = [
+        this.skin[_vd.nameBg],
+        this.skin[_vd.nameBg_g],
+      ]
+    }
+
+    this.gradient.stops = this.skin[`${_vd.name}GradStops`];
+    
+    this.createGradientStops(key);
+
+  }
+
+  createGradientSlider(parent) {
+    let t = this;
+
+    this.gradient.wrapperEl = document.createElement("div");
+    this.gradient.wrapperEl.className = "sk_picker_gradient_root";
+    this.gradient.previewEl = document.createElement("div");
+    this.gradient.previewEl.className = "sk_picker_gradient_preview";
+
+    this.gradient.stopsWrapperEl = document.createElement("div");
+    this.gradient.stopsWrapperEl.className = "sk_picker_gradient_stops_wrapper";
+
+    this.gradient.wrapperEl.appendChild(this.gradient.previewEl);
+    this.gradient.wrapperEl.appendChild(this.gradient.stopsWrapperEl);
+    parent.appendChild(this.gradient.wrapperEl);
+
+  }
+
+  createGradientStops(key){
+    
+
+    this.gradient.wrapperEl.style.setProperty(
+      "--grad",
+      this.generateGradientString()
+    );
+
+    this.gradient.stops.forEach((s, index) => {
+      this.addGradientSwatch(s, index, key);
+    });
+  }
+
 
   handlePicker(event, key, onChangeCallback) {
     let self = this;
@@ -1454,9 +1542,6 @@ class Skinner {
       console.log("A picker is already open. Please close it first.");
       return;
     }
-
-    // const pe = event.target.parentElement;
-    // console.log(pe);
 
     let x = event.clientX;
     let y = event.clientY;
@@ -1472,11 +1557,6 @@ class Skinner {
       console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
 
-      // if (source === "input" || source === "outside") {
-      //   instance.hide();
-      //   instance.destroy();
-      //   self.pickerInstance = null;
-      // }
     });
 
     SKPickerInstance.on("hide", (source, instance) => {
@@ -2415,6 +2495,36 @@ class Skinner {
   --controls-ui-pad-y: 6px;
 }
 
+.sk_picker_gradient_stops_wrapper{
+display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.sk_picker_gradient_stop {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 2px solid black;
+    border-radius: 6px;
+    z-index: 10;
+    }.sk_picker_gradient_root {
+            border-radius: 4px;
+    padding: 8px;
+    position: absolute;
+    top: 0;
+    background-color: var(--sk_dominantBgHover);
+    left: 0;
+    z-index: 100;
+    }
+    .sk_picker_gradient_preview {
+        height: 50px;
+    border-radius: 4px;
+    position: relative;
+    background-image: var(--grad);
+    width: 120px;
+    }
+
 .sk_path_string_root {
   height: 40px;
   position: relative;
@@ -2437,438 +2547,6 @@ class Skinner {
   stroke: var(--sk_accentBg);
   stroke-width: 1px;
   fill: none;
-}
-
-.pickr {
-  position: relative;
-  overflow: visible;
-  transform: translateY(0);
-}
-
-.pickr * {
-  box-sizing: border-box;
-  outline: none;
-  border: none;
-  -webkit-appearance: none;
-}
-
-.pickr .pcr-button {
-  position: relative;
-  height: 35px;
-  width: 35px;
-  padding: 0.5em;
-  cursor: pointer;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Helvetica Neue, Arial, sans-serif;
-  border-radius: 2px;
-  overflow: hidden;
-  background: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" stroke="%2342445A" stroke-width="5px" stroke-linecap="round"><path d="M45,45L5,5"></path><path d="M45,5L5,45"></path></svg>')
-    no-repeat 50%;
-  background-size: 0;
-  transition: all 0.3s;
-}
-
-.pickr .pcr-button:before {
-  /*background: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path fill="white" d="M1,0H2V1H1V0ZM0,1H1V2H0V1Z"/><path fill="gray" d="M0,0H1V1H0V0ZM1,1H2V2H1V1Z"/></svg>');*/
-  background-size: 0.5em;
-  z-index: -1;
-  z-index: auto;
-}
-
-.pickr .pcr-button:after,
-.pickr .pcr-button:before {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0.15em;
-}
-
-.pickr .pcr-button:after {
-  transition: background 0.3s;
-  background: var(--pcr-color);
-}
-
-.pickr .pcr-button.clear {
-  background-size: 70%;
-}
-
-.pickr .pcr-button.clear:before {
-  opacity: 0;
-}
-
-.pickr .pcr-button.clear:focus {
-  box-shadow: 0 0 0 1px hsla(0, 0%, 100%, 0.85), 0 0 0 3px var(--pcr-color);
-}
-
-.pickr .pcr-button.disabled {
-  cursor: not-allowed;
-}
-
-.pcr-app *,
-.pickr * {
-  box-sizing: border-box;
-  outline: none;
-  border: none;
-  -webkit-appearance: none;
-}
-
-.pcr-app button.pcr-active,
-.pcr-app button:focus,
-.pcr-app input.pcr-active,
-.pcr-app input:focus,
-.pickr button.pcr-active,
-.pickr button:focus,
-.pickr input.pcr-active,
-.pickr input:focus {
-  /*box-shadow: 0 0 0 1px hsla(0,0%,100%,.85),0 0 0 3px var(--pcr-color)*/
-}
-
-.pcr-app .pcr-palette,
-.pcr-app .pcr-slider,
-.pickr .pcr-palette,
-.pickr .pcr-slider {
-  transition: box-shadow 0.3s;
-}
-
-.pcr-app .pcr-palette:focus,
-.pcr-app .pcr-slider:focus,
-.pickr .pcr-palette:focus,
-.pickr .pcr-slider:focus {
-  box-shadow: 0 0 0 1px hsla(0, 0%, 100%, 0.85), 0 0 0 3px rgba(0, 0, 0, 0.25);
-}
-
-.pcr-app {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  z-index: 10000;
-  border-radius: 0.1em;
-  background: #fff;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0s 0.3s;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Helvetica Neue, Arial, sans-serif;
-  box-shadow: 0 0.15em 1.5em 0 rgba(0, 0, 0, 0.1), 0 0 1em 0 rgba(0, 0, 0, 0.03);
-  left: 0;
-  top: 0;
-}
-
-.pcr-app.visible {
-  transition: opacity 0.3s;
-  visibility: visible;
-  opacity: 1;
-}
-
-.pcr-app .pcr-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 0.75em;
-}
-
-.pcr-app .pcr-swatches.pcr-last {
-  margin: 0;
-}
-
-@supports (display: grid) {
-  .pcr-app .pcr-swatches {
-    display: grid;
-    align-items: center;
-    grid-template-columns: repeat(auto-fit, 1.75em);
-  }
-}
-
-.pcr-app .pcr-swatches > button {
-  font-size: 1em;
-  position: relative;
-  width: calc(1.75em - 5px);
-  height: calc(1.75em - 5px);
-  border-radius: 0.15em;
-  cursor: pointer;
-  margin: 2.5px;
-  flex-shrink: 0;
-  justify-self: center;
-  transition: all 0.15s;
-  overflow: hidden;
-  background: transparent;
-  z-index: 1;
-}
-
-.pcr-app .pcr-swatches > button:before {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path fill="white" d="M1,0H2V1H1V0ZM0,1H1V2H0V1Z"/><path fill="gray" d="M0,0H1V1H0V0ZM1,1H2V2H1V1Z"/></svg>');
-  background-size: 6px;
-  border-radius: 0.15em;
-  z-index: -1;
-}
-
-.pcr-app .pcr-swatches > button:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--pcr-color);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 0.15em;
-  box-sizing: border-box;
-}
-
-.pcr-app .pcr-swatches > button:hover {
-  filter: brightness(1.05);
-}
-
-.pcr-app .pcr-swatches > button:not(.pcr-active) {
-  box-shadow: none;
-}
-
-.pcr-app .pcr-interaction {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 0 -0.2em;
-}
-
-.pcr-app .pcr-interaction > * {
-  margin: 0 0.2em;
-}
-
-.pcr-app .pcr-interaction input {
-  letter-spacing: 0.07em;
-  font-size: 0.75em;
-  text-align: center;
-  cursor: pointer;
-  color: #75797e;
-  background: #f1f3f4;
-  border-radius: 0.15em;
-  transition: all 0.15s;
-  padding: 0.45em 0.5em;
-  margin-top: 0.75em;
-}
-
-.pcr-app .pcr-interaction input:hover {
-  filter: brightness(0.975);
-}
-
-.pcr-app .pcr-interaction input:focus {
-  box-shadow: 0 0 0 1px hsla(0, 0%, 100%, 0.85),
-    0 0 0 3px rgba(66, 133, 244, 0.75);
-}
-
-.pcr-app .pcr-interaction .pcr-result {
-  color: #75797e;
-  text-align: left;
-  flex: 1 1 8em;
-  min-width: 8em;
-  transition: all 0.2s;
-  border-radius: 0.15em;
-  background: #f1f3f4;
-  cursor: text;
-}
-
-.pcr-app .pcr-interaction .pcr-result::-moz-selection {
-  background: #4285f4;
-  color: #fff;
-}
-
-.pcr-app .pcr-interaction .pcr-result::selection {
-  background: #4285f4;
-  color: #fff;
-}
-
-.pcr-app .pcr-interaction .pcr-type.active {
-  color: #fff;
-  background: #4285f4;
-}
-
-.pcr-app .pcr-interaction .pcr-cancel,
-.pcr-app .pcr-interaction .pcr-clear,
-.pcr-app .pcr-interaction .pcr-save {
-  width: auto;
-  color: #fff;
-}
-
-.pcr-app .pcr-interaction .pcr-cancel:hover,
-.pcr-app .pcr-interaction .pcr-clear:hover,
-.pcr-app .pcr-interaction .pcr-save:hover {
-  filter: brightness(0.925);
-}
-
-.pcr-app .pcr-interaction .pcr-save {
-  background: #4285f4;
-}
-
-.pcr-app .pcr-interaction .pcr-cancel,
-.pcr-app .pcr-interaction .pcr-clear {
-  background: #f44250;
-}
-
-.pcr-app .pcr-interaction .pcr-cancel:focus,
-.pcr-app .pcr-interaction .pcr-clear:focus {
-  box-shadow: 0 0 0 1px hsla(0, 0%, 100%, 0.85),
-    0 0 0 3px rgba(244, 66, 80, 0.75);
-}
-
-.pcr-app .pcr-selection .pcr-picker {
-  position: absolute;
-  height: 18px;
-  width: 18px;
-  border: 2px solid #fff;
-  border-radius: 100%;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.pcr-app .pcr-selection .pcr-color-chooser,
-.pcr-app .pcr-selection .pcr-color-opacity,
-.pcr-app .pcr-selection .pcr-color-palette {
-  position: relative;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  cursor: grab;
-  cursor: -webkit-grab;
-}
-
-.pcr-app .pcr-selection .pcr-color-chooser:active,
-.pcr-app .pcr-selection .pcr-color-opacity:active,
-.pcr-app .pcr-selection .pcr-color-palette:active {
-  cursor: grabbing;
-  cursor: -webkit-grabbing;
-}
-
-.pcr-app[data-theme="classic"] {
-  width: 28.5em;
-  max-width: 95vw;
-  padding: 0.8em;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection {
-  display: flex;
-  justify-content: space-between;
-  flex-grow: 1;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-preview {
-  position: relative;
-  z-index: 1;
-  width: 2em;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-right: 0.75em;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-preview:before {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path fill="white" d="M1,0H2V1H1V0ZM0,1H1V2H0V1Z"/><path fill="gray" d="M0,0H1V1H0V0ZM1,1H2V2H1V1Z"/></svg>');
-  background-size: 0.5em;
-  border-radius: 0.15em;
-  z-index: -1;
-}
-
-.pcr-app[data-theme="classic"]
-  .pcr-selection
-  .pcr-color-preview
-  .pcr-last-color {
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  border-radius: 0.15em 0.15em 0 0;
-  z-index: 2;
-}
-
-.pcr-app[data-theme="classic"]
-  .pcr-selection
-  .pcr-color-preview
-  .pcr-current-color {
-  border-radius: 0 0 0.15em 0.15em;
-}
-
-.pcr-app[data-theme="classic"]
-  .pcr-selection
-  .pcr-color-preview
-  .pcr-current-color,
-.pcr-app[data-theme="classic"]
-  .pcr-selection
-  .pcr-color-preview
-  .pcr-last-color {
-  background: var(--pcr-color);
-  width: 100%;
-  height: 50%;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-palette {
-  width: 100%;
-  height: 8em;
-  z-index: 1;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-palette .pcr-palette {
-  flex-grow: 1;
-  border-radius: 0.15em;
-}
-
-.pcr-app[data-theme="classic"]
-  .pcr-selection
-  .pcr-color-palette
-  .pcr-palette:before {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path fill="white" d="M1,0H2V1H1V0ZM0,1H1V2H0V1Z"/><path fill="gray" d="M0,0H1V1H0V0ZM1,1H2V2H1V1Z"/></svg>');
-  background-size: 0.5em;
-  border-radius: 0.15em;
-  z-index: -1;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-chooser,
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-opacity {
-  margin-left: 0.75em;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-chooser .pcr-picker,
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-opacity .pcr-picker {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-chooser .pcr-slider,
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-opacity .pcr-slider {
-  width: 8px;
-  flex-grow: 1;
-  border-radius: 50em;
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-chooser .pcr-slider {
-  background: linear-gradient(180deg, red, #ff0, #0f0, #0ff, #00f, #f0f, red);
-}
-
-.pcr-app[data-theme="classic"] .pcr-selection .pcr-color-opacity .pcr-slider {
-  background: linear-gradient(180deg, transparent, #000),
-    url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path fill="white" d="M1,0H2V1H1V0ZM0,1H1V2H0V1Z"/><path fill="gray" d="M0,0H1V1H0V0ZM1,1H2V2H1V1Z"/></svg>');
-  background-size: 100%, 50%;
 }
 
 html,
