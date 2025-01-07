@@ -132,6 +132,7 @@ export default function Moveable(opt) {
     },
 
     update(x = 0, y = 0) {
+
       const { left, top, width, height } =
         that.options.wrapper.getBoundingClientRect();
 

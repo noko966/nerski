@@ -1445,6 +1445,8 @@ class Skinner {
     }
   }
 
+  handleGradientPicker(event, key, onChangeCallback) {}
+
   handlePicker(event, key, onChangeCallback) {
     let self = this;
     let currentColor = self.skin[key];
@@ -1453,10 +1455,16 @@ class Skinner {
       return;
     }
 
+    // const pe = event.target.parentElement;
+    // console.log(pe);
+
+    let x = event.clientX;
+    let y = event.clientY;
+
     const SKPickerInstance = new SKPicker(null, currentColor);
     SKPickerInstance.init();
 
-    SKPickerInstance.show();
+    SKPickerInstance.show(x, y);
 
     self.pickerInstance = SKPickerInstance;
 
@@ -4454,6 +4462,7 @@ border-radius: 50%;*/
     document.head.appendChild(this.iconsLink);
   }
 }
+
 
 class AnglePicker {
   constructor(element, radius) {
