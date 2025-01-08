@@ -33,6 +33,8 @@ export default class SKPicker {
 
     this._recalc = true;
 
+    this.mode = "color";
+
     this.solids = [
       "#1ABC9C",
       "#3498DB",
@@ -340,8 +342,6 @@ export default class SKPicker {
   _emit(event, ...args) {
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
-
-  
 
   createPicker() {
     let _that = this;
@@ -660,5 +660,118 @@ export default class SKPicker {
     }
 
     return false;
+  }
+
+  generateGradientString() {
+    let str = "";
+    // We'll use this.gradient.type & angle:
+    this.gradient.type = "linear";
+    this.gradient.angle = "90deg";
+    const stopsString = this.gradient.stops.map((stop) => stop).join(", ");
+    str = `${this.gradient.type}-gradient(${this.gradient.angle}, ${stopsString})`;
+    return str;
+  }
+
+  addGradientSwatch(color, index, key) {
+    const c = tinycolor(color).toHexString();
+    if (c) {
+      const el = document.createElement("div");
+      el.className = "sk_picker_gradient_stop";
+      el.style.setProperty("--bg", this.skin?.[key]?.[index] || c);
+      el.style.background = `var(--bg)`;
+
+      this.gradient.stopsWrapperEl.appendChild(el);
+
+      el.addEventListener("click", (e) => {
+        this.handlePicker(e, c, (pickedColor) => {
+          // if you have "modifyKey" from Skinner, call it:
+          if (this.modifyKey) {
+            this.modifyKey(key[index], pickedColor);
+          }
+          let newStop = `${pickedColor}`;
+          if (this.skin?.[key]) {
+            this.skin[key][index] = newStop;
+            this.gradient.stops = this.skin[key];
+          }
+          this.createGradientStops(key);
+        });
+      });
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "sk_picker_gradient_stop_remove";
+      removeBtn.innerText = "x";
+      removeBtn.addEventListener("click", () => {
+        if (this.skin?.[key]) {
+          this.skin[key].splice(index, 1);
+          this.gradient.stops = this.skin[key];
+        }
+        this.createGradientStops(key);
+      });
+      el.appendChild(removeBtn);
+
+      return true;
+    }
+    return false;
+  }
+
+  showGradientSlider(event, essence, onChangeCallback) {
+    // "verbalData" was from your Skinner code
+    // We'll assume you have it or you can adapt
+    const _vd = this.verbalData ? this.verbalData(essence) : { name: essence };
+    const key = `${_vd.name}GradStops`;
+
+    this.createGradientSlider(event.target.parentElement);
+
+    if (!this.skin?.[key]) {
+      // default if no array present:
+      if (this.skin && _vd.nameBg && _vd.nameBg_g) {
+        this.skin[key] = [this.skin[_vd.nameBg], this.skin[_vd.nameBg_g]];
+      } else {
+        this.skin[key] = ["#FFFFFF", "#000000"];
+      }
+    }
+    this.gradient.stops = this.skin[key];
+
+    const addStopBtn = document.createElement("button");
+    addStopBtn.innerText = "Add Stop";
+    addStopBtn.className = "skinner_btn skinner_btn-accent";
+    addStopBtn.addEventListener("click", () => {
+      const newColor = "#FFFFFF";
+      this.skin[key].push(newColor);
+      this.gradient.stops = this.skin[key];
+      this.createGradientStops(key);
+      // if you want to call onChangeCallback:
+      onChangeCallback && onChangeCallback(this.gradient.stops);
+    });
+    this.gradient.wrapperEl.appendChild(addStopBtn);
+
+    this.createGradientStops(key);
+  }
+
+  createGradientSlider(parent) {
+    this.gradient.wrapperEl = document.createElement("div");
+    this.gradient.wrapperEl.className = "sk_picker_gradient_root";
+
+    this.gradient.previewEl = document.createElement("div");
+    this.gradient.previewEl.className = "sk_picker_gradient_preview";
+
+    this.gradient.stopsWrapperEl = document.createElement("div");
+    this.gradient.stopsWrapperEl.className = "sk_picker_gradient_stops_wrapper";
+
+    this.gradient.wrapperEl.appendChild(this.gradient.previewEl);
+    this.gradient.wrapperEl.appendChild(this.gradient.stopsWrapperEl);
+    parent.appendChild(this.gradient.wrapperEl);
+  }
+
+  createGradientStops(key) {
+    this.gradient.stopsWrapperEl.innerHTML = "";
+    this.gradient.wrapperEl.style.setProperty(
+      "--grad",
+      this.generateGradientString()
+    );
+
+    this.gradient.stops.forEach((s, index) => {
+      this.addGradientSwatch(s, index, key);
+    });
   }
 }

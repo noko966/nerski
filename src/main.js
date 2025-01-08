@@ -36,10 +36,10 @@ class Skinner {
       wrapperEl: null,
       previewEl: null,
       stopsWrapperEl: null,
-      type: 'linear',
+      type: "linear",
       angle: 90,
       stops: [],
-    }
+    };
 
     this.patientRoot = patientRoot || document.body;
 
@@ -502,43 +502,43 @@ class Skinner {
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg2)
-        .toString()
+          .darken(this.defaults.dark.bg2)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg2)
-        .toString();
+          .lighten(this.defaults.light.bg2)
+          .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg3)
-        .toString()
+          .darken(this.defaults.dark.bg3)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg3)
-        .toString();
+          .lighten(this.defaults.light.bg3)
+          .toString();
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -584,11 +584,11 @@ class Skinner {
     bgKeyNames.forEach((bgName, i) => {
       this.skin[bgName] = isDark
         ? chroma(firstColor)
-          .darken(0.2 * (i + 1))
-          .hex()
+            .darken(0.2 * (i + 1))
+            .hex()
         : chroma(firstColor)
-          .brighten(0.2 * (i + 1))
-          .hex();
+            .brighten(0.2 * (i + 1))
+            .hex();
     });
 
     bgAKeyNames.forEach((bgName, i) => {
@@ -604,8 +604,9 @@ class Skinner {
     let _isGradient = this.skin[_vb.isGradient];
 
     if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${this.skin[_vb.gradientAngle]
-        }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+      this.skin[_vb.nameG] = `linear-gradient(${
+        this.skin[_vb.gradientAngle]
+      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
     } else {
       this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
       this.skin[_vb.nameG] = this.skin[_vb.nameBg];
@@ -1414,7 +1415,7 @@ class Skinner {
           );
         },
         (e) => {
-          this.showGradientSlider(e, _essence, (grad) => 
+          this.showGradientSlider(e, _essence, (grad) =>
             this.modifyKey(_vd.nameBg_g, grad)
           );
         },
@@ -1452,88 +1453,7 @@ class Skinner {
       ]);
     }
   }
-  generateGradientString() {
-    let str = "";
-    this.gradient.type = "linear";
-    this.gradient.angle = "90deg";
-    const stopsString = this.gradient.stops.map((stop) => stop).join(", ");
-    str = `${this.gradient.type}-gradient(${this.gradient.angle}, ${stopsString})`;
-    return str;
-  }
-
-  addGradientSwatch(color, index, key) {
-    const c = tinycolor(color).toHexString();
-
-    if (c) {
-      const el = document.createElement("div");
-      el.className = "sk_picker_gradient_stop";
-      el.style.background = `var(--${[key][index]})`;
-
-      // Append element and save swatch data
-      this.gradient.stopsWrapperEl.appendChild(el);
-      // gradientColorStops.push({ el, c });
-
-      // Bind event
-      el.addEventListener('click', (e) => {
-        this.handlePicker(e, c, (color)=> {
-          this.modifyKey(this.skin[key][index], color)
-        })
-      })
-
-      return true;
-    }
-
-    return false;
-  }
-
-  showGradientSlider(event, essence, onChangeCallback){
-    const _vd = this.verbalData(essence);
-    const parent = event.target.parentElement;
-    const key = `${_vd.name}GradStops`
-    this.createGradientSlider(parent);
-    if(!this.skin[key]) {
-      this.skin[key] = [
-        this.skin[_vd.nameBg],
-        this.skin[_vd.nameBg_g],
-      ]
-    }
-
-    this.gradient.stops = this.skin[`${_vd.name}GradStops`];
-    
-    this.createGradientStops(key);
-
-  }
-
-  createGradientSlider(parent) {
-    let t = this;
-
-    this.gradient.wrapperEl = document.createElement("div");
-    this.gradient.wrapperEl.className = "sk_picker_gradient_root";
-    this.gradient.previewEl = document.createElement("div");
-    this.gradient.previewEl.className = "sk_picker_gradient_preview";
-
-    this.gradient.stopsWrapperEl = document.createElement("div");
-    this.gradient.stopsWrapperEl.className = "sk_picker_gradient_stops_wrapper";
-
-    this.gradient.wrapperEl.appendChild(this.gradient.previewEl);
-    this.gradient.wrapperEl.appendChild(this.gradient.stopsWrapperEl);
-    parent.appendChild(this.gradient.wrapperEl);
-
-  }
-
-  createGradientStops(key){
-    
-
-    this.gradient.wrapperEl.style.setProperty(
-      "--grad",
-      this.generateGradientString()
-    );
-
-    this.gradient.stops.forEach((s, index) => {
-      this.addGradientSwatch(s, index, key);
-    });
-  }
-
+  
 
   handlePicker(event, key, onChangeCallback) {
     let self = this;
@@ -1556,7 +1476,6 @@ class Skinner {
     SKPickerInstance.on("change", (color, source, instance) => {
       console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
-
     });
 
     SKPickerInstance.on("hide", (source, instance) => {
@@ -2508,7 +2427,26 @@ display: flex;
     border: 2px solid black;
     border-radius: 6px;
     z-index: 10;
-    }.sk_picker_gradient_root {
+    }
+    .sk_picker_gradient_stop_remove{
+        position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    outline: 0;
+    transform: translate(50%, -50%);
+    border-radius: 50%;
+    z-index: 10;
+    cursor: pointer;
+    }
+    .sk_picker_gradient_root {
             border-radius: 4px;
     padding: 8px;
     position: absolute;
@@ -4140,7 +4078,6 @@ border-radius: 50%;*/
     document.head.appendChild(this.iconsLink);
   }
 }
-
 
 class AnglePicker {
   constructor(element, radius) {
