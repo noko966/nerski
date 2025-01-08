@@ -3,9 +3,32 @@ import Moveable from "./moveable";
 const tinycolor = require("tinycolor2");
 
 export default class SKPicker {
-  constructor(rootElement, currentColor) {
+  constructor(rootElement, currentColor, mode, currentGradientStops) {
     this.rootElement = rootElement || document.body;
     this.root = null;
+
+    this._mode = mode || "color";
+
+    if(this._mode === 'gradient') {
+      this.currentGradientStopsObj = {};
+      currentGradientStops.forEach((s, i) => {
+        this.currentGradientStopsObj[`gradStop${i}`] = {
+          color: s
+        }
+      })
+    }
+    
+
+    this.gradient = {
+      wrapperEl: null,
+      previewEl: null,
+      stopsWrapperEl: null,
+      type: "linear",
+      angle: 90,
+      stops: this.currentGradientStopsObj,
+      activeStopId: 'gradStop0'
+    };
+
 
     this._outsideClickHandler = null; // ADDED
     this.swatchesWrapper = null;
@@ -24,6 +47,7 @@ export default class SKPicker {
       show: [],
       clear: [],
       change: [],
+      gradientchange: [],
       changestop: [],
       cancel: [],
       swatchselect: [],
@@ -33,7 +57,6 @@ export default class SKPicker {
 
     this._recalc = true;
 
-    this.mode = "color";
 
     this.solids = [
       "#1ABC9C",
@@ -290,6 +313,56 @@ export default class SKPicker {
     align-items: stretch;
     row-gap: 6px;
     }
+    .sk_picker_gradient_stops_wrapper{
+display: flex;
+    flex-direction: row;
+    align-items: center;
+        column-gap: 8px;
+}
+
+.sk_picker_gradient_stop {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 2px solid black;
+    border-radius: 6px;
+    z-index: 10;
+    }
+    .sk_picker_gradient_stop_remove{
+        position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    outline: 0;
+    transform: translate(50%, -50%);
+    border-radius: 50%;
+    z-index: 10;
+    cursor: pointer;
+    }
+    .sk_picker_gradient_root {
+    border-radius: 4px;
+    padding: 8px;
+    background-color: var(--sk_dominantBgHover);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
+    }
+    .sk_picker_gradient_preview {
+        height: 50px;
+    border-radius: 4px;
+    position: relative;
+    background-image: var(--grad);
+    width: 100%;
+    }
     
     `;
     styleEl.innerHTML = style;
@@ -451,7 +524,15 @@ export default class SKPicker {
     let _color = tinycolor(color).toHexString();
 
     this._color = _color;
-    this._emit("change", _color, source, this);
+    if (this._mode === 'gradient') {
+      this.gradient.stops[this.gradient.activeStopId].color = _color;
+      this.createGradientStops();
+      const gradient = this.generateGradientString()
+      this._emit("gradientchange", gradient, source, this);
+    }
+    else {
+      this._emit("change", _color, source, this);
+    }
 
     return true;
   }
@@ -504,6 +585,8 @@ export default class SKPicker {
     };
     // Attach the click event
     this.eyedropperTrigger.addEventListener("click", this._eyedropperHandler);
+
+    this._mode === 'gradient' && this.showGradientSlider();
 
     const slidersWrapper = document.createElement("div");
     slidersWrapper.className = "sk_picker_sliders";
@@ -662,50 +745,55 @@ export default class SKPicker {
     return false;
   }
 
+
+  setActiveGradientStop(key) {
+    this.gradient.activeStopId = key;
+    this.setBackground(this.gradient.stops[key].color);
+    this.updateSliders();
+  }
+
   generateGradientString() {
     let str = "";
-    // We'll use this.gradient.type & angle:
     this.gradient.type = "linear";
     this.gradient.angle = "90deg";
-    const stopsString = this.gradient.stops.map((stop) => stop).join(", ");
+    const keys = Object.keys(this.gradient.stops);
+
+    keys.sort((a, b) => {
+      const numA = parseInt(a.replace("gradStop", ""), 10);
+      const numB = parseInt(b.replace("gradStop", ""), 10);
+      return numA - numB;
+    });
+
+    const stopsString = keys
+      .map((key) => this.gradient.stops[key].color)
+      .join(", ");
     str = `${this.gradient.type}-gradient(${this.gradient.angle}, ${stopsString})`;
     return str;
   }
 
-  addGradientSwatch(color, index, key) {
+  addGradientSwatch(color, key) {
     const c = tinycolor(color).toHexString();
     if (c) {
       const el = document.createElement("div");
       el.className = "sk_picker_gradient_stop";
-      el.style.setProperty("--bg", this.skin?.[key]?.[index] || c);
+      el.style.setProperty("--bg", color);
       el.style.background = `var(--bg)`;
 
       this.gradient.stopsWrapperEl.appendChild(el);
 
       el.addEventListener("click", (e) => {
-        this.handlePicker(e, c, (pickedColor) => {
-          // if you have "modifyKey" from Skinner, call it:
-          if (this.modifyKey) {
-            this.modifyKey(key[index], pickedColor);
-          }
-          let newStop = `${pickedColor}`;
-          if (this.skin?.[key]) {
-            this.skin[key][index] = newStop;
-            this.gradient.stops = this.skin[key];
-          }
-          this.createGradientStops(key);
-        });
+        // if you have "modifyKey" from Skinner, call it:
+        this.setActiveGradientStop(key);
+
+        // this.createGradientStops();a
       });
 
       const removeBtn = document.createElement("button");
       removeBtn.className = "sk_picker_gradient_stop_remove";
       removeBtn.innerText = "x";
       removeBtn.addEventListener("click", () => {
-        if (this.skin?.[key]) {
-          this.skin[key].splice(index, 1);
-          this.gradient.stops = this.skin[key];
-        }
-        this.createGradientStops(key);
+        delete this.gradient.stops[key];
+        this.createGradientStops();
       });
       el.appendChild(removeBtn);
 
@@ -714,41 +802,39 @@ export default class SKPicker {
     return false;
   }
 
-  showGradientSlider(event, essence, onChangeCallback) {
-    // "verbalData" was from your Skinner code
-    // We'll assume you have it or you can adapt
-    const _vd = this.verbalData ? this.verbalData(essence) : { name: essence };
-    const key = `${_vd.name}GradStops`;
+  showGradientSlider(onChangeCallback) {
+    this.createGradientSlider();
 
-    this.createGradientSlider(event.target.parentElement);
-
-    if (!this.skin?.[key]) {
-      // default if no array present:
-      if (this.skin && _vd.nameBg && _vd.nameBg_g) {
-        this.skin[key] = [this.skin[_vd.nameBg], this.skin[_vd.nameBg_g]];
-      } else {
-        this.skin[key] = ["#FFFFFF", "#000000"];
-      }
-    }
-    this.gradient.stops = this.skin[key];
 
     const addStopBtn = document.createElement("button");
-    addStopBtn.innerText = "Add Stop";
+    addStopBtn.innerText = "+";
     addStopBtn.className = "skinner_btn skinner_btn-accent";
     addStopBtn.addEventListener("click", () => {
       const newColor = "#FFFFFF";
-      this.skin[key].push(newColor);
-      this.gradient.stops = this.skin[key];
-      this.createGradientStops(key);
-      // if you want to call onChangeCallback:
-      onChangeCallback && onChangeCallback(this.gradient.stops);
+
+      const keys = Object.keys(this.gradient.stops);
+
+      let maxIndex = 0;
+      keys.forEach((key) => {
+        const num = parseInt(key.replace("gradStop", ""), 10);
+        if (!isNaN(num) && num > maxIndex) {
+          maxIndex = num;
+        }
+      });
+
+      const nextIndex = maxIndex + 1;
+      const newKey = `gradStop${nextIndex}`;
+
+      this.gradient.stops[newKey] = { color: newColor };
+
+      this.createGradientStops();
     });
     this.gradient.wrapperEl.appendChild(addStopBtn);
 
-    this.createGradientStops(key);
+    this.createGradientStops();
   }
 
-  createGradientSlider(parent) {
+  createGradientSlider() {
     this.gradient.wrapperEl = document.createElement("div");
     this.gradient.wrapperEl.className = "sk_picker_gradient_root";
 
@@ -760,18 +846,31 @@ export default class SKPicker {
 
     this.gradient.wrapperEl.appendChild(this.gradient.previewEl);
     this.gradient.wrapperEl.appendChild(this.gradient.stopsWrapperEl);
-    parent.appendChild(this.gradient.wrapperEl);
+    this.root.appendChild(this.gradient.wrapperEl);
   }
 
-  createGradientStops(key) {
+  createGradientStops() {
     this.gradient.stopsWrapperEl.innerHTML = "";
     this.gradient.wrapperEl.style.setProperty(
       "--grad",
       this.generateGradientString()
     );
 
-    this.gradient.stops.forEach((s, index) => {
-      this.addGradientSwatch(s, index, key);
+    // 1) Gather the keys
+    const keys = Object.keys(this.gradient.stops);
+
+    // 2) Sort them based on the numeric part after 'gradStop'
+    keys.sort((a, b) => {
+      const orderA = parseInt(a.replace("gradStop", ""), 10);
+      const orderB = parseInt(b.replace("gradStop", ""), 10);
+      return orderA - orderB; // ascending order
     });
+
+    // 3) Iterate in sorted order and call your function
+    keys.forEach((key) => {
+      const stopColor = this.gradient.stops[key].color;
+      this.addGradientSwatch(stopColor, key);
+    });
+
   }
 }

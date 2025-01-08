@@ -32,15 +32,7 @@ class Skinner {
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
-    this.gradient = {
-      wrapperEl: null,
-      previewEl: null,
-      stopsWrapperEl: null,
-      type: "linear",
-      angle: 90,
-      stops: [],
-    };
-
+    
     this.patientRoot = patientRoot || document.body;
 
     this.isStylerToggledOn = false;
@@ -599,18 +591,18 @@ class Skinner {
   }
 
   generateGradientss(essence) {
-    let _essence = essence;
-    let _vb = this.verbalData(_essence);
-    let _isGradient = this.skin[_vb.isGradient];
+    // let _essence = essence;
+    // let _vb = this.verbalData(_essence);
+    // let _isGradient = this.skin[_vb.isGradient];
 
-    if (_isGradient) {
-      this.skin[_vb.nameG] = `linear-gradient(${
-        this.skin[_vb.gradientAngle]
-      }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
-    } else {
-      this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
-      this.skin[_vb.nameG] = this.skin[_vb.nameBg];
-    }
+    // if (_isGradient) {
+    //   this.skin[_vb.nameG] = `linear-gradient(${
+    //     this.skin[_vb.gradientAngle]
+    //   }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
+    // } else {
+    //   this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
+    //   this.skin[_vb.nameG] = this.skin[_vb.nameBg];
+    // }
   }
 
   generateTextss(essence) {
@@ -1415,8 +1407,10 @@ class Skinner {
           );
         },
         (e) => {
-          this.showGradientSlider(e, _essence, (grad) =>
-            this.modifyKey(_vd.nameBg_g, grad)
+          this.handleGradientPicker(e, _essence, (color) =>{
+            console.log({color});
+            this.modifyKey(_vd.nameG, color)
+          }
           );
         },
         (e) => {
@@ -1452,6 +1446,38 @@ class Skinner {
         _hiddenControlsArray,
       ]);
     }
+  }
+
+  handleGradientPicker(event, essence, onChangeCallback) {
+    let self = this;
+    const _vd = this.verbalData(essence);
+    let currentGradientStops = self.skin[_vd.nameBg_g];
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const gradientStops = Array.isArray(currentGradientStops) ? currentGradientStops : [self.skin[_vd.nameBg], self.skin[_vd.nameBgHov]]
+
+    const SKPickerInstance = new SKPicker(null, gradientStops[0], 'gradient', gradientStops);
+    SKPickerInstance.init();
+
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("gradientchange", (grad, source, instance) => {
+      console.log("Picker color changed:", grad, "Source:", source);
+      onChangeCallback(grad);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
+    });
   }
   
 
@@ -2413,55 +2439,6 @@ class Skinner {
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
 }
-
-.sk_picker_gradient_stops_wrapper{
-display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.sk_picker_gradient_stop {
-    position: relative;
-    width: 24px;
-    height: 24px;
-    border: 2px solid black;
-    border-radius: 6px;
-    z-index: 10;
-    }
-    .sk_picker_gradient_stop_remove{
-        position: absolute;
-    top: 0;
-    right: 0;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    appearance: none;
-    -webkit-appearance: none;
-    border: 0;
-    outline: 0;
-    transform: translate(50%, -50%);
-    border-radius: 50%;
-    z-index: 10;
-    cursor: pointer;
-    }
-    .sk_picker_gradient_root {
-            border-radius: 4px;
-    padding: 8px;
-    position: absolute;
-    top: 0;
-    background-color: var(--sk_dominantBgHover);
-    left: 0;
-    z-index: 100;
-    }
-    .sk_picker_gradient_preview {
-        height: 50px;
-    border-radius: 4px;
-    position: relative;
-    background-image: var(--grad);
-    width: 120px;
-    }
 
 .sk_path_string_root {
   height: 40px;
