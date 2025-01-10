@@ -8,7 +8,7 @@
   --demo_s_b_s: 8px;
   --demo_s_b_m: 16px;
   --demo_s_b_l: 24px;
-  background-color: var(--bodyBg);
+  background: var(--bodyG);
   color: var(--bodyTxt);
   display: flex;
   align-items: start;
@@ -193,7 +193,7 @@
 }
 
 .demo_event_row {
-  background-color: var(--eventBg);
+  background: var(--eventG);
   color: var(--eventTxt);
   padding: var(--demo_s_b_xs) var(--demo_s_b_s);
   display: flex;

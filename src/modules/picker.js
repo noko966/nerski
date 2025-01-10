@@ -9,15 +9,14 @@ export default class SKPicker {
 
     this._mode = mode || "color";
 
-    if(this._mode === 'gradient') {
+    if (this._mode === "gradient") {
       this.currentGradientStopsObj = {};
       currentGradientStops.forEach((s, i) => {
         this.currentGradientStopsObj[`gradStop${i}`] = {
-          color: s
-        }
-      })
+          color: s,
+        };
+      });
     }
-    
 
     this.gradient = {
       wrapperEl: null,
@@ -26,9 +25,8 @@ export default class SKPicker {
       type: "linear",
       angle: 90,
       stops: this.currentGradientStopsObj,
-      activeStopId: 'gradStop0'
+      activeStopId: "gradStop0",
     };
-
 
     this._outsideClickHandler = null; // ADDED
     this.swatchesWrapper = null;
@@ -56,7 +54,6 @@ export default class SKPicker {
     this._color = tinycolor(currentColor).toHexString();
 
     this._recalc = true;
-
 
     this.solids = [
       "#1ABC9C",
@@ -363,7 +360,20 @@ display: flex;
     background-image: var(--grad);
     width: 100%;
     }
-    
+    .sk_picker_input {
+    width: 50px;
+    font-size: 11px;
+    height: 24px;
+    font-weight: 500;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
+    border-radius: 2px;
+    text-align: right;
+    border: 0;
+    border: 1px solid var(--sk_dominantBg2);
+    outline: 0;
+    padding: 0 6px;
+  }
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -524,13 +534,12 @@ display: flex;
     let _color = tinycolor(color).toHexString();
 
     this._color = _color;
-    if (this._mode === 'gradient') {
+    if (this._mode === "gradient") {
       this.gradient.stops[this.gradient.activeStopId].color = _color;
       this.createGradientStops();
-      const gradient = this.generateGradientString()
+      const gradient = this.generateGradientString();
       this._emit("gradientchange", gradient, source, this);
-    }
-    else {
+    } else {
       this._emit("change", _color, source, this);
     }
 
@@ -586,7 +595,7 @@ display: flex;
     // Attach the click event
     this.eyedropperTrigger.addEventListener("click", this._eyedropperHandler);
 
-    this._mode === 'gradient' && this.showGradientSlider();
+    this._mode === "gradient" && this.showGradientSlider();
 
     const slidersWrapper = document.createElement("div");
     slidersWrapper.className = "sk_picker_sliders";
@@ -745,7 +754,6 @@ display: flex;
     return false;
   }
 
-
   setActiveGradientStop(key) {
     this.gradient.activeStopId = key;
     this.setBackground(this.gradient.stops[key].color);
@@ -754,20 +762,34 @@ display: flex;
 
   generateGradientString() {
     let str = "";
-    this.gradient.type = "linear";
-    this.gradient.angle = "90deg";
+
+    // Get the keys (e.g., "gradStop1", "gradStop2", etc.)
     const keys = Object.keys(this.gradient.stops);
 
+    // Sort the keys in ascending order by numeric value
     keys.sort((a, b) => {
       const numA = parseInt(a.replace("gradStop", ""), 10);
       const numB = parseInt(b.replace("gradStop", ""), 10);
       return numA - numB;
     });
 
+    // Build a comma-separated string of the colors
     const stopsString = keys
       .map((key) => this.gradient.stops[key].color)
       .join(", ");
-    str = `${this.gradient.type}-gradient(${this.gradient.angle}, ${stopsString})`;
+
+    // Construct the gradient string based on the type
+    if (this.gradient.type === "linear") {
+      // e.g. "linear-gradient(45deg, red, blue)"
+      str = `linear-gradient(${this.gradient.angle}deg, ${stopsString})`;
+    } else if (this.gradient.type === "radial") {
+      // e.g. "radial-gradient(circle at 50% 50%, red, blue)"
+      str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+    } else if (this.gradient.type === "conic") {
+      // e.g. "conic-gradient(from 90deg at 50% 50%, red, blue)"
+      str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+    }
+
     return str;
   }
 
@@ -805,7 +827,6 @@ display: flex;
   showGradientSlider(onChangeCallback) {
     this.createGradientSlider();
 
-
     const addStopBtn = document.createElement("button");
     addStopBtn.innerText = "+";
     addStopBtn.className = "skinner_btn skinner_btn-accent";
@@ -829,7 +850,55 @@ display: flex;
 
       this.createGradientStops();
     });
+
+    const angleInput = document.createElement("input");
+    angleInput.className = "sk_picker_input";
+    angleInput.type = "number";
+    angleInput.value = this.gradient.angle;
+
+    this._eventBindings.push(
+      _.on(angleInput, "change", (e) => {
+        this.gradient.angle = e.target.value;
+        this.setBackground(this._color);
+      })
+    );
+
+    const gradientTypeContainer = document.createElement("div");
+    gradientTypeContainer.className = "sk_picker_gradient_type_container";
+
+    const gradientTypes = ["linear", "radial", "conic"];
+
+    gradientTypes.forEach((type) => {
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "gradientType";
+      radio.value = type;
+
+      if (this.gradient.type === type) {
+        radio.checked = true;
+      }
+
+      this._eventBindings.push(
+        _.on(radio, "change", (e) => {
+          if (e.target.checked) {
+            this.gradient.type = e.target.value;
+            this.setBackground(this._color);
+          }
+        })
+      );
+
+      // Create a label for readability
+      const label = document.createElement("label");
+      label.innerText = type.charAt(0).toUpperCase() + type.slice(1); // e.g. 'Linear'
+
+      // Append radio and label to the container
+      gradientTypeContainer.appendChild(radio);
+      gradientTypeContainer.appendChild(label);
+    });
+
     this.gradient.wrapperEl.appendChild(addStopBtn);
+    this.gradient.wrapperEl.appendChild(angleInput);
+    this.gradient.wrapperEl.appendChild(gradientTypeContainer);
 
     this.createGradientStops();
   }
@@ -871,6 +940,5 @@ display: flex;
       const stopColor = this.gradient.stops[key].color;
       this.addGradientSwatch(stopColor, key);
     });
-
   }
 }

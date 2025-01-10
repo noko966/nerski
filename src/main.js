@@ -32,7 +32,6 @@ class Skinner {
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
     };
 
-    
     this.patientRoot = patientRoot || document.body;
 
     this.isStylerToggledOn = false;
@@ -374,7 +373,7 @@ class Skinner {
 
     this.generateBackgrounds = this.generateBackgrounds.bind(this);
 
-    this.generateGradientss = this.generateGradientss.bind(this);
+    this.generateGradients = this.generateGradients.bind(this);
     this.generateTextss = this.generateTextss.bind(this);
     this.generateAccentss = this.generateAccentss.bind(this);
     this.generateBorderss = this.generateBorderss.bind(this);
@@ -590,19 +589,15 @@ class Skinner {
     });
   }
 
-  generateGradientss(essence) {
-    // let _essence = essence;
-    // let _vb = this.verbalData(_essence);
-    // let _isGradient = this.skin[_vb.isGradient];
-
-    // if (_isGradient) {
-    //   this.skin[_vb.nameG] = `linear-gradient(${
-    //     this.skin[_vb.gradientAngle]
-    //   }deg, ${this.skin[_vb.nameBg_g]} 0%, ${this.skin[_vb.nameBg]} 100%)`;
-    // } else {
-    //   this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
-    //   this.skin[_vb.nameG] = this.skin[_vb.nameBg];
-    // }
+  generateGradients(essence) {
+    let _essence = essence;
+    let _vb = this.verbalData(_essence);
+    let _isGradient = this.skin[_vb.isGradient];
+    if (_isGradient) {
+    } else {
+      this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
+      this.skin[_vb.nameG] = this.skin[_vb.nameBg];
+    }
   }
 
   generateTextss(essence) {
@@ -679,7 +674,7 @@ class Skinner {
         this.skin[_vd.isGradient] = _config[_essence].Gradient.isActive;
         this.skin[_vd.nameBg_g] = _config[_essence].Gradient.color;
         this.skin[_vd.gradientAngle] = _config[_essence].Gradient.angle;
-        this.generateGradientss(_essence);
+        this.generateGradients(_essence);
 
         this.skin[_vd.isCustomTxt] = _config[_essence].Text.isActive;
         this.skin[_vd.nameTxt] = _config[_essence].Text.color;
@@ -716,7 +711,7 @@ class Skinner {
         this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
         this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
         this.skin[_vd.gradientAngle] = this.skin[_vdf.gradientAngle];
-        this.generateGradientss(_essence);
+        this.generateGradients(_essence);
 
         this.skin[_vd.isCustomTxt] = this.skin[_vdf.isCustomTxt];
         this.skin[_vd.nameTxt] = this.skin[_vdf.nameTxt];
@@ -1140,7 +1135,7 @@ class Skinner {
 
     if (isActive) {
       this.generateBackgrounds(_essence);
-      this.generateGradientss(_essence);
+      this.generateGradients(_essence);
       this.generateTextss(_essence);
       this.generateAccentss(_essence);
       this.generateBorderss(_essence);
@@ -1171,7 +1166,7 @@ class Skinner {
       this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
       this.skin[_vd.gradientAngle] = this.skin[_vdf.gradientAngle];
 
-      this.generateGradientss(_essence);
+      this.generateGradients(_essence);
 
       this.skin[_vd.isCustomTxt] = this.skin[_vdf.isCustomTxt];
       this.skin[_vd.nameTxt] = this.skin[_vdf.nameTxt];
@@ -1364,7 +1359,7 @@ class Skinner {
     }
 
     this[c.nameBg].picker.style.background = this.skin[c.nameBg];
-    this[c.nameBg].picker2.style.background = this.skin[c.nameBg_g];
+    this[c.nameBg].picker2.style.background = this.skin[c.nameG];
     this[c.nameBg].borderPckr.style.background = this.skin[c.nameBorder];
     this[c.nameBg].customAccentPckr.style.background = this.skin[c.nameAccent];
     this[c.nameBg].radiusInput.value = this.skin[c.nameRadius];
@@ -1407,11 +1402,10 @@ class Skinner {
           );
         },
         (e) => {
-          this.handleGradientPicker(e, _essence, (color) =>{
-            console.log({color});
-            this.modifyKey(_vd.nameG, color)
-          }
-          );
+          this.handleGradientPicker(e, _essence, (color) => {
+            console.log({ color });
+            this.modifyKey(_vd.nameG, color);
+          });
         },
         (e) => {
           this.modifyKey(_vd.isDark, e.target.checked);
@@ -1460,9 +1454,16 @@ class Skinner {
     let x = event.clientX;
     let y = event.clientY;
 
-    const gradientStops = Array.isArray(currentGradientStops) ? currentGradientStops : [self.skin[_vd.nameBg], self.skin[_vd.nameBgHov]]
+    const gradientStops = Array.isArray(currentGradientStops)
+      ? currentGradientStops
+      : [self.skin[_vd.nameBg], self.skin[_vd.nameBgHov]];
 
-    const SKPickerInstance = new SKPicker(null, gradientStops[0], 'gradient', gradientStops);
+    const SKPickerInstance = new SKPicker(
+      null,
+      gradientStops[0],
+      "gradient",
+      gradientStops
+    );
     SKPickerInstance.init();
 
     SKPickerInstance.show(x, y);
@@ -1479,7 +1480,6 @@ class Skinner {
       self.pickerInstance = null;
     });
   }
-  
 
   handlePicker(event, key, onChangeCallback) {
     let self = this;
@@ -1901,7 +1901,7 @@ class Skinner {
     // _label.appendChild(_labelArrow);
 
     let pickerMainColor = this.skin[label + "Bg"];
-    let pickerGradientColor = this.skin[label + "Bg_g"];
+    let pickerGradientColor = this.skin[label + "G"];
     let pickerTextColor = this.skin[label + "Txt"];
     let pickerBorderColor = this.skin[verbalData.nameBorder];
     let pickerCustomAccentColor = this.skin[verbalData.nameAccent]
