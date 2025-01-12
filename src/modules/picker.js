@@ -174,7 +174,7 @@ export default class SKPicker {
     flex-grow: 1;
     min-width: 1px;
     border-radius: 4px;
-    border: 1px solid var(--sk_dominantBg2);
+    border: 1px solid var(--sk_dominantBg3);
     }
     .sk_picker_controls_row{
     display: flex;
@@ -355,7 +355,7 @@ display: flex;
     border-radius: 2px;
     text-align: right;
     border: 0;
-    border: 1px solid var(--sk_dominantBg2);
+    border: 1px solid var(--sk_dominantBg3);
     outline: 0;
     padding: 0 6px;
   }
@@ -397,6 +397,12 @@ display: flex;
     }
     .sk_picker_tab > input:checked + span {
     background: var(--sk_dominantBg2);
+    }
+    .sk_widget_block_section{
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    column-gap: 6px;
     }
     `;
     styleEl.innerHTML = style;
@@ -882,13 +888,16 @@ display: flex;
       this.createGradientStops();
     });
 
+    const widgetSection = document.createElement("div");
+    widgetSection.className = "sk_widget_block_section";
+
     const angleInput = document.createElement("input");
     angleInput.className = "sk_picker_input";
     angleInput.type = "number";
     angleInput.value = this.gradient.angle;
 
     const angleRangeSlider = document.createElement("input");
-    angleRangeSlider.className = "sk_picker_input";
+    angleRangeSlider.className = "sk_picker_range";
     angleRangeSlider.type = "range";
     angleRangeSlider.value = this.gradient.angle;
     angleRangeSlider.min = 0;
@@ -948,8 +957,9 @@ display: flex;
     });
 
     this.gradient.wrapperEl.appendChild(addStopBtn);
-    this.gradient.wrapperEl.appendChild(angleRangeSlider);
-    this.gradient.wrapperEl.appendChild(angleInput);
+    widgetSection.appendChild(angleRangeSlider);
+    widgetSection.appendChild(angleInput);
+    this.gradient.wrapperEl.appendChild(widgetSection);
     this.gradient.wrapperEl.appendChild(gradientTypeContainer);
 
     this.createGradientStops();

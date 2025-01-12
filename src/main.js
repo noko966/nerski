@@ -3433,21 +3433,26 @@ input[type="range"]:focus {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: var(--sk_dominantShadow);
-  border-radius: 0px;
+  background: var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBg3);
+  border-radius: 2px;
   width: 100%;
   height: 8px;
   cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  margin-top: -2px;
-    width: 12px;
-    height: 12px;
-    background-color: var(--sk_accentBg);
-    border-radius: 7px;
+      margin-top: -4px;
+    width: 14px;
+    height: 14px;
+    
+    background-color: var(--sk_dominantTxt2);
+    border: 1px solid var(--sk_dominantBg2);
+    border-radius: 6px;
     cursor: pointer;
     -webkit-appearance: none;
+    box-shadow: inset 0 0 0px 2px var(--sk_dominantBg3Hover);
+
 }
 
 
@@ -3456,7 +3461,7 @@ input[type="range"]::-moz-range-track {
   border: 0.2px solid #010101;
   border-radius: 1.3px;
   width: 100%;
-  height: 8.4px;
+  height: 8px;
   cursor: pointer;
 }
 
