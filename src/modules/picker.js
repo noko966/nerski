@@ -181,16 +181,16 @@ export default class SKPicker {
     align-items: center;
     column-gap: 6px;
     }
-    .sk_picker_sliders{
+    .sk_widget_block{
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 8px;
-    background: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg2);
+    padding: 6px;
+    background: var(--sk_dominantBg2);
+    border: 1px solid var(--sk_dominantBg2Hover);
     border-radius: 4px;
     flex-direction: column;
-    row-gap: 6px;
+    row-gap: 4px;
     }
     .sk_picker_solid{
     height: var(--solid_size);
@@ -228,6 +228,7 @@ export default class SKPicker {
     .sk_picker_slider_track {
       height: 16px;
       border-radius: 4px;
+      border: 1px solid var(--sk_dominantBg);
       background: var(--bg);
     }
     .sk_picker_slider_root.variant_hue{
@@ -240,21 +241,20 @@ export default class SKPicker {
     }
     .sk_picker_slider_hand{
       position: absolute;
-      width: 12px;
-      height: 24px;
-      border: 3px solid black;
-      border-radius: 6px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--sk_dominantBg3);
+      border-radius: 8px;
       z-index: 10;
-      top: 50%;
-    transform: translateY(-50%);yya
+      box-shadow: inset 0 0 0px 2px var(--sk_dominantBg2);
+    cursor: pointer;
     }
 
     .sk_picker_canvas_root{
         width: 100%;
-        height: 80px;
-        background: var(--sk_dominantShadow);
-        border-radius: 8px;
-        border: 1px solid var(--sk_dominantBgHover);
+        height: 60px;
+        border-radius: 4px;
+        border: 1px solid var(--sk_dominantBg);
     }
 
     .sk_picker_canvas_hue{
@@ -263,13 +263,7 @@ export default class SKPicker {
       border-radius: inherit;
     }
 
-    .sk_picker_canvas_hand{
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 3px solid black;
-    border-radius: 10px;
-    }
+
    .sk_picker_btn {
     appearance: none;
     border: 1px solid var(--sk_dominantBg2);
@@ -343,16 +337,7 @@ display: flex;
     z-index: 10;
     cursor: pointer;
     }
-    .sk_picker_gradient_root {
-    border-radius: 4px;
-    padding: 8px;
-    background-color: var(--sk_dominantBgHover);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    row-gap: 8px;
-    }
+
     .sk_picker_gradient_preview {
         height: 50px;
     border-radius: 4px;
@@ -374,6 +359,45 @@ display: flex;
     outline: 0;
     padding: 0 6px;
   }
+    .sk_widget_separator_hor{
+        width: 100%;
+    height: 1px;
+    flex-shrink: 0;
+    padding: 0 12px;
+    }
+    .sk_widget_separator_hor::before{
+    height: 1px;
+    background: var(--sk_dominantBgHover);
+    width: 100%;
+    content: '';
+    display: block;
+    }
+    .sk_picker_tabs_wrapper{
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--sk_dominantBg);
+    border-radius: 8px;
+    overflow: hidden;
+    }
+    .sk_picker_tab{
+    flex: 1;
+    cursor: pointer;
+    }
+    .sk_picker_tab > input{
+    display: none;
+    }
+    .sk_picker_tab > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    height: 24px;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
+    }
+    .sk_picker_tab > input:checked + span {
+    background: var(--sk_dominantBg2);
+    }
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -435,7 +459,7 @@ display: flex;
     hue.className = "sk_picker_canvas_hue";
 
     const hand = document.createElement("div");
-    hand.className = "sk_picker_canvas_hand";
+    hand.className = "sk_picker_slider_hand";
 
     root.appendChild(hue);
     hue.appendChild(hand);
@@ -598,8 +622,9 @@ display: flex;
     this._mode === "gradient" && this.showGradientSlider();
 
     const slidersWrapper = document.createElement("div");
-    slidersWrapper.className = "sk_picker_sliders";
+    slidersWrapper.className = "sk_widget_block";
     slidersWrapper.appendChild(this.saturationControl);
+    slidersWrapper.appendChild(this.createSeparator());
     slidersWrapper.appendChild(this.hueControl);
 
     const actionsWrapper = document.createElement("div");
@@ -627,6 +652,12 @@ display: flex;
 
     // 9. Return the root, in case needed
     return this.root;
+  }
+
+  createSeparator() {
+    const sw = document.createElement("div");
+    sw.className = "sk_widget_separator_hor";
+    return sw;
   }
 
   createDiv(cn) {
@@ -856,21 +887,36 @@ display: flex;
     angleInput.type = "number";
     angleInput.value = this.gradient.angle;
 
+    const angleRangeSlider = document.createElement("input");
+    angleRangeSlider.className = "sk_picker_input";
+    angleRangeSlider.type = "range";
+    angleRangeSlider.value = this.gradient.angle;
+    angleRangeSlider.min = 0;
+    angleRangeSlider.max = 360;
+    angleRangeSlider.step = 10;
+
     this._eventBindings.push(
       _.on(angleInput, "change", (e) => {
         this.gradient.angle = e.target.value;
         this.setBackground(this._color);
+        angleRangeSlider.value = e.target.value;
+      }),
+      _.on(angleRangeSlider, "change", (e) => {
+        this.gradient.angle = e.target.value;
+        this.setBackground(this._color);
+        angleInput.value = e.target.value;
       })
     );
 
     const gradientTypeContainer = document.createElement("div");
-    gradientTypeContainer.className = "sk_picker_gradient_type_container";
+    gradientTypeContainer.className = "sk_picker_tabs_wrapper";
 
     const gradientTypes = ["linear", "radial", "conic"];
 
     gradientTypes.forEach((type) => {
       const radio = document.createElement("input");
       radio.type = "radio";
+      radio.id = type;
       radio.name = "gradientType";
       radio.value = type;
 
@@ -889,14 +935,20 @@ display: flex;
 
       // Create a label for readability
       const label = document.createElement("label");
-      label.innerText = type.charAt(0).toUpperCase() + type.slice(1); // e.g. 'Linear'
+      label.className = "sk_picker_tab";
+      label.htmlFor = type;
+      const text = document.createElement("span");
+      text.innerText = type.charAt(0).toUpperCase() + type.slice(1); // e.g. 'Linear'
 
       // Append radio and label to the container
-      gradientTypeContainer.appendChild(radio);
+      // gradientTypeContainer.appendChild(radio);
+      label.appendChild(radio);
+      label.appendChild(text);
       gradientTypeContainer.appendChild(label);
     });
 
     this.gradient.wrapperEl.appendChild(addStopBtn);
+    this.gradient.wrapperEl.appendChild(angleRangeSlider);
     this.gradient.wrapperEl.appendChild(angleInput);
     this.gradient.wrapperEl.appendChild(gradientTypeContainer);
 
@@ -905,7 +957,7 @@ display: flex;
 
   createGradientSlider() {
     this.gradient.wrapperEl = document.createElement("div");
-    this.gradient.wrapperEl.className = "sk_picker_gradient_root";
+    this.gradient.wrapperEl.className = "sk_widget_block";
 
     this.gradient.previewEl = document.createElement("div");
     this.gradient.previewEl.className = "sk_picker_gradient_preview";

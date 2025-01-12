@@ -2319,7 +2319,7 @@ class Skinner {
     ];
 
     let firstDominantBg = colors.bg;
-    let isDark = colors.name === "dark" ? true : false;
+    let isDark = colors.name === "dark" ? false : false;
     UISkin.dominant = {};
     UISkin.dominant[_vdDominant.nameBg] = firstDominantBg;
     dominantKeyNames.forEach((bgName, i) => {
