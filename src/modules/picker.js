@@ -7,6 +7,19 @@ export default class SKPicker {
     this.rootElement = rootElement || document.body;
     this.root = null;
 
+    this.icons = {
+      eyeDropper: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.1374 9.21573L5.00012 17L2.15698 17.8432L2.50012 15L10.7844 6.86279" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.7332 3.67055C17.2391 4.90977 16.4313 6.33722 15.4744 7.72545L14.9097 9.96075C14.8156 10.3215 14.3685 10.447 14.1019 10.1804L10.7842 6.86271L9.81951 5.898C9.55285 5.63134 9.67834 5.18428 10.047 5.09016L12.1568 4.56467C13.5685 3.57643 15.0274 2.73722 16.2979 2.23526C16.7607 2.06271 17.2077 2.1882 17.4901 2.47839C17.7881 2.76859 17.9293 3.21565 17.7411 3.67055H17.7332Z" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+      removeStop: `
+<svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.02026 1L5.02026 5" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M0.979981 5L4.97998 1" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+    };
+
     this._mode = mode || "color";
 
     if (this._mode === "gradient") {
@@ -21,6 +34,7 @@ export default class SKPicker {
     this.gradient = {
       wrapperEl: null,
       previewEl: null,
+      stopsControlWrapper: null,
       stopsWrapperEl: null,
       type: "linear",
       angle: 90,
@@ -139,7 +153,7 @@ export default class SKPicker {
     const style = `
     .sk_picker_root{
     display: none;
-    --input_size: 32px;
+    --input_size: 28px;
     --solid_size: 24px;
     position: fixed;
     width: 250px;
@@ -151,30 +165,16 @@ export default class SKPicker {
     background: var(--sk_dominantBg);
     border: 1px solid var(--sk_dominantBgHover);
     backdrop-filter: blur(5px);
-
     flex-direction: column;
     align-items: stretch;
-    padding: 12px;
+    padding: 6px;
     border-radius: 4px;
     flex-direction: column;
-    row-gap: 8px;
+    row-gap: 4px;
+    box-shadow: 0 0 0 4px var(--sk_dominantShadow);
     }
     .sk_picker_root.state_visible{
     display: flex;
-    }
-    .sk_picker_input{
-    appearance: none;
-    height: var(--input_size);
-    padding: 0 8px;
-    outline: none;
-    border: none;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    width: 100%;
-    flex-grow: 1;
-    min-width: 1px;
-    border-radius: 4px;
-    border: 1px solid var(--sk_dominantBg3);
     }
     .sk_picker_controls_row{
     display: flex;
@@ -197,20 +197,16 @@ export default class SKPicker {
     width: var(--solid_size);
     border-radius: 4px;
     cursor: pointer;
-    border: 2px solid var(--sk_dominantTxt);
+    border: 1px solid var(--sk_dominantBg3Hover);
     }
-    .sk_picker_colors{
-    overflow-y: auto;
+    .sk_swatches_wrapper{
+        overflow-y: auto;
+    overflow-x: hidden;
     flex-wrap: wrap;
     display: flex;
-    row-gap: 4px;
-    column-gap: 4px;
-    max-height: 80px;
-    padding: 8px;
-    display: flex;
-    background: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg2);
-    border-radius: 4px;
+    row-gap: 2px;
+    column-gap: 2px;
+    max-height: 60px;
     }
 
     .sk_picker_scroll::-webkit-scrollbar {
@@ -266,11 +262,12 @@ export default class SKPicker {
 
    .sk_picker_btn {
     appearance: none;
-    border: 1px solid var(--sk_dominantBg2);
+    border: 0;
+    border: 1px solid var(--sk_dominantBg3Hover);
     text-align: center;
     height: var(--input_size);
     text-decoration: none;
-    background-color: var(--sk_dominantBgHover);
+    background-color: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt2);
     text-transform: capitalize;
     font-size: 12px;
@@ -284,6 +281,7 @@ export default class SKPicker {
     align-items: center;
     justify-content: center;
     column-gap: 4px;
+    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
     }
     .sk_picker_btn.variant_primary{
     width: 100%;
@@ -293,17 +291,9 @@ export default class SKPicker {
     .sk_picker_btn.variant_icon{
     height: var(--input_size);
     width: var(--input_size);
+    padding: 0;
     }
-    .sk_picker_actions_wrapper {
-    padding: 8px;
-    display: flex;
-    background: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg2);
-    border-radius: 4px;
-    flex-direction: column;
-    align-items: stretch;
-    row-gap: 6px;
-    }
+
     .sk_picker_gradient_stops_wrapper{
 display: flex;
     flex-direction: row;
@@ -313,42 +303,49 @@ display: flex;
 
 .sk_picker_gradient_stop {
     position: relative;
-    width: 24px;
-    height: 24px;
-    border: 2px solid black;
-    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--sk_dominantBgHover);
+    border-radius: 4px;
     z-index: 10;
     }
     .sk_picker_gradient_stop_remove{
+    appearance: none;
         position: absolute;
     top: 0;
     right: 0;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--sk_dominantTxt3);
+    background: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantBg3Hover);
     appearance: none;
     -webkit-appearance: none;
     border: 0;
     outline: 0;
     transform: translate(50%, -50%);
-    border-radius: 50%;
+    border-radius: 4px;
     z-index: 10;
     cursor: pointer;
+    padding: 0;
     }
 
     .sk_picker_gradient_preview {
-        height: 50px;
+        height: 32px;
     border-radius: 4px;
     position: relative;
     background-image: var(--grad);
     width: 100%;
+    border: 1px solid var(--sk_dominantBg3Hover);
     }
     .sk_picker_input {
+    appearance: none;
     width: 50px;
     font-size: 11px;
-    height: 24px;
+    height: var(--input_size);
     font-weight: 500;
     background: var(--sk_dominantBg);
     color: var(--sk_dominantTxt2);
@@ -391,7 +388,7 @@ display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    height: 24px;
+    height: var(--input_size);
     background: var(--sk_dominantBg);
     color: var(--sk_dominantTxt2);
     }
@@ -404,6 +401,14 @@ display: flex;
     padding: 2px;
     column-gap: 6px;
     }
+    .sk_grow{
+    flex-grow: 1;
+    min-width: 1px;
+    }
+    .sk_widget_row {
+    display: flex;
+    align-items: center;
+}
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -577,15 +582,14 @@ display: flex;
   }
 
   createUI() {
-    // 1. Create the picker’s root container
     this.root = document.createElement("div");
     this.root.className = "sk_picker_root";
 
-    // 3. Create a container for color swatches
     this.swatchesWrapper = document.createElement("div");
-    this.swatchesWrapper.className = "sk_picker_colors sk_picker_scroll";
+    this.swatchesWrapper.className = "sk_swatches_wrapper sk_picker_scroll";
 
-    // We’ll store swatch listeners in an array so we can remove them later
+    const swatchesWidget = document.createElement("div");
+    swatchesWidget.className = "sk_widget_block";
 
     this.solids.forEach((color) => this.addSwatch(color));
 
@@ -595,12 +599,12 @@ display: flex;
     // 6. Create an input field
     this.inputEl = document.createElement("input");
     this.inputEl.type = "text";
-    this.inputEl.className = "sk_picker_input";
+    this.inputEl.className = "sk_picker_input sk_grow";
 
     // 7. Create an eyedropper button (optional)
     this.eyedropperTrigger = document.createElement("button");
     this.eyedropperTrigger.className = "sk_picker_btn variant_icon";
-    this.eyedropperTrigger.innerText = "🎨";
+    this.eyedropperTrigger.innerHTML = this.icons.eyeDropper;
 
     // If you have an eyedropper handler, store it similarly
     // e.g.:
@@ -634,7 +638,7 @@ display: flex;
     slidersWrapper.appendChild(this.hueControl);
 
     const actionsWrapper = document.createElement("div");
-    actionsWrapper.className = "sk_picker_actions_wrapper";
+    actionsWrapper.className = "sk_widget_footer_row";
 
     const inputsWrapper = document.createElement("div");
     inputsWrapper.className = "sk_picker_controls_row";
@@ -644,13 +648,15 @@ display: flex;
     this.applyAndClose = document.createElement("button");
     this.applyAndClose.className = "sk_picker_btn variant_primary";
     this.applyAndClose.innerText = "Apply";
-
-    actionsWrapper.appendChild(inputsWrapper);
+    slidersWrapper.appendChild(this.createSeparator());
+    slidersWrapper.appendChild(inputsWrapper);
     actionsWrapper.appendChild(this.applyAndClose);
 
     // 8. Append all elements to their containers
     this.root.appendChild(slidersWrapper); // Input goes into controls
-    this.root.appendChild(this.swatchesWrapper); // Swatches container
+    this.root.appendChild(swatchesWidget);
+    swatchesWidget.appendChild(this.swatchesWrapper);
+
     this.root.appendChild(actionsWrapper); // Actions
 
     // Finally, attach the entire picker to the designated root element
@@ -849,7 +855,7 @@ display: flex;
 
       const removeBtn = document.createElement("button");
       removeBtn.className = "sk_picker_gradient_stop_remove";
-      removeBtn.innerText = "x";
+      removeBtn.innerHTML = this.icons.removeStop;
       removeBtn.addEventListener("click", () => {
         delete this.gradient.stops[key];
         this.createGradientStops();
@@ -866,7 +872,7 @@ display: flex;
 
     const addStopBtn = document.createElement("button");
     addStopBtn.innerText = "+";
-    addStopBtn.className = "skinner_btn skinner_btn-accent";
+    addStopBtn.className = "sk_picker_btn variant_icon";
     addStopBtn.addEventListener("click", () => {
       const newColor = "#FFFFFF";
 
@@ -955,11 +961,12 @@ display: flex;
       label.appendChild(text);
       gradientTypeContainer.appendChild(label);
     });
-
-    this.gradient.wrapperEl.appendChild(addStopBtn);
+    this.gradient.stopsControlWrapper.appendChild(addStopBtn);
+    this.gradient.wrapperEl.appendChild(this.createSeparator());
     widgetSection.appendChild(angleRangeSlider);
     widgetSection.appendChild(angleInput);
     this.gradient.wrapperEl.appendChild(widgetSection);
+    this.gradient.wrapperEl.appendChild(this.createSeparator());
     this.gradient.wrapperEl.appendChild(gradientTypeContainer);
 
     this.createGradientStops();
@@ -972,11 +979,16 @@ display: flex;
     this.gradient.previewEl = document.createElement("div");
     this.gradient.previewEl.className = "sk_picker_gradient_preview";
 
+    this.gradient.stopsControlWrapper = document.createElement("div");
+    this.gradient.stopsControlWrapper.className = "sk_widget_row";
+
     this.gradient.stopsWrapperEl = document.createElement("div");
-    this.gradient.stopsWrapperEl.className = "sk_picker_gradient_stops_wrapper";
+    this.gradient.stopsWrapperEl.className =
+      "sk_picker_gradient_stops_wrapper sk_grow";
 
     this.gradient.wrapperEl.appendChild(this.gradient.previewEl);
-    this.gradient.wrapperEl.appendChild(this.gradient.stopsWrapperEl);
+    this.gradient.wrapperEl.appendChild(this.gradient.stopsControlWrapper);
+    this.gradient.stopsControlWrapper.appendChild(this.gradient.stopsWrapperEl);
     this.root.appendChild(this.gradient.wrapperEl);
   }
 

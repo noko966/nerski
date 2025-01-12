@@ -49,7 +49,7 @@ class Skinner {
       },
       light: {
         name: "light",
-        bg: "#e8ecf1",
+        bg: "#d4d7db",
         accent: "#1696a5",
       },
     };
@@ -2428,13 +2428,13 @@ class Skinner {
   --sk_zind2: calc(var(--sk_zind) + 10);
   --skinnerHeaderHeight: 32px;
   --skinnerHeaderTogglerSize: 50px;
-  --skinnerToolboxHeight: 24px;
+  --skinnerToolboxHeight: 28px;
   --skinnerToolboxFooterHeight: 48px;
-  --skinnerBtnHeight: 26px;
+  --skinnerBtnHeight: 28px;
   --skinnerToolboxCollapserSize: 42px;
-  --control-picker-size: 24px;
+  --control-picker-size: 28px;
   --control-picker-size-border: calc(var(--control-picker-size) - 4px);
-  --controls-row-height: 32px;
+  --controls-row-height: 34px;
   --controls-ui-gap: 6px;
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
@@ -2445,7 +2445,7 @@ class Skinner {
   position: relative;
   width: 100%;
   position: absolute;
-  top: 4px;
+  top: 7px;
 }
 
 .sk_path_string_box {
@@ -2460,7 +2460,7 @@ class Skinner {
   width: 100%;
   top: 0px;
   stroke: var(--sk_accentBg);
-  stroke-width: 1px;
+  stroke-width: 1.5px;
   fill: none;
 }
 
@@ -2488,11 +2488,11 @@ body {
   display: flex;
   align-items: center;
   column-gap: 6px;
-  padding: 0 8px;
+  padding: 0 4px;
   height: var(--skinnerToolboxFooterHeight);
-  background: var(--shadow);
+  background: var(--sk_dominantBg2Hover);
   position: absolute;
-  border-top: 1px solid var(--sk_dominantBgHover);
+  border-top: 1px solid var(--sk_dominantBg3Hover);
   bottom: 0;
   left: 0;
   right: 0;
@@ -2779,15 +2779,15 @@ body {
 }
 
 .skn_controls_row {
-  border: 1px solid var(--sk_dominantBg2);
-  display: flex;
-  padding: 0 var(--controls-ui-pad-x);
-  align-items: center;
-  column-gap: var(--controls-ui-gap);
-  height: var(--controls-row-height);
-  background-color: var(--sk_dominantBgHover);
-  color: var(--sk_dominantTxt) !important;
-  border-radius: 4px;
+  border: 1px solid var(--sk_dominantBg3Hover);
+    display: flex;
+    padding: 0 var(--controls-ui-pad-x);
+    align-items: center;
+    column-gap: var(--controls-ui-gap);
+    height: var(--controls-row-height);
+    background-color: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt) !important;
+    border-radius: 4px;
 }
 
 .nik_skinner_control_group {
@@ -3039,9 +3039,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg2);
+    background-color: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantBg3Hover);
     color: var(--sk_dominantTxt2);
+        box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
 }
 
 .skinner_btn-50 {
@@ -3138,9 +3139,10 @@ body {
 .nik_skinner_header_controls {
   display: flex;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   padding: var(--controls-ui-pad-y) var(--controls-ui-pad-x);
   color: var(--sk_dominantTxt2);
+  background: var(--sk_dominantBg2Hover);
   z-index: 10;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
@@ -3206,7 +3208,7 @@ body {
 .nik_skinner_radius_amount {
   width: 50px;
   font-size: 11px;
-  height: 24px;
+  height: 28px;
   font-weight: 500;
   background: var(--sk_dominantBg);
   color: var(--sk_dominantTxt2);
@@ -3231,18 +3233,18 @@ body {
 
 .nik_skinner_checkbox_wrapper {
   display: flex;
-  border: 1px solid var(--sk_dominantBg2);
+  border: 1px solid var(--sk_dominantBg3Hover);
   height: var(--controls-row-height);
   align-items: center;
   justify-content: center;
-  background-color: var(--sk_dominantBgHover);
+  background-color: var(--sk_dominantBg2);
   flex-shrink: 0;
   position: relative;
   margin: 0;
   flex-shrink: 0;
   border-radius: 0;
   column-gap: 4px;
-  padding: 8px;
+  padding: 2px 4px;
   border-radius: 4px;
 }
 
@@ -3257,7 +3259,7 @@ body {
 .nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-range {
   width: 100%;
   justify-content: flex-start;
-  padding: 8px;
+  padding: 2px 4px;
 }
 
 .nik_skinner_control_group_checkbox_wrapper > input {
@@ -3442,16 +3444,15 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-      margin-top: -4px;
-    width: 14px;
-    height: 14px;
-    
-    background-color: var(--sk_dominantTxt2);
+      margin-top: -6px;
+    width: 18px;
+    height: 18px;
+    background-color: var(--sk_dominantBg);
     border: 1px solid var(--sk_dominantBg2);
-    border-radius: 6px;
+    border-radius: 50%;
     cursor: pointer;
     -webkit-appearance: none;
-    box-shadow: inset 0 0 0px 2px var(--sk_dominantBg3Hover);
+    box-shadow: inset 0 0 0px 2px var(--sk_dominantTxt);
 
 }
 
@@ -3530,7 +3531,7 @@ how to remove the virtical space around the range input in IE*/
 }
 
 :root {
-  --chbSize: 20px;
+  --chbSize: 24px;
   --chbH: var(--chbSize);
   --wrapperChbSize: 42px;
   --chbSizeBorder: 1px;
@@ -3545,10 +3546,10 @@ how to remove the virtical space around the range input in IE*/
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: var(--sk_dominantShadow);
+  background-color: var(--sk_dominantBg);
   cursor: pointer;
   border: var(--chbSizeBorder) solid var(--sk_dominantBg2);
-  border-radius: 2px;
+  border-radius: 4px;
   color: var(--sk_dominantBg);
   transition: background 0.2s;
 }
@@ -3596,7 +3597,7 @@ input[type="number"] {
   > input[type="checkbox"]:checked
   + .skinner_custom_chb {
   background: var(--sk_accentBg);
-  color: var(sk_accentTxt);
+  color: var(--sk_accentTxt);
   border-color: var(--sk_accentBgHover);
   --stroke_dash_arr: 16;
   --stroke_dash_off: 0;
@@ -3666,7 +3667,7 @@ border-radius: 50%;*/
   color: var(--sk_dominantTxt2);
   border: 0;
   border-radius: 2px;
-  border: 1px solid var(--sk_dominantBg2);
+  border: 1px solid var(--sk_dominantBg3Hover);
   outline: 0;
   font-size: 11px;
   text-transform: capitalize;
@@ -3680,7 +3681,7 @@ border-radius: 50%;*/
   transform: translate(-50%, 0);
   width: 100%;
   height: 100%;
-  line-height: 32px;
+  line-height: 26px;
   font-weight: 500;
   overflow: hidden;
   z-index: 80;
@@ -3756,12 +3757,12 @@ border-radius: 50%;*/
 }
 
 .skinner_ui_switcher {
-  width: calc(var(--skinnerToolboxHeight) * 2);
+  width: calc(var(--skinnerToolboxHeight) + 10px);
   background-color: var(--sk_dominantBg);
   color: var(--sk_dominantTxt);
-  border: 1px solid var(--sk_accentBg);
+  border: 2px solid var(--sk_accentBg);
   border-radius: 16px;
-  padding: 2px;
+  padding: 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3782,10 +3783,10 @@ border-radius: 50%;*/
     z-index: 10;
     height: calc(var(--skinnerToolboxHeight) + 8px);
     padding: 4px 8px;
-    background: var(--sk_dominantBg);
+    background: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt2);
-    border-radius: 8px;
-    border: 1px solid var(--sk_dominantBgHover);
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg3);
 }
 
 .skinner_ui_switcher > i {
@@ -3801,19 +3802,19 @@ border-radius: 50%;*/
 .skinner_ui_switcher > span {
   content: "";
   display: block;
-  width: 20px;
-  height: 20px;
+      width: 20px;
+    height: 20px;
   border-radius: 50%;
   background: var(--sk_accentBg);
   position: absolute;
   left: 2px;
-  top: 1px;
+  top: 2px;
   transform: translateX(0);
-  transition: background-color 0.1s, transform 0.1s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .skinner_ui_switcher > input:checked ~ span {
-  transform: translateX(22px);
+  transform: translateX(10px);
 }
 
 .skinner_settings_wrapper {
@@ -4021,16 +4022,17 @@ border-radius: 50%;*/
 }
 
 .skinner_ui_control_wrapper{
-        width: var(--skinnerBtnHeight);
+    width: var(--skinnerBtnHeight);
     height: var(--skinnerBtnHeight);
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg2);
+    background-color: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantBg3Hover);
     border-radius: 4px;
     color: var(--sk_dominantTxt2);
+    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
 }
 
 .nik_skinner_control_group{
