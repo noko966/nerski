@@ -368,3 +368,29 @@
   border-bottom-left-radius: var(--dominantRadius);
   border-bottom-right-radius: var(--dominantRadius);
 }
+
+input.demo_widget_input {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 32px;
+  width: 100%;
+  border-radius: 4px;
+  background: var(--inputG);
+  color: var(--inputTxt);
+  border: 0;
+  outline: 0;
+  padding: 0 8px;
+}
+
+.demo_widget_input_wrapper{
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: 6px;
+}
+
+.demo_widget_input_label{
+  font-size: 13px;
+  color: inherit;
+}

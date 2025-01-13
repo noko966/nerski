@@ -280,24 +280,26 @@ ${cn} > * {
     console.log(tree);
     const rootEl = tree[0];
     const repeated = rootEl.cssSelector.repeat(2);
-    let css = `
-    
+
+
+    let CSSVariableRuleStart = `
     ${repeated} *{
       color: unset;
       background: unset;
       border: unset;
     }
-
-    ${repeated}{
+    ${repeated} {
       background: ${tinycolor("#1a1a1a").toHexString()};
-      color: ${tinycolor("#1a1a1a").toHexString()};
-    }
+      color: ${tinycolor("#fff").toHexString()};
     `;
+
+
+    let css = ``;
 
     const usedSelectors = new Set();
 
     tree.forEach((t) => {
-      const { cssSelector, level, ind } = t;
+      const { cssSelector, level, ind, dataSk } = t;
 
       // If we've seen this cssSelector before, skip it
       if (usedSelectors.has(cssSelector)) {
@@ -308,18 +310,27 @@ ${cn} > * {
       // Build a single unique selector
       const selector = `${cssSelector}`;
 
+      CSSVariableRuleStart += `
+        --${dataSk}Bg: ${tinycolor("#1a1a1a")
+          .lighten(level * 2 + ind * 1)
+          .toHexString()};
+        --${dataSk}Txt: ${tinycolor("#fff").toHexString()};
+      `;
+
       // Append CSS rule
       css += `${repeated} ${selector} {
-      background: ${tinycolor("#1a1a1a")
-        .lighten(level * 2 + ind * 1)
-        .toHexString()};
-      color: ${tinycolor("#fff").toHexString()};
-      padding: ${level * 2}px ${level * 2 + 2}px; 
-      border: 2px solid ${tinycolor("#1a1a1a").toHexString()};
+      background: var(--${dataSk}Bg);
+      color: var(--${dataSk}Txt);
     }\n\n`;
     });
 
-    this.setOrUpdateIframeCustomCss(css);
+    const res = `
+    ${CSSVariableRuleStart}
+    }
+    ${css}
+    `
+
+    this.setOrUpdateIframeCustomCss(res);
   }
 
   createControl(label) {

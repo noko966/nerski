@@ -129,13 +129,6 @@ export default class ViewDemoEuropean {
     return el;
   }
 
-  createInput() {
-    const el = document.createElement("input");
-    el.className = "demo_event_input";
-    el.setAttribute("data-sk", "input");
-    return el;
-  }
-
   createButton(variant) {
     const el = document.createElement("button");
     el.className = `demo_event_button variant_${variant ? variant : "base"}`;
@@ -198,6 +191,7 @@ export default class ViewDemoEuropean {
   createBody() {
     const el = document.createElement("div");
     el.className = "demo_body";
+    el.id = "demo_body_unique_id";
     el.setAttribute("data-sk", "body");
     return el;
   }
@@ -322,6 +316,22 @@ export default class ViewDemoEuropean {
     return eventRoot;
   }
 
+  createInput() {
+    const wrapper = document.createElement("div");
+    const label = document.createElement("span");
+    label.className = "demo_widget_input_label";
+    label.innerText = 'input label'
+    const input = document.createElement("input");
+    wrapper.className = "demo_widget_input_wrapper";
+    input.className = "demo_widget_input";
+    input.type = 'text';
+    input.value = 'type here'
+    input.setAttribute("data-sk", "input");
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    return wrapper;
+  }
+
   createWidget() {
     const root = document.createElement("div");
     root.className = "demo_widget_root";
@@ -336,6 +346,9 @@ export default class ViewDemoEuropean {
     const content = document.createElement("div");
     content.className = "demo_widget_content";
     content.setAttribute("data-sk", "widget_content");
+
+    content.appendChild(this.createInput())
+    content.appendChild(this.createInput())
 
     const hi = this.createIcon();
     header.appendChild(headerText);
@@ -403,7 +416,6 @@ export default class ViewDemoEuropean {
     const w2 = this.createWidget();
     const w3 = this.createWidget();
     const w4 = this.createWidget();
-    const w5 = this.createWidget();
 
     this.demo.aside.appendChild(w1);
     this.demo.aside.appendChild(w2);
