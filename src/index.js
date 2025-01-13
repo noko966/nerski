@@ -5,7 +5,7 @@ import { Skinner } from "./main.js";
 
 import ViewDemoEuropean from "./views/european.js";
 
-const target = document;
+// const target = document;
 
 const configOrderCasino = [
   {
@@ -1088,6 +1088,10 @@ if (!window.Skinner) {
   console.warn("window.skinner already exists!");
 }
 
+const demo = new ViewDemoEuropean();
+demo.init();
+const target = document.querySelector(".demo_body");
+
 function init() {
   if (window.SkinnerInstance) {
     console.warn("SkinnerInstance already exists!");
@@ -1120,14 +1124,10 @@ function destroy() {
   console.log("SkinnerInstance destroyed");
 }
 
-const demo = new ViewDemoEuropean();
-demo.init();
-// Add event listener for keydown event to trigger init on pressing "s"
-// and destroy SkinnerInstance on pressing "d"
+init();
 window.addEventListener("keydown", (event) => {
   if (event.key === "a" || event.key === "A") {
     // Trigger init function
-    init();
   } else if (event.key === "q" || event.key === "Q") {
     // Trigger destroy function
     destroy();

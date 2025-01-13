@@ -811,6 +811,39 @@ class Skinner {
     })();
   }
 
+  traverseDom() {
+    const _CS = this.customStyler;
+
+    function getDataSkNodesWithLevels(el, level = 0, ind) {
+      const results = [];
+      let _ind = ind || 0;
+      // If this element has data-sk, record it
+      if (el.hasAttribute("data-sk")) {
+        results.push({
+          ind,
+          level,
+          tag: el.tagName.toLowerCase(),
+          dataSk: el.getAttribute("data-sk"),
+          text: el.textContent.trim(),
+          cssSelector: `${_CS.generateCssPath(el)}[data-sk="${el.getAttribute(
+            "data-sk"
+          )}"]`,
+        });
+      }
+
+      for (const child of el.children) {
+        results.push(...getDataSkNodesWithLevels(child, level + 1, _ind++));
+      }
+
+      return results;
+    }
+
+    const rootEl = this.patientRoot;
+
+    const flatList = getDataSkNodesWithLevels(rootEl, 0);
+    _CS.createCSSBasedOnTree(flatList, rootEl);
+  }
+
   init() {
     this.createHTML();
     this.addCss();
@@ -1772,6 +1805,7 @@ class Skinner {
   }
 
   addUiThemeSwitcher() {
+    let that = this;
     let _id = "skinner_ui_switcher";
     let switcherWrapper = document.createElement("label");
     switcherWrapper.className = this.classNames.uiSwitch;
@@ -1798,7 +1832,12 @@ class Skinner {
     let toggleBtn = document.createElement("button");
     toggleBtn.id = "toggleEditorBtn";
     toggleBtn.className = "skinner_btn skinner_btn-icon";
-    toggleBtn.innerText = "toggle Editor";
+    toggleBtn.innerText = "E";
+
+    let traverseDomBtn = document.createElement("button");
+    traverseDomBtn.id = "traverseDomBtn";
+    traverseDomBtn.className = "skinner_btn skinner_btn-icon";
+    traverseDomBtn.innerText = "T";
 
     // Replace the previous document.getElementById('toggleButton') logic with this:
     toggleBtn.addEventListener("click", () => {
@@ -1808,7 +1847,10 @@ class Skinner {
         this.customStyler.toggleStyler();
       }
     });
+
+    traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
     this.skinnerUiControls.appendChild(toggleBtn);
+    this.skinnerUiControls.appendChild(traverseDomBtn);
     // ----- New Toggle Button End -----
   }
 

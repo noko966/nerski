@@ -142,9 +142,6 @@ ${cn} > * {
         (el) => el.matches && el.matches("[data-sk]")
       );
 
-      console.log(path);
-      console.log(hoveredElement);
-
       if (hoveredElement) {
         let target = hoveredElement;
         let uniqueClass = target.getAttribute("data-sk");
@@ -182,9 +179,6 @@ ${cn} > * {
       const clickedElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
       );
-
-      console.log(path);
-      console.log(clickedElement);
 
       if (clickedElement) {
         this.isStopped = true;
@@ -238,6 +232,8 @@ ${cn} > * {
 
   createKey(name, el) {
     this.skin[name] = {};
+    if (!el) {
+    }
     let cs = this.getSelectorAffectedCssStyles(el);
     let color = tinycolor(cs.color).toHexString();
     let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
@@ -255,6 +251,75 @@ ${cn} > * {
     this.skin[name]["height"] = cs.height;
     this.skin[name]["borderRadius"] = cs.borderRadius;
     this.skin[name]["flexDirection"] = cs.flexDirection;
+  }
+
+  createCSSSingleBasedOnTree() {
+    let css = "";
+    for (const key in this.skin) {
+      css += `${key} {
+  background-color: ${this.skin[key].backgroundColor};
+  color: ${this.skin[key].color};
+  padding-top: ${this.skin[key]["padding-top"]}px;
+  padding-right: ${this.skin[key]["padding-right"]}px;
+  padding-bottom: ${this.skin[key]["padding-bottom"]}px;
+  padding-left: ${this.skin[key]["padding-left"]}px;
+  border-radius: ${this.skin[key].borderRadius};
+}\n\n`;
+    }
+
+    // width: ${this.skin[key].width} !important;
+    //   height: ${this.skin[key].height} !important;
+
+    // display: flex !important;
+    //   flex-direction: ${this.skin[key].flexDirection} !important;
+
+    return css;
+  }
+
+  createCSSBasedOnTree(tree) {
+    console.log(tree);
+    const rootEl = tree[0];
+    const repeated = rootEl.cssSelector.repeat(2);
+    let css = `
+    
+    ${repeated} *{
+      color: unset;
+      background: unset;
+      border: unset;
+    }
+
+    ${repeated}{
+      background: ${tinycolor("#1a1a1a").toHexString()};
+      color: ${tinycolor("#1a1a1a").toHexString()};
+    }
+    `;
+
+    const usedSelectors = new Set();
+
+    tree.forEach((t) => {
+      const { cssSelector, level, ind } = t;
+
+      // If we've seen this cssSelector before, skip it
+      if (usedSelectors.has(cssSelector)) {
+        return;
+      }
+      usedSelectors.add(cssSelector);
+
+      // Build a single unique selector
+      const selector = `${cssSelector}`;
+
+      // Append CSS rule
+      css += `${repeated} ${selector} {
+      background: ${tinycolor("#1a1a1a")
+        .lighten(level * 2 + ind * 1)
+        .toHexString()};
+      color: ${tinycolor("#fff").toHexString()};
+      padding: ${level * 2}px ${level * 2 + 2}px; 
+      border: 2px solid ${tinycolor("#1a1a1a").toHexString()};
+    }\n\n`;
+    });
+
+    this.setOrUpdateIframeCustomCss(css);
   }
 
   createControl(label) {
@@ -770,7 +835,7 @@ ${cn} > * {
     while (
       currentElement &&
       currentElement.nodeType === Node.ELEMENT_NODE &&
-      level < 3
+      level < 1
     ) {
       let selector = "";
 
