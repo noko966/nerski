@@ -2884,6 +2884,7 @@ body {
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.314s;
+  border: 1px solid var(--sk_dominantBg3Hover);
 }
 
 .nik_skinner_control_group_picker.variant_border {

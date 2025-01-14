@@ -160,6 +160,7 @@ export default class ViewDemoEuropean {
   createEventScore(text) {
     const el = document.createElement("span");
     el.className = "demo_event_score";
+    el.setAttribute("data-sk-text", "accent");
     el.innerText = text || "0";
     return el;
   }

@@ -108,8 +108,8 @@ class MouseIntersectStyler {
 
 
 ${cn}{
-  background: ${selectGradient1};
-  color: var(--dominantTxt);
+  background-image: ${selectGradient1} !important;
+  color: var(--dominantTxt) !important;
   background-size: 200% 200%;
   animation-duration: 10s;
   animation-direction: normal;
@@ -186,13 +186,10 @@ ${cn} > * {
 
         // Show UI near the clicked element
         const bounds = clickedElement.getBoundingClientRect();
+        this.injectStyle("");
         this.showUI(bounds.left, bounds.top, clickedElement);
       }
     }
-  }
-
-  onMouseՕut(evt) {
-    // this.injectStyle("");
   }
 
   modifyKey(name, value) {
@@ -209,71 +206,67 @@ ${cn} > * {
 
   createCss() {
     let css = "";
+
+    let CSSVariableRuleStart = `
+   
+    :root{
+    
+    `;
+
+
     for (const key in this.skin) {
+      
+      const _skin = this.skin[key];
+
+      CSSVariableRuleStart += `
+      
+        --${_skin.varPrefix}Bg: ${tinycolor(_skin.backgroundColor).toHexString()};
+        --${_skin.varPrefix}Txt: ${tinycolor(_skin.color).toHexString()};
+
+      `;
+
+      // Append CSS rule
+      css += `${key} * {
+        color: unset;
+      }`;
       css += `${key} {
-  background-color: ${this.skin[key].backgroundColor};
-  color: ${this.skin[key].color};
-  padding-top: ${this.skin[key]["padding-top"]}px;
-  padding-right: ${this.skin[key]["padding-right"]}px;
-  padding-bottom: ${this.skin[key]["padding-bottom"]}px;
-  padding-left: ${this.skin[key]["padding-left"]}px;
-  border-radius: ${this.skin[key].borderRadius};
-}\n\n`;
+      background: var(--${_skin.varPrefix}Bg);
+      color: var(--${_skin.varPrefix}Txt);
+      }
+    `;
+    };
+
+    const res = `
+    ${CSSVariableRuleStart}
     }
+    ${css}
+    `
 
-    // width: ${this.skin[key].width} !important;
-    //   height: ${this.skin[key].height} !important;
+    return res
 
-    // display: flex !important;
-    //   flex-direction: ${this.skin[key].flexDirection} !important;
 
-    return css;
   }
+
+  
 
   createKey(name, el) {
     this.skin[name] = {};
-    if (!el) {
-    }
-    let cs = this.getSelectorAffectedCssStyles(el);
-    let color = tinycolor(cs.color).toHexString();
-    let backgroundColor = tinycolor(cs.backgroundColor).toHexString();
-
+    const cs = this.getSelectorAffectedCssStyles(el);
+    const bg = tinycolor(cs.background).toHexString();
+    const txt = tinycolor(cs.text).toHexString();
+    let uniqueClass = el.getAttribute("data-sk");
     const padding = this.parseProp(cs.padding);
 
-    this.skin[name]["backgroundColor"] = backgroundColor;
-    this.skin[name]["color"] = color;
+    this.skin[name]["backgroundColor"] = bg;
+    this.skin[name]["color"] = txt;
     this.skin[name]["padding-top"] = padding.top.value;
     this.skin[name]["padding-right"] = padding.right.value;
     this.skin[name]["padding-bottom"] = padding.bottom.value;
     this.skin[name]["padding-left"] = padding.left.value;
 
-    this.skin[name]["width"] = cs.width;
-    this.skin[name]["height"] = cs.height;
+    this.skin[name]["varPrefix"] = uniqueClass;
+
     this.skin[name]["borderRadius"] = cs.borderRadius;
-    this.skin[name]["flexDirection"] = cs.flexDirection;
-  }
-
-  createCSSSingleBasedOnTree() {
-    let css = "";
-    for (const key in this.skin) {
-      css += `${key} {
-  background-color: ${this.skin[key].backgroundColor};
-  color: ${this.skin[key].color};
-  padding-top: ${this.skin[key]["padding-top"]}px;
-  padding-right: ${this.skin[key]["padding-right"]}px;
-  padding-bottom: ${this.skin[key]["padding-bottom"]}px;
-  padding-left: ${this.skin[key]["padding-left"]}px;
-  border-radius: ${this.skin[key].borderRadius};
-}\n\n`;
-    }
-
-    // width: ${this.skin[key].width} !important;
-    //   height: ${this.skin[key].height} !important;
-
-    // display: flex !important;
-    //   flex-direction: ${this.skin[key].flexDirection} !important;
-
-    return css;
   }
 
   createCSSBasedOnTree(tree) {
@@ -281,6 +274,11 @@ ${cn} > * {
     const rootEl = tree[0];
     const repeated = rootEl.cssSelector.repeat(2);
 
+    const _skin = {
+      bg: '#2c3e50',
+      txt: '#fff',
+      acc: '#63bf1b',
+    }
 
     let CSSVariableRuleStart = `
     ${repeated} *{
@@ -289,14 +287,15 @@ ${cn} > * {
       border: unset;
     }
     ${repeated} {
-      background: ${tinycolor("#1a1a1a").toHexString()};
-      color: ${tinycolor("#fff").toHexString()};
+      background: ${tinycolor(_skin.bg).toHexString()};
+      color: ${tinycolor(_skin.txt).toHexString()};
     `;
-
 
     let css = ``;
 
     const usedSelectors = new Set();
+
+
 
     tree.forEach((t) => {
       const { cssSelector, level, ind, dataSk } = t;
@@ -311,17 +310,23 @@ ${cn} > * {
       const selector = `${cssSelector}`;
 
       CSSVariableRuleStart += `
-        --${dataSk}Bg: ${tinycolor("#1a1a1a")
+        --${dataSk}Bg: ${tinycolor(_skin.bg)
           .lighten(level * 2 + ind * 1)
           .toHexString()};
-        --${dataSk}Txt: ${tinycolor("#fff").toHexString()};
+        --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
+        --${dataSk}Accent: ${tinycolor(_skin.acc).toHexString()};
+
       `;
 
       // Append CSS rule
       css += `${repeated} ${selector} {
       background: var(--${dataSk}Bg);
       color: var(--${dataSk}Txt);
-    }\n\n`;
+    }\n
+    ${repeated} ${selector} [data-sk-text="accent"] {
+          color: var(--${dataSk}Accent);
+    }
+    `;
     });
 
     const res = `
@@ -333,14 +338,43 @@ ${cn} > * {
     this.setOrUpdateIframeCustomCss(res);
   }
 
-  createControl(label) {
+  createControlRoot(){
+    let root = document.createElement("div");
+    root.className = 'sk_widget_collapse_block';
+
+    return root;
+  }
+
+  createControlHeader(label){
+    let el = document.createElement("div");
+    el.className = 'sk_widget_block_header';
+    let txt = document.createElement("span");
+    txt.className = 'sk_txt';
+    txt.innerText = label;
+    let ic = document.createElement("i");
+    ic.className = 'sk_ico';
+    ic.innerHTML = '';
+    el.appendChild(ic);
+    el.appendChild(txt);
+
+    return el;
+  }
+
+  createControlContent(){
+    let el = document.createElement("div");
+    el.className = 'sk_widget_block_content';
+    return el;
+  }
+
+  createControl(label, variantCN) {
     let d = document.createElement("div");
     let s = document.createElement("span");
     s.innerText = label || "control name";
     let c = document.createElement("div");
-    d.className = "sk_styler_control_row";
+    d.className = `sk_styler_control_row ${variantCN ? variantCN : ""}`;
     s.className = "sk_styler_control_row_label";
     c.className = "sk_styler_control_holder";
+
     d.appendChild(s);
     d.appendChild(c);
     return {
@@ -355,17 +389,36 @@ ${cn} > * {
     const style = document.createElement("style");
     style.innerHTML = `
       .sk_ui_custom_change_root {
-        position: fixed;
+    --input_size: 28px;
+    --solid_size: 24px;
+    position: fixed;
+    width: 250px;
+    height: auto;
+    z-index: var(--sk_zind);
+    top: 0px;
+    transform: translate(0, 0);
+    border: none;
+    background: var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBgHover);
+    backdrop-filter: blur(5px);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+    box-shadow: 0 0 0 4px var(--sk_dominantShadow);
+      }
+    .sk_widget_collapse_block {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 20px;
     background: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt);
-    border: 1px solid var(--sk_dominantBg3);
-    z-index: var(--sk_zind2);
-    row-gap: 4px;
-      }
+    border: 1px solid var(--sk_dominantBg2Hover);
+    border-radius: 4px;
+    overflow: hidden;
+}
 
       .sk_ui_custom_change_root.state-reveal {
         animation: appear 0.3s;
@@ -375,35 +428,46 @@ ${cn} > * {
           100% { opacity: 1; }
         }
           .sk_styler_control_row {
-    border: 1px solid var(--sk_dominantBg2);
     display: flex;
-    padding: 0 var(--controls-ui-pad-x);
     align-items: center;
     column-gap: var(--controls-ui-gap);
-    height: var(--controls-row-height);
-    background-color: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt) !important;
-    border-radius: 4px;
+    
 }
     .sk_styler_control_row_label {
     flex-grow: 1;
     min-width: 1px;
-    font-size: 12px;
+    font-size: 10px;
+    text-align: right;
 }
-    .sk_styler_control_holder{
-    
+    .sk_styler_control_row.variant_color{
+        width: calc(50% - 5px);
     }
 
     .sk_styler_control_holder > .pickr {
     position: absolute;
 }
 
-.sk_editor_input {
-    -webkit-appearance: none;
+.row{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    column-gap: 4px;
+}
+
+.sk_block_separator_y{
+    width: 1px;
+    flex-shrink:0;
+    height: 24px;
+    background: var(--sk_dominantBg);
+    flex-shrink: 0;
+
+}
+
+.sk_input {
     appearance: none;
     width: 50px;
     font-size: 11px;
-    height: 24px;
+    height: var(--input_size);
     font-weight: 500;
     background: var(--sk_dominantBg);
     color: var(--sk_dominantTxt2);
@@ -414,33 +478,56 @@ ${cn} > * {
     outline: 0;
     padding: 0 6px;
 }
-    .sk_editor_button{
-    -webkit-appearance: none;
+
+.sk_btn {
     appearance: none;
-    border: 1px solid var(--sk_dominantBg3);
+    border: 0;
+    border: 1px solid var(--sk_dominantBg3Hover);
     text-align: center;
-    height: var(--skinnerBtnHeight);
+    height: var(--input_size);
     text-decoration: none;
     background-color: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt2);
-    display: block;
     text-transform: capitalize;
     font-size: 12px;
     position: relative;
     font-weight: 500;
-    padding: 0 12px;
+    padding: 0 8px;
     border-radius: 4px;
     transition: all 0.2s;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     column-gap: 4px;
-    }
-    .sk_editor_button.variant_ok{
-        background-color: var(--sk_accentBg);
-    border-color: var(--sk_accentBg);
+    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
+}
+    .sk_btn.variant_primary{
+        width: 100%;
+    background-color: var(--sk_accentBg);
     color: var(--sk_accentTxt);
-    position: relative;
+    }
+   
+    .sk_widget_block_header{
+    height: 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt);
+    font-size: 10px;
+    column-gap: 6px;
+    }
+    .sk_widget_block_content{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt);
+    font-size: 10px;
+    
     }
     `;
     const root = document.createElement("div");
@@ -467,25 +554,24 @@ ${cn} > * {
     };
 
     // Apply button
+    const buttonWrapper = document.createElement("div");
+    buttonWrapper.className = "sk_widget_footer_row";
+
     this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "sk_editor_button variant_ok";
+    this.hideUITrigger.className = "sk_btn variant_primary";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
 
     // Control wrappers for various properties
-    let controlWrapperBg = this.createControl("background-color");
-    let controlWrapperColor = this.createControl("text-color");
-    let controlWrapperPadding = this.createControl("padding");
-    let controlWrapperFlex = this.createControl("padding");
-    let controlWrapperRadius = this.createControl("border-radius");
-    let controlWrapperWidthHeight = this.createControl("width/height");
+    let controlWrapperBg = this.createControl("background", "variant_color");
+    let controlWrapperColor = this.createControl("text", "variant_color");
 
     // Padding input
     let padInputVariants = ["top", "right", "left", "bottom"];
     let paddingInputs = {};
     padInputVariants.forEach((v) => {
       paddingInputs[v] = document.createElement("input");
-      paddingInputs[v].className = "nik_skinner_radius_amount";
+      paddingInputs[v].className = "sk_input";
       paddingInputs[v].type = "number";
       paddingInputs[v].addEventListener("change", (e) => {
         self.modifyKey(`padding-${v}`, e.target.value);
@@ -504,91 +590,61 @@ ${cn} > * {
       handleTextColorPickerCallBack
     );
 
-    // Flex-direction radio buttons
-    const flexDirectionWrapper = document.createElement("div");
-    flexDirectionWrapper.className = "nik_skinner_flex_direction_wrapper";
 
-    const flexRowRadio = document.createElement("input");
-    flexRowRadio.type = "radio";
-    flexRowRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
-    flexRowRadio.id = "flexRowRadio";
-    flexRowRadio.value = "row";
-    flexRowRadio.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        self.modifyKey("flexDirection", "row");
-      }
-    });
-    const flexRowLabel = document.createElement("label");
-    flexRowLabel.setAttribute("for", "flexRowRadio");
-    flexRowLabel.innerText = "Flex Row";
-
-    const flexColumnRadio = document.createElement("input");
-    flexColumnRadio.type = "radio";
-    flexColumnRadio.name = "flexDirection"; // Same name ensures mutual exclusivity
-    flexColumnRadio.id = "flexColumnRadio";
-    flexColumnRadio.value = "column";
-    flexColumnRadio.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        self.modifyKey("flexDirection", "column");
-      }
-    });
-    const flexColumnLabel = document.createElement("label");
-    flexColumnLabel.setAttribute("for", "flexColumnRadio");
-    flexColumnLabel.innerText = "Flex Column";
-
-    // Append radios and labels to the wrapper
-    flexDirectionWrapper.appendChild(flexRowRadio);
-    flexDirectionWrapper.appendChild(flexRowLabel);
-    flexDirectionWrapper.appendChild(flexColumnRadio);
-    flexDirectionWrapper.appendChild(flexColumnLabel);
 
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
     borderRadiusInput.type = "number";
-    borderRadiusInput.className = "sk_editor_input";
+    borderRadiusInput.className = "sk_input";
     borderRadiusInput.placeholder = "Border Radius (px)";
     borderRadiusInput.addEventListener("change", (e) => {
       self.modifyKey("borderRadius", e.target.value + "px");
     });
 
-    // Width and height inputs
-    const widthInput = document.createElement("input");
-    widthInput.type = "number";
-    widthInput.className = "sk_editor_input";
-    widthInput.placeholder = "Width (px)";
-    widthInput.addEventListener("change", (e) => {
-      self.modifyKey("width", e.target.value + "px");
-    });
 
-    const heightInput = document.createElement("input");
-    heightInput.type = "number";
-    heightInput.className = "sk_editor_input";
-    heightInput.placeholder = "Height (px)";
-    heightInput.addEventListener("change", (e) => {
-      self.modifyKey("height", e.target.value + "px");
-    });
     controlWrapperBg.inside.appendChild(this.BgPicker);
     controlWrapperColor.inside.appendChild(this.TextColorPicker);
 
-    controlWrapperPadding.inside.appendChild(paddingInputs.top);
-    controlWrapperPadding.inside.appendChild(paddingInputs.right);
-    controlWrapperPadding.inside.appendChild(paddingInputs.bottom);
-    controlWrapperPadding.inside.appendChild(paddingInputs.left);
-    controlWrapperRadius.inside.appendChild(borderRadiusInput);
-    controlWrapperFlex.inside.appendChild(flexDirectionWrapper);
-    controlWrapperWidthHeight.inside.appendChild(widthInput);
-    controlWrapperWidthHeight.inside.appendChild(heightInput);
+    const colorBlock = this.createControlRoot();
+    const colorBlockHeader = this.createControlHeader('Color');
+    const colorBlockContent = this.createControlContent();
 
-    // Append controls to root
+    const paddingBlock = this.createControlRoot();
+    const paddingBlockHeader = this.createControlHeader('Padding');
+    const paddingBlockContent = this.createControlContent();
 
-    root.appendChild(controlWrapperBg.element);
-    root.appendChild(controlWrapperColor.element);
-    root.appendChild(controlWrapperPadding.element);
-    root.appendChild(controlWrapperFlex.element);
-    root.appendChild(controlWrapperRadius.element);
-    root.appendChild(controlWrapperWidthHeight.element);
+    const radiusBlock = this.createControlRoot();
+    const radiusBlockHeader = this.createControlHeader('Radius');
+    const radiusBlockContent = this.createControlContent();
 
-    root.appendChild(this.hideUITrigger);
+    colorBlock.appendChild(colorBlockHeader);
+    colorBlock.appendChild(colorBlockContent);
+    const pickersElWrapper = document.createElement("div");
+    pickersElWrapper.className = 'row';
+    const separatorEl =  document.createElement("div");
+    separatorEl.className = 'sk_block_separator_y';
+    colorBlockContent.appendChild(pickersElWrapper);
+    pickersElWrapper.appendChild(controlWrapperBg.element);
+    pickersElWrapper.appendChild(separatorEl);
+    pickersElWrapper.appendChild(controlWrapperColor.element);
+
+    paddingBlock.appendChild(paddingBlockHeader);
+    paddingBlock.appendChild(paddingBlockContent);
+    paddingBlockContent.appendChild(paddingInputs.top);
+    paddingBlockContent.appendChild(paddingInputs.right);
+    paddingBlockContent.appendChild(paddingInputs.bottom);
+    paddingBlockContent.appendChild(paddingInputs.left);
+
+    radiusBlock.appendChild(radiusBlockHeader);
+    radiusBlock.appendChild(radiusBlockContent);
+    radiusBlockContent.appendChild(borderRadiusInput);
+
+    root.appendChild(colorBlock);
+    root.appendChild(paddingBlock);
+    root.appendChild(radiusBlock);
+    
+    buttonWrapper.appendChild(this.hideUITrigger);
+    root.appendChild(buttonWrapper);
     document.body.appendChild(style);
     document.body.appendChild(root);
 
@@ -677,12 +733,10 @@ ${cn} > * {
     if (!selector) return;
     let computedStyles = getComputedStyle(selector);
     let styles = {
-      backgroundColor: computedStyles.backgroundColor,
-      color: computedStyles.color,
+      background: computedStyles.background,
+      text: computedStyles.color,
       padding: computedStyles.padding,
       borderRadius: computedStyles.borderRadius,
-      width: computedStyles.width,
-      height: computedStyles.height,
     };
 
     return styles;
@@ -692,13 +746,13 @@ ${cn} > * {
     if (!this.UIRoot) return;
 
     const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
-    const backgroundColor = elementStyles.backgroundColor;
-    const color = elementStyles.color;
+    const bg = elementStyles.background;
+    const txt = elementStyles.text;
     const padding = this.parseProp(elementStyles.padding);
     const bordeRadius = this.parseProp(elementStyles.borderRadius);
 
-    this.stylerControls.backgroundColor.style.background = backgroundColor;
-    this.stylerControls.color.style.background = color;
+    this.stylerControls.backgroundColor.style.background = bg;
+    this.stylerControls.color.style.background = txt;
     this.stylerControls.padding.top.value = padding.top.value;
     this.stylerControls.padding.right.value = padding.right.value;
     this.stylerControls.padding.bottom.value = padding.bottom.value;
@@ -846,7 +900,7 @@ ${cn} > * {
     while (
       currentElement &&
       currentElement.nodeType === Node.ELEMENT_NODE &&
-      level < 1
+      level < 3
     ) {
       let selector = "";
 
@@ -915,30 +969,24 @@ ${cn} > * {
 
   handlePicker(event, onChangeCallback) {
     let self = this;
-    const selectedRuleState = this.skin[this.activeSelectorId];
+    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
     if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
-    // 1. Create the instance
-    const SKPickerInstance = new SKPicker(
-      null,
-      selectedRuleState.backgroundColor
-    );
+
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const SKPickerInstance = new SKPicker(null, currentColor);
     SKPickerInstance.init();
 
-    // 2. Show the picker UI (assuming SKPicker has a .show() method)
-    SKPickerInstance.show();
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("change", (color, source, instance) => {
-      // console.log("Picker color changed:", color, "Source:", source);
       onChangeCallback(color);
-
-      // if (source === "input" || source === "outside") {
-      //   instance.hide();
-      //   instance.destroy();
-      //   self.pickerInstance = null;
-      // }
     });
 
     SKPickerInstance.on("hide", (source, instance) => {
