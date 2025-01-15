@@ -310,10 +310,12 @@ export default class ViewDemoEuropean {
     });
 
     eventRoot.appendChild(eventTabs);
-    eventRoot.appendChild(eventHeader);
-    eventRoot.appendChild(eventSubHeader);
-    eventRoot.appendChild(eventListWrapper);
-
+    const wrapper = document.createElement("div");
+    wrapper.className = "demo_widget_wrapper";
+    wrapper.appendChild(eventHeader);
+    wrapper.appendChild(eventSubHeader);
+    wrapper.appendChild(eventListWrapper);
+    eventRoot.appendChild(wrapper);
     return eventRoot;
   }
 
@@ -321,12 +323,12 @@ export default class ViewDemoEuropean {
     const wrapper = document.createElement("div");
     const label = document.createElement("span");
     label.className = "demo_widget_input_label";
-    label.innerText = 'input label'
+    label.innerText = "input label";
     const input = document.createElement("input");
     wrapper.className = "demo_widget_input_wrapper";
     input.className = "demo_widget_input";
-    input.type = 'text';
-    input.value = 'type here'
+    input.type = "text";
+    input.value = "type here";
     input.setAttribute("data-sk", "input");
     wrapper.appendChild(label);
     wrapper.appendChild(input);
@@ -348,8 +350,8 @@ export default class ViewDemoEuropean {
     content.className = "demo_widget_content";
     content.setAttribute("data-sk", "widget_content");
 
-    content.appendChild(this.createInput())
-    content.appendChild(this.createInput())
+    content.appendChild(this.createInput());
+    content.appendChild(this.createInput());
 
     const hi = this.createIcon();
     header.appendChild(headerText);

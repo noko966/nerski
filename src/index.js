@@ -2,10 +2,9 @@ import { Skinner } from "./main.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
+// const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
 
 import ViewDemoEuropean from "./views/european.js";
-
-// const target = document;
 
 const configOrderCasino = [
   {
@@ -659,7 +658,7 @@ function createCssStringSport(skin) {
     res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
 
     if (i !== configOrderSport.length - 1) {
-      res += `\n\n`;
+      res += `\n`;
     }
   });
 
@@ -697,7 +696,7 @@ function createCssStringCasino(skin) {
     res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
 
     if (i !== configOrderCasino.length - 1) {
-      res += `\n\n`;
+      res += `\n`;
     }
   });
 
@@ -705,17 +704,16 @@ function createCssStringCasino(skin) {
 }
 let dd = "";
 
-
 function createCss(c) {
-  let css = `
-  :host:host:host,
-:root:root:root {
+  const rootSel = false && "#sport-modern-view";
+
+  let css = `${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
   ${createCssStringSport(c)}
 }`;
 
   let results = {
     css: css,
-    name: "casWeb",
+    name: "tst",
   };
 
   setOrUpdateIframeCss(css, target);
@@ -756,7 +754,8 @@ if (!window.Skinner) {
 
 const demo = new ViewDemoEuropean();
 demo.init();
-const target = document.querySelector(".demo_body");
+// const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
+const target = document.querySelector(".demo_body").parentElement;
 
 function init() {
   if (window.SkinnerInstance) {

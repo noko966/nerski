@@ -30,6 +30,17 @@ class Skinner {
       saveToDb: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_save" d="M9.8,15.8V9.1 M11.6,10.7l-1.6-1.6C9.9,9,9.7,9,9.5,9.2l-1.6,1.6 M12.7,13c0.4,0.2,0.8,0.3,1.2,0.3 c1.4,0,2.4-1.1,2.4-2.4s-1.1-2.4-2.4-2.4c-0.4,0-0.7,0.1-1,0.2c0-2.1-1.6-3.9-3.5-3.9S5.8,6.4,5.8,8.5c-1.2,0.2-2.1,1.2-2.1,2.4 c0,1.4,1.1,2.4,2.4,2.4c0.4,0,0.8-0.1,1.1-0.3"/></svg>`,
       recolor: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><g class="sk_svg_path_load"><path class="st0" d="M10,14.2c1.6,0,2.8-1.3,2.8-2.8S11.4,7.7,10,5.2c-1.4,2.5-2.8,4.6-2.8,6.2S8.4,14.2,10,14.2z"/> <line class="st0" x1="15.7" y1="16.4" x2="4.3" y2="16.4"/><g></svg>`,
       showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
+      brush: `<svg  class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+<path d="M21.4,14.1c-0.3-0.3-0.6-0.5-1-0.6l0.4-8.1c0.1-1-0.2-2.1-0.9-2.9c-0.7-0.8-1.7-1.2-2.8-1.2H6.8
+	C5.8,1.3,4.7,1.7,4,2.5C3.3,3.3,3,4.3,3.1,5.4l0.4,8.1c-1,0.4-1.8,1.4-1.8,2.6c0,0.7,0.3,1.4,0.8,1.9c0.5,0.5,1.2,0.8,1.9,0.8h4.2
+	v0.8c0,1.8,1.5,3.2,3.2,3.2s3.2-1.5,3.2-3.2v-0.8h4.1c1.5,0,2.7-1.1,2.8-2.5C22.3,15.4,22,14.6,21.4,14.1z M5.1,3.5
+	c0.4-0.5,1-0.7,1.7-0.7h0.4V7c0,0.4,0.3,0.8,0.8,0.8S8.7,7.4,8.7,7V2.8h2.5V4c0,0.4,0.3,0.8,0.8,0.8s0.8-0.3,0.8-0.8V2.8h4.4
+	c0.6,0,1.2,0.3,1.7,0.7c0.4,0.5,0.6,1.1,0.6,1.7c0,0,0,0,0,0l-0.4,8H5l-0.4-8C4.5,4.6,4.7,4,5.1,3.5z M19.4,17.3h-4.9
+	c-0.4,0-0.8,0.3-0.8,0.8v1.5c0,1-0.8,1.8-1.8,1.8s-1.8-0.8-1.8-1.8V18c0-0.4-0.3-0.8-0.8-0.8h-5c-0.3,0-0.6-0.1-0.9-0.4
+	c-0.2-0.2-0.4-0.5-0.4-0.9c0-0.6,0.5-1.2,1.1-1.2c0,0,0.1,0,0.1,0h15l0.1,0c0.3,0,0.5,0.1,0.8,0.4c0.3,0.3,0.4,0.6,0.4,1
+	C20.7,16.8,20.1,17.3,19.4,17.3z"/>
+</svg>`,
     };
 
     this.patientRoot = patientRoot || document.body;
@@ -299,7 +310,7 @@ class Skinner {
         },
         {
           name: "filter",
-          inherits: ["input", "dominant", "body"],
+          inherits: ["dominant", "body"],
         },
         {
           name: "tooltip",
@@ -428,20 +439,22 @@ class Skinner {
     let _missingConfig = {};
     for (let i = 0; i < this.configOrder.length; i++) {
       let _essence = this.configOrder[i].name;
+      const bluePrinntBase = "#19C950";
       let _configBlueprint = {
         Background: {
           isDark: false,
           isActive: false,
-          color: "#19C950",
+          color: bluePrinntBase,
         },
         Gradient: {
           angle: 0,
           isActive: false,
-          color: "#1703A2",
+          color: bluePrinntBase,
+          type: "linear",
         },
         Text: {
           isActive: false,
-          color: "#611BCD",
+          color: "#fff",
         },
         Accent: {
           isActive: false,
@@ -589,14 +602,30 @@ class Skinner {
     });
   }
 
-  generateGradients(essence) {
-    let _essence = essence;
-    let _vb = this.verbalData(_essence);
-    let _isGradient = this.skin[_vb.isGradient];
-    if (_isGradient) {
+  generateGradients(config) {
+    let { type, angle, stops, vbe } = config;
+    const active = this.skin[vbe.isGradient];
+    this.skin[vbe.gradientAngle] = angle;
+    this.skin[vbe.gradientType] = type;
+
+    this.skin[vbe.nameBg_g] = stops || [
+      this.skin[vbe.nameBg],
+      this.skin[vbe.nameBg3],
+    ];
+
+    if (active) {
+      let str = "";
+      const stopsString = stops.map((s) => s).join(", ");
+      if (type === "linear") {
+        str = `linear-gradient(${angle}deg, ${stopsString})`;
+      } else if (type === "radial") {
+        str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+      } else if (type === "conic") {
+        str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+      }
+      this.skin[vbe.nameG] = str;
     } else {
-      this.skin[_vb.nameBg_g] = this.skin[_vb.nameBg2];
-      this.skin[_vb.nameG] = this.skin[_vb.nameBg];
+      this.skin[vbe.nameG] = this.skin[vbe.nameBg];
     }
   }
 
@@ -671,10 +700,15 @@ class Skinner {
         this.skin[_vd.isDark] = _config[_essence].Background.isDark;
         this.generateBackgrounds(_essence);
 
-        this.skin[_vd.isGradient] = _config[_essence].Gradient.isActive;
-        this.skin[_vd.nameBg_g] = _config[_essence].Gradient.color;
-        this.skin[_vd.gradientAngle] = _config[_essence].Gradient.angle;
-        this.generateGradients(_essence);
+        const config = {
+          active: _config[_essence].Gradient.isActive,
+          angle: _config[_essence].Gradient.angle,
+          type: _config[_essence].Gradient.type,
+          stops: _config[_essence].Gradient.stops,
+          vbe: _vd,
+        };
+
+        this.generateGradients(config);
 
         this.skin[_vd.isCustomTxt] = _config[_essence].Text.isActive;
         this.skin[_vd.nameTxt] = _config[_essence].Text.color;
@@ -708,10 +742,14 @@ class Skinner {
         );
         this.generateBackgrounds(_essence);
 
-        this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
-        this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
-        this.skin[_vd.gradientAngle] = this.skin[_vdf.gradientAngle];
-        this.generateGradients(_essence);
+        const config = {
+          angle: this.skin[_vd.gradientAngle],
+          type: this.skin[_vd.gradientType],
+          stops: this.skin[_vd.nameBg_g],
+          vbe: _vd,
+        };
+
+        this.generateGradients(config);
 
         this.skin[_vd.isCustomTxt] = this.skin[_vdf.isCustomTxt];
         this.skin[_vd.nameTxt] = this.skin[_vdf.nameTxt];
@@ -749,7 +787,7 @@ class Skinner {
       "Bg3",
       "Bg3Hover",
     ];
-    debugger;
+
     let _bg = _variation
       ? this.skin[_vb.name + _variationsArr[_variation]]
       : this.skin[_vb.name + _variationsArr[_lvl]];
@@ -797,7 +835,7 @@ class Skinner {
       self[verbalData.nameBg].picker.style.background =
         self.skin[verbalData.nameBg];
       self[verbalData.nameBg].picker2.style.background =
-        self.skin[verbalData.nameBg_g];
+        self.skin[verbalData.nameG];
       self[verbalData.nameBg].picker3.style.setProperty =
         ("--bg", self.skin[verbalData.nameBg]);
       self[verbalData.nameBg].picker3.style.setProperty =
@@ -1126,6 +1164,7 @@ class Skinner {
     data.isGradient = "is" + data.upperCaseName + "Gradient";
     data.isGradientReversed = data.isGradient + "Reversed";
     data.gradientAngle = data.upperCaseName + "GradientAngle";
+    data.gradientType = data.upperCaseName + "GradientType";
 
     data.isDark = "is" + data.upperCaseName + "BgDark";
 
@@ -1168,7 +1207,16 @@ class Skinner {
 
     if (isActive) {
       this.generateBackgrounds(_essence);
-      this.generateGradients(_essence);
+
+      const config = {
+        angle: this.skin[_vd.gradientAngle],
+        type: this.skin[_vd.gradientType],
+        stops: this.skin[_vd.nameBg_g],
+        vbe: _vd,
+      };
+
+      this.generateGradients(config);
+
       this.generateTextss(_essence);
       this.generateAccentss(_essence);
       this.generateBorderss(_essence);
@@ -1195,11 +1243,14 @@ class Skinner {
       this.skin[_vd.isDark] = this.skin[_vdf.isDark];
       this.generateBackgrounds(_essence);
 
-      this.skin[_vd.isGradient] = this.skin[_vdf.isGradient];
-      this.skin[_vd.nameBg_g] = this.skin[_vdf.nameBg_g];
-      this.skin[_vd.gradientAngle] = this.skin[_vdf.gradientAngle];
+      const config = {
+        angle: this.skin[_vd.gradientAngle],
+        type: this.skin[_vd.gradientType],
+        stops: this.skin[_vd.nameBg_g],
+        vbe: _vd,
+      };
 
-      this.generateGradients(_essence);
+      this.generateGradients(config);
 
       this.skin[_vd.isCustomTxt] = this.skin[_vdf.isCustomTxt];
       this.skin[_vd.nameTxt] = this.skin[_vdf.nameTxt];
@@ -1249,8 +1300,9 @@ class Skinner {
       };
       if (this.skin[verbalData.isGradient]) {
         config[verbalData.name].Gradient = {
-          isActive: this.skin[verbalData.isName],
-          color: this.skin[verbalData.nameBg_g],
+          isActive: this.skin[verbalData.isGradient],
+          color: this.skin[verbalData.nameG],
+          stopsArr: this.skin[verbalData.nameBg_g],
           angle: this.skin[verbalData.gradientAngle],
         };
       }
@@ -1437,7 +1489,9 @@ class Skinner {
         (e) => {
           this.handleGradientPicker(e, _essence, (color) => {
             console.log({ color });
-            this.modifyKey(_vd.nameG, color);
+            this.modifyKey(_vd.nameBg_g, color.stops);
+            this.modifyKey(_vd.gradientAngle, color.angle);
+            this.modifyKey(_vd.gradientType, color.type);
           });
         },
         (e) => {
@@ -1478,7 +1532,6 @@ class Skinner {
   handleGradientPicker(event, essence, onChangeCallback) {
     let self = this;
     const _vd = this.verbalData(essence);
-    let currentGradientStops = self.skin[_vd.nameBg_g];
     if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
@@ -1487,15 +1540,15 @@ class Skinner {
     let x = event.clientX;
     let y = event.clientY;
 
-    const gradientStops = Array.isArray(currentGradientStops)
-      ? currentGradientStops
-      : [self.skin[_vd.nameBg], self.skin[_vd.nameBgHov]];
-
     const SKPickerInstance = new SKPicker(
       null,
-      gradientStops[0],
+      self.skin[_vd.nameBg_g][0],
       "gradient",
-      gradientStops
+      {
+        stops: self.skin[_vd.nameBg_g],
+        angle: self.skin[_vd.gradientAngle],
+        type: self.skin[_vd.gradientType],
+      }
     );
     SKPickerInstance.init();
 
@@ -1635,7 +1688,6 @@ class Skinner {
   createBtn(name, className) {
     let _class = className || "";
     let btn = document.createElement("button");
-    btn.innerText = name;
     btn.className = `skinner_btn ${_class}`;
     let txt = document.createElement("span");
     let icon = document.createElement("i");
@@ -1829,10 +1881,10 @@ class Skinner {
     this.skinnerUiControls.appendChild(switcherWrapper);
 
     // Create the toggle button in the same area as the theme switcher
-    let toggleBtn = document.createElement("button");
-    toggleBtn.id = "toggleEditorBtn";
-    toggleBtn.className = "skinner_btn skinner_btn-icon";
-    toggleBtn.innerText = "E";
+    this.toggleBtn = document.createElement("button");
+    this.toggleBtn.id = "toggleEditorBtn";
+    this.toggleBtn.className = "skinner_btn skinner_btn-icon";
+    this.toggleBtn.innerHTML = this.icons.brush;
 
     let traverseDomBtn = document.createElement("button");
     traverseDomBtn.id = "traverseDomBtn";
@@ -1840,16 +1892,17 @@ class Skinner {
     traverseDomBtn.innerText = "T";
 
     // Replace the previous document.getElementById('toggleButton') logic with this:
-    toggleBtn.addEventListener("click", () => {
+    this.toggleBtn.addEventListener("click", (e) => {
       if (this.customStyler) {
         // Toggle the boolean flag
         this.isStylerToggledOn = !this.isStylerToggledOn;
+        this.toggleBtn.classList.toggle("state_active");
         this.customStyler.toggleStyler();
       }
     });
 
     traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
-    this.skinnerUiControls.appendChild(toggleBtn);
+    this.skinnerUiControls.appendChild(this.toggleBtn);
     this.skinnerUiControls.appendChild(traverseDomBtn);
     // ----- New Toggle Button End -----
   }
@@ -3061,6 +3114,7 @@ body {
   text-decoration: none;
   background-color: var(--sk_dominantBgHover);
   color: var(--sk_dominantTxt2);
+  fill: var(--sk_dominantTxt2);
   display: block;
   text-transform: capitalize;
   font-size: 12px;
@@ -3073,6 +3127,11 @@ body {
   display: flex;
   align-items: center;
   column-gap: 4px;
+}
+
+.skinner_btn.state_active{
+    background: conic-gradient(from 90deg at 50% 50%, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
+    color: #fff;
 }
 
 .skinner_btn-icon {

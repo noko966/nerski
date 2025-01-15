@@ -382,7 +382,7 @@ input.demo_widget_input {
   padding: 0 8px;
 }
 
-.demo_widget_input_wrapper{
+.demo_widget_input_wrapper {
   padding: 8px 16px;
   display: flex;
   flex-direction: column;
@@ -390,7 +390,7 @@ input.demo_widget_input {
   row-gap: 6px;
 }
 
-.demo_widget_input_label{
+.demo_widget_input_label {
   font-size: 13px;
   color: inherit;
 }

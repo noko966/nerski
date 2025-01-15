@@ -3,7 +3,7 @@ import Moveable from "./moveable";
 const tinycolor = require("tinycolor2");
 
 export default class SKPicker {
-  constructor(rootElement, currentColor, mode, currentGradientStops) {
+  constructor(rootElement, currentColor, mode, gradientConfig) {
     this.rootElement = rootElement || document.body;
     this.root = null;
 
@@ -22,9 +22,11 @@ export default class SKPicker {
 
     this._mode = mode || "color";
 
+    this._gradientConfig = gradientConfig || {};
+
     if (this._mode === "gradient") {
       this.currentGradientStopsObj = {};
-      currentGradientStops.forEach((s, i) => {
+      this._gradientConfig.stops.forEach((s, i) => {
         this.currentGradientStopsObj[`gradStop${i}`] = {
           color: s,
         };
@@ -36,8 +38,8 @@ export default class SKPicker {
       previewEl: null,
       stopsControlWrapper: null,
       stopsWrapperEl: null,
-      type: "linear",
-      angle: 90,
+      type: this._gradientConfig.type || "linear",
+      angle: this._gradientConfig.angle || 90,
       stops: this.currentGradientStopsObj,
       activeStopId: "gradStop0",
     };
@@ -806,34 +808,34 @@ display: flex;
   generateGradientString() {
     let str = "";
 
-    // Get the keys (e.g., "gradStop1", "gradStop2", etc.)
     const keys = Object.keys(this.gradient.stops);
 
-    // Sort the keys in ascending order by numeric value
     keys.sort((a, b) => {
       const numA = parseInt(a.replace("gradStop", ""), 10);
       const numB = parseInt(b.replace("gradStop", ""), 10);
       return numA - numB;
     });
 
-    // Build a comma-separated string of the colors
     const stopsString = keys
       .map((key) => this.gradient.stops[key].color)
       .join(", ");
 
-    // Construct the gradient string based on the type
+    const stopsArray = keys.map((key) => this.gradient.stops[key].color);
+
     if (this.gradient.type === "linear") {
-      // e.g. "linear-gradient(45deg, red, blue)"
       str = `linear-gradient(${this.gradient.angle}deg, ${stopsString})`;
     } else if (this.gradient.type === "radial") {
-      // e.g. "radial-gradient(circle at 50% 50%, red, blue)"
       str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
     } else if (this.gradient.type === "conic") {
-      // e.g. "conic-gradient(from 90deg at 50% 50%, red, blue)"
       str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
     }
 
-    return str;
+    return {
+      str,
+      angle: this.gradient.angle,
+      type: this.gradient.type,
+      stops: stopsArray,
+    };
   }
 
   addGradientSwatch(color, key) {
@@ -847,16 +849,14 @@ display: flex;
       this.gradient.stopsWrapperEl.appendChild(el);
 
       el.addEventListener("click", (e) => {
-        // if you have "modifyKey" from Skinner, call it:
         this.setActiveGradientStop(key);
-
-        // this.createGradientStops();a
       });
 
       const removeBtn = document.createElement("button");
       removeBtn.className = "sk_picker_gradient_stop_remove";
       removeBtn.innerHTML = this.icons.removeStop;
-      removeBtn.addEventListener("click", () => {
+      removeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
         delete this.gradient.stops[key];
         this.createGradientStops();
       });
@@ -953,7 +953,7 @@ display: flex;
       label.className = "sk_picker_tab";
       label.htmlFor = type;
       const text = document.createElement("span");
-      text.innerText = type.charAt(0).toUpperCase() + type.slice(1); // e.g. 'Linear'
+      text.innerText = type.charAt(0).toUpperCase() + type.slice(1);
 
       // Append radio and label to the container
       // gradientTypeContainer.appendChild(radio);
@@ -996,7 +996,7 @@ display: flex;
     this.gradient.stopsWrapperEl.innerHTML = "";
     this.gradient.wrapperEl.style.setProperty(
       "--grad",
-      this.generateGradientString()
+      this.generateGradientString().str
     );
 
     // 1) Gather the keys
@@ -1009,7 +1009,6 @@ display: flex;
       return orderA - orderB; // ascending order
     });
 
-    // 3) Iterate in sorted order and call your function
     keys.forEach((key) => {
       const stopColor = this.gradient.stops[key].color;
       this.addGradientSwatch(stopColor, key);

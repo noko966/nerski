@@ -206,48 +206,42 @@ ${cn} > * {
 
   createCss() {
     let css = "";
+    console.log(this.root);
 
     let CSSVariableRuleStart = `
    
     :root{
-    
     `;
 
-
     for (const key in this.skin) {
-      
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
-      
-        --${_skin.varPrefix}Bg: ${tinycolor(_skin.backgroundColor).toHexString()};
-        --${_skin.varPrefix}Txt: ${tinycolor(_skin.color).toHexString()};
+        --SK_custom${_skin.varPrefix}Bg: ${tinycolor(
+        _skin.backgroundColor
+      ).toHexString()};
+        --SK_custom${_skin.varPrefix}Txt: ${tinycolor(
+        _skin.color
+      ).toHexString()};`;
 
-      `;
-
-      // Append CSS rule
       css += `${key} * {
         color: unset;
-      }`;
+}`;
       css += `${key} {
-      background: var(--${_skin.varPrefix}Bg);
-      color: var(--${_skin.varPrefix}Txt);
-      }
-    `;
-    };
+  background: var(--SK_custom${_skin.varPrefix}Bg);
+  color: var(--SK_custom${_skin.varPrefix}Txt);
+}
+`;
+    }
 
     const res = `
     ${CSSVariableRuleStart}
     }
     ${css}
-    `
+    `;
 
-    return res
-
-
+    return res;
   }
-
-  
 
   createKey(name, el) {
     this.skin[name] = {};
@@ -270,15 +264,14 @@ ${cn} > * {
   }
 
   createCSSBasedOnTree(tree) {
-    console.log(tree);
     const rootEl = tree[0];
-    const repeated = rootEl.cssSelector.repeat(2);
-
+    // const repeated = rootEl.cssSelector.repeat(2);
+    const repeated = rootEl.cssSelector;
     const _skin = {
-      bg: '#2c3e50',
-      txt: '#fff',
-      acc: '#63bf1b',
-    }
+      bg: "#2c3e50",
+      txt: "#fff",
+      acc: "#63bf1b",
+    };
 
     let CSSVariableRuleStart = `
     ${repeated} *{
@@ -295,8 +288,6 @@ ${cn} > * {
 
     const usedSelectors = new Set();
 
-
-
     tree.forEach((t) => {
       const { cssSelector, level, ind, dataSk } = t;
 
@@ -311,8 +302,8 @@ ${cn} > * {
 
       CSSVariableRuleStart += `
         --${dataSk}Bg: ${tinycolor(_skin.bg)
-          .lighten(level * 2 + ind * 1)
-          .toHexString()};
+        .lighten(level * 2 + ind * 1)
+        .toHexString()};
         --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
         --${dataSk}Accent: ${tinycolor(_skin.acc).toHexString()};
 
@@ -324,7 +315,7 @@ ${cn} > * {
       color: var(--${dataSk}Txt);
     }\n
     ${repeated} ${selector} [data-sk-text="accent"] {
-          color: var(--${dataSk}Accent);
+      color: var(--${dataSk}Accent);
     }
     `;
     });
@@ -333,36 +324,36 @@ ${cn} > * {
     ${CSSVariableRuleStart}
     }
     ${css}
-    `
+    `;
 
     this.setOrUpdateIframeCustomCss(res);
   }
 
-  createControlRoot(){
+  createControlRoot() {
     let root = document.createElement("div");
-    root.className = 'sk_widget_collapse_block';
+    root.className = "sk_widget_collapse_block";
 
     return root;
   }
 
-  createControlHeader(label){
+  createControlHeader(label) {
     let el = document.createElement("div");
-    el.className = 'sk_widget_block_header';
+    el.className = "sk_widget_block_header";
     let txt = document.createElement("span");
-    txt.className = 'sk_txt';
+    txt.className = "sk_txt";
     txt.innerText = label;
     let ic = document.createElement("i");
-    ic.className = 'sk_ico';
-    ic.innerHTML = '';
+    ic.className = "sk_ico";
+    ic.innerHTML = "";
     el.appendChild(ic);
     el.appendChild(txt);
 
     return el;
   }
 
-  createControlContent(){
+  createControlContent() {
     let el = document.createElement("div");
-    el.className = 'sk_widget_block_content';
+    el.className = "sk_widget_block_content";
     return el;
   }
 
@@ -590,8 +581,6 @@ ${cn} > * {
       handleTextColorPickerCallBack
     );
 
-
-
     // Border-radius input
     const borderRadiusInput = document.createElement("input");
     borderRadiusInput.type = "number";
@@ -601,28 +590,27 @@ ${cn} > * {
       self.modifyKey("borderRadius", e.target.value + "px");
     });
 
-
     controlWrapperBg.inside.appendChild(this.BgPicker);
     controlWrapperColor.inside.appendChild(this.TextColorPicker);
 
     const colorBlock = this.createControlRoot();
-    const colorBlockHeader = this.createControlHeader('Color');
+    const colorBlockHeader = this.createControlHeader("Color");
     const colorBlockContent = this.createControlContent();
 
     const paddingBlock = this.createControlRoot();
-    const paddingBlockHeader = this.createControlHeader('Padding');
+    const paddingBlockHeader = this.createControlHeader("Padding");
     const paddingBlockContent = this.createControlContent();
 
     const radiusBlock = this.createControlRoot();
-    const radiusBlockHeader = this.createControlHeader('Radius');
+    const radiusBlockHeader = this.createControlHeader("Radius");
     const radiusBlockContent = this.createControlContent();
 
     colorBlock.appendChild(colorBlockHeader);
     colorBlock.appendChild(colorBlockContent);
     const pickersElWrapper = document.createElement("div");
-    pickersElWrapper.className = 'row';
-    const separatorEl =  document.createElement("div");
-    separatorEl.className = 'sk_block_separator_y';
+    pickersElWrapper.className = "row";
+    const separatorEl = document.createElement("div");
+    separatorEl.className = "sk_block_separator_y";
     colorBlockContent.appendChild(pickersElWrapper);
     pickersElWrapper.appendChild(controlWrapperBg.element);
     pickersElWrapper.appendChild(separatorEl);
@@ -642,7 +630,7 @@ ${cn} > * {
     root.appendChild(colorBlock);
     root.appendChild(paddingBlock);
     root.appendChild(radiusBlock);
-    
+
     buttonWrapper.appendChild(this.hideUITrigger);
     root.appendChild(buttonWrapper);
     document.body.appendChild(style);
