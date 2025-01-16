@@ -8,6 +8,7 @@ class Skinner {
   constructor(cssCb, starterConfig, header, root, variant, patientRoot) {
     this.skPickerInstance = null;
     this.pickers = [];
+    this.progress = {};
     this.eventListeners = [];
     this.variant = variant || "sport";
     this.header =
@@ -1286,6 +1287,62 @@ class Skinner {
     return fbArr;
   }
 
+  saveProgress() {
+    let config = {};
+    for (let i = 0; i < this.configOrder.length; i++) {
+      let _essence = this.configOrder[i].name;
+      let verbalData = this.verbalData(_essence);
+      config[verbalData.name] = {};
+      config[verbalData.name].Background = {
+        isActive: this.skin[verbalData.isName],
+        color: this.skin[verbalData.nameBg],
+        isDark: this.skin[verbalData.isDark],
+      };
+      if (this.skin[verbalData.isGradient]) {
+        config[verbalData.name].Gradient = {
+          isActive: this.skin[verbalData.isGradient],
+          color: this.skin[verbalData.nameG],
+          stops: this.skin[verbalData.nameBg_g],
+          angle: this.skin[verbalData.gradientAngle],
+          type: this.skin[verbalData.gradientType],
+        };
+      }
+      if (this.skin[verbalData.isCustomTxt]) {
+        config[verbalData.name].Text = {
+          isActive: this.skin[verbalData.isCustomTxt],
+          color: this.skin[verbalData.nameTxt],
+        };
+      }
+      if (this.skin[verbalData.isCustomAccent]) {
+        config[verbalData.name].Accent = {
+          isActive: this.skin[verbalData.isCustomAccent],
+          color: this.skin[verbalData.nameAccent],
+        };
+      }
+      if (this.skin[verbalData.isCustomBorder]) {
+        config[verbalData.name].Border = {
+          isActive: this.skin[verbalData.isCustomBorder],
+          color: this.skin[verbalData.nameBorder],
+        };
+      }
+      if (this.skin[verbalData.nameRadius]) {
+        config[verbalData.name].borderRadius = this.skin[verbalData.nameRadius];
+      }
+    }
+    this.progress = config;
+    localStorage.setItem("skinnerProgress", JSON.stringify(config));
+
+    this.copyTextToClipboard(config);
+  }
+
+  loadProgress() {
+    const storedProgress = localStorage.getItem("skinnerProgress");
+    if (storedProgress !== null) {
+      this.progress = JSON.parse(storedProgress);
+      this.initBasedOnCustomConfig(this.progress);
+    }
+  }
+
   saveConfig() {
     this.message("config saved", true);
     let config = {};
@@ -1302,8 +1359,9 @@ class Skinner {
         config[verbalData.name].Gradient = {
           isActive: this.skin[verbalData.isGradient],
           color: this.skin[verbalData.nameG],
-          stopsArr: this.skin[verbalData.nameBg_g],
+          stops: this.skin[verbalData.nameBg_g],
           angle: this.skin[verbalData.gradientAngle],
+          type: this.skin[verbalData.gradientType],
         };
       }
       if (this.skin[verbalData.isCustomTxt]) {
@@ -1901,9 +1959,9 @@ class Skinner {
       }
     });
 
-    traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
+    // traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
     this.skinnerUiControls.appendChild(this.toggleBtn);
-    this.skinnerUiControls.appendChild(traverseDomBtn);
+    // this.skinnerUiControls.appendChild(traverseDomBtn);
     // ----- New Toggle Button End -----
   }
 
