@@ -708,7 +708,7 @@ function createCss(c) {
   const rootSel = false && "#sport-modern-view";
 
   let css = `${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
-  ${createCssStringSport(c)}
+  ${createCssStringCasino(c)}
 }`;
 
   let results = {
@@ -745,6 +745,7 @@ function setOrUpdateIframeCss(cssStyle, target) {
   // Update the inner HTML of the style element with the new CSS
   styleElement.innerHTML = cssStyle;
 }
+
 // Check if init and destroy are already defined in the global scope
 if (!window.Skinner) {
   window.Skinner = Skinner;
@@ -765,10 +766,10 @@ function init() {
 
   window.SkinnerInstance = new Skinner(
     createCss,
-    colorsSport,
+    colorsCasweb,
     null,
     null,
-    "sport",
+    "casino",
     target
   );
   window.SkinnerInstance.init();
