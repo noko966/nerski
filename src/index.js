@@ -4,7 +4,7 @@ import { Skinner } from "./main.js";
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
 
-// import ViewDemoEuropean from "./views/european.js";
+import ViewDemoEuropean from "./views/european.js";
 
 const configOrderCasino = [
   {
@@ -708,7 +708,7 @@ function createCss(c) {
   const rootSel = false && "#sport-modern-view";
 
   let css = `${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
-  ${createCssStringCasino(c)}
+  ${createCssStringSport(c)}
 }`;
 
   let results = {
@@ -753,8 +753,8 @@ if (!window.Skinner) {
   console.warn("window.skinner already exists!");
 }
 
-// const demo = new ViewDemoEuropean();
-// demo.init();
+const demo = new ViewDemoEuropean();
+demo.init();
 // const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
 // const target = document.querySelector(".demo_body").parentElement;
 const target = document.body;
@@ -770,7 +770,7 @@ function init() {
     colorsCasweb,
     null,
     null,
-    "casino",
+    "sport",
     target
   );
   window.SkinnerInstance.init();

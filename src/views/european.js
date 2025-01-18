@@ -194,6 +194,7 @@ export default class ViewDemoEuropean {
     el.className = "demo_body";
     el.id = "demo_body_unique_id";
     el.setAttribute("data-sk", "body");
+    this.generateRandomCircles(50, el);
     return el;
   }
 
@@ -275,6 +276,7 @@ export default class ViewDemoEuropean {
     eventHeader.appendChild(ehi2);
     const eventSubHeader = this.createEventSubHeader();
     const eventListWrapper = this.createListWrapper("variant_event");
+    eventListWrapper.setAttribute("data-sk", "event_list");
     events.map((i) => {
       const er = this.createEventRow();
       const ht = this.createEventTeam(i.homeTeam);
@@ -312,6 +314,7 @@ export default class ViewDemoEuropean {
     eventRoot.appendChild(eventTabs);
     const wrapper = document.createElement("div");
     wrapper.className = "demo_widget_wrapper";
+    wrapper.setAttribute("data-sk", "widget_wrapper");
     wrapper.appendChild(eventHeader);
     wrapper.appendChild(eventSubHeader);
     wrapper.appendChild(eventListWrapper);
@@ -362,6 +365,81 @@ export default class ViewDemoEuropean {
     return root;
   }
 
+  generateRandomCircles(count, parent) {
+    const svgNS = "http://www.w3.org/2000/svg";
+
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttributeNS(
+      "http://www.w3.org/2000/xmlns/",
+      "xmlns:xlink",
+      "http://www.w3.org/1999/xlink"
+    );
+    svg.setAttribute("preserveAspectRatio", "none");
+
+    const w = window.innerWidth;
+    svg.setAttribute("width", w);
+    svg.setAttribute("height", w);
+
+    // path.setAttribute("vector-effect", "non-scaling-stroke");
+
+    // Append the SVG to the container
+    parent.appendChild(svg);
+    // Get the actual width and height of the SVG container
+
+    // 2. CREATE A <defs> SECTION AND DEFINE A FILTER
+    const defs = document.createElementNS(svgNS, "defs");
+
+    // Create a simple drop-shadow filter
+    const filter = document.createElementNS(svgNS, "filter");
+    filter.setAttribute("id", "blr");
+    // feGaussianBlur
+    const feGaussianBlur = document.createElementNS(svgNS, "feGaussianBlur");
+    feGaussianBlur.setAttribute("in", "offset");
+    feGaussianBlur.setAttribute("stdDeviation", "6");
+    feGaussianBlur.setAttribute("result", "blur");
+    filter.appendChild(feGaussianBlur);
+
+    // Append filter to defs, and defs to svg
+    defs.appendChild(filter);
+    svg.appendChild(defs);
+
+    // Create 'count' random circles
+    for (let i = 0; i < count; i++) {
+      // Create an SVG circle element
+      const circle = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+
+      // Generate random position, radius, and color
+      const cx = Math.random() * w; // random x in the range [0, svgWidth)
+      const cy = Math.random() * w; // random y in the range [0, svgHeight)
+      const r = 10 + Math.random() * 100; // radius between 10 and 40
+      const fillsArr = [
+        "var(--accentBg)",
+        "var(--accentBg)",
+        "var(--accentBg)",
+        "var(--eventBg)",
+        "var(--eventBg2)",
+      ];
+
+      circle.setAttribute("filter", "url(#blr)");
+
+      let fillIndex = Math.ceil(Math.random() * fillsArr.length);
+
+      // Set circle attributes
+      circle.setAttribute("cx", cx);
+      circle.setAttribute("cy", cy);
+      circle.setAttribute("r", r);
+      circle.setAttribute("fill", fillsArr[fillIndex]);
+
+      // Append the circle to our SVG
+      svg.appendChild(circle);
+    }
+  }
+
+  // Generate 20 random circles when the page loads
+
   init() {
     this.demo.body = this.createBody();
     this.demo.sidebar = this.createSidebar();
@@ -380,6 +458,7 @@ export default class ViewDemoEuropean {
     this.sidebarDataDoomy.forEach((element, index) => {
       const group = document.createElement("div");
       group.className = `demo_sidebar_items_list_group variant_${element.group}`;
+      group.setAttribute("data-sk", "sidebar_list");
       element.items.forEach((it, index) => {
         const si = this.createSidebarRow(element.group);
 

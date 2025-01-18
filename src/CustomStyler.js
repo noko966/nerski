@@ -93,9 +93,34 @@ class MouseIntersectStyler {
   }
 
   generateHoverStyle(cn) {
-    const selectGradient1 = `repeating-linear-gradient(45deg, var(--dominantBg), var(--dominantBg) 10px, var(--dominantBg2) 10px, var(--accentBg) 10px, var(--accentBg) 11px, var(--accentBg) 11px, var(--dominantBg2) 11px, var(--dominantBg2) 20px)`;
+    const colors = [
+      "#FF637C",
+      "#8144CD",
+      "#7872E0",
+      "#56A9E2",
+      "#D2F58D",
+      "#FFD76B",
+      "#FF637C",
+    ];
 
-    const selectGradient2 = `repeating-linear-gradient(45deg, var(--sk_dominantBg), var(--sk_dominantBg) 10px, var(--sk_dominantBg) 10px, var(--sk_accentBg) 10px, var(--sk_accentBg) 11px, var(--sk_accentBg) 11px, var(--sk_dominantBg2) 11px, var(--sk_dominantBg2) 20px)`;
+    // We'll use 10px for each color band
+    const bandSize = 20;
+
+    // Build each color stop pair: "color Xpx, color Ypx"
+    const stops = colors.map((color, i) => {
+      const s1 = i * bandSize;
+      const e1 = (i + 1) * bandSize;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
+        e1 + 1
+      }px, ${color} ${e1 + 2}px`;
+    });
+
+    // Join all stops into a comma-separated list
+    const gradientStops = stops.join(", ");
+
+    // Finally, wrap in a repeating-linear-gradient with a 45deg angle
+    const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
+
     let css = `
 @keyframes sk_custom_hover_anim {
   from{
@@ -108,7 +133,7 @@ class MouseIntersectStyler {
 
 
 ${cn}{
-  background-image: ${selectGradient1} !important;
+  background-image: ${repeatingGradient} !important;
   color: var(--dominantTxt) !important;
   background-size: 200% 200%;
   animation-duration: 10s;
@@ -217,19 +242,15 @@ ${cn} > * {
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
-        --SK_custom${_skin.varPrefix}Bg: ${tinycolor(
-        _skin.backgroundColor
-      ).toHexString()};
-        --SK_custom${_skin.varPrefix}Txt: ${tinycolor(
-        _skin.color
-      ).toHexString()};`;
+--SK_custom${_skin.varPrefix}Bg: ${_skin.backgroundColor};
+--SK_custom${_skin.varPrefix}Txt:${_skin.color};`;
 
       css += `${key} * {
-        color: unset;
+color: unset;
 }`;
       css += `${key} {
-  background: var(--SK_custom${_skin.varPrefix}Bg);
-  color: var(--SK_custom${_skin.varPrefix}Txt);
+background: var(--SK_custom${_skin.varPrefix}Bg);
+color: var(--SK_custom${_skin.varPrefix}Txt);
 }
 `;
     }
@@ -268,9 +289,9 @@ ${cn} > * {
     // const repeated = rootEl.cssSelector.repeat(2);
     const repeated = rootEl.cssSelector;
     const _skin = {
-      bg: "#2c3e50",
+      bg: "#1a1a1a",
       txt: "#fff",
-      acc: "#63bf1b",
+      acc: "#ffb700",
     };
 
     let CSSVariableRuleStart = `
@@ -290,6 +311,7 @@ ${cn} > * {
 
     tree.forEach((t) => {
       const { cssSelector, level, ind, dataSk } = t;
+      const lvl = 4 - level;
 
       // If we've seen this cssSelector before, skip it
       if (usedSelectors.has(cssSelector)) {
@@ -303,16 +325,22 @@ ${cn} > * {
       CSSVariableRuleStart += `
         --${dataSk}Bg: ${tinycolor(_skin.bg)
         .lighten(level * 2 + ind * 1)
-        .toHexString()};
+        .setAlpha(0.1 + level * 0.01)
+        .toRgbString()};
         --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
-        --${dataSk}Accent: ${tinycolor(_skin.acc).toHexString()};
-
+        --${dataSk}Accent: ${tinycolor(_skin.acc)
+        .setAlpha(0.1 + level * 0.01)
+        .toRgbString()};
+          
       `;
 
       // Append CSS rule
       css += `${repeated} ${selector} {
       background: var(--${dataSk}Bg);
       color: var(--${dataSk}Txt);
+      backdrop-filter: blur(10px);
+      border-radius: ${Math.abs(lvl + 2)}px;
+      padding: ${Math.abs(lvl * 4)}px;
     }\n
     ${repeated} ${selector} [data-sk-text="accent"] {
       color: var(--${dataSk}Accent);
@@ -530,9 +558,9 @@ ${cn} > * {
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
-      this.handlePicker(e, (color) => {
-        this.modifyKey("backgroundColor", color);
-        this.updateControl("backgroundColor", color);
+      this.handleGradientPicker(e, (color) => {
+        this.modifyKey("backgroundColor", color.str);
+        this.updateControl("backgroundColor", color.str);
       });
     };
 
@@ -975,6 +1003,37 @@ ${cn} > * {
 
     SKPickerInstance.on("change", (color, source, instance) => {
       onChangeCallback(color);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
+    });
+  }
+
+  handleGradientPicker(event, onChangeCallback) {
+    let self = this;
+    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const SKPickerInstance = new SKPicker(null, currentColor, "gradient", {
+      stops: [currentColor],
+    });
+    SKPickerInstance.init();
+
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("gradientchange", (grad, source, instance) => {
+      console.log("Picker color changed:", grad, "Source:", source);
+      onChangeCallback(grad);
     });
 
     SKPickerInstance.on("hide", (source, instance) => {

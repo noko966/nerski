@@ -57,12 +57,12 @@ class Skinner {
       dark: {
         name: "dark",
         bg: "#1F2122",
-        accent: "#1696a5",
+        accent: "#8144CD",
       },
       light: {
         name: "light",
         bg: "#d4d7db",
-        accent: "#1696a5",
+        accent: "#8144CD",
       },
     };
 
@@ -968,21 +968,53 @@ class Skinner {
   addStringAnim() {
     const stringWrapper = document.createElement("div");
     stringWrapper.className = "sk_path_string_root";
-
+    const svgNS = "http://www.w3.org/2000/svg";
     const box = document.createElement("div");
     box.className = "sk_path_string_box";
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const svg = document.createElementNS(svgNS, "svg");
     svg.setAttributeNS(
       "http://www.w3.org/2000/xmlns/",
       "xmlns:xlink",
       "http://www.w3.org/1999/xlink"
     );
 
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    var path = document.createElementNS(svgNS, "path");
     path.setAttribute("vector-effect", "non-scaling-stroke");
     svg.setAttribute("preserveAspectRatio", "none");
-
+    const defs = document.createElementNS(svgNS, "defs");
     svg.appendChild(path);
+    svg.appendChild(defs);
+
+    const linearGradient = document.createElementNS(svgNS, "linearGradient");
+    linearGradient.setAttribute("id", "strokeGradient");
+    linearGradient.setAttribute("gradientUnits", "userSpaceOnUse");
+
+    linearGradient.setAttribute("x1", "0%");
+    linearGradient.setAttribute("y1", "0%");
+    linearGradient.setAttribute("x2", "100%");
+    linearGradient.setAttribute("y2", "0%");
+
+    const colors = [
+      "#FF637C",
+      "#8144CD",
+      "#7872E0",
+      "#56A9E2",
+      "#D2F58D",
+      "#FFD76B",
+      "#FF637C",
+    ];
+
+    // Distribute offsets evenly (0% to 100%)
+    colors.forEach((color, index) => {
+      const stop = document.createElementNS(svgNS, "stop");
+      const offset = (index / (colors.length - 1)) * 100;
+      stop.setAttribute("offset", offset + "%");
+      stop.setAttribute("stop-color", color);
+      linearGradient.appendChild(stop);
+    });
+
+    // 5. Append the gradient to defs
+    defs.appendChild(linearGradient);
 
     stringWrapper.appendChild(svg);
     stringWrapper.appendChild(box);
@@ -1004,6 +1036,7 @@ class Skinner {
       );
     };
 
+    path.setAttribute("stroke", "url(#strokeGradient)");
     const lerp = (x, y, a) => x * (1 - a) + y * a;
 
     const manageMouseEnter = () => {
@@ -1851,9 +1884,9 @@ class Skinner {
         this.createDownloadBtn(name2, "skinner_btn-accent", 2)
       );
     }
-
     let customDownloadBtn = document.createElement("button");
     customDownloadBtn.className = "skinner_btn skinner_btn-accent";
+
     customDownloadBtn.innerText = "custom css";
     customDownloadBtn.addEventListener("click", () => {
       this.makeCustomDownloadRequest();
@@ -1959,9 +1992,9 @@ class Skinner {
       }
     });
 
-    // traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
+    traverseDomBtn.addEventListener("click", this.traverseDom.bind(this));
     this.skinnerUiControls.appendChild(this.toggleBtn);
-    // this.skinnerUiControls.appendChild(traverseDomBtn);
+    this.skinnerUiControls.appendChild(traverseDomBtn);
     // ----- New Toggle Button End -----
   }
 
@@ -2591,6 +2624,7 @@ class Skinner {
   --controls-ui-gap: 6px;
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
+  --sk_grad_rainbow: linear-gradient(90deg, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
 }
 
 .sk_path_string_root {

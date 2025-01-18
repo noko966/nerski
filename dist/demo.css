@@ -15,6 +15,16 @@
   height: 100vh;
   column-gap: var(--demo_s_b_m);
   padding: var(--demo_s_b_m);
+  position: relative;
+}
+
+.demo_body svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .demo_sidebar_root {
@@ -22,6 +32,8 @@
   flex-shrink: 0;
   height: 100%;
   overflow-y: auto;
+  z-index: 10;
+  position: relative;
 }
 
 .demo_sidebar_root > .demo_list_wrapper {
@@ -49,6 +61,8 @@
   display: flex;
   flex-direction: row;
   column-gap: var(--demo_s_b_m);
+  z-index: 10;
+  position: relative;
 }
 
 .demo_aside_root {
@@ -60,6 +74,8 @@
   flex-direction: column;
   align-items: stretch;
   overflow-y: auto;
+  z-index: 10;
+  position: relative;
 }
 
 .demo_icon {
@@ -393,4 +409,10 @@ input.demo_widget_input {
 .demo_widget_input_label {
   font-size: 13px;
   color: inherit;
+}
+
+.demo_widget_wrapper {
+  background-color: var(--eventRGBA2);
+  backdrop-filter: blur(10px);
+  padding: 4px;
 }

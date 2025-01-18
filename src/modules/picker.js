@@ -831,7 +831,7 @@ display: flex;
     }
 
     return {
-      str,
+      str: stopsArray.length > 1 ? str : stopsArray[0],
       angle: this.gradient.angle,
       type: this.gradient.type,
       stops: stopsArray,
@@ -874,8 +874,6 @@ display: flex;
     addStopBtn.innerText = "+";
     addStopBtn.className = "sk_picker_btn variant_icon";
     addStopBtn.addEventListener("click", () => {
-      const newColor = "#FFFFFF";
-
       const keys = Object.keys(this.gradient.stops);
 
       let maxIndex = 0;
@@ -885,6 +883,8 @@ display: flex;
           maxIndex = num;
         }
       });
+
+      const newColor = this.gradient.stops[`gradStop${maxIndex}`].color;
 
       const nextIndex = maxIndex + 1;
       const newKey = `gradStop${nextIndex}`;
