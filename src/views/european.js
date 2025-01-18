@@ -194,7 +194,7 @@ export default class ViewDemoEuropean {
     el.className = "demo_body";
     el.id = "demo_body_unique_id";
     el.setAttribute("data-sk", "body");
-    this.generateRandomCircles(50, el);
+    this.generateRandomCircles(10, el);
     return el;
   }
 
@@ -414,7 +414,7 @@ export default class ViewDemoEuropean {
       // Generate random position, radius, and color
       const cx = Math.random() * w; // random x in the range [0, svgWidth)
       const cy = Math.random() * w; // random y in the range [0, svgHeight)
-      const r = 10 + Math.random() * 100; // radius between 10 and 40
+      const r = 10 + Math.random() * 30; // radius between 10 and 40
       const fillsArr = [
         "var(--accentBg)",
         "var(--accentBg)",
@@ -437,8 +437,6 @@ export default class ViewDemoEuropean {
       svg.appendChild(circle);
     }
   }
-
-  // Generate 20 random circles when the page loads
 
   init() {
     this.demo.body = this.createBody();

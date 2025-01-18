@@ -311,6 +311,9 @@ display: flex;
     border-radius: 4px;
     z-index: 10;
     }
+    .sk_picker_gradient_stop.state_ative{
+      box-shadow: 0 0 0 2px var(--sk_dominantShadow);
+    }
     .sk_picker_gradient_stop_remove{
     appearance: none;
         position: absolute;
@@ -838,11 +841,11 @@ display: flex;
     };
   }
 
-  addGradientSwatch(color, key) {
+  addGradientSwatch(color, key, active = false) {
     const c = tinycolor(color).toHexString();
     if (c) {
       const el = document.createElement("div");
-      el.className = "sk_picker_gradient_stop";
+      el.className = `sk_picker_gradient_stop ${active ? "state_ative" : ""}`;
       el.style.setProperty("--bg", color);
       el.style.background = `var(--bg)`;
 
@@ -1011,7 +1014,9 @@ display: flex;
 
     keys.forEach((key) => {
       const stopColor = this.gradient.stops[key].color;
-      this.addGradientSwatch(stopColor, key);
+      const active = this.gradient.activeStopId === key;
+
+      this.addGradientSwatch(stopColor, key, active);
     });
   }
 }

@@ -767,7 +767,7 @@ function init() {
 
   window.SkinnerInstance = new Skinner(
     createCss,
-    colorsCasweb,
+    colorsSport,
     null,
     null,
     "sport",

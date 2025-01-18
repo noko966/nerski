@@ -60,8 +60,6 @@ export function HSVaColor(h = 0, s = 0, v = 0, a = 1) {
     toHEXA() {
       const hex = hsvToHex(that.h, that.s, that.v);
 
-      // Check if alpha channel make sense, convert it to 255 number space, convert
-      // To hex and pad it with zeros if needet.
       const alpha =
         that.a >= 1
           ? ""

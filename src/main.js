@@ -57,12 +57,12 @@ class Skinner {
       dark: {
         name: "dark",
         bg: "#1F2122",
-        accent: "#8144CD",
+        accent: "#7872E0",
       },
       light: {
         name: "light",
         bg: "#d4d7db",
-        accent: "#8144CD",
+        accent: "#7872E0",
       },
     };
 
@@ -3030,6 +3030,19 @@ body {
   cursor: pointer;
   transition: all 0.314s;
   border: 1px solid var(--sk_dominantBg3Hover);
+  position: relative;
+  overflow: hidden;
+}
+
+.nik_skinner_control_group_picker::before{
+    content: " ";
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%) rotate(45deg);
 }
 
 .nik_skinner_control_group_picker.variant_border {
