@@ -2268,7 +2268,7 @@ class Skinner {
       isCustomTextControl.appendChild(chb.label);
       isCustomTextPckr = this.createColorBox(
         pickerTextColor,
-        "nik_skinner_control_group_picker variant_text",
+        "nik_skinner_control_group_picker",
         customTxtCb
       );
       isCustomTextControl.appendChild(isCustomTextPckr);
@@ -2300,7 +2300,7 @@ class Skinner {
       customAccentControl.appendChild(chb.label);
       customAccentPckr = this.createColorBox(
         pickerCustomAccentColor,
-        "nik_skinner_control_group_picker variant_accent",
+        "nik_skinner_control_group_picker",
         customAccentCb
       );
       customAccentControl.appendChild(customAccentPckr);
@@ -2333,7 +2333,7 @@ class Skinner {
       borderControl.appendChild(chb.label);
       borderPckr = this.createColorBox(
         pickerBorderColor,
-        "nik_skinner_control_group_picker variant_border",
+        "nik_skinner_control_group_picker",
         customBorderCb
       );
       borderControl.appendChild(borderPckr);
@@ -2534,7 +2534,7 @@ class Skinner {
     const dominantTextKeyNames = [
       _vdDominant.nameTxt,
       _vdDominant.nameTxt2,
-      _vdDominant.nameTxt2,
+      _vdDominant.nameTxt3,
     ];
     let firstDominantTxt = guessVisibleColor(firstDominantBg);
     dominantTextKeyNames.forEach((TxtName, i) => {
@@ -2556,6 +2556,16 @@ class Skinner {
     });
 
     let dominantShadow = chroma(firstDominantBg).shade(0.3);
+
+    let accentShadow = tinycolor
+      .mix(firstAccentBg, firstDominantBg, 50)
+      .desaturate(20)
+      .lighten(10)
+      .toHexString();
+
+    let accentShadow2 = tinycolor(accentShadow).lighten(4).toHexString();
+
+    let dominantGlass = tinycolor(firstDominantBg).setAlpha(0.5).toRgbString();
 
     // let shadow = islight
     //   ? tinycolor(bg).lighten(6).toHexString()
@@ -2604,6 +2614,14 @@ class Skinner {
         `--${_vd.name}Shadow`,
         `${dominantShadow}`
       );
+      document.documentElement.style.setProperty(
+        `--${_vd.name}Shadow`,
+        `${accentShadow}`
+      );
+      document.documentElement.style.setProperty(
+        `--${_vd.name}Glass`,
+        `${dominantGlass}`
+      );
     });
   }
 
@@ -2647,7 +2665,7 @@ class Skinner {
   width: 100%;
   top: 0px;
   stroke: var(--sk_accentBg);
-  stroke-width: 1.5px;
+  stroke-width: 2px;
   fill: none;
 }
 
@@ -2677,7 +2695,7 @@ body {
   column-gap: 6px;
   padding: 0 4px;
   height: var(--skinnerToolboxFooterHeight);
-  background: var(--sk_dominantBg2Hover);
+  background: var(--sk_dominantGlass);
   position: absolute;
   border-top: 1px solid var(--sk_dominantBg3Hover);
   bottom: 0;
@@ -3078,7 +3096,7 @@ body {
 }
 
 .nik_skinner_control_group_picker.variant_text::before {
-  content: "T";
+  /*content: "T";*/
   color: var(--Txt);
 }
 
@@ -3213,7 +3231,7 @@ body {
 
 .skinner_btn {
   appearance: none;
-  border: 1px solid var(--sk_dominantBg2);
+  border: 2px solid var(--sk_dominantBg2);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
@@ -3224,8 +3242,8 @@ body {
   text-transform: capitalize;
   font-size: 12px;
   position: relative;
-  font-weight: 500;
-  padding: 0 12px;
+  font-weight: 700;
+  padding: 0 6px;
   border-radius: 4px;
   transition: all 0.2s;
   cursor: pointer;
@@ -3246,10 +3264,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--sk_dominantBg3);
-    border: 1px solid var(--sk_dominantBg3Hover);
+        background-color: var(--sk_dominantBg3);
+    border: 2px solid var(--sk_dominantBg3Hover);
     color: var(--sk_dominantTxt2);
-        box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
 }
 
 .skinner_btn-50 {
@@ -3291,15 +3308,14 @@ body {
 
 .skinner_btn-accent {
   background-color: var(--sk_accentBg);
-  border-color: var(--sk_accentBg);
+  border-color: var(--sk_accentBg2);
   color: var(--sk_accentTxt);
   position: relative;
-  padding-inline-start: 6px;
 }
 
 .skinner_btn-accent:hover {
   border-color: var(--sk_accentBg);
-  background-color: var(--sk_accentBg2);
+  background-color: var(--sk_accentBg);
   color: var(--sk_accentTxt);
 }
 /* view switchers */
