@@ -303,8 +303,9 @@
 .demo_tabs_row {
   display: flex;
   align-items: center;
-  column-gap: var(--demo_s_b_xs);
-  padding: var(--demo_s_b_xs);
+  display: flex;
+  align-items: center;
+  column-gap: 1px;
 }
 
 .demo_tab {
@@ -319,6 +320,8 @@
   height: 36px;
   border-radius: var(--tabRadius);
   flex-shrink: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .demo_tab.state_active {
@@ -355,6 +358,29 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+
+.demo_button {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--buttonSecondaryBorder);
+  background: var(--buttonSecondaryG);
+  color: var(--buttonSecondaryTxt);
+  width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: var(--buttonSecondaryRadius);
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.demo_button.variant_accent {
+  background: var(--buttonG);
+  color: var(--buttonTxt);
+  border-radius: var(--buttonRadius);
+  border-color: var(--buttonBorder);
 }
 
 .demo_widget_header {

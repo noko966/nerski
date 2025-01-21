@@ -129,11 +129,26 @@ export default class ViewDemoEuropean {
     return el;
   }
 
-  createButton(variant) {
+  createButton(text) {
+    const bw = document.createElement("div");
+    bw.className = "demo_widget_input_wrapper";
     const el = document.createElement("button");
-    el.className = `demo_event_button variant_${variant ? variant : "base"}`;
+    el.className = `demo_button variant_accent`;
+    el.innerText = text || "click";
     el.setAttribute("data-sk", "button");
-    return el;
+    bw.appendChild(el);
+    return bw;
+  }
+
+  createButtonSecondary(text) {
+    const bw = document.createElement("div");
+    bw.className = "demo_widget_input_wrapper";
+    const el = document.createElement("button");
+    el.className = "demo_button";
+    el.innerText = text || "click";
+    el.setAttribute("data-sk", "buttonSecondary");
+    bw.appendChild(el);
+    return bw;
   }
 
   createStake(text) {
@@ -351,10 +366,39 @@ export default class ViewDemoEuropean {
     headerText.innerText = "widget title";
     const content = document.createElement("div");
     content.className = "demo_widget_content";
+    content.setAttribute("data-sk", "dominant");
+
+    content.appendChild(this.createInput());
+    content.appendChild(this.createInput());
+
+    const hi = this.createIcon();
+    header.appendChild(headerText);
+    header.appendChild(hi);
+    root.appendChild(header);
+    root.appendChild(content);
+
+    return root;
+  }
+
+  createBetslip() {
+    const root = document.createElement("div");
+    root.className = "demo_widget_root";
+
+    const header = document.createElement("div");
+    header.className = "demo_widget_header";
+    header.setAttribute("data-sk", "widget_header");
+
+    const headerText = document.createElement("span");
+    headerText.className = "demo_widget_header_title";
+    headerText.innerText = "widget title";
+    const content = document.createElement("div");
+    content.className = "demo_widget_content";
     content.setAttribute("data-sk", "widget_content");
 
     content.appendChild(this.createInput());
     content.appendChild(this.createInput());
+    content.appendChild(this.createButton("place bet"));
+    content.appendChild(this.createButtonSecondary("book a bet"));
 
     const hi = this.createIcon();
     header.appendChild(headerText);
@@ -494,13 +538,9 @@ export default class ViewDemoEuropean {
 
     const w1 = this.createWidget();
     const w2 = this.createWidget();
-    const w3 = this.createWidget();
-    const w4 = this.createWidget();
 
     this.demo.aside.appendChild(w1);
     this.demo.aside.appendChild(w2);
-    this.demo.aside.appendChild(w3);
-    this.demo.aside.appendChild(w4);
-    this.demo.aside.appendChild(w4);
+    this.demo.aside.appendChild(this.createBetslip());
   }
 }

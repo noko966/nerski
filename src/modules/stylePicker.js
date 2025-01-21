@@ -1,8 +1,5 @@
 import * as _ from "./utils";
-import Moveable from "./moveable";
 const tinycolor = require("tinycolor2");
-
-
 
 export default class SKStylePicker {
   constructor(rootElement, currentColor, mode, gradientConfig) {
@@ -10,7 +7,6 @@ export default class SKStylePicker {
     this.root = null;
 
     this.icons = {
-
       eyeDropper: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.1374 9.21573L5.00012 17L2.15698 17.8432L2.50012 15L10.7844 6.86279" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M17.7332 3.67055C17.2391 4.90977 16.4313 6.33722 15.4744 7.72545L14.9097 9.96075C14.8156 10.3215 14.3685 10.447 14.1019 10.1804L10.7842 6.86271L9.81951 5.898C9.55285 5.63134 9.67834 5.18428 10.047 5.09016L12.1568 4.56467C13.5685 3.57643 15.0274 2.73722 16.2979 2.23526C16.7607 2.06271 17.2077 2.1882 17.4901 2.47839C17.7881 2.76859 17.9293 3.21565 17.7411 3.67055H17.7332Z" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -25,51 +21,61 @@ export default class SKStylePicker {
 
     this.styles = [
       {
-        name: 'default',
+        name: "default",
         cssPropValues: {
-          background: 'var(--oddBg)',
-          color: 'var(--oddTxt)',
-          radius: 'var(--oddRadius)',
+          background: "var(--oddBg)",
+          color: "var(--oddTxt)",
+          radius: "var(--oddRadius)",
           border: null,
           shadow: null,
         },
       },
       {
-        name: 'glass',
+        name: "glass",
         cssPropValues: {
-          background: 'var(--oddBg)',
-          color: 'var(--oddAccent)',
-          radius: 'var(--oddRadius)',
-          border: '',
-          shadow: 'inset 6px 6px 10px var(--accentRGBA)',
+          background: "var(--oddBg)",
+          color: "var(--oddAccent)",
+          radius: "var(--oddRadius)",
+          border: "",
+          shadow: "inset 6px 6px 10px var(--accentRGBA)",
         },
       },
       {
-        name: 'skeo',
+        name: "clown",
         cssPropValues: {
-          background: 'var(--oddBg)',
-          color: 'var(--oddTxt)',
-          radius: 'var(--oddRadius)',
-          border: {
-            top: '1px solid var(--oddBg2)',
-            bottom: '1px solid var(--bodyBg)',
-          },
-          shadow: '1px 1px 2px 0px var(--bodyBg)',
+          background: this._createGradientClown(),
+          color: "var(--oddAccent)",
+          radius: "var(--oddRadius)",
+          border: "",
+          shadow: "inset 6px 6px 10px var(--accentRGBA)",
         },
       },
       {
-        name: 'underlined',
+        name: "skeo",
         cssPropValues: {
-          background: 'var(--oddBg)',
-          color: 'var(--oddTxt)',
-          radius: '0',
+          background: "var(--oddBg)",
+          color: "var(--oddTxt)",
+          radius: "var(--oddRadius)",
           border: {
-            bottom: '1px solid var(--oddAccent)',
+            top: "1px solid var(--oddBg2)",
+            bottom: "1px solid var(--bodyBg)",
           },
-          shadow: '1px 1px 2px 0px var(--bodyBg)',
+          shadow: "1px 1px 2px 0px var(--bodyBg)",
         },
-      }
-    ]
+      },
+      {
+        name: "underlined",
+        cssPropValues: {
+          background: "var(--oddBg)",
+          color: "var(--oddTxt)",
+          radius: "0",
+          border: {
+            bottom: "1px solid var(--oddAccent)",
+          },
+          shadow: "1px 1px 2px 0px var(--bodyBg)",
+        },
+      },
+    ];
 
     this.swatchesWrapper = null;
     this.swatchColors = [];
@@ -95,7 +101,29 @@ export default class SKStylePicker {
     this._color = tinycolor(currentColor).toHexString();
 
     this._recalc = true;
+  }
 
+  _createGradientClown() {
+    const colors = ["var(--accentBg)"];
+
+    // We'll use 10px for each color band
+    const bandSize = 20;
+
+    // Build each color stop pair: "color Xpx, color Ypx"
+    const stops = colors.map((color, i) => {
+      const s1 = i * bandSize;
+      const e1 = (i + 1) * bandSize;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
+        e1 + 1
+      }px, ${color} ${e1 + 2}px`;
+    });
+
+    // Join all stops into a comma-separated list
+    const gradientStops = stops.join(", ");
+
+    // Finally, wrap in a repeating-linear-gradient with a 45deg angle
+    const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
+    return repeatingGradient;
   }
 
   _rePositioningPicker(x, y) {
@@ -462,7 +490,6 @@ display: flex;
     this.root = document.createElement("div");
     this.root.className = "sk_picker_root";
 
-
     const themesBlock = document.createElement("div");
     themesBlock.className = "sk_widget_block";
 
@@ -474,9 +501,7 @@ display: flex;
     this.root.appendChild(themesBlock);
     themesBlock.appendChild(this.styleSwatchesWrapper);
     this.rootElement.appendChild(this.root);
-
   }
-
 
   init() {
     this.createUI();
@@ -512,14 +537,12 @@ display: flex;
         },
         { capture: true }
       )
-    )
-
+    );
   }
 
   destroy() {
     const root = this.root;
     this._eventBindings.forEach((args) => _.off(...args));
-
 
     // 4. Remove the root from the DOM
     if (this.root.parentElement) {
@@ -536,7 +559,6 @@ display: flex;
   }
 
   addStyleSwatch(_style) {
-
     if (_style) {
       const { styleSwatchesWrapper } = this;
 
@@ -549,21 +571,32 @@ display: flex;
       el.style.setProperty("--radius", _style.cssPropValues.radius);
       if (_style.cssPropValues.border) {
         for (const key in _style.cssPropValues.border) {
-          el.style.setProperty(`--border-${key}`, _style.cssPropValues.border[key]);
+          el.style.setProperty(
+            `--border-${key}`,
+            _style.cssPropValues.border[key]
+          );
         }
       }
 
       let cssStyle = `
       background: ${_style.cssPropValues.background};
       color: ${_style.cssPropValues.color};
-      ${_style.cssPropValues.shadow ? `box-shadow: ${_style.cssPropValues.shadow}` : ''};
-      ${_style.cssPropValues.radius ? `border-radius: ${_style.cssPropValues.radius}` : ''};
+      ${
+        _style.cssPropValues.shadow
+          ? `box-shadow: ${_style.cssPropValues.shadow}`
+          : ""
+      };
+      ${
+        _style.cssPropValues.radius
+          ? `border-radius: ${_style.cssPropValues.radius}`
+          : ""
+      };
       `;
       for (const key in _style.cssPropValues.border) {
-        cssStyle += _style.cssPropValues.border[key] ? `border-${key}: ${_style.cssPropValues.border[key]}` : '';
+        cssStyle += _style.cssPropValues.border[key]
+          ? `border-${key}: ${_style.cssPropValues.border[key]}`
+          : "";
       }
-
-
 
       // Append element and save swatch data
       styleSwatchesWrapper.appendChild(el);
@@ -580,6 +613,4 @@ display: flex;
 
     return false;
   }
-
-
 }

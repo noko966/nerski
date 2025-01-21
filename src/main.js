@@ -233,7 +233,7 @@ class Skinner {
         },
         {
           name: "buttonSecondary",
-          inherits: ["body"],
+          inherits: ["dominant", "body"],
         },
         {
           name: "navbar",
@@ -269,7 +269,7 @@ class Skinner {
         },
         {
           name: "showMore",
-          inherits: ["body"],
+          inherits: ["dominant", "body"],
         },
         {
           name: "marketHeader",
@@ -281,11 +281,11 @@ class Skinner {
         },
         {
           name: "tab",
-          inherits: ["dominant", "body"],
+          inherits: ["tabActive", "dominant", "body"],
         },
         {
           name: "tabActive",
-          inherits: ["tab", "dominant", "body"],
+          inherits: ["dominant", "body"],
         },
         {
           name: "tabSecondaryActive",
@@ -1183,9 +1183,9 @@ class Skinner {
     let data = {};
     data.name = name;
     data.nameBg = data.name + "Bg";
-    `.demo_event_stake[data-sk="odd"]`
+    `.demo_event_stake[data-sk="odd"]`;
     data.selector = `[data-sk="${data.name}"]`;
-    data.style =  data.nameBg + "Style";
+    data.style = data.nameBg + "Style";
     data.nameBg_g = data.nameBg + "_g";
     data.nameG = data.name + "G";
     data.nameRGBA = data.name + "RGBA";
@@ -1625,7 +1625,6 @@ class Skinner {
     }
   }
 
-
   handleStylePicker(event, essence, onChangeCallback) {
     let self = this;
     const _vd = this.verbalData(essence);
@@ -1638,7 +1637,7 @@ class Skinner {
 
     const SKStylePickerInstance = new SKStylePicker(
       null,
-      self.skin[_vd.nameBg_g][0],
+      self.skin[_vd.nameBg_g][0]
     );
     SKStylePickerInstance.init();
 
@@ -1655,7 +1654,6 @@ class Skinner {
       instance.destroy();
       self.stylePickerInstance = null;
     });
-
   }
   handleGradientPicker(event, essence, onChangeCallback) {
     let self = this;
@@ -2176,9 +2174,7 @@ class Skinner {
     let isEnabledControl, isEnabledPckr;
     {
       //isEnabledPckrDiv = this.createDiv("nik_skinner_control_group_picker");
-      isEnabledControl = this.createDiv(
-        "sk_checkbox_wrapper state_delay_1"
-      );
+      isEnabledControl = this.createDiv("sk_checkbox_wrapper state_delay_1");
 
       ddContent.appendChild(isEnabledControl);
       isEnabledControl.appendChild(
@@ -2433,10 +2429,10 @@ class Skinner {
     let stylePickerRoot, styleTrigger;
 
     {
-      stylePickerRoot = document.createElement('div');
-      stylePickerRoot.className = 'sk_checkbox_wrapper'
-      styleTrigger = document.createElement('div');
-      styleTrigger.className = 'sk_style_trigger'
+      stylePickerRoot = document.createElement("div");
+      stylePickerRoot.className = "sk_checkbox_wrapper";
+      styleTrigger = document.createElement("div");
+      styleTrigger.className = "sk_style_trigger";
       styleTrigger.addEventListener("click", selectEssenceStyleCb);
       stylePickerRoot.appendChild(styleTrigger);
       ddContent.appendChild(stylePickerRoot);
@@ -2533,8 +2529,6 @@ class Skinner {
   updateUiPalette(colors) {
     this.generateUiPalette(colors);
   }
-
-
 
   generateUiPalette(colors) {
     const UISkin = {};
