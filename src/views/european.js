@@ -125,7 +125,7 @@ export default class ViewDemoEuropean {
   createEventRow(variant) {
     const el = document.createElement("div");
     el.className = "demo_event_row";
-    el.setAttribute("data-sk", `event_${variant ? variant : "base"}`);
+    el.setAttribute("data-sk", `${variant ? variant : "event"}`);
     return el;
   }
 

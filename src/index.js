@@ -644,9 +644,9 @@ function createCssStringSport(skin) {
     
     let essence = verbalData(c.name);
 
-    styles += `${essence.selector} {
+    styles += skin[essence.style] ? `${essence.selector} {
       ${skin[essence.style]}\n
-    }\n`
+    }\n` : ""
 
     variables += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
     variables += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;

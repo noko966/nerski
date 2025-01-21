@@ -454,7 +454,7 @@ display: flex;
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
 
-  setStyle(style){
+  setStyle(style) {
     this._emit("stylechange", style, this);
   }
 
@@ -490,6 +490,29 @@ display: flex;
   _bindEvents() {
     let that = this;
     const { root, applyAndClose, inputEl } = this;
+    this._eventBindings.push(
+      _.on(
+        document,
+        "keyup",
+        (e) =>
+          this.isOpen() &&
+          (e.key === "Escape" || e.code === "Escape") &&
+          this.hide()
+      ),
+      _.on(
+        document,
+        ["touchstart", "mousedown"],
+        (e) => {
+          if (
+            this.isOpen() &&
+            !_.eventPath(e).some((el) => el === root || el === applyAndClose)
+          ) {
+            this.hide();
+          }
+        },
+        { capture: true }
+      )
+    )
 
   }
 
@@ -524,9 +547,9 @@ display: flex;
       el.style.setProperty("--color", _style.cssPropValues.color);
       el.style.setProperty("--shadow", _style.cssPropValues.shadow);
       el.style.setProperty("--radius", _style.cssPropValues.radius);
-      if(_style.cssPropValues.border) {
+      if (_style.cssPropValues.border) {
         for (const key in _style.cssPropValues.border) {
-        el.style.setProperty(`--border-${key}`, _style.cssPropValues.border[key]);
+          el.style.setProperty(`--border-${key}`, _style.cssPropValues.border[key]);
         }
       }
 
@@ -537,10 +560,10 @@ display: flex;
       ${_style.cssPropValues.radius ? `border-radius: ${_style.cssPropValues.radius}` : ''};
       `;
       for (const key in _style.cssPropValues.border) {
-      cssStyle += _style.cssPropValues.border[key] ? `border-${key}: ${_style.cssPropValues.border[key]}` : '';
+        cssStyle += _style.cssPropValues.border[key] ? `border-${key}: ${_style.cssPropValues.border[key]}` : '';
       }
-      
-      
+
+
 
       // Append element and save swatch data
       styleSwatchesWrapper.appendChild(el);
