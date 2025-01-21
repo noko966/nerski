@@ -2,11 +2,13 @@ import guessVisibleColor from "./neuron.js";
 var tinycolor = require("tinycolor2");
 import chroma from "chroma-js";
 import SKPicker from "./modules/picker.js";
+import SKStylePicker from "./modules/stylePicker.js";
 import { MouseIntersectStyler } from "./CustomStyler.js";
 
 class Skinner {
   constructor(cssCb, starterConfig, header, root, variant, patientRoot) {
-    this.skPickerInstance = null;
+    this.pickerInstance = null;
+    this.stylePickerInstance = null;
     this.pickers = [];
     this.progress = {};
     this.eventListeners = [];
@@ -1181,6 +1183,9 @@ class Skinner {
     let data = {};
     data.name = name;
     data.nameBg = data.name + "Bg";
+    `.demo_event_stake[data-sk="odd"]`
+    data.selector = `[data-sk="${data.name}"]`;
+    data.style =  data.nameBg + "Style";
     data.nameBg_g = data.nameBg + "_g";
     data.nameG = data.name + "G";
     data.nameRGBA = data.name + "RGBA";
@@ -1516,7 +1521,6 @@ class Skinner {
     this[c.nameBg].borderChb.disabled = !this.skin[c.isName];
     this[c.nameBg].customAccentChb.disabled = !this.skin[c.isName];
     this[c.nameBg].checkBoxIsDark.disabled = !this.skin[c.isName];
-    this[c.nameBg].gradientAnglePicker.setDisabled(this.skin[c.isGradient]);
 
     this[c.nameBg].checkBox.checked = this.skin[c.isName];
     this[c.nameBg].checkBox2.checked = this.skin[c.isGradient];
@@ -1570,16 +1574,12 @@ class Skinner {
           this.modifyKey(_vd.isGradient, e.target.checked);
         },
         (e) => {
-          this.modifyKey(_vd.gradientAngle, e.data.angle);
-        },
-        (e) => {
           this.handlePicker(e, _vd.nameBg, (color) =>
             this.modifyKey(_vd.nameBg, color)
           );
         },
         (e) => {
           this.handleGradientPicker(e, _essence, (color) => {
-            console.log({ color });
             this.modifyKey(_vd.nameBg_g, color.stops);
             this.modifyKey(_vd.gradientAngle, color.angle);
             this.modifyKey(_vd.gradientType, color.type);
@@ -1615,11 +1615,48 @@ class Skinner {
         (e) => {
           this.modifyKey(_vd.nameRadius, e.target.value);
         },
+        (e) => {
+          this.handleStylePicker(e, _essence, (style) => {
+            this.modifyKey(_vd.style, style);
+          });
+        },
         _hiddenControlsArray,
       ]);
     }
   }
 
+
+  handleStylePicker(event, essence, onChangeCallback) {
+    let self = this;
+    const _vd = this.verbalData(essence);
+    if (self.stylePickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const SKStylePickerInstance = new SKStylePicker(
+      null,
+      self.skin[_vd.nameBg_g][0],
+    );
+    SKStylePickerInstance.init();
+
+    SKStylePickerInstance.show(x, y);
+
+    self.stylePickerInstance = SKStylePickerInstance;
+
+    SKStylePickerInstance.on("stylechange", (style, source, instance) => {
+      console.log("Style changed:", style, "Source:", source);
+      onChangeCallback(style);
+    });
+
+    SKStylePickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.stylePickerInstance = null;
+    });
+
+  }
   handleGradientPicker(event, essence, onChangeCallback) {
     let self = this;
     const _vd = this.verbalData(essence);
@@ -2058,7 +2095,6 @@ class Skinner {
       parent,
       checkboxCallback,
       gradientCallback,
-      angleChangeCallback,
       pickerCallback,
       picker2Callback,
       isDarkCallback,
@@ -2069,6 +2105,7 @@ class Skinner {
       isCustomBorderCb,
       customBorderCb,
       customRadiusCb,
+      selectEssenceStyleCb,
       hideConfigArray,
     ] = params;
     let t = this;
@@ -2140,7 +2177,7 @@ class Skinner {
     {
       //isEnabledPckrDiv = this.createDiv("nik_skinner_control_group_picker");
       isEnabledControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper state_delay_1"
+        "sk_checkbox_wrapper state_delay_1"
       );
 
       ddContent.appendChild(isEnabledControl);
@@ -2201,7 +2238,7 @@ class Skinner {
       //    "nik_skinner_control_group_picker"
       //);
       isGradientEnabledControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper state_delay_2"
+        "sk_checkbox_wrapper state_delay_2"
       );
       let chb = this.createCheckBox(label + "_g");
       isGradientEnabledChb = chb.checkbox;
@@ -2229,29 +2266,29 @@ class Skinner {
       });
     }
 
-    let anglePicker;
-    {
-      anglePicker = new AnglePicker(isGradientEnabledControl);
+    // let anglePicker;
+    // {
+    //   anglePicker = new AnglePicker(isGradientEnabledControl);
 
-      const onAngleChange = function (e) {
-        angleChangeCallback(e);
-      };
+    //   const onAngleChange = function (e) {
+    //     angleChangeCallback(e);
+    //   };
 
-      anglePicker.eventTarget.addEventListener("angleChange", onAngleChange);
+    //   anglePicker.eventTarget.addEventListener("angleChange", onAngleChange);
 
-      this.eventListeners.push({
-        element: anglePicker.eventTarget,
-        type: "angleChange",
-        listener: onAngleChange,
-      });
-    }
+    //   this.eventListeners.push({
+    //     element: anglePicker.eventTarget,
+    //     type: "angleChange",
+    //     listener: onAngleChange,
+    //   });
+    // }
 
     //custom text
 
     let isCustomTextControl, isCustomTextChb, isCustomTextPckr;
     {
       isCustomTextControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper nik_skinner_checkbox_wrapper-small state_delay_3"
+        "sk_checkbox_wrapper sk_checkbox_wrapper-small state_delay_3"
       );
       let chb = this.createCheckBox(label + "_text");
       isCustomTextChb = chb.checkbox;
@@ -2285,7 +2322,7 @@ class Skinner {
     let customAccentControl, customAccentChb, customAccentPckr;
     if (isCustomAccentCb && customAccentCb) {
       customAccentControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper nik_skinner_checkbox_wrapper-small state_delay_4"
+        "sk_checkbox_wrapper sk_checkbox_wrapper-small state_delay_4"
       );
       let chb = this.createCheckBox(label + "_custom_accent");
       customAccentChb = chb.checkbox;
@@ -2316,7 +2353,7 @@ class Skinner {
     let borderControl, borderChb, borderPckr;
     if (isCustomBorderCb && customBorderCb) {
       borderControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper nik_skinner_checkbox_wrapper-small state_delay_5"
+        "sk_checkbox_wrapper sk_checkbox_wrapper-small state_delay_5"
       );
       let chb = this.createCheckBox(label + "_border");
       borderChb = chb.checkbox;
@@ -2349,7 +2386,7 @@ class Skinner {
     let radiusControl, radiusInput, radiusAmount;
     if (customRadiusCb) {
       radiusControl = this.createDiv(
-        "nik_skinner_checkbox_wrapper nik_skinner_checkbox_wrapper-range"
+        "sk_checkbox_wrapper sk_checkbox_wrapper-range"
       );
       radiusInput = document.createElement("input");
       radiusInput.type = "range";
@@ -2393,6 +2430,17 @@ class Skinner {
     }
 
     let _hideConfigArray = hideConfigArray || [];
+    let stylePickerRoot, styleTrigger;
+
+    {
+      stylePickerRoot = document.createElement('div');
+      stylePickerRoot.className = 'sk_checkbox_wrapper'
+      styleTrigger = document.createElement('div');
+      styleTrigger.className = 'sk_style_trigger'
+      styleTrigger.addEventListener("click", selectEssenceStyleCb);
+      stylePickerRoot.appendChild(styleTrigger);
+      ddContent.appendChild(stylePickerRoot);
+    }
 
     const configMap = {
       background: isEnabledControl,
@@ -2401,6 +2449,7 @@ class Skinner {
       accent: customAccentControl,
       border: borderControl,
       radius: radiusControl,
+      style: stylePickerRoot,
     };
 
     parent.appendChild(wrapper);
@@ -2416,7 +2465,6 @@ class Skinner {
       picker2: isGradientEnabledPckr,
       checkBox: isEnabledChb,
       checkBox2: isGradientEnabledChb,
-      gradientAnglePicker: anglePicker,
       checkBoxIsDark: isDarkChb,
       checkBox3: isCustomTextChb,
       picker3: isCustomTextPckr,
@@ -2426,6 +2474,7 @@ class Skinner {
       borderPckr: borderPckr,
       radiusInput: radiusInput,
       radiusAmount: radiusAmount,
+      styleInput: styleTrigger,
     };
   }
 
@@ -2485,7 +2534,7 @@ class Skinner {
     this.generateUiPalette(colors);
   }
 
-  // generateUiPalette(colors) {}
+
 
   generateUiPalette(colors) {
     const UISkin = {};
@@ -3454,7 +3503,7 @@ body {
   width: 100px;
 }
 
-.nik_skinner_checkbox_wrapper {
+.sk_checkbox_wrapper {
   display: flex;
   border: 1px solid var(--sk_dominantBg3Hover);
   height: var(--controls-row-height);
@@ -3471,15 +3520,32 @@ body {
   border-radius: 4px;
 }
 
-.nik_skinner_checkbox_wrapper > .pickr {
+.sk_style_trigger{
+    width: var(--control-picker-size);
+    height: var(--control-picker-size);
+    flex-shrink: 0;
+    border: none;
+    outline: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #11585d;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.314s;
+    border: 1px solid var(--sk_dominantBg3Hover);
+    position: relative;
+    overflow: hidden;
+}
+
+.sk_checkbox_wrapper > .pickr {
   position: absolute;
 }
 
-.nik_skinner_checkbox_wrapper:last-child {
+.sk_checkbox_wrapper:last-child {
   margin: 0;
 }
 
-.nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-range {
+.sk_checkbox_wrapper.sk_checkbox_wrapper-range {
   width: 100%;
   justify-content: flex-start;
   padding: 2px 4px;
@@ -3522,7 +3588,7 @@ body {
   opacity: 0.2;
 }
 
-.nik_skinner_checkbox_wrapper-controls
+.sk_checkbox_wrapper-controls
   .nik_skinner_control_group_checkbox_wrapper {
   width: 30px;
   height: 30px;
@@ -4057,11 +4123,11 @@ border-radius: 50%;*/
   display: none;
 }
 
-.nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-small {
+.sk_checkbox_wrapper.sk_checkbox_wrapper-small {
   width: 64px;
 }
 
-.nik_skinner_checkbox_wrapper.nik_skinner_checkbox_wrapper-range {
+.sk_checkbox_wrapper.sk_checkbox_wrapper-range {
   width: 160px;
 }
 
