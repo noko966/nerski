@@ -139,7 +139,7 @@ export default class ViewDemoEuropean {
   createStake(text) {
     const el = document.createElement("button");
     el.className = "demo_event_stake";
-    el.setAttribute("data-sk", "event_stake");
+    el.setAttribute("data-sk", "odd");
     el.innerText = text || "-";
     return el;
   }
@@ -219,7 +219,7 @@ export default class ViewDemoEuropean {
   createEventSubHeader() {
     const el = document.createElement("div");
     el.className = "demo_event_header_sub";
-    el.setAttribute("data-sk", "event_header_sub");
+    el.setAttribute("data-sk", "subHeader");
 
     return el;
   }
@@ -227,7 +227,7 @@ export default class ViewDemoEuropean {
   createEventHeader() {
     const el = document.createElement("div");
     el.className = "demo_event_header";
-    el.setAttribute("data-sk", "event_header");
+    el.setAttribute("data-sk", "header");
 
     return el;
   }

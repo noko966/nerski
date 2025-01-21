@@ -591,6 +591,9 @@ function verbalData(name) {
   let data = {};
   data.name = name;
   data.nameBg = data.name + "Bg";
+  `.demo_event_stake[data-sk="odd"]`
+  data.selector = `[data-sk="${data.name}"]`;
+  data.style =  data.nameBg + "Style";
   data.nameBg_g = data.nameBg + "_g";
   data.nameG = data.name + "G";
   data.nameRGBA = data.name + "RGBA";
@@ -602,11 +605,13 @@ function verbalData(name) {
   data.nameBg2Hov = data.nameBg2 + "Hover";
   data.nameBg3 = data.nameBg + "3";
   data.nameBg3Hov = data.nameBg3 + "Hover";
+
   data.upperCaseName = data.name[0].toUpperCase() + data.name.substring(1);
   data.isName = "is" + data.upperCaseName + "Bg";
   data.isGradient = "is" + data.upperCaseName + "Gradient";
   data.isGradientReversed = data.isGradient + "Reversed";
   data.gradientAngle = data.upperCaseName + "GradientAngle";
+  data.gradientType = data.upperCaseName + "GradientType";
 
   data.isDark = "is" + data.upperCaseName + "BgDark";
 
@@ -630,39 +635,47 @@ function verbalData(name) {
 }
 
 function createCssStringSport(skin) {
-  let res = ``;
+  let styles = ``;
+  let variables = ``;
+
+
 
   configOrderSport.forEach((c, i) => {
+    
     let essence = verbalData(c.name);
 
-    res += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
-    res += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
-    res += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-    res += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-    res += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
-    res += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
-    res += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
-    res += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-    res += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
-    res += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
-    res += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
-    res += `    --${essence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`;
-    res += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
-    res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
-    res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
-    res += `    --${essence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`;
-    res += `    --${essence.name}ShadowFade: ${
+    styles += `${essence.selector} {
+      ${skin[essence.style]}\n
+    }\n`
+
+    variables += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
+    variables += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
+    variables += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+    variables += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+    variables += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
+    variables += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
+    variables += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
+    variables += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+    variables += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+    variables += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
+    variables += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
+    variables += `    --${essence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`;
+    variables += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
+    variables += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
+    variables += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
+    variables += `    --${essence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`;
+    variables += `    --${essence.name}ShadowFade: ${
       skin[`${essence.name}ShadowFade`]
     };\n`;
-    res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
-    res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
+    variables += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
+    variables += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
 
     if (i !== configOrderSport.length - 1) {
-      res += `\n`;
+      variables += `\n`;
     }
   });
 
-  return res;
+  return {styles, variables};
 }
 
 function createCssStringCasino(skin) {
@@ -707,8 +720,10 @@ let dd = "";
 function createCss(c) {
   const rootSel = false && "#sport-modern-view";
 
-  let css = `${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
-  ${createCssStringSport(c)}
+  let css = `
+${createCssStringSport(c).styles}
+${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
+${createCssStringSport(c).variables}
 }`;
 
   let results = {
