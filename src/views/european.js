@@ -254,7 +254,7 @@ export default class ViewDemoEuropean {
       const tab = document.createElement("button");
       tab.innerText = t.n;
       tab.className = `demo_tab ${t.a && "state_active"}`;
-      tab.setAttribute("data-sk", "tab");
+      tab.setAttribute("data-sk", `${t.a ? "tabActive" : "tab"}`);
 
       el.appendChild(tab);
     });

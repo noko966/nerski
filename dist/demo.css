@@ -311,7 +311,7 @@
 .demo_tab {
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid var(--oddBorder);
+  border: 0;
   background: var(--tabG);
   color: var(--tabTxt);
   display: flex;

@@ -1635,10 +1635,7 @@ class Skinner {
     let x = event.clientX;
     let y = event.clientY;
 
-    const SKStylePickerInstance = new SKStylePicker(
-      null,
-      self.skin[_vd.nameBg_g][0]
-    );
+    const SKStylePickerInstance = new SKStylePicker(null, _vd);
     SKStylePickerInstance.init();
 
     SKStylePickerInstance.show(x, y);

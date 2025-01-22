@@ -2,7 +2,7 @@ import * as _ from "./utils";
 const tinycolor = require("tinycolor2");
 
 export default class SKStylePicker {
-  constructor(rootElement, currentColor, mode, gradientConfig) {
+  constructor(rootElement, verbalData, mode, gradientConfig) {
     this.rootElement = rootElement || document.body;
     this.root = null;
 
@@ -19,63 +19,7 @@ export default class SKStylePicker {
 </svg>`,
     };
 
-    this.styles = [
-      {
-        name: "default",
-        cssPropValues: {
-          background: "var(--oddBg)",
-          color: "var(--oddTxt)",
-          radius: "var(--oddRadius)",
-          border: null,
-          shadow: null,
-        },
-      },
-      {
-        name: "glass",
-        cssPropValues: {
-          background: "var(--oddBg)",
-          color: "var(--oddAccent)",
-          radius: "var(--oddRadius)",
-          border: "",
-          shadow: "inset 6px 6px 10px var(--accentRGBA)",
-        },
-      },
-      {
-        name: "clown",
-        cssPropValues: {
-          background: this._createGradientClown(),
-          color: "var(--oddAccent)",
-          radius: "var(--oddRadius)",
-          border: "",
-          shadow: "inset 6px 6px 10px var(--accentRGBA)",
-        },
-      },
-      {
-        name: "skeo",
-        cssPropValues: {
-          background: "var(--oddBg)",
-          color: "var(--oddTxt)",
-          radius: "var(--oddRadius)",
-          border: {
-            top: "1px solid var(--oddBg2)",
-            bottom: "1px solid var(--bodyBg)",
-          },
-          shadow: "1px 1px 2px 0px var(--bodyBg)",
-        },
-      },
-      {
-        name: "underlined",
-        cssPropValues: {
-          background: "var(--oddBg)",
-          color: "var(--oddTxt)",
-          radius: "0",
-          border: {
-            bottom: "1px solid var(--oddAccent)",
-          },
-          shadow: "1px 1px 2px 0px var(--bodyBg)",
-        },
-      },
-    ];
+    this._vd = verbalData;
 
     this.swatchesWrapper = null;
     this.swatchColors = [];
@@ -98,14 +42,74 @@ export default class SKStylePicker {
       stylechange: [],
     };
 
-    this._color = tinycolor(currentColor).toHexString();
-
     this._recalc = true;
   }
 
-  _createGradientClown() {
-    const colors = ["var(--accentBg)"];
+  createStyles() {
+    const _vd = this._vd;
+    const _that = this;
+    this.styles = [
+      {
+        name: "default",
+        cssPropValues: {
+          background: `var(--${_vd.nameBg})`,
+          color: `var(--${_vd.nameTxt})`,
+          radius: `var(--${_vd.nameRadius})`,
+          border: null,
+          shadow: null,
+        },
+      },
+      {
+        name: "glass",
+        cssPropValues: {
+          background: `var(--${_vd.nameBg})`,
+          color: `var(--${_vd.nameAccent})`,
+          radius: `var(--${_vd.nameRadius})`,
+          border: "",
+          shadow: `inset 6px 6px 10px var(--${_vd.nameBg2})`,
+        },
+      },
+      {
+        name: "clown",
+        cssPropValues: {
+          background: _that._createGradientClown(_vd),
+          color: `var(--${_vd.nameAccent})`,
+          radius: `var(--${_vd.nameRadius})`,
+          border: null,
+          shadow: `inset 6px 6px 10px var(--${_vd.nameBg2})`,
+        },
+      },
+      {
+        name: "skeo",
+        cssPropValues: {
+          background: `var(--${_vd.nameBg})`,
+          color: `var(--${_vd.nameTxt})`,
+          radius: `var(--${_vd.nameRadius})`,
+          border: {
+            top: `var(--${_vd.nameBg2})`,
+            bottom: `var(--${_vd.nameBg})`,
+          },
+          shadow: `inset 1px 1px 2px 0px var(--${_vd.nameBg})`,
+        },
+      },
+      {
+        name: "underlined",
+        cssPropValues: {
+          background: `var(--${_vd.nameBg})`,
+          color: `var(--${_vd.nameTxt})`,
+          radius: "0",
+          border: {
+            bottom: `1px solid var(--${_vd.nameAccent})`,
+          },
+          shadow: null,
+        },
+      },
+    ];
+  }
 
+  _createGradientClown(verbalData) {
+    const _vd = verbalData;
+    const colors = [`var(--${_vd.nameAccent})`];
     // We'll use 10px for each color band
     const bandSize = 20;
 
@@ -113,9 +117,9 @@ export default class SKStylePicker {
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
-        e1 + 1
-      }px, ${color} ${e1 + 2}px`;
+      return `var(--${_vd.nameBg}) ${s1}px, var(--${
+        _vd.nameBg
+      }) ${e1}px, ${color} ${e1 + 1}px, ${color} ${e1 + 2}px`;
     });
 
     // Join all stops into a comma-separated list
@@ -504,6 +508,7 @@ display: flex;
   }
 
   init() {
+    this.createStyles();
     this.createUI();
     this._bindEvents();
     this.createStyle();
