@@ -1181,7 +1181,7 @@ class Skinner {
     let data = {};
     data.name = name;
     data.nameBg = data.name + "Bg";
-    `.demo_event_stake[data-sk="odd"]`;
+    
     data.selector = `[data-sk="${data.name}"]`;
     data.style = data.nameBg + "Style";
     data.nameBg_g = data.nameBg + "_g";

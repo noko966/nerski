@@ -772,72 +772,94 @@ demo.init();
 // const target = document.querySelector(".demo_body").parentElement;
 const target = document.body;
 
-const config = [
-  {
-    name: "body",
+const configTree = {
+  body: {
     Background: {
       color: "#111111",
     },
-
-    children: [
-      {
-        name: "dominant",
-        children: [
-          { name: "buttonSecondary" },
-          { name: "navbar" },
-          {
-            name: "header",
-            children: [
-              { name: "subHeader" },
-              { name: "collapse" },
-              { name: "marketHeader" },
-            ],
+    children: {
+      dominant: {
+        children: {
+          buttonSecondary: {},
+          navbar: {},
+          header: {
+            children: {
+              subHeader: {},
+              collapse: {},
+              marketHeader: {},
+            },
           },
-          {
-            name: "event",
-            children: [{ name: "eventLive" }],
+          event: {
+            children: {
+              eventLive: {},
+            },
           },
-          { name: "showMore" },
-          {
-            name: "tabActive",
-            children: [
-              {
-                name: "tab",
-                children: [{ name: "tabSecondaryActive" }],
+          showMore: {},
+          tabActive: {
+            children: {
+              tab: {
+                children: {
+                  tabSecondaryActive: {},
+                },
               },
-            ],
+            },
           },
-          {
-            name: "menu_1",
-            children: [
-              {
-                name: "menu_2",
-                children: [
-                  {
-                    name: "menu_3",
-                  },
-                ],
+          menu_1: {
+            children: {
+              menu_2: {
+                children: {
+                  menu_3: {},
+                },
               },
-            ],
+            },
           },
-          {
-            name: "input",
-            children: [{ name: "inputSecondary" }],
+          input: {
+            children: {
+              inputSecondary: {},
+            },
           },
-          { name: "filter" },
-          { name: "tooltip" },
-          { name: "tmLogo" },
-        ],
+          filter: {},
+          tooltip: {},
+          tmLogo: {},
+        },
       },
-      { name: "slider" },
-      { name: "odd" },
-      { name: "modal" },
-    ],
+      slider: {},
+      odd: {},
+      modal: {},
+    },
   },
-  {
-    name: "accent",
-    children: [{ name: "button" }, { name: "oddActive" }],
+  accent: {
+    children: {
+      button: {},
+      oddActive: {},
+    },
   },
-];
+};
 
-window.SkinnerInstance = new SKT(createCss, config, null, target);
+
+const config = {
+  body: {
+    Background: {
+      color: "#101010",
+    },
+    borderRadius: 8,
+  },
+  accent: {
+    Background: {
+      color: "#A3D140",
+    },
+    borderRadius: 8,
+  },
+  button: {
+    Background: {
+      color: "#177B17",
+    },
+  },
+  buttonSecondary: {
+    Background: {
+      color: "#333",
+    },
+  },
+};
+
+window.SkinnerInstance = new SKT(createCss, configTree , config, null, target);
