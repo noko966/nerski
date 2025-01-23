@@ -264,13 +264,26 @@ class SKT {
    */
   createHTML() {
     // For each node in the object-based tree, create a div and attach a click
-    this.traverseObject(this._configTree, ({ name, data }) => {
+    const wrapperSkinner = document.createElement("div");
+    wrapperSkinner.className = "sk_toolbox";
+    const wrapperScroll = document.createElement("div");
+    wrapperScroll.className = "nik_skinner_control_wrapper";
+    wrapperSkinner.appendChild(wrapperScroll);
+    this._root.appendChild(wrapperSkinner);
+    this.traverseObject(this.getConfig(), ({ name, data }) => {
+
       const wrapper = document.createElement("div");
       wrapper.className = "sk_checkbox_wrapper";
       const chb = this.createCheckBox(name);
       wrapper.appendChild(chb.label);
-      
-      this._root.appendChild(wrapper);
+      console.log(data, name, 'asd');
+
+
+      const wrapperBg = document.createElement("div");
+      wrapperBg.className = "nik_skinner_control_group_picker";
+      wrapper.appendChild(wrapperBg);
+      wrapperBg.style.background = data.Background.color;
+      wrapperScroll.appendChild(wrapper);
 
       // On click, dispatch an action to update the node's background color randomly
       // nodeEl.addEventListener("click", () => {
@@ -574,7 +587,7 @@ body {
     z-index: 10;
 }
 
-.skinner_toolbox {
+.sk_toolbox {
     position: fixed;
     bottom: 0;
     left: 50%;
