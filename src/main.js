@@ -150,7 +150,6 @@ class Skinner {
         {
           name: "buttonSecondary",
           inherits: ["dominant", "body"],
-          // variation: 5,
         },
         {
           name: "navbar",
@@ -637,49 +636,50 @@ class Skinner {
     let _vb = this.verbalData(_essence);
     let _isCustomTextActive = this.skin[_vb.isCustomTxt];
     let essenceBg = this.skin[_vb.nameBg];
-    let essenceTxt;
-    if (_isCustomTextActive) {
-      essenceTxt = this.skin[_vb.nameTxt];
-    } else {
-      essenceTxt = guessVisibleColor(
+    if (!_isCustomTextActive) {
+      this.skin[_vb.nameTxt] = guessVisibleColor(
         tinycolor(this.skin[_vb.nameBg]).toHexString()
       );
     }
-    this.skin[_vb.nameTxt] = essenceTxt;
     this.skin[_vb.nameTxt2] = tinycolor
-      .mix(essenceTxt, essenceBg, 30)
+      .mix(this.skin[_vb.nameTxt], essenceBg, 30)
       .toHexString();
     this.skin[_vb.nameTxt3] = tinycolor
-      .mix(essenceTxt, essenceBg, 50)
+      .mix(this.skin[_vb.nameTxt], essenceBg, 50)
       .toHexString();
   }
 
   generateAccentss(essence) {
-    let _essence = essence;
-    let _vb = this.verbalData(_essence);
-    let _isCustomAccentActive = this.skin[_vb.isCustomAccent];
-    let _customAccentColor = this.skin[_vb.nameAccent];
-    if (_isCustomAccentActive) {
-      this.skin[_vb.nameAccent] = _customAccentColor;
-    } else {
-      this.skin[_vb.nameAccent] =
-        this.skin.accentBg || this.mergedConfig.accent.Background.color;
+    const _vd = this.verbalData(essence);
+
+    const isCustomAccentActive = this.skin[_vd.isCustomAccent];
+
+    if (!isCustomAccentActive) {
+      const accentColor =
+        essence === "accent" || essence === "button"
+          ? this.skin.bodyBg
+          : this.skin.accentBg || this.mergedConfig.accent.Background.color;
+
+      this.skin[_vd.nameAccent] = accentColor;
     }
-    this.skin[_vb.nameAccentTxt] = tinycolor(
-      guessVisibleColor(tinycolor(this.skin[_vb.nameAccent]).toHexString())
-    )
+
+    const baseAccentColor = this.skin[_vd.nameAccent];
+    const visibleColor = guessVisibleColor(
+      tinycolor(baseAccentColor).toHexString()
+    );
+
+    const accentTextColor = tinycolor(visibleColor)
       .setAlpha(this.defaults.txt.txt)
       .toRgbString();
+
+    this.skin[_vd.nameAccentTxt] = accentTextColor;
   }
 
   generateBorderss(essence) {
     let _essence = essence;
     let _vb = this.verbalData(_essence);
     let _isCustomBorderActive = this.skin[_vb.isCustomBorder];
-    let _customBorderColor = this.skin[_vb.nameBorder];
-    if (_isCustomBorderActive) {
-      this.skin[_vb.nameBorder] = _customBorderColor;
-    } else {
+    if (!_isCustomBorderActive) {
       this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
     }
   }
@@ -839,10 +839,8 @@ class Skinner {
         self.skin[verbalData.nameBg];
       self[verbalData.nameBg].picker2.style.background =
         self.skin[verbalData.nameG];
-      self[verbalData.nameBg].picker3.style.setProperty =
-        ("--bg", self.skin[verbalData.nameBg]);
-      self[verbalData.nameBg].picker3.style.setProperty =
-        ("--txt", self.skin[verbalData.nameTxt]);
+      self[verbalData.nameBg].picker3.style.background =
+        self.skin[verbalData.nameTxt];
       self[verbalData.nameBg].customAccentPckr.style.background =
         self.skin[verbalData.nameAccent];
 
@@ -1473,23 +1471,23 @@ class Skinner {
   updateControlFor(name) {
     let c = this.verbalData(name);
     this.essenceGroups[name].style.setProperty("--bg", this.skin[c.nameBg]);
-    this.essenceGroups[name].style.setProperty("--Txt", this.skin[c.nameTxt]);
+    this.essenceGroups[name].style.setProperty("--txt", this.skin[c.nameTxt]);
     this.essenceGroups[name].style.setProperty(
-      "--Accent",
+      "--acc",
       this.skin[c.nameAccent]
     );
     this.essenceGroups[name].style.setProperty(
-      "--AccentTxt",
+      "--accTxt",
       this.skin[c.nameAccentTxt]
     );
 
     this.essenceGroups[name].style.setProperty(
-      "--Border",
+      "--border",
       this.skin[c.nameBorder]
     );
 
     this.essenceGroups[name].style.setProperty(
-      "--Radius",
+      "--radius",
       this.skin[c.nameRadius]
     );
 
@@ -2118,9 +2116,9 @@ class Skinner {
     _label.appendChild(_labelSpan);
     // _label.appendChild(_labelArrow);
 
-    let pickerMainColor = this.skin[label + "Bg"];
-    let pickerGradientColor = this.skin[label + "G"];
-    let pickerTextColor = this.skin[label + "Txt"];
+    let pickerMainColor = this.skin[verbalData.nameBg];
+    let pickerGradientColor = this.skin[verbalData.nameG];
+    let pickerTextColor = this.skin[verbalData.nameTxt];
     let pickerBorderColor = this.skin[verbalData.nameBorder];
     let pickerCustomAccentColor = this.skin[verbalData.nameAccent]
       ? this.skin[verbalData.nameAccent]
@@ -2180,7 +2178,7 @@ class Skinner {
 
       isEnabledPckr = this.createColorBox(
         pickerMainColor,
-        "nik_skinner_control_group_picker",
+        "nik_skinner_control_group_picker variant_bg",
         pickerCallback
       );
       isEnabledControl.appendChild(isEnabledPckr);
@@ -2298,7 +2296,7 @@ class Skinner {
       isCustomTextControl.appendChild(chb.label);
       isCustomTextPckr = this.createColorBox(
         pickerTextColor,
-        "nik_skinner_control_group_picker",
+        "nik_skinner_control_group_picker variant_text",
         customTxtCb
       );
       isCustomTextControl.appendChild(isCustomTextPckr);
@@ -2330,7 +2328,7 @@ class Skinner {
       customAccentControl.appendChild(chb.label);
       customAccentPckr = this.createColorBox(
         pickerCustomAccentColor,
-        "nik_skinner_control_group_picker",
+        "nik_skinner_control_group_picker variant_accent",
         customAccentCb
       );
       customAccentControl.appendChild(customAccentPckr);
@@ -2363,7 +2361,7 @@ class Skinner {
       borderControl.appendChild(chb.label);
       borderPckr = this.createColorBox(
         pickerBorderColor,
-        "nik_skinner_control_group_picker",
+        "nik_skinner_control_group_picker variant_border",
         customBorderCb
       );
       borderControl.appendChild(borderPckr);
@@ -3083,7 +3081,6 @@ body {
   outline: 0;
   appearance: none;
   -webkit-appearance: none;
-  background: #11585d;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.314s;
@@ -3103,58 +3100,29 @@ body {
     transform: translate(50%, 50%) rotate(45deg);
 }
 
-.nik_skinner_control_group_picker.variant_border {
+.nik_skinner_control_group_picker {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.nik_skinner_control_group_picker.variant_border::before {
-  content: "";
-  background: var(--sk_dominantBg);
-  width: var(--control-picker-size-border);
-  height: var(--control-picker-size-border);
-  flex-shrink: 0;
+.nik_skinner_control_group_picker.variant_bg {
+  background: var(--bg) !important;
+}
+
+.nik_skinner_control_group_picker.variant_border {
+  background: var(--border) !important;
 }
 
 .nik_skinner_control_group_picker.variant_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 13px;
-  background: var(--bg) !important;
+  background: var(--txt) !important;
 }
 
 .nik_skinner_control_group_picker.variant_accent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 13px;
-  background: var(--bg) !important;
-}
-
-.nik_skinner_control_group_picker.variant_text::before {
-  /*content: "T";*/
-  color: var(--Txt);
-}
-
-.nik_skinner_control_group_picker.variant_accent::before {
-  content: "A";
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--Accent);
-  color: var(--AccentTxt);
-  display: block;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--acc) !important;
 }
 
 .nik_skinner_control_group_picker:hover {
-  background: #0f4448;
 }
 
 .nik_skinner_control_group_picker::-webkit-color-swatch-wrapper {
@@ -4469,304 +4437,5 @@ class AnglePicker {
     return degrees;
   }
 }
-
-window.colorsCasweb = {
-  body: {
-    Background: {
-      color: "#101010",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#A3D140",
-    },
-    borderRadius: 8,
-  },
-  button: {
-    Background: {
-      color: "#177B17",
-    },
-  },
-  buttonSecondary: {
-    Background: {
-      color: "#333",
-    },
-  },
-  dominant: {
-    Background: {
-      color: "#777",
-    },
-  },
-  card: {
-    Background: {
-      color: "#777",
-    },
-  },
-  game: {
-    Background: {
-      color: "#777",
-    },
-  },
-  jackpot: {
-    Background: {
-      color: "#777",
-    },
-  },
-  navbar: {
-    Background: {
-      color: "#333",
-    },
-  },
-  slider: {
-    Background: {
-      color: "#000",
-    },
-  },
-  header: {
-    Background: {
-      color: "#333",
-    },
-  },
-  headerSecondary: {
-    Background: {
-      color: "#333",
-    },
-  },
-  footer: {
-    Background: {
-      color: "#333",
-    },
-  },
-  subHeader: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tab: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tabActive: {
-    Background: {
-      color: "#333",
-    },
-  },
-  input: {
-    Background: {
-      color: "#333",
-    },
-  },
-  inputSecondary: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tooltip: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  filter: {
-    Background: {
-      color: "#333",
-    },
-  },
-  modal: {
-    Background: {
-      color: "#333",
-    },
-  },
-  login: {
-    Background: {
-      color: "#333",
-    },
-  },
-  register: {
-    Background: {
-      color: "#333",
-    },
-  },
-};
-
-window.colorsSport = {
-  body: {
-    Background: {
-      color: "#111111",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#ffb700",
-    },
-  },
-  dominant: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  button: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  buttonSecondary: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  navbar: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  slider: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  header: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  subHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  event: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  eventLive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  odd: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  oddActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  showMore: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  marketHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  collapse: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tab: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tabActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tabSecondaryActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_1: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_2: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_3: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  input: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  inputSecondary: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  filter: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tooltip: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  modal: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlip: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipStake: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipInput: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipButton: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipTab: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipTabActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tmLogo: {
-    Background: {
-      color: "#111111",
-    },
-  },
-};
 
 export { Skinner };

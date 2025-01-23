@@ -52,7 +52,7 @@ export default class SKStylePicker {
       {
         name: "default",
         cssPropValues: {
-          background: `var(--${_vd.nameBg})`,
+          background: `var(--${_vd.nameG})`,
           color: `var(--${_vd.nameTxt})`,
           radius: `var(--${_vd.nameRadius})`,
           border: null,
@@ -62,7 +62,7 @@ export default class SKStylePicker {
       {
         name: "glass",
         cssPropValues: {
-          background: `var(--${_vd.nameBg})`,
+          background: `var(--${_vd.nameG})`,
           color: `var(--${_vd.nameAccent})`,
           radius: `var(--${_vd.nameRadius})`,
           border: "",
@@ -82,7 +82,7 @@ export default class SKStylePicker {
       {
         name: "skeo",
         cssPropValues: {
-          background: `var(--${_vd.nameBg})`,
+          background: `var(--${_vd.nameG})`,
           color: `var(--${_vd.nameTxt})`,
           radius: `var(--${_vd.nameRadius})`,
           border: {
@@ -95,7 +95,7 @@ export default class SKStylePicker {
       {
         name: "underlined",
         cssPropValues: {
-          background: `var(--${_vd.nameBg})`,
+          background: `var(--${_vd.nameG})`,
           color: `var(--${_vd.nameTxt})`,
           radius: "0",
           border: {
@@ -499,10 +499,16 @@ display: flex;
 
     this.styleSwatchesWrapper = document.createElement("div");
     this.styleSwatchesWrapper.className = "sk_styles_wrapper sk_picker_scroll";
+    const actionsWrapper = document.createElement("div");
+    actionsWrapper.className = "sk_widget_footer_row";
+    this.applyAndClose = document.createElement("button");
+    this.applyAndClose.className = "sk_picker_btn variant_primary";
+    this.applyAndClose.innerText = "Apply";
 
     this.styles.forEach((st) => this.addStyleSwatch(st));
-
+    actionsWrapper.appendChild(this.applyAndClose);
     this.root.appendChild(themesBlock);
+    this.root.appendChild(actionsWrapper);
     themesBlock.appendChild(this.styleSwatchesWrapper);
     this.rootElement.appendChild(this.root);
   }
@@ -521,6 +527,9 @@ display: flex;
     let that = this;
     const { root, applyAndClose, inputEl } = this;
     this._eventBindings.push(
+      _.on(this.applyAndClose, "click", () => {
+        this.isOpen() ? this.hide() : this.show();
+      }),
       _.on(
         document,
         "keyup",
