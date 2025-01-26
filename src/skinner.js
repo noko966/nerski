@@ -419,6 +419,22 @@ class Skinner {
             " => ",
             newValue
           );
+
+          const groupObj = this.ui.essenceGroups[essenceName];
+          if (!groupObj) return;
+
+          const color = newValue.Background?.color;
+          if (color) {
+            groupObj.colorTriggerEl.style.backgroundColor = color;
+          }
+
+          const _isActive = newValue.Background && newValue.Background.isActive;
+          groupObj.groupEl.classList.toggle("state_active", !!_isActive);
+
+          groupObj.isActiveCheckboxEl.checked = !!_isActive;
+
+          const _isDark = newValue.Background && newValue.Background.isDark;
+          groupObj.isDarkCheckboxEl.checked = !!_isDark;
         });
       })
     );
@@ -550,7 +566,7 @@ class Skinner {
     label.className = "sk_chb_label " + (_cn ? _cn : "");
     label.htmlFor = _id;
     icon = document.createElement("i");
-    icon.className = "sk_chb ";
+    icon.className = "sk_chb";
     icon.innerHTML = this.ui.icons.chb;
     checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -559,7 +575,10 @@ class Skinner {
     label.appendChild(checkbox);
     label.appendChild(icon);
 
-    return label;
+    return {
+      el: label,
+      chb: checkbox,
+    };
   }
 
   buildUI() {
@@ -568,7 +587,7 @@ class Skinner {
     this.ui.header = document.createElement("div");
     this.ui.header.className = "sk_header";
     this.ui.content = document.createElement("div");
-    this.ui.content.className = "sk_content";
+    this.ui.content.className = "sk_content sk_scrollbar";
 
     this.root.appendChild(this.ui.root);
     this.ui.root.appendChild(this.ui.header);
@@ -576,19 +595,121 @@ class Skinner {
 
     this.essencesArray.forEach((essenceObj) => {
       const name = essenceObj.name;
+      const essenceState = this.state[name];
       const group = document.createElement("div");
       group.className = "sk_control_group";
+      const groupLabel = document.createElement("span");
+      groupLabel.className = "sk_control_group_label";
+      groupLabel.innerText = name;
+      const groupChild1 = document.createElement("div");
+      groupChild1.className = "sk_checkbox_wrapper";
+      const groupChild2 = document.createElement("div");
+      groupChild2.className = "sk_checkbox_wrapper";
+      const chbRef = this.createCheckBox(name + "IsActive");
 
-      const isActive = document.createElement("div");
-      isActive.className = "sk_control_group";
+      if (essenceState.Background && essenceState.Background.isActive) {
+        group.classList.add("state_active");
+      }
 
-      const chb = this.createCheckBox(name);
-      isActive.appendChild(chb);
-      group.appendChild(isActive);
+      chbRef.chb.checked = !!(
+        essenceState.Background && essenceState.Background.isActive
+      );
+
+      chbRef.chb.addEventListener("change", (e) => {
+        const newVal = e.target.checked;
+        this.updateEssenceState(name, {
+          Background: {
+            isActive: newVal,
+          },
+        });
+      });
+
+      const backgroundPickerEl = document.createElement("div");
+      backgroundPickerEl.className = "sk_picker_trigger";
+
+      if (essenceState.Background && essenceState.Background.color) {
+        backgroundPickerEl.style.backgroundColor =
+          essenceState.Background.color;
+      }
+
+      backgroundPickerEl.addEventListener("click", (evt) => {
+        this.handlePicker(evt, name, (newColor) => {
+          this.updateEssenceState(name, {
+            Background: {
+              color: newColor,
+            },
+          });
+          backgroundPickerEl.style.backgroundColor = newColor;
+        });
+      });
+
+      const chbIsDarkRef = this.createCheckBox(name + "isDark");
+
+      chbIsDarkRef.chb.checked = !!(
+        essenceState.Background && essenceState.Background.isDark
+      );
+
+      chbIsDarkRef.chb.addEventListener("change", (e) => {
+        const newVal = e.target.checked;
+        this.updateEssenceState(name, {
+          Background: {
+            isDark: newVal,
+          },
+        });
+      });
+
+      groupChild1.appendChild(chbRef.el);
+      groupChild1.appendChild(groupLabel);
+      groupChild2.appendChild(backgroundPickerEl);
+      groupChild2.appendChild(chbIsDarkRef.el);
+
+      group.appendChild(groupChild1);
+      group.appendChild(groupChild2);
       this.ui.content.appendChild(group);
-      this.ui.essenceGroups[name] = group;
+
+      this.ui.essenceGroups[name] = {
+        groupEl: group,
+        isActiveCheckboxEl: chbRef.chb,
+        isDarkCheckboxEl: chbIsDarkRef.chb,
+        colorTriggerEl: backgroundPickerEl,
+      };
     });
   }
+
+  handlePicker(event, essenceName, onChangeCallback) {
+    if (this.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+
+    // Extract the current color from your state
+    const essenceState = this.state[essenceName];
+    const currentColor = essenceState.Background
+      ? essenceState.Background.color
+      : "#000000";
+
+    const x = event.clientX;
+    const y = event.clientY;
+
+    const SKPickerInstance = new SKPicker(null, currentColor);
+    SKPickerInstance.init();
+    SKPickerInstance.show(x, y);
+
+    this.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("change", (color, source, instance) => {
+      onChangeCallback(color);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      this.pickerInstance = null;
+    });
+  }
+
+  // updateEssenceUI(name) {
+  //   this.ui.essenceGroups[name].className =
+  // }
 
   addStyle() {
     const css = `
@@ -751,24 +872,15 @@ body {
 }
 
 .sk_header {
-    position: fixed;
-    top: 0px;
-    left: 50%;
-    width: auto;
-    transform: translateX(-50%);
-    z-index: 100;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt);
-    border-radius: 8px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border: 1px solid var(--sk_dominantBgHover);
-        box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
-        display: none;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: var(--sk_dominantBg2);
+  color: var(--sk_dominantTxt);
+  border-bottom: 1px solid var(--sk_dominantBgHover);
+  height: 30px;
 }
 
 .skinner_ico {
@@ -961,7 +1073,14 @@ body {
   opacity: 0.5;
 }
 
-.nik_skinner_control_group.state_active {
+.sk_control_group_label{
+  font-size: 11px;
+  width: 80px;
+  text-transform: capitalize;
+  flex-shrink: 0;
+}
+
+.sk_control_group.state_active {
   box-shadow: -5px 0px 0 0px var(--sk_accentBg);
   opacity: 1;
   --grp_opacity: 1;
@@ -980,7 +1099,7 @@ body {
   transform: scale(1.1);
 }
 
-.nik_skinner_control_group_picker {
+.sk_picker_trigger {
   width: var(--control-picker-size);
   height: var(--control-picker-size);
   flex-shrink: 0;
@@ -996,7 +1115,7 @@ body {
   overflow: hidden;
 }
 
-.nik_skinner_control_group_picker::before{
+.sk_picker_trigger::before{
     content: " ";
     width: 10px;
     height: 10px;
@@ -1461,22 +1580,22 @@ body {
   flex-shrink: 0;
 }
 
-.nik_skinner_scrollbar::-webkit-scrollbar {
+.sk_scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.nik_skinner_scrollbar::-webkit-scrollbar-track {
+.sk_scrollbar::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.nik_skinner_scrollbar::-webkit-scrollbar-thumb {
+.sk_scrollbar::-webkit-scrollbar-thumb {
   background: var(--sk_dominantBg2);
   border-radius: 2px;
 }
 
 /* Handle on hover */
-.nik_skinner_scrollbar::-webkit-scrollbar-thumb:hover {
+.sk_scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--sk_dominantBg2);
 }
 
