@@ -1,4 +1,4 @@
-import { SKT } from "./skTree.js";
+import { Skinner } from "./skinner.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
@@ -836,6 +836,19 @@ const configTree = {
   },
 };
 
+const starterConfig = {
+  body: {
+    Background: {
+      color: "#111111",
+    },
+    borderRadius: 8,
+  },
+  accent: {
+    Background: {
+      color: "#ffb700",
+    },
+  },
+};
 
 const config = {
   body: {
@@ -855,11 +868,7 @@ const config = {
       color: "#177B17",
     },
   },
-  buttonSecondary: {
-    Background: {
-      color: "#333",
-    },
-  },
 };
 
-window.SkinnerInstance = new SKT(createCss, configTree , config, null, target);
+window.SkinnerInstance = new Skinner(createCss, config, null, target);
+window.SkinnerInstance.init();
