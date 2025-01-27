@@ -205,6 +205,33 @@ class Skinner {
       borderRadius: 2,
     };
 
+    this.essenceSteps = {
+      dark: {
+        1: 3,
+        2: 6,
+        3: 9,
+        4: 12,
+        5: 16,
+      },
+      light: {
+        1: 3,
+        2: 10,
+        3: 13,
+        4: 15,
+        5: 18,
+      },
+      alpha: {
+        1: 0.7,
+        2: 0.5,
+        3: 0.3,
+      },
+      txt: {
+        1: 0.9,
+        2: 0.6,
+        3: 0.4,
+      },
+    };
+
     this.tree = this.arrayToTree(this.essencesArray);
     const a = this.findNodeByName(this.tree, "accent");
     const b = this.findNodeByName(this.tree, "dominant");
@@ -212,12 +239,6 @@ class Skinner {
 
     this.tree.forEach((rn) => {
       this.rootNodes.push(rn.name);
-    });
-
-    this.tree.forEach((rn) => {
-      this.traverseFromNode(rn, (n) => {
-        console.log(n);
-      });
     });
 
     this.state = {};
@@ -236,7 +257,7 @@ class Skinner {
       this.state[essenceName] = merged;
     });
 
-    console.log("Final state:", this.state);
+    // console.log("Final state:", this.state);
   }
 
   generateUiPalette(colors) {
@@ -369,14 +390,97 @@ class Skinner {
   }
 
   updateEssenceState(essenceName, partialConfig) {
+    const t = this;
     const currentConfig = this.state[essenceName];
     const merged = this.deepMerge(currentConfig, partialConfig);
 
     this.state[essenceName] = merged;
 
+    const startNode = this.findNodeByName(this.tree, essenceName);
+
+    // this.updateChildrenInheritance(essenceName);
+
     this.emit("statechange", {
       essenceName,
       newValue: merged,
+    });
+  }
+
+  updateChildrenState(nodeName) {
+    const t = this;
+    const startNode = this.findNodeByName(this.tree, nodeName);
+    this.traverseFromNode(startNode, (node) => {
+      if (node.parent) {
+        const childName = node.name;
+        const parentName = node.parent;
+
+        const childConfig = t.state[childName];
+        const parentConfig = t.state[parentName];
+        if (!childConfig.Background.isActive) {
+          const parentColor = parentConfig.Background.color;
+          const parentIsDark = parentConfig.Background.isDark;
+          t.updateEssenceState(childName, {
+            Background: {
+              isDark: parentIsDark,
+            },
+          });
+          if (parentIsDark) {
+            t.updateEssenceState(childName, {
+              Background: {
+                color: tinycolor(parentColor).darken(2).toHexString(),
+              },
+            });
+          } else {
+            t.updateEssenceState(childName, {
+              Background: {
+                color: tinycolor(parentColor).lighten(2).toHexString(),
+              },
+            });
+          }
+        }
+      }
+    });
+  }
+
+  updateChildrenInheritance() {
+    this.rootNodes.forEach((rn) => {
+      const t = this;
+      const startNode = this.findNodeByName(this.tree, rn);
+      if (!startNode) {
+        console.warn("No node found for:", nodeName);
+        return;
+      }
+
+      this.traverseFromNode(startNode, (node) => {
+        // If there's a parent, check inheritance conditions
+        if (node.parent) {
+          const childName = node.name;
+          const parentName = node.parent;
+
+          const childConfig = this.state[childName];
+          const parentConfig = this.state[parentName];
+          if (!childConfig || !parentConfig) return;
+
+          if (childConfig.Background && !childConfig.Background.isActive) {
+            const parentColor = parentConfig.Background.color;
+            const isDarkParent = parentConfig.Background.isDark;
+
+            let step;
+            let derivedColor;
+            if (isDarkParent) {
+              step = t.essenceSteps.dark[1];
+              derivedColor = tinycolor(parentColor).lighten(step).toHexString();
+            } else {
+              step = t.essenceSteps.light[1];
+              derivedColor = tinycolor(parentColor).darken(step).toHexString();
+            }
+            childConfig.Background.isDark = childConfig.Background.color =
+              isDarkParent;
+
+            // **** Emit statechange for the child we just updated ****
+          }
+        }
+      });
     });
   }
 
@@ -453,12 +557,14 @@ class Skinner {
   }
 
   traverseFromNode(node, callback) {
+    console.log(node, "asd");
+
     const t = this;
     callback(node);
 
     if (node.children && node.children.length > 0) {
       for (const child of node.children) {
-        t.traverseFromNode(child, callback);
+        this.traverseFromNode(child, callback);
       }
     }
   }
@@ -530,6 +636,7 @@ class Skinner {
 
   init() {
     this.addStyle();
+    this.updateChildrenInheritance();
     this.buildUI();
     this.generateUiPalette(this.ui.colors["dark"]);
     this.bindEvents();
@@ -651,6 +758,7 @@ class Skinner {
 
       chbIsDarkRef.chb.addEventListener("change", (e) => {
         const newVal = e.target.checked;
+
         this.updateEssenceState(name, {
           Background: {
             isDark: newVal,
@@ -675,6 +783,8 @@ class Skinner {
       };
     });
   }
+
+  generateEssenceSkin() {}
 
   handlePicker(event, essenceName, onChangeCallback) {
     if (this.pickerInstance) {

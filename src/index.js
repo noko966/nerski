@@ -863,11 +863,6 @@ const config = {
     },
     borderRadius: 8,
   },
-  button: {
-    Background: {
-      color: "#177B17",
-    },
-  },
 };
 
 window.SkinnerInstance = new Skinner(createCss, config, null, target);
