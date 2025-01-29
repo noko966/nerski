@@ -178,6 +178,7 @@ class Skinner {
       },
     ];
 
+
     this.configBlueprint = {
       Background: {
         isDark: false,
@@ -233,9 +234,6 @@ class Skinner {
     };
 
     this.tree = this.arrayToTree(this.essencesArray);
-    const a = this.findNodeByName(this.tree, "accent");
-    const b = this.findNodeByName(this.tree, "dominant");
-    const c = this.findNodeByName(this.tree, "button");
 
     this.tree.forEach((rn) => {
       this.rootNodes.push(rn.name);
@@ -257,8 +255,68 @@ class Skinner {
       this.state[essenceName] = merged;
     });
 
-    // console.log("Final state:", this.state);
+
   }
+
+  generateFallbackBackground(fbNode) {
+    const _t = this;
+    const { isDark, color, isActive } = _t.state[fbNode].Background;
+    const _isDark = isDark;
+    const _step = _isDark ? _t.essenceSteps.dark[1] : _t.essenceSteps.light[1];
+    const _color = _isDark ? tinycolor(color).darken(_step).toHexString() : tinycolor(color).lighten(_step).toHexString();
+    return {
+      color: _color,
+      isDark: _isDark,
+      isActive: false
+    }
+  }
+
+  updateControl(node) {
+    const _t = this;
+    const _name = node.name;
+
+    const { isDark, color, isActive } = _t.state[_name].Background;
+    const groupObj = _t.ui.essenceGroups[_name];
+
+    groupObj.groupEl.classList.toggle("state_active", !!isActive);
+    groupObj.isActiveCheckboxEl.checked = !!isActive;
+    groupObj.isDarkCheckboxEl.checked = !!isDark;
+    groupObj.colorTriggerEl.style.backgroundColor = color;
+  }
+
+  buildFullState(node) {
+    const _t = this;
+    const _name = node.name;
+    const { isActive, isDark, color } = _t.state[_name].Background;
+
+    if (!isActive) {
+      const _parentName = node.parent;
+      this.generateFallbackBackground(_parentName);
+      _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
+    }
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(n => {
+        _t.buildFullState(n);
+      })
+    }
+
+  }
+
+
+
+  syncUiWithState(node) {
+    const _t = this;
+    _t.updateControl(node);
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(n => {
+        _t.syncUiWithState(n);
+      })
+    }
+
+  }
+
+
+
 
   generateUiPalette(colors) {
     const UISkin = {};
@@ -390,9 +448,11 @@ class Skinner {
   }
 
   updateEssenceState(essenceName, partialConfig) {
+
     const t = this;
     const currentConfig = this.state[essenceName];
     const merged = this.deepMerge(currentConfig, partialConfig);
+    console.log(merged);
 
     this.state[essenceName] = merged;
 
@@ -403,84 +463,6 @@ class Skinner {
     this.emit("statechange", {
       essenceName,
       newValue: merged,
-    });
-  }
-
-  updateChildrenState(nodeName) {
-    const t = this;
-    const startNode = this.findNodeByName(this.tree, nodeName);
-    this.traverseFromNode(startNode, (node) => {
-      if (node.parent) {
-        const childName = node.name;
-        const parentName = node.parent;
-
-        const childConfig = t.state[childName];
-        const parentConfig = t.state[parentName];
-        if (!childConfig.Background.isActive) {
-          const parentColor = parentConfig.Background.color;
-          const parentIsDark = parentConfig.Background.isDark;
-          t.updateEssenceState(childName, {
-            Background: {
-              isDark: parentIsDark,
-            },
-          });
-          if (parentIsDark) {
-            t.updateEssenceState(childName, {
-              Background: {
-                color: tinycolor(parentColor).darken(2).toHexString(),
-              },
-            });
-          } else {
-            t.updateEssenceState(childName, {
-              Background: {
-                color: tinycolor(parentColor).lighten(2).toHexString(),
-              },
-            });
-          }
-        }
-      }
-    });
-  }
-
-  updateChildrenInheritance() {
-    this.rootNodes.forEach((rn) => {
-      const t = this;
-      const startNode = this.findNodeByName(this.tree, rn);
-      if (!startNode) {
-        console.warn("No node found for:", nodeName);
-        return;
-      }
-
-      this.traverseFromNode(startNode, (node) => {
-        // If there's a parent, check inheritance conditions
-        if (node.parent) {
-          const childName = node.name;
-          const parentName = node.parent;
-
-          const childConfig = this.state[childName];
-          const parentConfig = this.state[parentName];
-          if (!childConfig || !parentConfig) return;
-
-          if (childConfig.Background && !childConfig.Background.isActive) {
-            const parentColor = parentConfig.Background.color;
-            const isDarkParent = parentConfig.Background.isDark;
-
-            let step;
-            let derivedColor;
-            if (isDarkParent) {
-              step = t.essenceSteps.dark[1];
-              derivedColor = tinycolor(parentColor).lighten(step).toHexString();
-            } else {
-              step = t.essenceSteps.light[1];
-              derivedColor = tinycolor(parentColor).darken(step).toHexString();
-            }
-            childConfig.Background.isDark = childConfig.Background.color =
-              isDarkParent;
-
-            // **** Emit statechange for the child we just updated ****
-          }
-        }
-      });
     });
   }
 
@@ -524,21 +506,21 @@ class Skinner {
             newValue
           );
 
-          const groupObj = this.ui.essenceGroups[essenceName];
-          if (!groupObj) return;
+          // const groupObj = this.ui.essenceGroups[essenceName];
+          // if (!groupObj) return;
 
-          const color = newValue.Background?.color;
-          if (color) {
-            groupObj.colorTriggerEl.style.backgroundColor = color;
-          }
+          // const color = newValue.Background?.color;
+          // if (color) {
+          //   groupObj.colorTriggerEl.style.backgroundColor = color;
+          // }
 
-          const _isActive = newValue.Background && newValue.Background.isActive;
-          groupObj.groupEl.classList.toggle("state_active", !!_isActive);
+          // const _isActive = newValue.Background && newValue.Background.isActive;
+          // groupObj.groupEl.classList.toggle("state_active", !!_isActive);
 
-          groupObj.isActiveCheckboxEl.checked = !!_isActive;
+          // groupObj.isActiveCheckboxEl.checked = !!_isActive;
 
-          const _isDark = newValue.Background && newValue.Background.isDark;
-          groupObj.isDarkCheckboxEl.checked = !!_isDark;
+          // const _isDark = newValue.Background && newValue.Background.isDark;
+          // groupObj.isDarkCheckboxEl.checked = !!_isDark;
         });
       })
     );
@@ -557,7 +539,6 @@ class Skinner {
   }
 
   traverseFromNode(node, callback) {
-    console.log(node, "asd");
 
     const t = this;
     callback(node);
@@ -636,12 +617,82 @@ class Skinner {
 
   init() {
     this.addStyle();
-    this.updateChildrenInheritance();
     this.buildUI();
+    this.tree.forEach(rn => {
+      this.buildFullState(rn);
+      this.syncUiWithState(rn);
+      this.buildSkin(rn);
+      this.updateCSS(rn);
+    })
     this.generateUiPalette(this.ui.colors["dark"]);
     this.bindEvents();
     this.emit("init");
   }
+
+  updateSkin(node) {
+    const _t = this;
+    const _name = node.name;
+    const _vd = _t.verbalData(_name);
+    const BackgroundState = _t.state[_name].Background;
+
+    _t.skin[_vd.nameBg] = BackgroundState.color;
+  }
+
+  buildSkin(node) {
+    const _t = this;
+    _t.updateSkin(node);
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(n => {
+        _t.buildSkin(n);
+      })
+    }
+
+  }
+
+  updateCSS(node){
+    const _t = this;
+    const _name = node.name;
+
+    const _vd = _t.verbalData(_name);
+    const _id = `sk_style_elem_${_name}`;
+    let style = document.getElementById(_id);
+    if(!style) {
+      style = document.createElement('style');
+      style.id = _id;
+      _t.root.appendChild(style);
+
+    }
+
+    const backgrouns = ['nameBg']
+    let css = '';
+    backgrouns.forEach(bg => {
+      css += `
+    --${_vd[bg]}: --${_t.skin[_vd[bg]]};
+    `
+    })
+
+    style.innerHTML = css;
+
+  }
+
+  rebuild(name) {
+    const _t = this;
+    const node = _t.findNodeByName(_t.tree, name);
+    _t.buildFullState(node);
+    _t.syncUiWithState(node);
+    _t.updateSkin(node);
+    _t.updateCSS(node);
+
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(n => {
+        _t.rebuild(n.name);
+      
+      })
+    }
+
+  }
+
+
 
   arrayToTree = (arr = []) => {
     const map = {};
@@ -729,15 +780,11 @@ class Skinner {
             isActive: newVal,
           },
         });
+        this.rebuild(name);
       });
 
       const backgroundPickerEl = document.createElement("div");
       backgroundPickerEl.className = "sk_picker_trigger";
-
-      if (essenceState.Background && essenceState.Background.color) {
-        backgroundPickerEl.style.backgroundColor =
-          essenceState.Background.color;
-      }
 
       backgroundPickerEl.addEventListener("click", (evt) => {
         this.handlePicker(evt, name, (newColor) => {
@@ -746,14 +793,14 @@ class Skinner {
               color: newColor,
             },
           });
-          backgroundPickerEl.style.backgroundColor = newColor;
+          this.rebuild(name);
         });
       });
 
       const chbIsDarkRef = this.createCheckBox(name + "isDark");
 
       chbIsDarkRef.chb.checked = !!(
-        essenceState.Background && essenceState.Background.isDark
+        essenceState.Background.isDark
       );
 
       chbIsDarkRef.chb.addEventListener("change", (e) => {
@@ -764,6 +811,8 @@ class Skinner {
             isDark: newVal,
           },
         });
+        this.rebuild(name);
+
       });
 
       groupChild1.appendChild(chbRef.el);
@@ -784,7 +833,7 @@ class Skinner {
     });
   }
 
-  generateEssenceSkin() {}
+  generateEssenceSkin() { }
 
   handlePicker(event, essenceName, onChangeCallback) {
     if (this.pickerInstance) {
@@ -794,9 +843,7 @@ class Skinner {
 
     // Extract the current color from your state
     const essenceState = this.state[essenceName];
-    const currentColor = essenceState.Background
-      ? essenceState.Background.color
-      : "#000000";
+    const currentColor = essenceState.Background.color
 
     const x = event.clientX;
     const y = event.clientY;

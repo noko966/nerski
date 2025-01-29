@@ -491,7 +491,6 @@ display: flex;
         const c = _that._color;
         // const { lastColor, currentColor } = _root.preview;
         const _sv = tinycolor(c).toHsv();
-        console.log(_sv);
 
         // Update the input field only if the user is currently not typing
         if (_that._recalc) {
