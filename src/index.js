@@ -766,8 +766,8 @@ function setOrUpdateIframeCss(cssStyle, target) {
   styleElement.innerHTML = cssStyle;
 }
 
-// const demo = new ViewDemoEuropean();
-// demo.init();
+const demo = new ViewDemoEuropean();
+demo.init();
 // const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
 // const target = document.querySelector(".demo_body").parentElement;
 const target = document.body;

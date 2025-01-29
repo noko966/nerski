@@ -208,18 +208,18 @@ class Skinner {
 
     this.essenceSteps = {
       dark: {
-        1: 3,
-        2: 6,
-        3: 9,
-        4: 12,
-        5: 16,
+        nameBgHov: 3,
+        nameBg2: 6,
+        nameBg2Hov: 9,
+        nameBg3: 12,
+        nameBg3Hov: 16,
       },
       light: {
-        1: 3,
-        2: 10,
-        3: 13,
-        4: 15,
-        5: 18,
+        nameBgHov: 3,
+        nameBg2: 7,
+        nameBg2Hov: 10,
+        nameBg3: 13,
+        nameBg3Hov: 16,
       },
       alpha: {
         1: 0.7,
@@ -262,7 +262,7 @@ class Skinner {
     const _t = this;
     const { isDark, color, isActive } = _t.state[fbNode].Background;
     const _isDark = isDark;
-    const _step = _isDark ? _t.essenceSteps.dark[1] : _t.essenceSteps.light[1];
+    const _step = _isDark ? _t.essenceSteps.dark.nameBgHov : _t.essenceSteps.light.nameBgHov;
     const _color = _isDark ? tinycolor(color).darken(_step).toHexString() : tinycolor(color).lighten(_step).toHexString();
     return {
       color: _color,
@@ -284,6 +284,7 @@ class Skinner {
     groupObj.colorTriggerEl.style.backgroundColor = color;
   }
 
+
   buildFullState(node) {
     const _t = this;
     const _name = node.name;
@@ -299,9 +300,7 @@ class Skinner {
         _t.buildFullState(n);
       })
     }
-
   }
-
 
 
   syncUiWithState(node) {
@@ -314,7 +313,6 @@ class Skinner {
     }
 
   }
-
 
 
 
@@ -622,20 +620,54 @@ class Skinner {
       this.buildFullState(rn);
       this.syncUiWithState(rn);
       this.buildSkin(rn);
-      this.updateCSS(rn);
+      this.buildCSS(rn);
     })
     this.generateUiPalette(this.ui.colors["dark"]);
     this.bindEvents();
     this.emit("init");
   }
 
+  getShadeStep(color, isDark, index) {
+    const _t = this;
+    const _step = isDark ? _t.essenceSteps.dark[index] : _t.essenceSteps.light[index];
+    return isDark ? tinycolor(color).darken(_step).toHexString() : tinycolor(color).lighten(_step).toHexString();
+  }
+
+  createBackgrounds(name){
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const BackgroundState = _t.state[_name].Background;
+    const _color = BackgroundState.color;
+    _t.skin[_vd.nameBg] = _color;
+    const _isDark = BackgroundState.isDark;
+    const backgrouns = ['nameBgHov', 'nameBg2', 'nameBg2Hov', 'nameBg3', 'nameBg3Hov'];
+
+    backgrouns.forEach((b) => {
+      _t.skin[_vd[b]] = _t.getShadeStep(_color, _isDark, b);
+    })
+  }
+
+  createGradients(name){
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const BackgroundState = _t.state[_name].Background;
+    const GradientState = _t.state[_name].Gradient;
+    if(!GradientState.isActive) {
+      const _color = BackgroundState.color;
+      _t.skin[_vd.nameG] = _color;
+    }
+    
+
+  }
+
   updateSkin(node) {
     const _t = this;
     const _name = node.name;
-    const _vd = _t.verbalData(_name);
-    const BackgroundState = _t.state[_name].Background;
+    _t.createBackgrounds(_name);
+    _t.createGradients(_name);
 
-    _t.skin[_vd.nameBg] = BackgroundState.color;
   }
 
   buildSkin(node) {
@@ -646,33 +678,49 @@ class Skinner {
         _t.buildSkin(n);
       })
     }
+  }
+
+  buildCSS(node) {
+    const _t = this;
+    _t.updateCSS(node);
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(n => {
+        _t.buildCSS(n);
+      })
+    }
 
   }
 
-  updateCSS(node){
+  updateCSS(node) {
     const _t = this;
     const _name = node.name;
 
     const _vd = _t.verbalData(_name);
     const _id = `sk_style_elem_${_name}`;
     let style = document.getElementById(_id);
-    if(!style) {
+    if (!style) {
       style = document.createElement('style');
       style.id = _id;
       _t.root.appendChild(style);
 
     }
 
-    const backgrouns = ['nameBg']
+    const backgrouns = ['nameBg', 'nameBgHov', 'nameBg2', 'nameBg2Hov', 'nameBg3', 'nameBg3Hov'];
     let css = '';
     backgrouns.forEach(bg => {
-      css += `
-    --${_vd[bg]}: --${_t.skin[_vd[bg]]};
-    `
+      css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`
     })
 
-    style.innerHTML = css;
+    css += `--${_vd.nameG}: ${_t.skin[_vd.nameG]};\n`
 
+    style.innerHTML = _t.wrapInRootTag(':root', css);
+
+  }
+
+  wrapInRootTag(tag, css){
+    const _tag = tag || ':root';
+
+    return `${_tag}{\n${css}}`
   }
 
   rebuild(name) {
@@ -682,11 +730,10 @@ class Skinner {
     _t.syncUiWithState(node);
     _t.updateSkin(node);
     _t.updateCSS(node);
-
     if (node.children && node.children.length > 0) {
       node.children.forEach(n => {
         _t.rebuild(n.name);
-      
+
       })
     }
 
