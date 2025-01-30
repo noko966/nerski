@@ -86,6 +86,7 @@ class Skinner {
       },
       {
         name: "buttonSecondary",
+
         parent: "dominant",
       },
       {
@@ -178,7 +179,6 @@ class Skinner {
       },
     ];
 
-
     this.configBlueprint = {
       Background: {
         isDark: false,
@@ -188,6 +188,7 @@ class Skinner {
       Gradient: {
         isActive: false,
         angle: 0,
+        stops: [],
         color: null,
         type: "linear",
       },
@@ -254,21 +255,23 @@ class Skinner {
 
       this.state[essenceName] = merged;
     });
-
-
   }
 
   generateFallbackBackground(fbNode) {
     const _t = this;
     const { isDark, color, isActive } = _t.state[fbNode].Background;
     const _isDark = isDark;
-    const _step = _isDark ? _t.essenceSteps.dark.nameBgHov : _t.essenceSteps.light.nameBgHov;
-    const _color = _isDark ? tinycolor(color).darken(_step).toHexString() : tinycolor(color).lighten(_step).toHexString();
+    const _step = _isDark
+      ? _t.essenceSteps.dark.nameBgHov
+      : _t.essenceSteps.light.nameBgHov;
+    const _color = _isDark
+      ? tinycolor(color).darken(_step).toHexString()
+      : tinycolor(color).lighten(_step).toHexString();
     return {
       color: _color,
       isDark: _isDark,
-      isActive: false
-    }
+      isActive: false,
+    };
   }
 
   updateControl(node) {
@@ -284,7 +287,6 @@ class Skinner {
     groupObj.colorTriggerEl.style.backgroundColor = color;
   }
 
-
   buildFullState(node) {
     const _t = this;
     const _name = node.name;
@@ -296,25 +298,21 @@ class Skinner {
       _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
     }
     if (node.children && node.children.length > 0) {
-      node.children.forEach(n => {
+      node.children.forEach((n) => {
         _t.buildFullState(n);
-      })
+      });
     }
   }
-
 
   syncUiWithState(node) {
     const _t = this;
     _t.updateControl(node);
     if (node.children && node.children.length > 0) {
-      node.children.forEach(n => {
+      node.children.forEach((n) => {
         _t.syncUiWithState(n);
-      })
+      });
     }
-
   }
-
-
 
   generateUiPalette(colors) {
     const UISkin = {};
@@ -446,7 +444,6 @@ class Skinner {
   }
 
   updateEssenceState(essenceName, partialConfig) {
-
     const t = this;
     const currentConfig = this.state[essenceName];
     const merged = this.deepMerge(currentConfig, partialConfig);
@@ -537,7 +534,6 @@ class Skinner {
   }
 
   traverseFromNode(node, callback) {
-
     const t = this;
     callback(node);
 
@@ -616,12 +612,12 @@ class Skinner {
   init() {
     this.addStyle();
     this.buildUI();
-    this.tree.forEach(rn => {
+    this.tree.forEach((rn) => {
       this.buildFullState(rn);
       this.syncUiWithState(rn);
       this.buildSkin(rn);
       this.buildCSS(rn);
-    })
+    });
     this.generateUiPalette(this.ui.colors["dark"]);
     this.bindEvents();
     this.emit("init");
@@ -629,11 +625,15 @@ class Skinner {
 
   getShadeStep(color, isDark, index) {
     const _t = this;
-    const _step = isDark ? _t.essenceSteps.dark[index] : _t.essenceSteps.light[index];
-    return isDark ? tinycolor(color).darken(_step).toHexString() : tinycolor(color).lighten(_step).toHexString();
+    const _step = isDark
+      ? _t.essenceSteps.dark[index]
+      : _t.essenceSteps.light[index];
+    return isDark
+      ? tinycolor(color).darken(_step).toHexString()
+      : tinycolor(color).lighten(_step).toHexString();
   }
 
-  createBackgrounds(name){
+  createBackgrounds(name) {
     const _t = this;
     const _name = name;
     const _vd = _t.verbalData(_name);
@@ -641,42 +641,120 @@ class Skinner {
     const _color = BackgroundState.color;
     _t.skin[_vd.nameBg] = _color;
     const _isDark = BackgroundState.isDark;
-    const backgrouns = ['nameBgHov', 'nameBg2', 'nameBg2Hov', 'nameBg3', 'nameBg3Hov'];
+    const backgrouns = [
+      "nameBgHov",
+      "nameBg2",
+      "nameBg2Hov",
+      "nameBg3",
+      "nameBg3Hov",
+    ];
 
     backgrouns.forEach((b) => {
       _t.skin[_vd[b]] = _t.getShadeStep(_color, _isDark, b);
-    })
+    });
   }
 
-  createGradients(name){
+  createGradients(name) {
     const _t = this;
     const _name = name;
     const _vd = _t.verbalData(_name);
     const BackgroundState = _t.state[_name].Background;
     const GradientState = _t.state[_name].Gradient;
-    if(!GradientState.isActive) {
+    const angle = GradientState.angle;
+    const type = GradientState.type;
+
+    if (GradientState.isActive) {
+      const stops =
+        GradientState.stops && GradientState.stops.length > 0
+          ? GradientState.stops
+          : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+      GradientState.stops = stops;
+      let str = "";
+      const stopsString = stops.map((s) => s).join(", ");
+      if (type === "linear") {
+        str = `linear-gradient(${angle}deg, ${stopsString})`;
+      } else if (type === "radial") {
+        str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+      } else if (type === "conic") {
+        str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+      }
+      _t.skin[_vd.nameG] = str;
+    } else {
       const _color = BackgroundState.color;
       _t.skin[_vd.nameG] = _color;
     }
-    
-
   }
+
+  createTexts(name) {
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const TextState = _t.state[_name].Text;
+    const BackgroundState = _t.state[_name].Background;
+    let { isActive, color } = TextState;
+    let bg = BackgroundState.color;
+    if (!isActive) {
+      _t.skin[_vd.nameTxt] = guessVisibleColor(tinycolor(bg).toHexString());
+    }
+    _t.skin[_vd.nameTxt2] = tinycolor
+      .mix(_t.skin[_vd.nameTxt], bg, 30)
+      .toHexString();
+
+    _t.skin[_vd.nameTxt3] = tinycolor
+      .mix(_t.skin[_vd.nameTxt], bg, 50)
+      .toHexString();
+  }
+
+  // generateAccentss(essence) {
+  //   const _vd = this.verbalData(essence);
+
+  //   const isCustomAccentActive = this.skin[_vd.isCustomAccent];
+
+  //   if (!isCustomAccentActive) {
+  //     const accentColor =
+  //       essence === "accent" || essence === "button"
+  //         ? this.skin.bodyBg
+  //         : this.skin.accentBg || this.mergedConfig.accent.Background.color;
+
+  //     this.skin[_vd.nameAccent] = accentColor;
+  //   }
+
+  //   const baseAccentColor = this.skin[_vd.nameAccent];
+  //   const visibleColor = guessVisibleColor(
+  //     tinycolor(baseAccentColor).toHexString()
+  //   );
+
+  //   const accentTextColor = tinycolor(visibleColor)
+  //     .setAlpha(this.defaults.txt.txt)
+  //     .toRgbString();
+
+  //   this.skin[_vd.nameAccentTxt] = accentTextColor;
+  // }
+
+  // generateBorderss(essence) {
+  //   let _essence = essence;
+  //   let _vb = this.verbalData(_essence);
+  //   let _isCustomBorderActive = this.skin[_vb.isCustomBorder];
+  //   if (!_isCustomBorderActive) {
+  //     this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
+  //   }
+  // }
 
   updateSkin(node) {
     const _t = this;
     const _name = node.name;
     _t.createBackgrounds(_name);
     _t.createGradients(_name);
-
+    _t.createTexts(_name);
   }
 
   buildSkin(node) {
     const _t = this;
     _t.updateSkin(node);
     if (node.children && node.children.length > 0) {
-      node.children.forEach(n => {
+      node.children.forEach((n) => {
         _t.buildSkin(n);
-      })
+      });
     }
   }
 
@@ -684,11 +762,10 @@ class Skinner {
     const _t = this;
     _t.updateCSS(node);
     if (node.children && node.children.length > 0) {
-      node.children.forEach(n => {
+      node.children.forEach((n) => {
         _t.buildCSS(n);
-      })
+      });
     }
-
   }
 
   updateCSS(node) {
@@ -699,28 +776,39 @@ class Skinner {
     const _id = `sk_style_elem_${_name}`;
     let style = document.getElementById(_id);
     if (!style) {
-      style = document.createElement('style');
+      style = document.createElement("style");
       style.id = _id;
       _t.root.appendChild(style);
-
     }
 
-    const backgrouns = ['nameBg', 'nameBgHov', 'nameBg2', 'nameBg2Hov', 'nameBg3', 'nameBg3Hov'];
-    let css = '';
-    backgrouns.forEach(bg => {
-      css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`
-    })
+    const backgrouns = [
+      "nameBg",
+      "nameBgHov",
+      "nameBg2",
+      "nameBg2Hov",
+      "nameBg3",
+      "nameBg3Hov",
+    ];
+    let css = "";
+    backgrouns.forEach((bg) => {
+      css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`;
+    });
 
-    css += `--${_vd.nameG}: ${_t.skin[_vd.nameG]};\n`
+    css += `--${_vd.nameG}: ${_t.skin[_vd.nameG]};\n`;
 
-    style.innerHTML = _t.wrapInRootTag(':root', css);
+    const texts = ["nameTxt", "nameTxt2", "nameTxt3"];
 
+    texts.forEach((txt) => {
+      css += `--${_vd[txt]}: ${_t.skin[_vd[txt]]};\n`;
+    });
+
+    style.innerHTML = _t.wrapInRootTag(":root", css);
   }
 
-  wrapInRootTag(tag, css){
-    const _tag = tag || ':root';
+  wrapInRootTag(tag, css) {
+    const _tag = tag || ":root";
 
-    return `${_tag}{\n${css}}`
+    return `${_tag}{\n${css}}`;
   }
 
   rebuild(name) {
@@ -731,15 +819,11 @@ class Skinner {
     _t.updateSkin(node);
     _t.updateCSS(node);
     if (node.children && node.children.length > 0) {
-      node.children.forEach(n => {
+      node.children.forEach((n) => {
         _t.rebuild(n.name);
-
-      })
+      });
     }
-
   }
-
-
 
   arrayToTree = (arr = []) => {
     const map = {};
@@ -784,6 +868,52 @@ class Skinner {
       el: label,
       chb: checkbox,
     };
+  }
+
+  addColorControl(essenceName, propertyName, propertyState = {}, options = {}) {
+    const _t = this;
+    const propertyWrapper = document.createElement("div");
+    propertyWrapper.className = "sk_checkbox_wrapper";
+
+    const isActiveRef = _t.createCheckBox(
+      `${essenceName}_${propertyName}_isActive`
+    );
+    isActiveRef.chb.checked = !!propertyState.isActive;
+
+    isActiveRef.chb.addEventListener("change", (e) => {
+      const newActiveVal = e.target.checked;
+      console.log("asdasda");
+
+      _t.updateEssenceState(essenceName, {
+        [propertyName]: {
+          ...propertyState,
+          isActive: newActiveVal,
+        },
+      });
+      _t.rebuild(essenceName);
+    });
+
+    const colorTrigger = document.createElement("div");
+    colorTrigger.className = "sk_picker_trigger";
+
+    colorTrigger.addEventListener("click", (evt) => {
+      this.handleGradientPicker(evt, essenceName, (data) => {
+        this.updateEssenceState(essenceName, {
+          [propertyName]: {
+            ...propertyState,
+            angle: data.angle,
+            stops: data.stops,
+            type: data.type,
+          },
+        });
+        this.rebuild(essenceName);
+      });
+    });
+
+    propertyWrapper.appendChild(isActiveRef.el);
+    propertyWrapper.appendChild(colorTrigger);
+
+    return propertyWrapper;
   }
 
   buildUI() {
@@ -846,9 +976,7 @@ class Skinner {
 
       const chbIsDarkRef = this.createCheckBox(name + "isDark");
 
-      chbIsDarkRef.chb.checked = !!(
-        essenceState.Background.isDark
-      );
+      chbIsDarkRef.chb.checked = !!essenceState.Background.isDark;
 
       chbIsDarkRef.chb.addEventListener("change", (e) => {
         const newVal = e.target.checked;
@@ -859,7 +987,6 @@ class Skinner {
           },
         });
         this.rebuild(name);
-
       });
 
       groupChild1.appendChild(chbRef.el);
@@ -869,7 +996,15 @@ class Skinner {
 
       group.appendChild(groupChild1);
       group.appendChild(groupChild2);
+
+      const gradientGroup = this.addColorControl(
+        name,
+        "Gradient",
+        essenceState.Gradient
+      );
+
       this.ui.content.appendChild(group);
+      group.appendChild(gradientGroup);
 
       this.ui.essenceGroups[name] = {
         groupEl: group,
@@ -880,7 +1015,44 @@ class Skinner {
     });
   }
 
-  generateEssenceSkin() { }
+  handleGradientPicker(event, essence, onChangeCallback) {
+    const _vd = this.verbalData(essence);
+    const _t = this;
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
+    }
+
+    let x = event.clientX;
+    let y = event.clientY;
+    const gtadientState = _t.state[essence].Gradient;
+
+    const SKPickerInstance = new SKPicker(
+      null,
+      gtadientState.stops[0],
+      "gradient",
+      {
+        stops: gtadientState.stops,
+        angle: gtadientState.angle,
+        type: gtadientState.type,
+      }
+    );
+    SKPickerInstance.init();
+
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("gradientchange", (grad, source, instance) => {
+      console.log("Picker color changed:", grad, "Source:", source);
+      onChangeCallback(grad);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
+    });
+  }
 
   handlePicker(event, essenceName, onChangeCallback) {
     if (this.pickerInstance) {
@@ -890,7 +1062,7 @@ class Skinner {
 
     // Extract the current color from your state
     const essenceState = this.state[essenceName];
-    const currentColor = essenceState.Background.color
+    const currentColor = essenceState.Background.color;
 
     const x = event.clientX;
     const y = event.clientY;
