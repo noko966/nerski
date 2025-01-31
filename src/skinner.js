@@ -302,13 +302,21 @@ class Skinner {
   buildFullState(node) {
     const _t = this;
     const _name = node.name;
-    const { isActive, isDark, color } = _t.state[_name].Background;
+    const isBackgroundActive = _t.state[_name].Background.isActive;
+    const isBackgroundDark = _t.state[_name].Background.isDark;
+    const isTextActive = _t.state[_name].Text.isActive;
 
-    if (!isActive) {
+    if (!isBackgroundActive) {
       const _parentName = node.parent;
       this.generateFallbackBackground(_parentName);
       _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
     }
+    const BackgrounColor = _t.state[_name].Background.color;
+
+    if (!isTextActive) {
+      _t.state[_name].Text.color = guessVisibleColor(BackgrounColor);
+    }
+
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
         _t.buildFullState(n);
@@ -1008,7 +1016,7 @@ class Skinner {
         const newActiveVal = e.target.checked;
 
         this.updateEssenceState(name, {
-          Gradient: {
+          Text: {
             isActive: newActiveVal,
           },
         });

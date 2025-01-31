@@ -853,13 +853,13 @@ const starterConfig = {
 const config = {
   body: {
     Background: {
-      color: "#101010",
+      color: "#321d51",
     },
     borderRadius: 8,
   },
   accent: {
     Background: {
-      color: "#A3D140",
+      color: "#f1c40f",
     },
     borderRadius: 8,
   },
