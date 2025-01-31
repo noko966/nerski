@@ -284,7 +284,19 @@ class Skinner {
     groupObj.groupEl.classList.toggle("state_active", !!isActive);
     groupObj.isActiveCheckboxEl.checked = !!isActive;
     groupObj.isDarkCheckboxEl.checked = !!isDark;
-    groupObj.colorTriggerEl.style.backgroundColor = color;
+    groupObj.colorTriggerEl.style.background = color;
+
+    const colorGradient = _t.skin[`${_name}G`];
+    const isActiveGradient = _t.state[_name].Gradient.isActive;
+
+    groupObj.isActiveGradientCheckboxEl.checked = !!isActiveGradient;
+    groupObj.gradientPickerEl.style.background = colorGradient;
+
+    const isActiveText = _t.state[_name].Text.isActive;
+    const colorText = _t.state[_name].Text.color;
+
+    groupObj.isActiveTextCheckboxEl.checked = !!isActiveText;
+    groupObj.textPickerEl.style.background = colorText;
   }
 
   buildFullState(node) {
@@ -500,22 +512,6 @@ class Skinner {
             " => ",
             newValue
           );
-
-          // const groupObj = this.ui.essenceGroups[essenceName];
-          // if (!groupObj) return;
-
-          // const color = newValue.Background?.color;
-          // if (color) {
-          //   groupObj.colorTriggerEl.style.backgroundColor = color;
-          // }
-
-          // const _isActive = newValue.Background && newValue.Background.isActive;
-          // groupObj.groupEl.classList.toggle("state_active", !!_isActive);
-
-          // groupObj.isActiveCheckboxEl.checked = !!_isActive;
-
-          // const _isDark = newValue.Background && newValue.Background.isDark;
-          // groupObj.isDarkCheckboxEl.checked = !!_isDark;
         });
       })
     );
@@ -641,7 +637,7 @@ class Skinner {
     const _color = BackgroundState.color;
     _t.skin[_vd.nameBg] = _color;
     const _isDark = BackgroundState.isDark;
-    const backgrouns = [
+    const backgrounds = [
       "nameBgHov",
       "nameBg2",
       "nameBg2Hov",
@@ -649,7 +645,7 @@ class Skinner {
       "nameBg3Hov",
     ];
 
-    backgrouns.forEach((b) => {
+    backgrounds.forEach((b) => {
       _t.skin[_vd[b]] = _t.getShadeStep(_color, _isDark, b);
     });
   }
@@ -693,7 +689,10 @@ class Skinner {
     const BackgroundState = _t.state[_name].Background;
     let { isActive, color } = TextState;
     let bg = BackgroundState.color;
-    if (!isActive) {
+
+    if (isActive) {
+      _t.skin[_vd.nameTxt] = TextState.color;
+    } else {
       _t.skin[_vd.nameTxt] = guessVisibleColor(tinycolor(bg).toHexString());
     }
     _t.skin[_vd.nameTxt2] = tinycolor
@@ -870,50 +869,46 @@ class Skinner {
     };
   }
 
-  addColorControl(essenceName, propertyName, propertyState = {}, options = {}) {
-    const _t = this;
-    const propertyWrapper = document.createElement("div");
-    propertyWrapper.className = "sk_checkbox_wrapper";
+  createBackgrounPicker(name) {
+    const backgroundPickerEl = document.createElement("div");
+    backgroundPickerEl.className = "sk_picker_trigger";
 
-    const isActiveRef = _t.createCheckBox(
-      `${essenceName}_${propertyName}_isActive`
-    );
-    isActiveRef.chb.checked = !!propertyState.isActive;
-
-    isActiveRef.chb.addEventListener("change", (e) => {
-      const newActiveVal = e.target.checked;
-      console.log("asdasda");
-
-      _t.updateEssenceState(essenceName, {
-        [propertyName]: {
-          ...propertyState,
-          isActive: newActiveVal,
-        },
-      });
-      _t.rebuild(essenceName);
-    });
-
-    const colorTrigger = document.createElement("div");
-    colorTrigger.className = "sk_picker_trigger";
-
-    colorTrigger.addEventListener("click", (evt) => {
-      this.handleGradientPicker(evt, essenceName, (data) => {
-        this.updateEssenceState(essenceName, {
-          [propertyName]: {
-            ...propertyState,
-            angle: data.angle,
-            stops: data.stops,
-            type: data.type,
+    backgroundPickerEl.addEventListener("click", (evt) => {
+      this.handlePicker(evt, name, (newColor) => {
+        this.updateEssenceState(name, {
+          Background: {
+            color: newColor,
           },
         });
-        this.rebuild(essenceName);
+        this.rebuild(name);
       });
     });
 
-    propertyWrapper.appendChild(isActiveRef.el);
-    propertyWrapper.appendChild(colorTrigger);
+    return backgroundPickerEl;
+  }
 
-    return propertyWrapper;
+  createTextPicker(name) {
+    const textPickerEl = document.createElement("div");
+    textPickerEl.className = "sk_picker_trigger";
+
+    textPickerEl.addEventListener("click", (evt) => {
+      this.handlePicker(evt, name, (newColor) => {
+        this.updateEssenceState(name, {
+          Text: {
+            color: newColor,
+          },
+        });
+        this.rebuild(name);
+      });
+    });
+
+    return textPickerEl;
+  }
+
+  createWrapper() {
+    const root = document.createElement("div");
+    root.className = "sk_checkbox_wrapper";
+    return root;
   }
 
   buildUI() {
@@ -960,19 +955,8 @@ class Skinner {
         this.rebuild(name);
       });
 
-      const backgroundPickerEl = document.createElement("div");
-      backgroundPickerEl.className = "sk_picker_trigger";
-
-      backgroundPickerEl.addEventListener("click", (evt) => {
-        this.handlePicker(evt, name, (newColor) => {
-          this.updateEssenceState(name, {
-            Background: {
-              color: newColor,
-            },
-          });
-          this.rebuild(name);
-        });
-      });
+      const backgroundPickerEl = this.createBackgrounPicker(name);
+      const textPickerEl = this.createTextPicker(name);
 
       const chbIsDarkRef = this.createCheckBox(name + "isDark");
 
@@ -996,21 +980,77 @@ class Skinner {
 
       group.appendChild(groupChild1);
       group.appendChild(groupChild2);
+      // gradients
 
-      const gradientGroup = this.addColorControl(
-        name,
-        "Gradient",
-        essenceState.Gradient
+      const gradientGroupWrapper = this.createWrapper();
+      const textGroupWrapper = this.createWrapper();
+
+      const isGradientActiveRef = this.createCheckBox(
+        `${name}isActiveGradient`
       );
+      isGradientActiveRef.chb.checked = !!essenceState.Gradient.isActive;
+
+      isGradientActiveRef.chb.addEventListener("change", (e) => {
+        const newActiveVal = e.target.checked;
+
+        this.updateEssenceState(name, {
+          Gradient: {
+            isActive: newActiveVal,
+          },
+        });
+        this.rebuild(name);
+      });
+
+      const isTextActiveRef = this.createCheckBox(`${name}isActiveText`);
+      isTextActiveRef.chb.checked = !!essenceState.Gradient.isActive;
+
+      isTextActiveRef.chb.addEventListener("change", (e) => {
+        const newActiveVal = e.target.checked;
+
+        this.updateEssenceState(name, {
+          Gradient: {
+            isActive: newActiveVal,
+          },
+        });
+        this.rebuild(name);
+      });
+
+      const gradientPickerEl = document.createElement("div");
+      gradientPickerEl.className = "sk_picker_trigger";
+
+      gradientPickerEl.addEventListener("click", (evt) => {
+        this.handleGradientPicker(evt, name, (data) => {
+          this.updateEssenceState(name, {
+            Gradient: {
+              angle: data.angle,
+              stops: data.stops,
+              type: data.type,
+            },
+          });
+          this.rebuild(name);
+        });
+      });
+
+      gradientGroupWrapper.appendChild(isGradientActiveRef.el);
+      gradientGroupWrapper.appendChild(gradientPickerEl);
+      textGroupWrapper.appendChild(isTextActiveRef.el);
+
+      textGroupWrapper.appendChild(textPickerEl);
+
+      group.appendChild(gradientGroupWrapper);
+      group.appendChild(textGroupWrapper);
 
       this.ui.content.appendChild(group);
-      group.appendChild(gradientGroup);
 
       this.ui.essenceGroups[name] = {
         groupEl: group,
         isActiveCheckboxEl: chbRef.chb,
         isDarkCheckboxEl: chbIsDarkRef.chb,
         colorTriggerEl: backgroundPickerEl,
+        isActiveGradientCheckboxEl: isGradientActiveRef.chb,
+        gradientPickerEl: gradientPickerEl,
+        isActiveTextCheckboxEl: isTextActiveRef.chb,
+        textPickerEl: textPickerEl,
       };
     });
   }

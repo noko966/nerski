@@ -441,9 +441,3 @@ input.demo_widget_input {
   font-size: 13px;
   color: inherit;
 }
-
-.demo_widget_wrapper {
-  background-color: var(--eventRGBA2);
-  backdrop-filter: blur(10px);
-  padding: 4px;
-}
