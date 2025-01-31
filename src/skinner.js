@@ -257,6 +257,17 @@ class Skinner {
     });
   }
 
+  generateBorderFallback(name) {
+    const { isDark, color } = this.state[name].Background;
+    const _step = isDark
+      ? this.essenceSteps.dark.nameBgHov
+      : this.essenceSteps.light.nameBgHov;
+    const _color = isDark
+      ? tinycolor(color).darken(_step).toHexString()
+      : tinycolor(color).lighten(_step).toHexString();
+    return _color;
+  }
+
   generateFallbackBackground(fbNode) {
     const _t = this;
     const { isDark, color, isActive } = _t.state[fbNode].Background;
@@ -309,6 +320,11 @@ class Skinner {
 
     groupObj.isActiveBorderCheckboxEl.checked = !!isActiveBorder;
     groupObj.borderPickerEl.style.background = colorBorder;
+
+    const radius = _t.state[_name].borderRadius;
+
+    groupObj.radiusRangeEl.value = radius;
+    groupObj.radiusInputEl.value = radius;
   }
 
   buildFullState(node) {
@@ -317,6 +333,8 @@ class Skinner {
     const isBackgroundActive = _t.state[_name].Background.isActive;
     const isBackgroundDark = _t.state[_name].Background.isDark;
     const isTextActive = _t.state[_name].Text.isActive;
+    const isAccentActive = _t.state[_name].Accent.isActive;
+    const isBorderActive = _t.state[_name].Accent.isActive;
 
     if (!isBackgroundActive) {
       const _parentName = node.parent;
@@ -328,6 +346,19 @@ class Skinner {
     if (!isTextActive) {
       _t.state[_name].Text.color = guessVisibleColor(BackgrounColor);
     }
+
+    if (!isAccentActive) {
+      const oppositeRootName = _t.getOppositeRoot(_t.tree, _name);
+      _t.state[_name].Accent.color =
+        _t.state[oppositeRootName.name].Background.color;
+    }
+
+    if (!isBorderActive) {
+      const bg = _t.generateBorderFallback(_name);
+      _t.state[_name].Border.color = bg;
+    }
+
+    // _t.state[_name].borderRadius = bg;
 
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
@@ -537,6 +568,44 @@ class Skinner {
     );
   }
 
+  getRootNode(rootNodes, childName) {
+    const node = this.findNodeByName(rootNodes, childName);
+    if (!node) return null;
+
+    if (node.parent === null) {
+      return node;
+    }
+
+    return this._climbUp(rootNodes, node);
+  }
+
+  _climbUp(rootNodes, node) {
+    if (node.parent === null) {
+      return node;
+    }
+    const parentNode = this.findNodeByName(rootNodes, node.parent);
+    if (!parentNode) {
+      return node;
+    }
+    return this._climbUp(rootNodes, parentNode);
+  }
+
+  getOppositeRoot(rootNodes, childName) {
+    const root = this.getRootNode(rootNodes, childName);
+    if (!root) return null;
+
+    let oppositeName;
+    if (root.name === "body") {
+      oppositeName = "accent";
+    } else if (root.name === "accent") {
+      oppositeName = "body";
+    } else {
+      return null;
+    }
+
+    return this.findNodeByName(rootNodes, oppositeName);
+  }
+
   findNodeByName(rootNodes, name) {
     for (const node of rootNodes) {
       if (node.name === name) return node;
@@ -628,6 +697,7 @@ class Skinner {
   init() {
     this.addStyle();
     this.buildUI();
+    this.bindEvents();
     this.tree.forEach((rn) => {
       this.buildFullState(rn);
       this.syncUiWithState(rn);
@@ -635,7 +705,6 @@ class Skinner {
       this.buildCSS(rn);
     });
     this.generateUiPalette(this.ui.colors["dark"]);
-    this.bindEvents();
     this.emit("init");
   }
 
@@ -710,11 +779,8 @@ class Skinner {
     let { isActive, color } = TextState;
     let bg = BackgroundState.color;
 
-    if (isActive) {
-      _t.skin[_vd.nameTxt] = TextState.color;
-    } else {
-      _t.skin[_vd.nameTxt] = guessVisibleColor(tinycolor(bg).toHexString());
-    }
+    _t.skin[_vd.nameTxt] = color;
+
     _t.skin[_vd.nameTxt2] = tinycolor
       .mix(_t.skin[_vd.nameTxt], bg, 30)
       .toHexString();
@@ -729,16 +795,11 @@ class Skinner {
     const _name = name;
     const _vd = _t.verbalData(_name);
     const AccentState = _t.state[_name].Accent;
-    const BackgroundState = _t.state[_name].Background;
     let { isActive, color } = AccentState;
-    let bg = BackgroundState.color;
-
-    if (isActive) {
-      _t.skin[_vd.nameAccent] = color;
-    } else {
-      _t.skin[_vd.nameAccent] = _t.state.accent.Background;
-    }
-    _t.skin[_vd.nameAccentTxt] = guessVisibleColor(tinycolor(_t.skin[_vd.nameAccent]).toHexString());
+    _t.skin[_vd.nameAccent] = color;
+    _t.skin[_vd.nameAccentTxt] = guessVisibleColor(
+      tinycolor(color).toHexString()
+    );
   }
 
   createBorders(name) {
@@ -747,17 +808,17 @@ class Skinner {
     const _vd = _t.verbalData(_name);
     const BorderState = _t.state[_name].Border;
     let { isActive, color } = BorderState;
-    let bg = t.state[_name].Background.color;
 
-    if (isActive) {
-      _t.skin[_vd.nameBorder] = color;
-    } else {
-      _t.skin[_vd.nameBorder] = bg;
-    }
-
+    _t.skin[_vd.nameBorder] = color;
   }
 
-
+  createRadius(name) {
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const BorderState = _t.state[_name].borderRadius;
+    _t.skin[_vd.nameRadius] = BorderState;
+  }
 
   updateSkin(node) {
     const _t = this;
@@ -766,6 +827,7 @@ class Skinner {
     _t.createGradients(_name);
     _t.createTexts(_name);
     _t.createAccents(_name);
+    _t.createRadius(_name);
   }
 
   buildSkin(node) {
@@ -821,6 +883,12 @@ class Skinner {
     texts.forEach((txt) => {
       css += `--${_vd[txt]}: ${_t.skin[_vd[txt]]};\n`;
     });
+
+    css += `--${_vd.nameAccent}: ${_t.skin[_vd.nameAccent]};\n`;
+    css += `--${_vd.nameAccentTxt}: ${_t.skin[_vd.nameAccentTxt]};\n`;
+
+    css += `--${_vd.nameBorder}: ${_t.skin[_vd.nameBorder]};\n`;
+    css += `--${_vd.nameRadius}: ${_t.skin[_vd.nameRadius]}px;\n`;
 
     style.innerHTML = _t.wrapInRootTag(":root", css);
   }
@@ -964,51 +1032,46 @@ class Skinner {
     return borderPickerEl;
   }
 
-
   createSliderControl(name, prop) {
-    let  _control, _input, _amount;
-    _control = document.createElement('div');
-    _control.className = "sk_checkbox_wrapper sk_checkbox_wrapper-range"
+    let _control, range, input;
+    _control = document.createElement("div");
+    _control.className = "sk_checkbox_wrapper sk_checkbox_wrapper-range";
 
-    _input = document.createElement("input");
-    _input.type = "range";
-    _input.min = 0;
-    _input.max = 100;
-    _amount = document.createElement("input");
-    _amount.type = "number";
-    _amount.className = "sk_radius_amount";
+    range = document.createElement("input");
+    range.type = "range";
+    range.min = 0;
+    range.max = 100;
+    input = document.createElement("input");
+    input.type = "number";
+    input.className = "sk_input_text";
 
-    const onRadiusRangeInput = function (e) {
-      _amount.value = e.target.value;
-      // customRadiusCb(e);
-    };
+    input.addEventListener("input", (e) => {
+      input.value = e.target.value;
+      this.updateEssenceState(name, {
+        borderRadius: e.target.value,
+      });
+      this.rebuild(name);
+    });
+    range.addEventListener("input", (e) => {
+      range.value = e.target.value;
+      this.updateEssenceState(name, {
+        borderRadius: e.target.value,
+      });
+      this.rebuild(name);
+    });
 
-    const onRadiusInputInput = function (e) {
-      _amount.value = e.target.value;
-      // customRadiusCb(e);
-    };
-
-    _input.addEventListener("input", onRadiusRangeInput);
-
-    _amount.addEventListener("input", onRadiusInputInput);
-    const label = document.createElement('div');
-    label.className = "sk_label_sm"
+    const label = document.createElement("div");
+    label.className = "sk_label_sm";
     // _control.appendChild(label);
 
-    _control.appendChild(_input);
-    _control.appendChild(_amount);
+    _control.appendChild(range);
+    _control.appendChild(input);
 
-    // this.eventListeners.push({
-    //   element: radiusInput,
-    //   type: "input",
-    //   listener: onRadiusRangeInput,
-    // });
-    // this.eventListeners.push({
-    //   element: radiusAmount,
-    //   type: "input",
-    //   listener: onRadiusInputInput,
-    // });
-    return _control
+    return {
+      el: _control,
+      inputEl: input,
+      rangeEl: range,
+    };
   }
 
   createAccentPicker(name) {
@@ -1037,7 +1100,7 @@ class Skinner {
 
   createEssenceCheckbox(name, prop) {
     const chbRef = this.createCheckBox(`${name}${prop}`);
-    chbRef.chb.checked = !!this.state[name][prop].isActive;
+    // chbRef.chb.checked = !!this.state[name][prop].isActive;
 
     chbRef.chb.addEventListener("change", (e) => {
       const newActiveVal = e.target.checked;
@@ -1050,6 +1113,24 @@ class Skinner {
       this.rebuild(name);
     });
 
+    return chbRef;
+  }
+
+  createTintCheckbox(name) {
+    const prop = "isDark";
+    const chbRef = this.createCheckBox(`${name}${prop}`);
+    chbRef.chb.checked = !!this.state[name].Background.isDark;
+
+    chbRef.chb.addEventListener("change", (e) => {
+      const newActiveVal = e.target.checked;
+
+      this.updateEssenceState(name, {
+        [prop]: {
+          idDark: newActiveVal,
+        },
+      });
+      this.rebuild(name);
+    });
 
     return chbRef;
   }
@@ -1078,25 +1159,10 @@ class Skinner {
       groupChild1.className = "sk_checkbox_wrapper";
       const groupChild2 = document.createElement("div");
       groupChild2.className = "sk_checkbox_wrapper";
-      const chbRef = this.createCheckBox(name + "IsActive");
 
       if (essenceState.Background && essenceState.Background.isActive) {
         group.classList.add("state_active");
       }
-
-      chbRef.chb.checked = !!(
-        essenceState.Background && essenceState.Background.isActive
-      );
-
-      chbRef.chb.addEventListener("change", (e) => {
-        const newVal = e.target.checked;
-        this.updateEssenceState(name, {
-          Background: {
-            isActive: newVal,
-          },
-        });
-        this.rebuild(name);
-      });
 
       const backgroundPickerEl = this.createBackgrounPicker(name);
       const gradientPickerEl = this.createGradientPicker(name);
@@ -1104,68 +1170,24 @@ class Skinner {
       const accentPickerEl = this.createAccentPicker(name);
       const borderPickerEl = this.createBorderPicker(name);
 
-      const chbIsDarkRef = this.createCheckBox(name + "isDark");
-
-      chbIsDarkRef.chb.checked = !!essenceState.Background.isDark;
-
-      chbIsDarkRef.chb.addEventListener("change", (e) => {
-        const newVal = e.target.checked;
-
-        this.updateEssenceState(name, {
-          Background: {
-            isDark: newVal,
-          },
-        });
-        this.rebuild(name);
-      });
-
-      // gradients
-
       const gradientGroupWrapper = this.createWrapper();
       const textGroupWrapper = this.createWrapper();
       const accentGroupWrapper = this.createWrapper();
       const borderGroupWrapper = this.createWrapper();
 
-      const isGradientActiveRef = this.createCheckBox(
-        `${name}isActiveGradient`
-      );
-      isGradientActiveRef.chb.checked = !!essenceState.Gradient.isActive;
-
-      isGradientActiveRef.chb.addEventListener("change", (e) => {
-        const newActiveVal = e.target.checked;
-
-        this.updateEssenceState(name, {
-          Gradient: {
-            isActive: newActiveVal,
-          },
-        });
-        this.rebuild(name);
-      });
-
-      const isTextActiveRef = this.createCheckBox(`${name}isActiveText`);
-      isTextActiveRef.chb.checked = !!essenceState.Gradient.isActive;
-
-      isTextActiveRef.chb.addEventListener("change", (e) => {
-        const newActiveVal = e.target.checked;
-
-        this.updateEssenceState(name, {
-          Text: {
-            isActive: newActiveVal,
-          },
-        });
-        this.rebuild(name);
-      });
-
-
-      const chbAccentRef = this.createEssenceCheckbox(name, 'Accent');
-      const chbBorderRef = this.createEssenceCheckbox(name, 'Border');
+      const chbRef = this.createEssenceCheckbox(name, `Background`);
+      const chbIsDarkRef = this.createTintCheckbox(name);
+      const isGradientActiveRef = this.createEssenceCheckbox(name, `Gradient`);
+      const isTextActiveRef = this.createEssenceCheckbox(name, `Text`);
+      const chbAccentRef = this.createEssenceCheckbox(name, "Accent");
+      const chbBorderRef = this.createEssenceCheckbox(name, "Border");
 
       groupChild1.appendChild(chbRef.el);
       groupChild1.appendChild(groupLabel);
       groupChild2.appendChild(backgroundPickerEl);
       groupChild2.appendChild(chbIsDarkRef.el);
 
-      const radiusGroupWrapper = this.createSliderControl(name, 'Radius');
+      const radiusGroupWrapper = this.createSliderControl(name, "radius");
 
       gradientGroupWrapper.appendChild(isGradientActiveRef.el);
       gradientGroupWrapper.appendChild(gradientPickerEl);
@@ -1182,7 +1204,7 @@ class Skinner {
       group.appendChild(textGroupWrapper);
       group.appendChild(accentGroupWrapper);
       group.appendChild(borderGroupWrapper);
-      group.appendChild(radiusGroupWrapper);
+      group.appendChild(radiusGroupWrapper.el);
 
       this.ui.content.appendChild(group);
 
@@ -1199,6 +1221,8 @@ class Skinner {
         accentPickerEl: accentPickerEl,
         isActiveBorderCheckboxEl: chbBorderRef.chb,
         borderPickerEl: borderPickerEl,
+        radiusRangeEl: radiusGroupWrapper.rangeEl,
+        radiusInputEl: radiusGroupWrapper.inputEl,
       };
     });
   }
@@ -2026,7 +2050,7 @@ body {
   width: 160px;
 }
 
-.sk_radius_amount {
+.sk_input_text {
   width: 50px;
   font-size: 11px;
   height: 28px;
