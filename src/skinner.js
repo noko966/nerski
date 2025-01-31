@@ -297,6 +297,18 @@ class Skinner {
 
     groupObj.isActiveTextCheckboxEl.checked = !!isActiveText;
     groupObj.textPickerEl.style.background = colorText;
+
+    const isActiveAccent = _t.state[_name].Accent.isActive;
+    const colorAccent = _t.state[_name].Accent.color;
+
+    groupObj.isActiveAccentCheckboxEl.checked = !!isActiveAccent;
+    groupObj.accentPickerEl.style.background = colorAccent;
+
+    const isActiveBorder = _t.state[_name].Border.isActive;
+    const colorBorder = _t.state[_name].Border.color;
+
+    groupObj.isActiveBorderCheckboxEl.checked = !!isActiveBorder;
+    groupObj.borderPickerEl.style.background = colorBorder;
   }
 
   buildFullState(node) {
@@ -712,40 +724,40 @@ class Skinner {
       .toHexString();
   }
 
-  // generateAccentss(essence) {
-  //   const _vd = this.verbalData(essence);
+  createAccents(name) {
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const AccentState = _t.state[_name].Accent;
+    const BackgroundState = _t.state[_name].Background;
+    let { isActive, color } = AccentState;
+    let bg = BackgroundState.color;
 
-  //   const isCustomAccentActive = this.skin[_vd.isCustomAccent];
+    if (isActive) {
+      _t.skin[_vd.nameAccent] = color;
+    } else {
+      _t.skin[_vd.nameAccent] = _t.state.accent.Background;
+    }
+    _t.skin[_vd.nameAccentTxt] = guessVisibleColor(tinycolor(_t.skin[_vd.nameAccent]).toHexString());
+  }
 
-  //   if (!isCustomAccentActive) {
-  //     const accentColor =
-  //       essence === "accent" || essence === "button"
-  //         ? this.skin.bodyBg
-  //         : this.skin.accentBg || this.mergedConfig.accent.Background.color;
+  createBorders(name) {
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const BorderState = _t.state[_name].Border;
+    let { isActive, color } = BorderState;
+    let bg = t.state[_name].Background.color;
 
-  //     this.skin[_vd.nameAccent] = accentColor;
-  //   }
+    if (isActive) {
+      _t.skin[_vd.nameBorder] = color;
+    } else {
+      _t.skin[_vd.nameBorder] = bg;
+    }
 
-  //   const baseAccentColor = this.skin[_vd.nameAccent];
-  //   const visibleColor = guessVisibleColor(
-  //     tinycolor(baseAccentColor).toHexString()
-  //   );
+  }
 
-  //   const accentTextColor = tinycolor(visibleColor)
-  //     .setAlpha(this.defaults.txt.txt)
-  //     .toRgbString();
 
-  //   this.skin[_vd.nameAccentTxt] = accentTextColor;
-  // }
-
-  // generateBorderss(essence) {
-  //   let _essence = essence;
-  //   let _vb = this.verbalData(_essence);
-  //   let _isCustomBorderActive = this.skin[_vb.isCustomBorder];
-  //   if (!_isCustomBorderActive) {
-  //     this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
-  //   }
-  // }
 
   updateSkin(node) {
     const _t = this;
@@ -753,6 +765,7 @@ class Skinner {
     _t.createBackgrounds(_name);
     _t.createGradients(_name);
     _t.createTexts(_name);
+    _t.createAccents(_name);
   }
 
   buildSkin(node) {
@@ -913,10 +926,132 @@ class Skinner {
     return textPickerEl;
   }
 
+  createGradientPicker(name) {
+    const gradientPickerEl = document.createElement("div");
+    gradientPickerEl.className = "sk_picker_trigger";
+
+    gradientPickerEl.addEventListener("click", (evt) => {
+      this.handleGradientPicker(evt, name, (data) => {
+        this.updateEssenceState(name, {
+          Gradient: {
+            angle: data.angle,
+            stops: data.stops,
+            type: data.type,
+          },
+        });
+        this.rebuild(name);
+      });
+    });
+
+    return gradientPickerEl;
+  }
+
+  createBorderPicker(name) {
+    const borderPickerEl = document.createElement("div");
+    borderPickerEl.className = "sk_picker_trigger";
+
+    borderPickerEl.addEventListener("click", (evt) => {
+      this.handlePicker(evt, name, (newColor) => {
+        this.updateEssenceState(name, {
+          Border: {
+            color: newColor,
+          },
+        });
+        this.rebuild(name);
+      });
+    });
+
+    return borderPickerEl;
+  }
+
+
+  createSliderControl(name, prop) {
+    let  _control, _input, _amount;
+    _control = document.createElement('div');
+    _control.className = "sk_checkbox_wrapper sk_checkbox_wrapper-range"
+
+    _input = document.createElement("input");
+    _input.type = "range";
+    _input.min = 0;
+    _input.max = 100;
+    _amount = document.createElement("input");
+    _amount.type = "number";
+    _amount.className = "sk_radius_amount";
+
+    const onRadiusRangeInput = function (e) {
+      _amount.value = e.target.value;
+      // customRadiusCb(e);
+    };
+
+    const onRadiusInputInput = function (e) {
+      _amount.value = e.target.value;
+      // customRadiusCb(e);
+    };
+
+    _input.addEventListener("input", onRadiusRangeInput);
+
+    _amount.addEventListener("input", onRadiusInputInput);
+    const label = document.createElement('div');
+    label.className = "sk_label_sm"
+    // _control.appendChild(label);
+
+    _control.appendChild(_input);
+    _control.appendChild(_amount);
+
+    // this.eventListeners.push({
+    //   element: radiusInput,
+    //   type: "input",
+    //   listener: onRadiusRangeInput,
+    // });
+    // this.eventListeners.push({
+    //   element: radiusAmount,
+    //   type: "input",
+    //   listener: onRadiusInputInput,
+    // });
+    return _control
+  }
+
+  createAccentPicker(name) {
+    const accentPickerEl = document.createElement("div");
+    accentPickerEl.className = "sk_picker_trigger";
+
+    accentPickerEl.addEventListener("click", (evt) => {
+      this.handlePicker(evt, name, (newColor) => {
+        this.updateEssenceState(name, {
+          Accent: {
+            color: newColor,
+          },
+        });
+        this.rebuild(name);
+      });
+    });
+
+    return accentPickerEl;
+  }
+
   createWrapper() {
     const root = document.createElement("div");
     root.className = "sk_checkbox_wrapper";
     return root;
+  }
+
+  createEssenceCheckbox(name, prop) {
+    const chbRef = this.createCheckBox(`${name}${prop}`);
+    chbRef.chb.checked = !!this.state[name][prop].isActive;
+
+    chbRef.chb.addEventListener("change", (e) => {
+      const newActiveVal = e.target.checked;
+
+      this.updateEssenceState(name, {
+        [prop]: {
+          isActive: newActiveVal,
+        },
+      });
+      this.rebuild(name);
+    });
+
+
+    return chbRef;
   }
 
   buildUI() {
@@ -964,7 +1099,10 @@ class Skinner {
       });
 
       const backgroundPickerEl = this.createBackgrounPicker(name);
+      const gradientPickerEl = this.createGradientPicker(name);
       const textPickerEl = this.createTextPicker(name);
+      const accentPickerEl = this.createAccentPicker(name);
+      const borderPickerEl = this.createBorderPicker(name);
 
       const chbIsDarkRef = this.createCheckBox(name + "isDark");
 
@@ -981,17 +1119,12 @@ class Skinner {
         this.rebuild(name);
       });
 
-      groupChild1.appendChild(chbRef.el);
-      groupChild1.appendChild(groupLabel);
-      groupChild2.appendChild(backgroundPickerEl);
-      groupChild2.appendChild(chbIsDarkRef.el);
-
-      group.appendChild(groupChild1);
-      group.appendChild(groupChild2);
       // gradients
 
       const gradientGroupWrapper = this.createWrapper();
       const textGroupWrapper = this.createWrapper();
+      const accentGroupWrapper = this.createWrapper();
+      const borderGroupWrapper = this.createWrapper();
 
       const isGradientActiveRef = this.createCheckBox(
         `${name}isActiveGradient`
@@ -1023,30 +1156,33 @@ class Skinner {
         this.rebuild(name);
       });
 
-      const gradientPickerEl = document.createElement("div");
-      gradientPickerEl.className = "sk_picker_trigger";
 
-      gradientPickerEl.addEventListener("click", (evt) => {
-        this.handleGradientPicker(evt, name, (data) => {
-          this.updateEssenceState(name, {
-            Gradient: {
-              angle: data.angle,
-              stops: data.stops,
-              type: data.type,
-            },
-          });
-          this.rebuild(name);
-        });
-      });
+      const chbAccentRef = this.createEssenceCheckbox(name, 'Accent');
+      const chbBorderRef = this.createEssenceCheckbox(name, 'Border');
+
+      groupChild1.appendChild(chbRef.el);
+      groupChild1.appendChild(groupLabel);
+      groupChild2.appendChild(backgroundPickerEl);
+      groupChild2.appendChild(chbIsDarkRef.el);
+
+      const radiusGroupWrapper = this.createSliderControl(name, 'Radius');
 
       gradientGroupWrapper.appendChild(isGradientActiveRef.el);
       gradientGroupWrapper.appendChild(gradientPickerEl);
       textGroupWrapper.appendChild(isTextActiveRef.el);
-
       textGroupWrapper.appendChild(textPickerEl);
+      accentGroupWrapper.appendChild(chbAccentRef.el);
+      accentGroupWrapper.appendChild(accentPickerEl);
+      borderGroupWrapper.appendChild(chbBorderRef.el);
+      borderGroupWrapper.appendChild(borderPickerEl);
 
+      group.appendChild(groupChild1);
+      group.appendChild(groupChild2);
       group.appendChild(gradientGroupWrapper);
       group.appendChild(textGroupWrapper);
+      group.appendChild(accentGroupWrapper);
+      group.appendChild(borderGroupWrapper);
+      group.appendChild(radiusGroupWrapper);
 
       this.ui.content.appendChild(group);
 
@@ -1059,6 +1195,10 @@ class Skinner {
         gradientPickerEl: gradientPickerEl,
         isActiveTextCheckboxEl: isTextActiveRef.chb,
         textPickerEl: textPickerEl,
+        isActiveAccentCheckboxEl: chbAccentRef.chb,
+        accentPickerEl: accentPickerEl,
+        isActiveBorderCheckboxEl: chbBorderRef.chb,
+        borderPickerEl: borderPickerEl,
       };
     });
   }
@@ -1886,7 +2026,7 @@ body {
   width: 160px;
 }
 
-.nik_skinner_radius_amount {
+.sk_radius_amount {
   width: 50px;
   font-size: 11px;
   height: 28px;
@@ -2522,7 +2662,7 @@ border-radius: 50%;*/
   left: 6px;
 }
 
-.skinner_ui_label_sm {
+.sk_label_sm {
   width: 100px;
   flex-shrink: 0;
   font-size: 11px;

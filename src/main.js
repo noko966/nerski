@@ -2373,7 +2373,6 @@ class Skinner {
     }
 
     //custom roundness
-
     let radiusControl, radiusInput, radiusAmount;
     if (customRadiusCb) {
       radiusControl = this.createDiv(
