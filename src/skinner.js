@@ -338,19 +338,25 @@ class Skinner {
 
     if (!isBackgroundActive) {
       const _parentName = node.parent;
-      this.generateFallbackBackground(_parentName);
       _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
     }
+
     const BackgrounColor = _t.state[_name].Background.color;
 
-    if (!isTextActive) {
+    if (!isTextActive && !node.parent) {
       _t.state[_name].Text.color = guessVisibleColor(BackgrounColor);
+    } else if (!isTextActive && node.parent) {
+      const _parentName = node.parent;
+      _t.state[_name].Text.color = _t.state[_parentName].Text.color;
     }
 
-    if (!isAccentActive) {
+    if (!isAccentActive && !node.parent) {
       const oppositeRootName = _t.getOppositeRoot(_t.tree, _name);
       _t.state[_name].Accent.color =
         _t.state[oppositeRootName.name].Background.color;
+    } else if (!isAccentActive && node.parent) {
+      const _parentName = node.parent;
+      _t.state[_name].Accent.color = _t.state[_parentName].Accent.color;
     }
 
     if (!isBorderActive) {
