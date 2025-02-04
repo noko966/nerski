@@ -455,7 +455,7 @@ class Skinner {
 
     let accentShadow2 = tinycolor(accentShadow).lighten(4).toHexString();
 
-    let dominantGlass = tinycolor(firstDominantBg).setAlpha(0.5).toRgbString();
+    let dominantGlass = tinycolor(firstDominantBg).setAlpha(0.8).toRgbString();
 
     // let shadow = islight
     //   ? tinycolor(bg).lighten(6).toHexString()
@@ -891,9 +891,13 @@ class Skinner {
     css += `--${_vd.nameRadius}: ${_t.skin[_vd.nameRadius]}px;\n`;
 
     style.innerHTML = _t.wrapInRootTag(":root", css);
+
+    this.state[_name].css = css;
   }
 
   wrapInRootTag(tag, css) {
+    console.log(tag);
+
     const _tag = tag || ":root";
 
     return `${_tag}{\n${css}}`;
@@ -1119,20 +1123,38 @@ class Skinner {
   createTintCheckbox(name) {
     const prop = "isDark";
     const chbRef = this.createCheckBox(`${name}${prop}`);
-    chbRef.chb.checked = !!this.state[name].Background.isDark;
+    // chbRef.chb.checked = !!this.state[name].Background.isDark;
 
     chbRef.chb.addEventListener("change", (e) => {
       const newActiveVal = e.target.checked;
 
       this.updateEssenceState(name, {
-        [prop]: {
-          idDark: newActiveVal,
+        Background: {
+          isDark: newActiveVal,
         },
       });
       this.rebuild(name);
     });
 
     return chbRef;
+  }
+
+  createButton(label, icon) {
+    const _t = this;
+    const buttonEl = document.createElement("div");
+    buttonEl.className = "sk_btn";
+    const lbl = document.createElement("span");
+    lbl.innerText = label;
+
+    if (icon) {
+      const ic = document.createElement("i");
+      ic.innerHTML = _t.ui.icons[icon];
+      ``;
+      buttonEl.appendChild(ic);
+    }
+    buttonEl.appendChild(lbl);
+
+    return buttonEl;
   }
 
   buildUI() {
@@ -1146,6 +1168,23 @@ class Skinner {
     this.root.appendChild(this.ui.root);
     this.ui.root.appendChild(this.ui.header);
     this.ui.root.appendChild(this.ui.content);
+
+    const editables = [
+      "essence",
+      "background",
+      "gradient",
+      "text",
+      "accent",
+      "border",
+      "radius",
+    ];
+
+    editables.forEach((e) => {
+      const label = document.createElement("div");
+      label.className = `sk_header_label variant-${e}`;
+      label.innerText = e;
+      this.ui.header.appendChild(label);
+    });
 
     this.essencesArray.forEach((essenceObj) => {
       const name = essenceObj.name;
@@ -1225,6 +1264,44 @@ class Skinner {
         radiusInputEl: radiusGroupWrapper.inputEl,
       };
     });
+
+    this.ui.footer = document.createElement("div");
+    this.ui.footer.className = "sk_actions_wrapper";
+
+    this.ui.root.appendChild(this.ui.footer);
+
+    this.ui.downloadTrigger = this.createButton("variables", "download");
+    this.ui.downloadTrigger.addEventListener("click", () =>
+      this.makeDownloadRequest("sport")
+    );
+    this.ui.footer.appendChild(this.ui.downloadTrigger);
+  }
+
+  async makeDownloadRequest(name, number) {
+    const _t = this;
+    let css = "";
+
+    _t.essencesArray.forEach((essenceObj) => {
+      css += _t.state[essenceObj.name].css;
+    });
+
+    const wrappedInRoot = _t.wrapInRootTag(":root", css);
+
+    var element = document.createElement("a");
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var fileNameSuffix = hours + "-" + minutes;
+    element.setAttribute(
+      "href",
+      "data:text/css;charset=utf-8," + encodeURIComponent(wrappedInRoot)
+    );
+    element.setAttribute("download", name + "_" + fileNameSuffix + ".css");
+    element.style.display = "none";
+
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 
   handleGradientPicker(event, essence, onChangeCallback) {
@@ -1366,7 +1443,7 @@ body {
   left: 0;
   right: 0;
   z-index: 100;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(12px);
 }
 
 .nik_root_mobile #dm-main-container {
@@ -1461,14 +1538,28 @@ body {
 
 .sk_header {
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background: var(--sk_dominantBg2);
-  color: var(--sk_dominantTxt);
-  border-bottom: 1px solid var(--sk_dominantBgHover);
-  height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt);
+    border-bottom: 1px solid var(--sk_dominantBgHover);
+    height: 30px;
+    padding: 0 16px;
+    column-gap: 6px;
+    font-size: 11px;
+    background: var(--sk_dominantGlass);
+}
+
+.sk_header_label {
+    width: 66px;
+    flex-shrink: 0;
+}
+
+.sk_header_label.variant-essence{
+    width: 118px;
+    display: flex;
+    align-items: center;
 }
 
 .skinner_ico {
@@ -1551,6 +1642,8 @@ body {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+  background: var(--sk_dominantGlass);
+  backdrop-filter: blur(14px);
 }
 
 .pcr-app {
@@ -1851,14 +1944,14 @@ body {
   padding: 0 16px;
 }
 
-.skinner_btn {
+.sk_btn {
   appearance: none;
-  border: 2px solid var(--sk_dominantBg2);
+  border: 1px solid var(--sk_dominantBg2);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
   background-color: var(--sk_dominantBgHover);
-  color: var(--sk_dominantTxt2);
+  color: var(--sk_dominantTxt);
   fill: var(--sk_dominantTxt2);
   display: block;
   text-transform: capitalize;
@@ -1874,12 +1967,12 @@ body {
   column-gap: 4px;
 }
 
-.skinner_btn.state_active{
+.sk_btn.state_active{
     background: conic-gradient(from 90deg at 50% 50%, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
     color: #fff;
 }
 
-.skinner_btn-icon {
+.sk_btn.variant_icon {
       width: var(--skinnerBtnHeight);
     height: var(--skinnerBtnHeight);
     padding: 0;
@@ -1891,51 +1984,18 @@ body {
     color: var(--sk_dominantTxt2);
 }
 
-.skinner_btn-50 {
-  width: 50%;
-  flex-shrink: 0;
-  border-radius: 0;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-}
-
-.skinner_btn-100 {
-  width: 100%;
-  flex-shrink: 0;
-  border-radius: 0;
-  border-radius: 8px;
-}
-
-.skinner_btn-s {
-  border-radius: 0;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-}
-
-.skinner_btn-l {
-  border-radius: 0;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-}
-
-.skinner_btn-50:last-child {
-  border-radius: 0;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-}
-
-.skinner_btn:hover {
+.sk_btn:hover {
   background-color: var(--sk_dominantBg2);
 }
 
-.skinner_btn-accent {
+.sk_btn.variant_cta {
   background-color: var(--sk_accentBg);
   border-color: var(--sk_accentBg2);
   color: var(--sk_accentTxt);
   position: relative;
 }
 
-.skinner_btn-accent:hover {
+.sk_btn.variant_cta:hover {
   border-color: var(--sk_accentBg);
   background-color: var(--sk_accentBg);
   color: var(--sk_accentTxt);
