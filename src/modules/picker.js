@@ -633,6 +633,12 @@ display: flex;
     // Attach the click event
     this.eyedropperTrigger.addEventListener("click", this._eyedropperHandler);
 
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "i") {
+        this._eyedropperHandler();
+      }
+    });
+
     this._mode === "gradient" && this.showGradientSlider();
 
     const slidersWrapper = document.createElement("div");

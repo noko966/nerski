@@ -23,8 +23,6 @@ class Skinner {
       toggleaccent: [],
       toggletext: [],
       toggleborder: [],
-
-
     };
     this.root = root || document.body;
     this.ui = {
@@ -334,7 +332,6 @@ class Skinner {
     groupObj.radiusInputEl.value = radius;
   }
 
-
   buildFullState(node) {
     const _t = this;
     _t.buildEssenceState(node);
@@ -371,7 +368,6 @@ class Skinner {
         const border = _t.generateBorderFallback(_name);
         _t.state[_name].Border.color = border;
       }
-
     } else {
       const _parentName = node.parent;
       _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
@@ -386,9 +382,9 @@ class Skinner {
       if (!isBorderActive) {
         _t.state[_name].Border.color = _t.state[_parentName].Border.color;
       }
+
+      _t.state[_name].borderRadius = _t.state[_parentName].borderRadius;
     }
-
-
   }
 
   syncUiWithState(node) {
@@ -592,13 +588,9 @@ class Skinner {
       _t.on("toggletext", ({ name, prop }) => {
         const bg = _t.state[name].Background.color;
         _t.state[name][prop].color = guessVisibleColor(bg);
-        console.log('toggletext', name, prop);
+        console.log("toggletext", name, prop);
         _t.rebuild(name);
       })
-
-
-
-
     );
   }
 
@@ -932,7 +924,6 @@ class Skinner {
   }
 
   wrapInRootTag(tag, css) {
-
     const _tag = tag || ":root";
 
     return `${_tag}{\n${css}}`;
@@ -1166,9 +1157,8 @@ class Skinner {
 
       _t.emit(eventListener, {
         name,
-        prop
+        prop,
       });
-
     });
 
     return chbRef;
@@ -1267,12 +1257,32 @@ class Skinner {
       const accentGroupWrapper = this.createWrapper();
       const borderGroupWrapper = this.createWrapper();
 
-      const chbRef = this.createEssenceCheckbox(name, `Background`, 'togglebackground');
+      const chbRef = this.createEssenceCheckbox(
+        name,
+        `Background`,
+        "togglebackground"
+      );
       const chbIsDarkRef = this.createTintCheckbox(name);
-      const isGradientActiveRef = this.createEssenceCheckbox(name, `Gradient`, 'togglegradient');
-      const isTextActiveRef = this.createEssenceCheckbox(name, `Text`, 'toggletext');
-      const chbAccentRef = this.createEssenceCheckbox(name, "Accent", 'toggleaccent');
-      const chbBorderRef = this.createEssenceCheckbox(name, "Border", 'toggleborder');
+      const isGradientActiveRef = this.createEssenceCheckbox(
+        name,
+        `Gradient`,
+        "togglegradient"
+      );
+      const isTextActiveRef = this.createEssenceCheckbox(
+        name,
+        `Text`,
+        "toggletext"
+      );
+      const chbAccentRef = this.createEssenceCheckbox(
+        name,
+        "Accent",
+        "toggleaccent"
+      );
+      const chbBorderRef = this.createEssenceCheckbox(
+        name,
+        "Border",
+        "toggleborder"
+      );
 
       groupChild1.appendChild(chbRef.el);
       groupChild1.appendChild(groupLabel);
