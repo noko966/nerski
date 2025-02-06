@@ -528,32 +528,6 @@ class Skinner {
     return copyTargetObject;
   }
 
-  deepMerge(defaults, overrides) {
-    const t = this;
-    if (
-      typeof overrides !== "object" ||
-      overrides === null ||
-      Array.isArray(overrides)
-    ) {
-      return overrides;
-    }
-    const result = { ...defaults };
-    for (const key of Object.keys(overrides)) {
-      const overrideValue = overrides[key];
-      const defaultValue = defaults[key];
-      if (
-        typeof defaultValue === "object" &&
-        defaultValue !== null &&
-        !Array.isArray(defaultValue)
-      ) {
-        result[key] = t.deepMerge(defaultValue, overrideValue);
-      } else {
-        result[key] = overrideValue;
-      }
-    }
-    return result;
-  }
-
   bindEvents() {
     const _t = this;
     _t.eventBindings;
@@ -833,6 +807,7 @@ class Skinner {
     _t.createGradients(name);
     _t.createTexts(name);
     _t.createAccents(name);
+    _t.createBorders(name);
     _t.createRadius(name);
   }
 
@@ -1037,7 +1012,7 @@ class Skinner {
     borderPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Border.color;
       _t.handlePicker(evt, color, (newColor) => {
-        _t.updateEssenceState(name, "Border", color, newColor);
+        _t.updateEssenceState(name, "Border", "color", newColor);
         this.build(name);
       });
     });
@@ -1114,11 +1089,8 @@ class Skinner {
     chbRef.chb.addEventListener("change", (e) => {
       const newActiveVal = e.target.checked;
       _t.updateEssenceState(name, prop, key, newActiveVal);
-      if (prop === "Text") {
-        const bg = _t.state[name].Background.color;
-        const txt = guessVisibleColor(bg);
-        _t.updateEssenceState(name, prop, "color", txt);
-      }
+      const bg = _t.state[name][prop].color;
+      _t.updateEssenceState(name, prop, "color", bg);
       _t.build(name);
     });
 
