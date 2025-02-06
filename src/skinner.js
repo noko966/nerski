@@ -54,8 +54,9 @@ class Skinner {
   border: `
       <svg class="sk_border_svg" preserveAspectRatio="none" vector-effect="non-scaling-stroke" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 649 39" style="enable-background:new 0 0 649 39;" xml:space="preserve">
-<polyline class="tl" points="308.2,1.5 1.5,1.5 1.5,37.5 "/>
-<polyline class="br" points="647.5,1.5 647.5,37.5 340.8,37.5 "/>
+
+<path class="tl" d="M308.2,1.5H5.5c-2.2,0-4,1.8-4,4v28c0,2.2,1.8,4,4,4h63.7"/>
+<path class="br" d="M580.4,1.5h63.1c2.2,0,4,1.8,4,4v28c0,2.2-1.8,4-4,4H340.8"/>
 </svg>`,
       },
       
@@ -1903,8 +1904,8 @@ body {
 }
 
 .sk_control_group {
---tl: 40;
---br: 40;
+--tl: 60;
+--br: 30;
   --grp_opacity: 0.4;
   --grp_pos: 4px;
   height: var(--controls-row-height);
@@ -1932,9 +1933,9 @@ body {
 }
 
 .sk_control_group.state_active {
---tl: -286;
---br: 360;
-  box-shadow: -5px 0px 0 0px var(--sk_accentBg);
+--tl: -267;
+--br: 385;
+  /*box-shadow: -5px 0px 0 0px var(--sk_accentBg);*/
   opacity: 1;
   --grp_opacity: 1;
   --grp_pos: 0;
@@ -1992,13 +1993,13 @@ height: 100%;
 
 .sk_border_svg > .tl{
     transition: stroke-dashoffset 0.5s;
-    stroke-dasharray: 40 342;
+    stroke-dasharray: 60 406;
     stroke-dashoffset: var(--tl);
 }
 
 .sk_border_svg > .br{
   transition: stroke-dashoffset 0.5s;
-    stroke-dasharray: 40 342;
+    stroke-dasharray: 60 406;
     stroke-dashoffset: var(--br);
 }
 
