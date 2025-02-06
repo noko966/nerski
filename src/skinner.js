@@ -291,8 +291,14 @@ class Skinner {
     const { isDark, color, isActive } = _t.state[name].Background;
     const groupObj = _t.ui.essenceGroups[name];
 
+    if (this.rootNodes.includes(name)) {
+      groupObj.isActiveCheckboxEl.checked = true;
+      groupObj.isActiveCheckboxEl.disabled = true;
+    } else {
+      groupObj.isActiveCheckboxEl.checked = isActive;
+    }
+
     groupObj.groupEl.classList.toggle("state_active", isActive);
-    groupObj.isActiveCheckboxEl.checked = isActive;
     groupObj.isDarkCheckboxEl.checked = isDark;
     groupObj.colorTriggerEl.style.background = color;
 
@@ -324,6 +330,34 @@ class Skinner {
 
     groupObj.radiusRangeEl.value = radius;
     groupObj.radiusInputEl.value = radius;
+
+    groupObj.isDarkCheckboxEl.disabled = !isActive;
+    groupObj.isActiveGradientCheckboxEl.disabled = !isActive;
+    groupObj.gradientPickerEl.classList.toggle(
+      "state_disabled",
+      !isActive || !isActiveGradient
+    );
+    groupObj.isActiveTextCheckboxEl.disabled = !isActive;
+    groupObj.textPickerEl.classList.toggle(
+      "state_disabled",
+      !isActive || !isActiveText
+    );
+
+    groupObj.isActiveAccentCheckboxEl.disabled = !isActive;
+    // groupObj.accentPickerEl.disabled = !isActive;
+    groupObj.accentPickerEl.classList.toggle(
+      "state_disabled",
+      !isActive || !isActiveAccent
+    );
+
+    groupObj.isActiveBorderCheckboxEl.disabled = !isActive;
+    groupObj.borderPickerEl.classList.toggle(
+      "state_disabled",
+      !isActive || !isActiveBorder
+    );
+
+    groupObj.radiusRangeEl.disabled = !isActive;
+    groupObj.radiusInputEl.disabled = !isActive;
   }
 
   buildEssenceState(name, parentName) {
@@ -1795,6 +1829,11 @@ body {
   border: 1px solid var(--sk_dominantBg3Hover);
   position: relative;
   overflow: hidden;
+}
+
+.sk_picker_trigger.state_disabled{
+    pointer-events: none;
+    opacity: 0.2;
 }
 
 .sk_picker_trigger::before{
