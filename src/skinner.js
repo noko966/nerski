@@ -51,7 +51,14 @@ class Skinner {
     c-0.2-0.2-0.4-0.5-0.4-0.9c0-0.6,0.5-1.2,1.1-1.2c0,0,0.1,0,0.1,0h15l0.1,0c0.3,0,0.5,0.1,0.8,0.4c0.3,0.3,0.4,0.6,0.4,1
     C20.7,16.8,20.1,17.3,19.4,17.3z"/>
   </svg>`,
+  border: `
+      <svg class="sk_border_svg" preserveAspectRatio="none" vector-effect="non-scaling-stroke" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 649 39" style="enable-background:new 0 0 649 39;" xml:space="preserve">
+<polyline class="tl" points="308.2,1.5 1.5,1.5 1.5,37.5 "/>
+<polyline class="br" points="647.5,1.5 647.5,37.5 340.8,37.5 "/>
+</svg>`,
       },
+      
       wrapper: null,
       header: null,
       content: null,
@@ -1177,6 +1184,123 @@ class Skinner {
     return buttonEl;
   }
 
+  addStringAnim() {
+    const stringWrapper = document.createElement("div");
+    stringWrapper.className = "sk_path_string_root";
+    const svgNS = "http://www.w3.org/2000/svg";
+    const box = document.createElement("div");
+    box.className = "sk_path_string_box";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttributeNS(
+      "http://www.w3.org/2000/xmlns/",
+      "xmlns:xlink",
+      "http://www.w3.org/1999/xlink"
+    );
+
+    var path = document.createElementNS(svgNS, "path");
+    path.setAttribute("vector-effect", "non-scaling-stroke");
+    svg.setAttribute("preserveAspectRatio", "none");
+    const defs = document.createElementNS(svgNS, "defs");
+    svg.appendChild(path);
+    svg.appendChild(defs);
+
+    const linearGradient = document.createElementNS(svgNS, "linearGradient");
+    linearGradient.setAttribute("id", "strokeGradient");
+    linearGradient.setAttribute("gradientUnits", "userSpaceOnUse");
+
+    linearGradient.setAttribute("x1", "0%");
+    linearGradient.setAttribute("y1", "0%");
+    linearGradient.setAttribute("x2", "100%");
+    linearGradient.setAttribute("y2", "0%");
+
+    const colors = [
+      "#FF637C",
+      "#8144CD",
+      "#7872E0",
+      "#56A9E2",
+      "#D2F58D",
+      "#FFD76B",
+      "#FF637C",
+    ];
+
+    // Distribute offsets evenly (0% to 100%)
+    colors.forEach((color, index) => {
+      const stop = document.createElementNS(svgNS, "stop");
+      const offset = (index / (colors.length - 1)) * 100;
+      stop.setAttribute("offset", offset + "%");
+      stop.setAttribute("stop-color", color);
+      linearGradient.appendChild(stop);
+    });
+
+    // 5. Append the gradient to defs
+    defs.appendChild(linearGradient);
+
+    stringWrapper.appendChild(svg);
+    stringWrapper.appendChild(box);
+
+    this.ui.root.appendChild(stringWrapper);
+
+    let progress = 0;
+    let width = 500;
+    let time = Math.PI / 2;
+    let x = 0.5;
+    let reqId = null;
+
+    svg.setAttribute("viewBox", `0 0 ${width} 40`);
+
+    const setPath = (progress) => {
+      path.setAttribute(
+        "d",
+        `M0 20 Q${width * x} ${20 + progress}, ${width} 20`
+      );
+    };
+
+    path.setAttribute("stroke", "url(#strokeGradient)");
+    const lerp = (x, y, a) => x * (1 - a) + y * a;
+
+    const manageMouseEnter = () => {
+      if (reqId) {
+        cancelAnimationFrame(reqId);
+        resetAnimation();
+      }
+    };
+
+    const manageMouseMove = (e) => {
+      const { movementY, clientX } = e;
+      const pathBound = box.getBoundingClientRect();
+      x = (clientX - pathBound.left) / pathBound.width;
+      progress += movementY * 0.2;
+      setPath(progress);
+    };
+
+    const manageMouseLeave = () => {
+      animateOut();
+    };
+
+    const animateOut = () => {
+      const newProgress = progress * Math.sin(time);
+      progress = lerp(progress, 0, 0.025);
+      time += 0.2;
+      setPath(newProgress);
+      if (Math.abs(progress) > 0.75) {
+        reqId = requestAnimationFrame(animateOut);
+      } else {
+        resetAnimation();
+      }
+    };
+
+    const resetAnimation = () => {
+      time = Math.PI / 2;
+      progress = 0;
+    };
+
+    box.addEventListener("mouseenter", manageMouseEnter);
+    box.addEventListener("mousemove", manageMouseMove);
+    box.addEventListener("mouseleave", manageMouseLeave);
+
+    setPath(progress);
+  }
+
   buildUI() {
     this.ui.root = document.createElement("div");
     this.ui.root.className = "sk_root";
@@ -1211,13 +1335,21 @@ class Skinner {
       const essenceState = this.state[name];
       const group = document.createElement("div");
       group.className = "sk_control_group";
+      const svgBorder = document.createElement("div");
+      svgBorder.className = "sk_border_svg_wrapper";
+      svgBorder.innerHTML = this.ui.icons.border;
+
+      svgBorder
       const groupLabel = document.createElement("span");
       groupLabel.className = "sk_control_group_label";
+      
       groupLabel.innerText = name;
       const groupChild1 = document.createElement("div");
       groupChild1.className = "sk_checkbox_wrapper";
       const groupChild2 = document.createElement("div");
       groupChild2.className = "sk_checkbox_wrapper";
+
+      group.append(svgBorder);
 
       if (essenceState.Background && essenceState.Background.isActive) {
         group.classList.add("state_active");
@@ -1311,6 +1443,8 @@ class Skinner {
       this.makeDownloadRequest("sport")
     );
     this.ui.footer.appendChild(this.ui.downloadTrigger);
+
+    this.addStringAnim();
   }
 
   async makeDownloadRequest(name, number) {
@@ -1769,6 +1903,8 @@ body {
 }
 
 .sk_control_group {
+--tl: 40;
+--br: 40;
   --grp_opacity: 0.4;
   --grp_pos: 4px;
   height: var(--controls-row-height);
@@ -1779,7 +1915,6 @@ body {
   transition: box-shadow 0.2s;
   box-shadow: -2px 0px 0 0px var(--sk_dominantBg2Hover);
   box-shadow: none;
-
   flex-direction: row;
   background-color: var(--sk_dominantBg);
   flex-wrap: nowrap;
@@ -1797,6 +1932,8 @@ body {
 }
 
 .sk_control_group.state_active {
+--tl: -286;
+--br: 360;
   box-shadow: -5px 0px 0 0px var(--sk_accentBg);
   opacity: 1;
   --grp_opacity: 1;
@@ -1834,6 +1971,35 @@ body {
 .sk_picker_trigger.state_disabled{
     pointer-events: none;
     opacity: 0.2;
+}
+
+.sk_border_svg_wrapper{
+       position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+}
+
+.sk_border_svg{
+fill: none;
+stroke-width: 2;
+stroke: var(--sk_accentBg);
+width: 100%;
+height: 100%;
+}
+
+.sk_border_svg > .tl{
+    transition: stroke-dashoffset 0.5s;
+    stroke-dasharray: 40 342;
+    stroke-dashoffset: var(--tl);
+}
+
+.sk_border_svg > .br{
+  transition: stroke-dashoffset 0.5s;
+    stroke-dasharray: 40 342;
+    stroke-dashoffset: var(--br);
 }
 
 .sk_picker_trigger::before{
