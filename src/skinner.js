@@ -6,23 +6,17 @@ import SKStylePicker from "./modules/stylePicker.js";
 import { MouseIntersectStyler } from "./CustomStyler.js";
 
 class Skinner {
-  constructor(cssCb, starterConfig, root, variant, patientRoot) {
+  constructor(starterConfig, root, variant, patientRoot) {
     this.eventListener = {
       init: [],
       save: [],
       hide: [],
       show: [],
       clear: [],
-      change: [],
       gradientchange: [],
       changestop: [],
       cancel: [],
       statechange: [],
-      togglebackground: [],
-      togglegradient: [],
-      toggleaccent: [],
-      toggletext: [],
-      toggleborder: [],
     };
     this.root = root || document.body;
     this.ui = {
@@ -252,11 +246,13 @@ class Skinner {
 
       const userOverrides = starterConfig[essenceName] || {};
 
-      const merged = this.deepMerge(this.configBlueprint, userOverrides);
+      const merged = this.deepMergeObject(this.configBlueprint, userOverrides);
 
       if (this.rootNodes.includes(essenceName)) {
         merged.Background.isActive = true;
       }
+
+      console.log(merged);
 
       this.state[essenceName] = merged;
     });
@@ -290,100 +286,84 @@ class Skinner {
     };
   }
 
-  updateControl(node) {
+  updateControl(name) {
     const _t = this;
-    const _name = node.name;
+    const { isDark, color, isActive } = _t.state[name].Background;
+    const groupObj = _t.ui.essenceGroups[name];
 
-    const { isDark, color, isActive } = _t.state[_name].Background;
-    const groupObj = _t.ui.essenceGroups[_name];
-
-    groupObj.groupEl.classList.toggle("state_active", !!isActive);
-    groupObj.isActiveCheckboxEl.checked = !!isActive;
-    groupObj.isDarkCheckboxEl.checked = !!isDark;
+    groupObj.groupEl.classList.toggle("state_active", isActive);
+    groupObj.isActiveCheckboxEl.checked = isActive;
+    groupObj.isDarkCheckboxEl.checked = isDark;
     groupObj.colorTriggerEl.style.background = color;
 
-    const colorGradient = _t.skin[`${_name}G`];
-    const isActiveGradient = _t.state[_name].Gradient.isActive;
+    const colorGradient = _t.skin[`${name}G`];
+    const isActiveGradient = _t.state[name].Gradient.isActive;
 
-    groupObj.isActiveGradientCheckboxEl.checked = !!isActiveGradient;
+    groupObj.isActiveGradientCheckboxEl.checked = isActiveGradient;
     groupObj.gradientPickerEl.style.background = colorGradient;
 
-    const isActiveText = _t.state[_name].Text.isActive;
-    const colorText = _t.state[_name].Text.color;
+    const isActiveText = _t.state[name].Text.isActive;
+    const colorText = _t.state[name].Text.color;
 
-    groupObj.isActiveTextCheckboxEl.checked = !!isActiveText;
+    groupObj.isActiveTextCheckboxEl.checked = isActiveText;
     groupObj.textPickerEl.style.background = colorText;
 
-    const isActiveAccent = _t.state[_name].Accent.isActive;
-    const colorAccent = _t.state[_name].Accent.color;
+    const isActiveAccent = _t.state[name].Accent.isActive;
+    const colorAccent = _t.state[name].Accent.color;
 
-    groupObj.isActiveAccentCheckboxEl.checked = !!isActiveAccent;
+    groupObj.isActiveAccentCheckboxEl.checked = isActiveAccent;
     groupObj.accentPickerEl.style.background = colorAccent;
 
-    const isActiveBorder = _t.state[_name].Border.isActive;
-    const colorBorder = _t.state[_name].Border.color;
+    const isActiveBorder = _t.state[name].Border.isActive;
+    const colorBorder = _t.state[name].Border.color;
 
-    groupObj.isActiveBorderCheckboxEl.checked = !!isActiveBorder;
+    groupObj.isActiveBorderCheckboxEl.checked = isActiveBorder;
     groupObj.borderPickerEl.style.background = colorBorder;
 
-    const radius = _t.state[_name].borderRadius;
+    const radius = _t.state[name].borderRadius;
 
     groupObj.radiusRangeEl.value = radius;
     groupObj.radiusInputEl.value = radius;
   }
 
-  buildFullState(node) {
+  buildEssenceState(name, parentName) {
     const _t = this;
-    _t.buildEssenceState(node);
-    if (node.children && node.children.length > 0) {
-      node.children.forEach((n) => {
-        _t.buildFullState(n);
-      });
-    }
-  }
-
-  buildEssenceState(node) {
-    const _t = this;
-    const _name = node.name;
-    const isBackgroundActive = _t.state[_name].Background.isActive;
-    const isBackgroundDark = _t.state[_name].Background.isDark;
-    const isTextActive = _t.state[_name].Text.isActive;
-    const isAccentActive = _t.state[_name].Accent.isActive;
-    const isBorderActive = _t.state[_name].Border.isActive;
+    const isBackgroundActive = _t.state[name].Background.isActive;
+    const isBackgroundDark = _t.state[name].Background.isDark;
+    const isTextActive = _t.state[name].Text.isActive;
+    const isAccentActive = _t.state[name].Accent.isActive;
+    const isBorderActive = _t.state[name].Border.isActive;
 
     if (isBackgroundActive) {
-      const BackgrounColor = _t.state[_name].Background.color;
+      const BackgrounColor = _t.state[name].Background.color;
 
       if (!isTextActive) {
-        _t.state[_name].Text.color = guessVisibleColor(BackgrounColor);
+        _t.state[name].Text.color = guessVisibleColor(BackgrounColor);
       }
 
       if (!isAccentActive) {
-        const oppositeRootName = _t.getOppositeRoot(_t.tree, _name);
-        _t.state[_name].Accent.color =
+        const oppositeRootName = _t.getOppositeRoot(_t.tree, name);
+        _t.state[name].Accent.color =
           _t.state[oppositeRootName.name].Background.color;
       }
 
       if (!isBorderActive) {
-        const border = _t.generateBorderFallback(_name);
-        _t.state[_name].Border.color = border;
+        const border = _t.generateBorderFallback(name);
+        _t.state[name].Border.color = border;
       }
     } else {
-      const _parentName = node.parent;
-      _t.state[_name].Background = _t.generateFallbackBackground(_parentName);
-
+      const _parentName = parentName;
+      _t.state[name].Background = _t.generateFallbackBackground(_parentName);
       if (!isTextActive) {
-        _t.state[_name].Text.color = _t.state[_parentName].Text.color;
+        _t.state[name].Text.color = _t.state[_parentName].Text.color;
       }
-
       if (!isAccentActive) {
-        _t.state[_name].Accent.color = _t.state[_parentName].Accent.color;
+        _t.state[name].Accent.color = _t.state[_parentName].Accent.color;
       }
       if (!isBorderActive) {
-        _t.state[_name].Border.color = _t.state[_parentName].Border.color;
+        _t.state[name].Border.color = _t.state[_parentName].Border.color;
       }
-
-      _t.state[_name].borderRadius = _t.state[_parentName].borderRadius;
+      _t.state[name].borderRadius = _t.state[_parentName].borderRadius;
     }
   }
 
@@ -403,83 +383,65 @@ class Skinner {
 
     //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
     let step = 4;
-    const _vdDominant = this.verbalData("sk_dominant");
-    const _vdAccent = this.verbalData("sk_accent");
+    const _vdd = this.verbalData("sk_dominant");
+    const _vda = this.verbalData("sk_accent");
 
-    const dominantKeyNames = [
-      _vdDominant.nameBgHov,
-      _vdDominant.nameBg2,
-      _vdDominant.nameBg2Hov,
-      _vdDominant.nameBg3,
-      _vdDominant.nameBg3Hov,
+    const bgKeyNames = [
+      "nameBgHov",
+      "nameBg2",
+      "nameBg2Hov",
+      "nameBg3",
+      "nameBg3Hov",
     ];
 
     let firstDominantBg = colors.bg;
     let isDark = colors.name === "dark" ? false : false;
     UISkin.dominant = {};
-    UISkin.dominant[_vdDominant.nameBg] = firstDominantBg;
-    dominantKeyNames.forEach((bgName, i) => {
-      UISkin.dominant[bgName] = isDark
-        ? chroma(firstDominantBg).darken(0.2 * (i + 1))
-        : chroma(firstDominantBg).brighten(0.2 * (i + 1));
+    UISkin.dominant[_vdd.nameBg] = firstDominantBg;
+    bgKeyNames.forEach((bgName, i) => {
+      UISkin.dominant[_vdd[bgName]] = isDark
+        ? tinycolor(firstDominantBg)
+            .darken(5 * (i + 1))
+            .toHexString()
+        : tinycolor(firstDominantBg)
+            .brighten(5 * (i + 1))
+            .toHexString();
     });
-
-    const accentKeyNames = [
-      _vdAccent.nameBgHov,
-      _vdAccent.nameBg2,
-      _vdAccent.nameBg2Hov,
-      _vdAccent.nameBg3,
-      _vdAccent.nameBg3Hov,
-    ];
-
-    let firstAccentBg = colors.accent;
+    const firstAccentBg = colors.accent;
     UISkin.accent = {};
-    UISkin.accent[_vdAccent.nameBg] = firstAccentBg;
-    accentKeyNames.forEach((bgName, i) => {
-      UISkin.accent[bgName] = isDark
-        ? chroma(firstAccentBg).darken(0.2 * (i + 1))
-        : chroma(firstAccentBg).brighten(0.2 * (i + 1));
+    UISkin.accent[_vda.nameBg] = firstAccentBg;
+    bgKeyNames.forEach((bgName, i) => {
+      UISkin.accent[_vda[bgName]] = tinycolor(firstAccentBg)
+        .darken(5 * (i + 1))
+        .toHexString();
     });
 
-    const dominantTextKeyNames = [
-      _vdDominant.nameTxt,
-      _vdDominant.nameTxt2,
-      _vdDominant.nameTxt3,
-    ];
-    let firstDominantTxt = guessVisibleColor(firstDominantBg);
-    dominantTextKeyNames.forEach((TxtName, i) => {
-      UISkin.dominant[TxtName] = chroma(firstDominantTxt)
-        .alpha(1 - (i + 1) * 0.2)
-        .css();
+    const txtKeyNames = ["nameTxt", "nameTxt2", "nameTxt3"];
+    let _txtd = guessVisibleColor(firstDominantBg);
+    let _txta = guessVisibleColor(firstAccentBg);
+    txtKeyNames.forEach((TxtName, i) => {
+      UISkin.dominant[_vdd[TxtName]] = tinycolor(_txtd)
+        .setAlpha(1 - (i + 1) * 0.2)
+        .toHexString();
+
+      UISkin.accent[_vda[TxtName]] = tinycolor(_txta)
+        .setAlpha(1 - (i + 1) * 0.2)
+        .toHexString();
     });
 
-    const accentTextKeyNames = [
-      _vdAccent.nameTxt,
-      _vdAccent.nameTxt2,
-      _vdAccent.nameTxt2,
-    ];
-    let firstAccentTxt = guessVisibleColor(firstAccentBg);
-    accentTextKeyNames.forEach((TxtName, i) => {
-      UISkin.accent[TxtName] = chroma(firstAccentTxt)
-        .alpha(1 - (i + 1) * 0.2)
-        .css();
-    });
+    const createShadow = (c) => {
+      return tinycolor(c).desaturate(20).darken(20).toHexString();
+    };
 
-    let dominantShadow = chroma(firstDominantBg).shade(0.3);
+    const createGlass = (c1) => {
+      return tinycolor(c1).setAlpha(0.6).toRgbString();
+    };
 
-    let accentShadow = tinycolor
-      .mix(firstAccentBg, firstDominantBg, 50)
-      .desaturate(20)
-      .lighten(10)
-      .toHexString();
+    let accentShadow = createShadow(firstAccentBg);
+    let dominantShadow = createShadow(firstDominantBg);
 
-    let accentShadow2 = tinycolor(accentShadow).lighten(4).toHexString();
-
-    let dominantGlass = tinycolor(firstDominantBg).setAlpha(0.8).toRgbString();
-
-    // let shadow = islight
-    //   ? tinycolor(bg).lighten(6).toHexString()
-    //   : tinycolor(bg).darken(6).toHexString();
+    const dominantGlass = createGlass(firstDominantBg);
+    const accentGlass = createGlass(firstAccentBg);
 
     UISkin.order.forEach((name, i) => {
       let _vd = this.verbalData(`sk_${name}`);
@@ -521,26 +483,49 @@ class Skinner {
         `${UISkin[name][_vd.nameTxt3]}`
       );
       this.root.style.setProperty(`--${_vd.name}Shadow`, `${dominantShadow}`);
-      this.root.style.setProperty(`--${_vd.name}Shadow`, `${accentShadow}`);
       this.root.style.setProperty(`--${_vd.name}Glass`, `${dominantGlass}`);
     });
   }
 
-  updateEssenceState(essenceName, partialConfig) {
+  updateEssenceState(name, prop, key, newVal) {
     const t = this;
-    const currentConfig = this.state[essenceName];
-    const merged = this.deepMerge(currentConfig, partialConfig);
+    if (!key) {
+      t.state[name][prop] = newVal;
+    } else {
+      t.state[name][prop][key] = newVal;
+    }
 
-    this.state[essenceName] = merged;
+    console.log(t.state[name]);
 
-    const startNode = this.findNodeByName(this.tree, essenceName);
+    // this.emit("statechange", {
+    //   name,
+    //   newValue: newVal,
+    // });
+  }
 
-    // this.updateChildrenInheritance(essenceName);
-
-    this.emit("statechange", {
-      essenceName,
-      newValue: merged,
+  deepMergeObject(targetObject = {}, sourceObject = {}) {
+    const _t = this;
+    // clone the source and target objects to avoid the mutation
+    const copyTargetObject = JSON.parse(JSON.stringify(targetObject));
+    const copySourceObject = JSON.parse(JSON.stringify(sourceObject));
+    // Iterating through all the keys of source object
+    Object.keys(copySourceObject).forEach((key) => {
+      if (
+        typeof copySourceObject[key] === "object" &&
+        !Array.isArray(copySourceObject[key])
+      ) {
+        // If property has nested object, call the function recursively
+        copyTargetObject[key] = _t.deepMergeObject(
+          copyTargetObject[key],
+          copySourceObject[key]
+        );
+      } else {
+        // else merge the object source to target
+        copyTargetObject[key] = copySourceObject[key];
+      }
     });
+
+    return copyTargetObject;
   }
 
   deepMerge(defaults, overrides) {
@@ -571,27 +556,21 @@ class Skinner {
 
   bindEvents() {
     const _t = this;
-    _t.eventBindings.push(
-      _t.on("init", () => {
-        // console.log("Initialized");
+    _t.eventBindings;
+    // .push
+    // _t.on("init", () => {
+    //   // console.log("Initialized");
 
-        _t.on("statechange", ({ essenceName, newValue }) => {
-          console.log(
-            "State changed for essence:",
-            essenceName,
-            " => ",
-            newValue
-          );
-        });
-      }),
-
-      _t.on("toggletext", ({ name, prop }) => {
-        const bg = _t.state[name].Background.color;
-        _t.state[name][prop].color = guessVisibleColor(bg);
-        console.log("toggletext", name, prop);
-        _t.rebuild(name);
-      })
-    );
+    //   _t.on("statechange", ({ essenceName, newValue }) => {
+    //     console.log(
+    //       "State changed for essence:",
+    //       essenceName,
+    //       " => ",
+    //       newValue
+    //     );
+    //   });
+    // }),
+    // ();
   }
 
   getRootNode(rootNodes, childName) {
@@ -732,8 +711,8 @@ class Skinner {
       // this.buildSkin(rn);
       // this.buildCSS(rn);
     });
-    this.generateUiPalette(this.ui.colors["dark"]);
-    this.emit("init");
+    this.generateUiPalette(this.ui.colors["light"]);
+    // this.emit("init");
   }
 
   getShadeStep(color, isDark, index) {
@@ -848,14 +827,13 @@ class Skinner {
     _t.skin[_vd.nameRadius] = BorderState;
   }
 
-  updateSkin(node) {
+  updateSkin(name) {
     const _t = this;
-    const _name = node.name;
-    _t.createBackgrounds(_name);
-    _t.createGradients(_name);
-    _t.createTexts(_name);
-    _t.createAccents(_name);
-    _t.createRadius(_name);
+    _t.createBackgrounds(name);
+    _t.createGradients(name);
+    _t.createTexts(name);
+    _t.createAccents(name);
+    _t.createRadius(name);
   }
 
   buildSkin(node) {
@@ -878,12 +856,11 @@ class Skinner {
     }
   }
 
-  updateCSS(node) {
+  updateCSS(name) {
     const _t = this;
-    const _name = node.name;
 
-    const _vd = _t.verbalData(_name);
-    const _id = `sk_style_elem_${_name}`;
+    const _vd = _t.verbalData(name);
+    const _id = `sk_style_elem_${name}`;
     let style = document.getElementById(_id);
     if (!style) {
       style = document.createElement("style");
@@ -891,7 +868,7 @@ class Skinner {
       _t.root.appendChild(style);
     }
 
-    const backgrouns = [
+    const backgrounds = [
       "nameBg",
       "nameBgHov",
       "nameBg2",
@@ -900,7 +877,7 @@ class Skinner {
       "nameBg3Hov",
     ];
     let css = "";
-    backgrouns.forEach((bg) => {
+    backgrounds.forEach((bg) => {
       css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`;
     });
 
@@ -920,7 +897,7 @@ class Skinner {
 
     style.innerHTML = _t.wrapInRootTag(":root", css);
 
-    this.state[_name].css = css;
+    this.state[name].css = css;
   }
 
   wrapInRootTag(tag, css) {
@@ -929,14 +906,29 @@ class Skinner {
     return `${_tag}{\n${css}}`;
   }
 
+  build(name) {
+    const _t = this;
+    const node = _t.findNodeByName(_t.tree, name);
+
+    _t.buildEssenceState(name, node.parent);
+    _t.updateControl(name);
+    _t.updateSkin(name);
+    _t.updateCSS(name);
+    if (node.children && node.children.length > 0) {
+      node.children.forEach((n) => {
+        _t.build(n.name);
+      });
+    }
+  }
+
   rebuild(name) {
     const _t = this;
     const node = _t.findNodeByName(_t.tree, name);
 
-    _t.buildEssenceState(node);
-    _t.updateControl(node);
-    _t.updateSkin(node);
-    _t.updateCSS(node);
+    _t.buildEssenceState(name, node.parent);
+    _t.updateControl(name);
+    _t.updateSkin(name);
+    _t.updateCSS(name);
 
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
@@ -967,17 +959,15 @@ class Skinner {
   };
 
   createCheckBox(id, cn) {
-    let _id = id;
-    let _cn = cn || "default";
+    const _id = id;
+    const _cn = cn || "default";
 
-    let label, icon, checkbox;
-    label = document.createElement("label");
+    const label = document.createElement("label");
     label.className = "sk_chb_label " + (_cn ? _cn : "");
-    label.htmlFor = _id;
-    icon = document.createElement("i");
+    const icon = document.createElement("i");
     icon.className = "sk_chb";
     icon.innerHTML = this.ui.icons.chb;
-    checkbox = document.createElement("input");
+    const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = _id;
 
@@ -997,13 +987,9 @@ class Skinner {
 
     backgroundPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Background.color;
-      this.handlePicker(evt, color, (newColor) => {
-        this.updateEssenceState(name, {
-          Background: {
-            color: newColor,
-          },
-        });
-        this.rebuild(name);
+      _t.handlePicker(evt, color, (newColor) => {
+        _t.updateEssenceState(name, "Background", "color", newColor);
+        this.build(name);
       });
     });
 
@@ -1018,12 +1004,8 @@ class Skinner {
     textPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Text.color;
       _t.handlePicker(evt, color, (newColor) => {
-        _t.updateEssenceState(name, {
-          Text: {
-            color: newColor,
-          },
-        });
-        _t.rebuild(name);
+        _t.updateEssenceState(name, "Text", "color", newColor);
+        this.build(name);
       });
     });
 
@@ -1037,14 +1019,10 @@ class Skinner {
 
     gradientPickerEl.addEventListener("click", (evt) => {
       _t.handleGradientPicker(evt, name, (data) => {
-        _t.updateEssenceState(name, {
-          Gradient: {
-            angle: data.angle,
-            stops: data.stops,
-            type: data.type,
-          },
-        });
-        _t.rebuild(name);
+        _t.updateEssenceState(name, "Gradient", "angle", data.angle);
+        _t.updateEssenceState(name, "Gradient", "stops", data.stops);
+        _t.updateEssenceState(name, "Gradient", "type", data.type);
+        this.build(name);
       });
     });
 
@@ -1059,12 +1037,8 @@ class Skinner {
     borderPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Border.color;
       _t.handlePicker(evt, color, (newColor) => {
-        _t.updateEssenceState(name, {
-          Border: {
-            color: newColor,
-          },
-        });
-        _t.rebuild(name);
+        _t.updateEssenceState(name, "Border", color, newColor);
+        this.build(name);
       });
     });
 
@@ -1072,6 +1046,7 @@ class Skinner {
   }
 
   createSliderControl(name, prop) {
+    const _t = this;
     let _control, range, input;
     _control = document.createElement("div");
     _control.className = "sk_checkbox_wrapper sk_checkbox_wrapper-range";
@@ -1086,17 +1061,13 @@ class Skinner {
 
     input.addEventListener("input", (e) => {
       input.value = e.target.value;
-      this.updateEssenceState(name, {
-        borderRadius: e.target.value,
-      });
-      this.rebuild(name);
+      _t.updateEssenceState(name, "borderRadius", null, e.target.value);
+      _t.build(name);
     });
     range.addEventListener("input", (e) => {
       range.value = e.target.value;
-      this.updateEssenceState(name, {
-        borderRadius: e.target.value,
-      });
-      this.rebuild(name);
+      _t.updateEssenceState(name, "borderRadius", null, e.target.value);
+      _t.build(name);
     });
 
     const label = document.createElement("div");
@@ -1121,12 +1092,8 @@ class Skinner {
     accentPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Accent.color;
       _t.handlePicker(evt, color, (newColor) => {
-        _t.updateEssenceState(name, {
-          Accent: {
-            color: newColor,
-          },
-        });
-        _t.rebuild(name);
+        _t.updateEssenceState(name, "Accent", "color", newColor);
+        this.build(name);
       });
     });
 
@@ -1139,26 +1106,34 @@ class Skinner {
     return root;
   }
 
-  createEssenceCheckbox(name, prop, eventListener) {
+  createEssenceCheckbox(name, prop, key) {
     const _t = this;
-    const chbRef = _t.createCheckBox(`${name}${prop}`);
+    const chbRef = _t.createCheckBox(`${name}${prop}${key}`);
     // chbRef.chb.checked = !!this.state[name][prop].isActive;
 
     chbRef.chb.addEventListener("change", (e) => {
       const newActiveVal = e.target.checked;
+      _t.updateEssenceState(name, prop, key, newActiveVal);
+      if (prop === "Text") {
+        const bg = _t.state[name].Background.color;
+        const txt = guessVisibleColor(bg);
+        _t.updateEssenceState(name, prop, "color", txt);
+      }
+      _t.build(name);
+    });
 
-      // _t.updateEssenceState(name, {
-      //   [prop]: {
-      //     isActive: newActiveVal,
-      //   },
-      // });
+    return chbRef;
+  }
 
-      _t.state[name][prop].isActive = newActiveVal;
+  createEssenceGroupCheckbox(name) {
+    const _t = this;
+    const chbRef = _t.createCheckBox(`Is${name}EssenceGroupActive`);
+    // chbRef.chb.checked = !!this.state[name][prop].isActive;
 
-      _t.emit(eventListener, {
-        name,
-        prop,
-      });
+    chbRef.chb.addEventListener("change", (e) => {
+      const newActiveVal = e.target.checked;
+      _t.updateEssenceState(name, "Background", "isActive", newActiveVal);
+      _t.build(name);
     });
 
     return chbRef;
@@ -1172,12 +1147,8 @@ class Skinner {
     chbRef.chb.addEventListener("change", (e) => {
       const newActiveVal = e.target.checked;
 
-      this.updateEssenceState(name, {
-        Background: {
-          isDark: newActiveVal,
-        },
-      });
-      this.rebuild(name);
+      this.updateEssenceState(name, "Background", prop, newActiveVal);
+      this.build(name);
     });
 
     return chbRef;
@@ -1257,31 +1228,27 @@ class Skinner {
       const accentGroupWrapper = this.createWrapper();
       const borderGroupWrapper = this.createWrapper();
 
-      const chbRef = this.createEssenceCheckbox(
-        name,
-        `Background`,
-        "togglebackground"
-      );
+      const chbRef = this.createEssenceGroupCheckbox(name);
       const chbIsDarkRef = this.createTintCheckbox(name);
       const isGradientActiveRef = this.createEssenceCheckbox(
         name,
         `Gradient`,
-        "togglegradient"
+        "isActive"
       );
       const isTextActiveRef = this.createEssenceCheckbox(
         name,
         `Text`,
-        "toggletext"
+        "isActive"
       );
       const chbAccentRef = this.createEssenceCheckbox(
         name,
         "Accent",
-        "toggleaccent"
+        "isActive"
       );
       const chbBorderRef = this.createEssenceCheckbox(
         name,
         "Border",
-        "toggleborder"
+        "isActive"
       );
 
       groupChild1.appendChild(chbRef.el);

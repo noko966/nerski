@@ -18,5 +18,5 @@ module.exports = {
     compress: true,
     port: 9000,
   },
-  mode: "production", // or 'development'
+  mode: "development", // or 'development'
 };

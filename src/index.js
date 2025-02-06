@@ -865,5 +865,5 @@ const config = {
   },
 };
 
-window.SkinnerInstance = new Skinner(createCss, config, null, target);
+window.SkinnerInstance = new Skinner( config, null, target);
 window.SkinnerInstance.init();
