@@ -853,17 +853,17 @@ const starterConfig = {
 const config = {
   body: {
     Background: {
-      color: "#321d51",
+      color: "#1a1a1a",
     },
     borderRadius: 8,
   },
   accent: {
     Background: {
-      color: "#f1c40f",
+      color: "#ffb800",
     },
     borderRadius: 8,
   },
 };
 
-window.SkinnerInstance = new Skinner( config, null, target);
+window.SkinnerInstance = new Skinner(config, null, target);
 window.SkinnerInstance.init();

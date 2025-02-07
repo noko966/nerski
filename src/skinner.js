@@ -51,7 +51,7 @@ class Skinner {
     c-0.2-0.2-0.4-0.5-0.4-0.9c0-0.6,0.5-1.2,1.1-1.2c0,0,0.1,0,0.1,0h15l0.1,0c0.3,0,0.5,0.1,0.8,0.4c0.3,0.3,0.4,0.6,0.4,1
     C20.7,16.8,20.1,17.3,19.4,17.3z"/>
   </svg>`,
-  border: `
+        border: `
       <svg class="sk_border_svg" preserveAspectRatio="none" vector-effect="non-scaling-stroke" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 649 39" style="enable-background:new 0 0 649 39;" xml:space="preserve">
 
@@ -59,7 +59,7 @@ class Skinner {
 <path class="br" d="M580.4,1.5h63.1c2.2,0,4,1.8,4,4v28c0,2.2-1.8,4-4,4H340.8"/>
 </svg>`,
       },
-      
+
       wrapper: null,
       header: null,
       content: null,
@@ -472,7 +472,7 @@ class Skinner {
     });
 
     const createShadow = (c) => {
-      return tinycolor(c).desaturate(20).darken(20).toHexString();
+      return tinycolor(c).desaturate(10).darken(20).toHexString();
     };
 
     const createGlass = (c1) => {
@@ -1168,6 +1168,21 @@ class Skinner {
     return chbRef;
   }
 
+  createSwitch() {
+    const lbl = document.createElement("label");
+    lbl.className = "sk_switch_root";
+    const switchEl = document.createElement("input");
+    switchEl.type = "checkbox";
+    switchEl.className = "sk_switch_input";
+    const ic = document.createElement("i");
+    ic.className = "sk_switch_imitator";
+
+    lbl.appendChild(switchEl);
+    lbl.appendChild(ic);
+
+    return lbl;
+  }
+
   createButton(label, icon) {
     const _t = this;
     const buttonEl = document.createElement("div");
@@ -1310,9 +1325,19 @@ class Skinner {
     this.ui.content = document.createElement("div");
     this.ui.content.className = "sk_content sk_scrollbar";
 
+    this.ui.toolsPanel = document.createElement("div");
+    this.ui.toolsPanel.className = "sk_tools_root";
+
+    this.ui.themeTrigger = this.createSwitch();
+    this.ui.collapseTrigger = this.createSwitch();
+
+    this.ui.toolsPanel.appendChild(this.ui.themeTrigger);
+    this.ui.toolsPanel.appendChild(this.ui.collapseTrigger);
+
     this.root.appendChild(this.ui.root);
     this.ui.root.appendChild(this.ui.header);
     this.ui.root.appendChild(this.ui.content);
+    this.ui.root.appendChild(this.ui.toolsPanel);
 
     const editables = [
       "essence",
@@ -1340,10 +1365,10 @@ class Skinner {
       svgBorder.className = "sk_border_svg_wrapper";
       svgBorder.innerHTML = this.ui.icons.border;
 
-      svgBorder
+      svgBorder;
       const groupLabel = document.createElement("span");
       groupLabel.className = "sk_control_group_label";
-      
+
       groupLabel.innerText = name;
       const groupChild1 = document.createElement("div");
       groupChild1.className = "sk_checkbox_wrapper";
@@ -1439,11 +1464,17 @@ class Skinner {
 
     this.ui.root.appendChild(this.ui.footer);
 
+    this.ui.saveTrigger = this.createButton("save", "download");
+
+    this.ui.loadTrigger = this.createButton("load", "download");
+
     this.ui.downloadTrigger = this.createButton("variables", "download");
     this.ui.downloadTrigger.addEventListener("click", () =>
       this.makeDownloadRequest("sport")
     );
     this.ui.footer.appendChild(this.ui.downloadTrigger);
+    this.ui.footer.appendChild(this.ui.saveTrigger);
+    this.ui.footer.appendChild(this.ui.loadTrigger);
 
     this.addStringAnim();
   }
@@ -1564,6 +1595,12 @@ class Skinner {
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
   --sk_grad_rainbow: linear-gradient(90deg, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
+  --sk_rainbow_1: #FF637C;
+  --sk_rainbow_2: #8144CD;
+  --sk_rainbow_3: #7872E0;
+  --sk_rainbow_4: #56A9E2;
+  --sk_rainbow_5: #D2F58D;
+  --sk_rainbow_6: #FFD76B;
 }
 
 .sk_path_string_root {
@@ -1571,7 +1608,7 @@ class Skinner {
   position: relative;
   width: 100%;
   position: absolute;
-  top: 7px;
+  top: 10px;
 }
 
 .sk_path_string_box {
@@ -1604,7 +1641,7 @@ body {
   display: flex;
   align-items: center;
   column-gap: 6px;
-  padding: 0 4px;
+  padding: 0 8px;
   height: var(--skinnerToolboxFooterHeight);
   background: var(--sk_dominantGlass);
   position: absolute;
@@ -1715,10 +1752,9 @@ body {
     color: var(--sk_dominantTxt);
     border-bottom: 1px solid var(--sk_dominantBgHover);
     height: 30px;
-    padding: 0 16px;
+    padding: 0 12px;
     column-gap: 6px;
     font-size: 11px;
-    background: var(--sk_dominantGlass);
 }
 
 .sk_header_label {
@@ -1806,14 +1842,30 @@ body {
   z-index: var(--sk_zind);
   height: 320px;
   width: auto;
-  background-color: var(--sk_dominantBg);
   color: var(--sk_dominantTxt);
   border: 1px solid var(--sk_dominantBgHover);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
-  background: var(--sk_dominantGlass);
-  backdrop-filter: blur(14px);
+  background: var(--sk_dominantBg);
+}
+
+.sk_tools_root{
+  background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt);
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 60px;
+    height: 100px;
+    transform: translateX(calc(100% + 12px));
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 6px;
 }
 
 .pcr-app {
@@ -1883,7 +1935,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100% - var(--skinnerToolboxFooterHeight));
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -1905,7 +1957,7 @@ body {
 
 .sk_control_group {
 --tl: 60;
---br: 30;
+--br: 60;
   --grp_opacity: 0.4;
   --grp_pos: 4px;
   height: var(--controls-row-height);
@@ -1917,7 +1969,6 @@ body {
   box-shadow: -2px 0px 0 0px var(--sk_dominantBg2Hover);
   box-shadow: none;
   flex-direction: row;
-  background-color: var(--sk_dominantBg);
   flex-wrap: nowrap;
   margin-bottom: 1px;
   align-items: center;
@@ -1975,18 +2026,21 @@ body {
 }
 
 .sk_border_svg_wrapper{
-       position: absolute;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: calc(100% + 8px);
-    height: calc(100% + 8px);
+    width: calc(100% + 5px);
+    height: calc(100% + 5px);
+    background: var(--sk_dominantBg);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .sk_border_svg{
 fill: none;
-stroke-width: 2;
-stroke: var(--sk_accentBg);
+stroke-width: 6px;
+stroke: url(#strokeGradient);
 width: 100%;
 height: 100%;
 }
@@ -2153,11 +2207,11 @@ height: 100%;
 
 .sk_btn {
   appearance: none;
-  border: 1px solid var(--sk_dominantBg2);
+  border: 1px solid var(--sk_dominantBg2Hover);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
-  background-color: var(--sk_dominantBgHover);
+  background-color: var(--sk_dominantBg2);
   color: var(--sk_dominantTxt);
   fill: var(--sk_dominantTxt2);
   display: block;
@@ -2180,14 +2234,12 @@ height: 100%;
 }
 
 .sk_btn.variant_icon {
-      width: var(--skinnerBtnHeight);
+    width: var(--skinnerBtnHeight);
     height: var(--skinnerBtnHeight);
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-        background-color: var(--sk_dominantBg3);
-    border: 2px solid var(--sk_dominantBg3Hover);
     color: var(--sk_dominantTxt2);
 }
 
@@ -2602,6 +2654,49 @@ input[type="range"]::-moz-range-thumb {
   border: 0.2px solid rgba(0, 0, 0, 0);
   border-radius: 18px;
   cursor: pointer;
+}
+
+.sk_switch_root {
+  position: relative;
+}
+
+.sk_switch_input{
+  display: none;
+} 
+
+.sk_switch_root > .sk_switch_input + .sk_switch_imitator {
+--trackBg: var(--sk_dominantShadow);
+--thumbBg: var(--sk_dominantBg2);
+  --tr: 0;
+}
+
+.sk_switch_root > .sk_switch_input:checked + .sk_switch_imitator {
+--trackBg: var(--sk_accentBg);
+--thumbBg: var(--sk_accentTxt);
+  --tr: 16px;
+}
+
+.sk_switch_imitator {
+  width: 36px;
+  height: 20px;
+  background-color: var(--trackBg);
+  flex-shrink: 0;
+  display: block;
+  position: relative;
+  border-radius: 12px;
+}
+
+.sk_switch_imitator::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: var(--thumbBg);
+  border: 2px solid var(--trackBg);
+  flex-shrink: 0;
+  display: block;
+  transform: translate(var(--tr));
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
 input[type="range"]::-ms-track {

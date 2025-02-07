@@ -209,7 +209,7 @@ export default class ViewDemoEuropean {
     el.className = "demo_body";
     el.id = "demo_body_unique_id";
     el.setAttribute("data-sk", "body");
-    this.generateRandomCircles(10, el);
+    // this.generateRandomCircles(10, el);
     return el;
   }
 
