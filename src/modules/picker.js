@@ -519,6 +519,48 @@ display: flex;
     return root;
   }
 
+  createOpacitySlider() {
+    let _that = this;
+    const root = document.createElement("div");
+    const hand = document.createElement("div");
+    const track = document.createElement("div");
+
+    root.className = "sk_picker_slider_root variant_opacity";
+    hand.className = "sk_picker_slider_hand";
+    track.className = "sk_picker_slider_track";
+
+    root.appendChild(hand);
+    root.appendChild(track);
+    this.oSlider = Moveable({
+      lock: "v",
+      element: hand,
+      wrapper: root,
+
+      onstop: () => _that._emit("changestop", "slider", _that),
+      onchange(v) {
+        let hsl = tinycolor(_that._color).toHsl();
+        let color = _that._color;
+        // Update the input field only if the user is currently not typing
+        if (_that._recalc) {
+          const alpha = Math.round(v * 1e2) / 100;
+
+          // Update color
+
+          // Prevent falling under zero
+          let _chx = tinycolor(hsl).setAlpha(alpha).toRgbString();
+          // Set picker and gradient color
+
+          _that.slSlider.trigger();
+          this.wrapper.style.setProperty("--bg", `rgba(0, 0, 0, ${alpha})`);
+          _that.setBackground(_chx, "picker_opacity");
+          _that.inputEl.value = _chx;
+        }
+      },
+    });
+
+    return root;
+  }
+
   createSlider(type) {
     let _that = this;
     const root = document.createElement("div");
@@ -527,6 +569,9 @@ display: flex;
     let variantCN;
     switch (type) {
       case "hue":
+        variantCN = "variant_hue";
+        break;
+      case "opacity":
         variantCN = "variant_hue";
         break;
 
@@ -578,6 +623,9 @@ display: flex;
       this.createGradientStops();
       const gradient = this.generateGradientString();
       this._emit("gradientchange", gradient, source, this);
+    } else if (this._mode === "opacity") {
+      const _colorWithOpacity = tinycolor(color).toRgbString();
+      this._emit("change", _colorWithOpacity, source, this);
     } else {
       this._emit("change", _color, source, this);
     }
@@ -646,6 +694,10 @@ display: flex;
     slidersWrapper.appendChild(this.saturationControl);
     slidersWrapper.appendChild(this.createSeparator());
     slidersWrapper.appendChild(this.hueControl);
+    if (this._mode === "opacity") {
+      this.opacityControl = this.createOpacitySlider();
+      slidersWrapper.appendChild(this.opacityControl);
+    }
 
     const actionsWrapper = document.createElement("div");
     actionsWrapper.className = "sk_widget_footer_row";
@@ -691,6 +743,10 @@ display: flex;
   updateSliders() {
     let _hsv = tinycolor(this._color).toHsv();
     this.hSlider.update(_hsv.h / 360);
+    if (this._mode === "opacity") {
+      const opacity = tinycolor(this._color).getAlpha();
+      this.oSlider.update(opacity);
+    }
     this.slSlider.update(_hsv.s, 1 - _hsv.v);
     this.inputEl.value = this._color;
     return true;

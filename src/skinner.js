@@ -212,6 +212,7 @@ class Skinner {
         color: null,
       },
       borderRadius: 2,
+      blur: 4,
     };
 
     this.essenceSteps = {
@@ -240,6 +241,11 @@ class Skinner {
         3: 0.4,
       },
     };
+
+    this.essencesArray.push({
+      name: "overlay",
+      parent: "body",
+    });
 
     this.tree = this.arrayToTree(this.essencesArray);
 
@@ -335,9 +341,13 @@ class Skinner {
     groupObj.borderPickerEl.style.background = colorBorder;
 
     const radius = _t.state[name].borderRadius;
+    const blur = _t.state[name].blur;
 
     groupObj.radiusRangeEl.value = radius;
     groupObj.radiusInputEl.value = radius;
+
+    groupObj.blurRangeEl.value = blur;
+    groupObj.blurInputEl.value = blur;
 
     groupObj.isDarkCheckboxEl.disabled = !isActive;
     groupObj.isActiveGradientCheckboxEl.disabled = !isActive;
@@ -366,6 +376,9 @@ class Skinner {
 
     groupObj.radiusRangeEl.disabled = !isActive;
     groupObj.radiusInputEl.disabled = !isActive;
+
+    groupObj.blurRangeEl.disabled = !isActive;
+    groupObj.blurInputEl.disabled = !isActive;
   }
 
   buildEssenceState(name, parentName) {
@@ -380,7 +393,9 @@ class Skinner {
       const BackgrounColor = _t.state[name].Background.color;
 
       if (!isTextActive) {
-        _t.state[name].Text.color = guessVisibleColor(BackgrounColor);
+        _t.state[name].Text.color = guessVisibleColor(
+          tinycolor(BackgrounColor).toHexString()
+        );
       }
 
       if (!isAccentActive) {
@@ -406,6 +421,7 @@ class Skinner {
         _t.state[name].Border.color = _t.state[_parentName].Border.color;
       }
       _t.state[name].borderRadius = _t.state[_parentName].borderRadius;
+      _t.state[name].blur = _t.state[name].blur;
     }
   }
 
@@ -711,6 +727,7 @@ class Skinner {
     data.nameAccentTxt = data.name + "AccentTxt";
 
     data.nameRadius = data.name + "Radius";
+    data.nameBlur = data.name + "Blur";
 
     return data;
   }
@@ -721,11 +738,6 @@ class Skinner {
     this.bindEvents();
     this.tree.forEach((rn) => {
       this.rebuild(rn.name);
-      // console.log({rn});
-      // this.buildFullState(rn);
-      // this.syncUiWithState(rn);
-      // this.buildSkin(rn);
-      // this.buildCSS(rn);
     });
     this.generateUiPalette(this.ui.colors["light"]);
     // this.emit("init");
@@ -843,6 +855,14 @@ class Skinner {
     _t.skin[_vd.nameRadius] = BorderState;
   }
 
+  createBlur(name) {
+    const _t = this;
+    const _name = name;
+    const _vd = _t.verbalData(_name);
+    const blurState = _t.state[_name].blur;
+    _t.skin[_vd.nameBlur] = blurState;
+  }
+
   updateSkin(name) {
     const _t = this;
     _t.createBackgrounds(name);
@@ -851,6 +871,7 @@ class Skinner {
     _t.createAccents(name);
     _t.createBorders(name);
     _t.createRadius(name);
+    _t.createBlur(name);
   }
 
   buildSkin(node) {
@@ -863,14 +884,38 @@ class Skinner {
     }
   }
 
-  buildCSS(node) {
+  updateOverlayCSS(name) {
     const _t = this;
-    _t.updateCSS(node);
-    if (node.children && node.children.length > 0) {
-      node.children.forEach((n) => {
-        _t.buildCSS(n);
-      });
+
+    const _vd = _t.verbalData(name);
+    const _id = `sk_style_elem_${name}`;
+    let style = document.getElementById(_id);
+    if (!style) {
+      style = document.createElement("style");
+      style.id = _id;
+      _t.root.appendChild(style);
     }
+
+    const backgrounds = ["nameBg", "nameBgHov"];
+    let css = "";
+    backgrounds.forEach((bg) => {
+      css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`;
+    });
+
+    const texts = ["nameTxt", "nameTxt2"];
+
+    texts.forEach((txt) => {
+      css += `--${_vd[txt]}: ${_t.skin[_vd[txt]]};\n`;
+    });
+
+    css += `--${_vd.nameAccent}: ${_t.skin[_vd.nameAccent]};\n`;
+    css += `--${_vd.nameAccentTxt}: ${_t.skin[_vd.nameAccentTxt]};\n`;
+
+    css += `--${_vd.nameBlur}: ${_t.skin[_vd.nameBlur]}px;\n`;
+
+    style.innerHTML = _t.wrapInRootTag(":root", css);
+
+    this.state[name].css = css;
   }
 
   updateCSS(name) {
@@ -930,7 +975,12 @@ class Skinner {
     _t.buildEssenceState(name, node.parent);
     _t.updateControl(name);
     _t.updateSkin(name);
-    _t.updateCSS(name);
+    if (name === "overlay") {
+      _t.updateOverlayCSS(name);
+    } else {
+      _t.updateCSS(name);
+    }
+
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
         _t.build(n.name);
@@ -945,7 +995,11 @@ class Skinner {
     _t.buildEssenceState(name, node.parent);
     _t.updateControl(name);
     _t.updateSkin(name);
-    _t.updateCSS(name);
+    if (name === "overlay") {
+      _t.updateOverlayCSS(name);
+    } else {
+      _t.updateCSS(name);
+    }
 
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
@@ -997,14 +1051,15 @@ class Skinner {
     };
   }
 
-  createBackgrounPicker(name) {
+  createBackgrounPicker(name, type) {
+    const _type = type;
     const _t = this;
     const backgroundPickerEl = document.createElement("div");
     backgroundPickerEl.className = "sk_picker_trigger";
 
     backgroundPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Background.color;
-      _t.handlePicker(evt, color, (newColor) => {
+      _t.handlePicker(evt, color, _type, (newColor) => {
         _t.updateEssenceState(name, "Background", "color", newColor);
         this.build(name);
       });
@@ -1020,7 +1075,7 @@ class Skinner {
 
     textPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Text.color;
-      _t.handlePicker(evt, color, (newColor) => {
+      _t.handlePicker(evt, color, "color", (newColor) => {
         _t.updateEssenceState(name, "Text", "color", newColor);
         this.build(name);
       });
@@ -1053,7 +1108,7 @@ class Skinner {
 
     borderPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Border.color;
-      _t.handlePicker(evt, color, (newColor) => {
+      _t.handlePicker(evt, color, "color", (newColor) => {
         _t.updateEssenceState(name, "Border", "color", newColor);
         this.build(name);
       });
@@ -1063,10 +1118,11 @@ class Skinner {
   }
 
   createSliderControl(name, prop) {
+    const _prop = prop || "borderRadius";
     const _t = this;
     let _control, range, input;
     _control = document.createElement("div");
-    _control.className = "sk_checkbox_wrapper sk_checkbox_wrapper-range";
+    _control.className = `sk_checkbox_wrapper sk_checkbox_wrapper-range variant_${prop}`;
 
     range = document.createElement("input");
     range.type = "range";
@@ -1078,12 +1134,12 @@ class Skinner {
 
     input.addEventListener("input", (e) => {
       input.value = e.target.value;
-      _t.updateEssenceState(name, "borderRadius", null, e.target.value);
+      _t.updateEssenceState(name, _prop, null, e.target.value);
       _t.build(name);
     });
     range.addEventListener("input", (e) => {
       range.value = e.target.value;
-      _t.updateEssenceState(name, "borderRadius", null, e.target.value);
+      _t.updateEssenceState(name, _prop, null, e.target.value);
       _t.build(name);
     });
 
@@ -1108,7 +1164,7 @@ class Skinner {
 
     accentPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Accent.color;
-      _t.handlePicker(evt, color, (newColor) => {
+      _t.handlePicker(evt, color, "color", (newColor) => {
         _t.updateEssenceState(name, "Accent", "color", newColor);
         this.build(name);
       });
@@ -1117,9 +1173,10 @@ class Skinner {
     return accentPickerEl;
   }
 
-  createWrapper() {
+  createWrapper(cn) {
+    const _cn = cn || "";
     const root = document.createElement("div");
-    root.className = "sk_checkbox_wrapper";
+    root.className = `sk_checkbox_wrapper ${_cn && `variant_${_cn}`}`;
     return root;
   }
 
@@ -1317,6 +1374,10 @@ class Skinner {
     setPath(progress);
   }
 
+  isOverlay(name) {
+    return name === "overlay";
+  }
+
   buildUI() {
     this.ui.root = document.createElement("div");
     this.ui.root.className = "sk_root";
@@ -1361,6 +1422,7 @@ class Skinner {
       const essenceState = this.state[name];
       const group = document.createElement("div");
       group.className = "sk_control_group";
+      this.isOverlay(name) && group.classList.add("variant_overlay");
       const svgBorder = document.createElement("div");
       svgBorder.className = "sk_border_svg_wrapper";
       svgBorder.innerHTML = this.ui.icons.border;
@@ -1380,17 +1442,18 @@ class Skinner {
       if (essenceState.Background && essenceState.Background.isActive) {
         group.classList.add("state_active");
       }
+      const pickerType = this.isOverlay(name) ? "opacity" : "color";
 
-      const backgroundPickerEl = this.createBackgrounPicker(name);
+      const backgroundPickerEl = this.createBackgrounPicker(name, pickerType);
       const gradientPickerEl = this.createGradientPicker(name);
       const textPickerEl = this.createTextPicker(name);
       const accentPickerEl = this.createAccentPicker(name);
       const borderPickerEl = this.createBorderPicker(name);
 
-      const gradientGroupWrapper = this.createWrapper();
-      const textGroupWrapper = this.createWrapper();
-      const accentGroupWrapper = this.createWrapper();
-      const borderGroupWrapper = this.createWrapper();
+      const gradientGroupWrapper = this.createWrapper("gradient");
+      const textGroupWrapper = this.createWrapper("text");
+      const accentGroupWrapper = this.createWrapper("accent");
+      const borderGroupWrapper = this.createWrapper("border");
 
       const chbRef = this.createEssenceGroupCheckbox(name);
       const chbIsDarkRef = this.createTintCheckbox(name);
@@ -1419,8 +1482,8 @@ class Skinner {
       groupChild1.appendChild(groupLabel);
       groupChild2.appendChild(backgroundPickerEl);
       groupChild2.appendChild(chbIsDarkRef.el);
-
-      const radiusGroupWrapper = this.createSliderControl(name, "radius");
+      const radiusGroupWrapper = this.createSliderControl(name, "borderRadius");
+      const blurGroupWrapper = this.createSliderControl(name, "blur");
 
       gradientGroupWrapper.appendChild(isGradientActiveRef.el);
       gradientGroupWrapper.appendChild(gradientPickerEl);
@@ -1438,6 +1501,7 @@ class Skinner {
       group.appendChild(accentGroupWrapper);
       group.appendChild(borderGroupWrapper);
       group.appendChild(radiusGroupWrapper.el);
+      group.appendChild(blurGroupWrapper.el);
 
       this.ui.content.appendChild(group);
 
@@ -1456,6 +1520,8 @@ class Skinner {
         borderPickerEl: borderPickerEl,
         radiusRangeEl: radiusGroupWrapper.rangeEl,
         radiusInputEl: radiusGroupWrapper.inputEl,
+        blurRangeEl: blurGroupWrapper.rangeEl,
+        blurInputEl: blurGroupWrapper.inputEl,
       };
     });
 
@@ -1545,7 +1611,7 @@ class Skinner {
     });
   }
 
-  handlePicker(event, color, onChangeCallback) {
+  handlePicker(event, color, type, onChangeCallback) {
     if (this.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
@@ -1557,7 +1623,7 @@ class Skinner {
     const x = event.clientX;
     const y = event.clientY;
 
-    const SKPickerInstance = new SKPicker(null, currentColor);
+    const SKPickerInstance = new SKPicker(null, currentColor, type);
     SKPickerInstance.init();
     SKPickerInstance.show(x, y);
 
@@ -1956,6 +2022,10 @@ body {
 }
 
 .sk_control_group {
+--blur: none;
+--radius: flex;
+--border: flex;
+--gradient: flex;
 --tl: 60;
 --br: 60;
   --grp_opacity: 0.4;
@@ -1974,6 +2044,13 @@ body {
   align-items: center;
   border-radius: 4px;
   opacity: 0.5;
+}
+
+.sk_control_group.variant_overlay{
+    --blur: flex;
+    --radius: none;
+    --border: none;
+    --gradient: none;
 }
 
 .sk_control_group_label{
@@ -2410,6 +2487,19 @@ height: 100%;
   column-gap: 4px;
   padding: 2px 4px;
   border-radius: 4px;
+}
+
+.sk_checkbox_wrapper.variant_blur{
+  display: var(--blur);
+}
+.sk_checkbox_wrapper.variant_borderRadius{
+  display: var(--radius);
+}
+.sk_checkbox_wrapper.variant_gradient{
+  display: var(--gradient);
+}
+.sk_checkbox_wrapper.variant_border{
+  display: var(--border);
 }
 
 .sk_style_trigger{
