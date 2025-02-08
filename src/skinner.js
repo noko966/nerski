@@ -1228,16 +1228,16 @@ class Skinner {
   createSwitch() {
     const lbl = document.createElement("label");
     lbl.className = "sk_switch_root";
-    const switchEl = document.createElement("input");
-    switchEl.type = "checkbox";
-    switchEl.className = "sk_switch_input";
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.className = "sk_switch_input";
     const ic = document.createElement("i");
     ic.className = "sk_switch_imitator";
 
-    lbl.appendChild(switchEl);
+    lbl.appendChild(input);
     lbl.appendChild(ic);
 
-    return lbl;
+    return { el: lbl, chb: input };
   }
 
   createButton(label, icon) {
@@ -1388,12 +1388,18 @@ class Skinner {
 
     this.ui.toolsPanel = document.createElement("div");
     this.ui.toolsPanel.className = "sk_tools_root";
-
+    const uiTriggerRef = this.createSwitch();
     this.ui.themeTrigger = this.createSwitch();
     this.ui.collapseTrigger = this.createSwitch();
+    this.ui.themeTrigger.chb.addEventListener("change", (e) => {
+      let uiTheme = e.currentTarget.checked
+        ? this.ui.colors["dark"]
+        : this.ui.colors["light"];
+      this.generateUiPalette(uiTheme);
+    });
 
-    this.ui.toolsPanel.appendChild(this.ui.themeTrigger);
-    this.ui.toolsPanel.appendChild(this.ui.collapseTrigger);
+    this.ui.toolsPanel.appendChild(this.ui.themeTrigger.el);
+    this.ui.toolsPanel.appendChild(this.ui.collapseTrigger.el);
 
     this.root.appendChild(this.ui.root);
     this.ui.root.appendChild(this.ui.header);
