@@ -23,12 +23,14 @@ class Skinner {
       colors: {
         dark: {
           name: "dark",
-          bg: "#1F2122",
+          dominant: "#1F2122",
+          button: "#464559",
           accent: "#7872E0",
         },
         light: {
           name: "light",
-          bg: "#d4d7db",
+          dominant: "#d4d7db",
+          button: "#a6a8c3",
           accent: "#7872E0",
         },
       },
@@ -253,14 +255,17 @@ class Skinner {
       this.rootNodes.push(rn.name);
     });
 
-    this.state = {};
+    this.prebuildState(starterConfig);
+  }
 
+  prebuildState(configOverrides) {
+    this.state = {};
     this.essencesArray.forEach((essenceObj) => {
       const essenceName = essenceObj.name;
 
-      const userOverrides = starterConfig[essenceName] || {};
+      const _overrides = configOverrides[essenceName] || {};
 
-      const merged = this.deepMergeObject(this.configBlueprint, userOverrides);
+      const merged = this.deepMergeObject(this.configBlueprint, _overrides);
 
       if (this.rootNodes.includes(essenceName)) {
         merged.Background.isActive = true;
@@ -437,12 +442,7 @@ class Skinner {
 
   generateUiPalette(colors) {
     const UISkin = {};
-    UISkin.order = ["dominant", "accent"];
-
-    //this.uiColors.bg = tinycolor(this.uiColors.bg).darken(80).desaturate(60).toString();
-    let step = 4;
-    const _vdd = this.verbalData("sk_dominant");
-    const _vda = this.verbalData("sk_accent");
+    UISkin.order = ["dominant", "accent", "button"];
 
     const bgKeyNames = [
       "nameBgHov",
@@ -452,96 +452,84 @@ class Skinner {
       "nameBg3Hov",
     ];
 
-    let firstDominantBg = colors.bg;
-    let isDark = colors.name === "dark" ? false : false;
-    UISkin.dominant = {};
-    UISkin.dominant[_vdd.nameBg] = firstDominantBg;
-    bgKeyNames.forEach((bgName, i) => {
-      UISkin.dominant[_vdd[bgName]] = isDark
-        ? tinycolor(firstDominantBg)
-            .darken(5 * (i + 1))
-            .toHexString()
-        : tinycolor(firstDominantBg)
-            .brighten(5 * (i + 1))
-            .toHexString();
-    });
-    const firstAccentBg = colors.accent;
-    UISkin.accent = {};
-    UISkin.accent[_vda.nameBg] = firstAccentBg;
-    bgKeyNames.forEach((bgName, i) => {
-      UISkin.accent[_vda[bgName]] = tinycolor(firstAccentBg)
-        .darken(5 * (i + 1))
-        .toHexString();
-    });
-
     const txtKeyNames = ["nameTxt", "nameTxt2", "nameTxt3"];
-    let _txtd = guessVisibleColor(firstDominantBg);
-    let _txta = guessVisibleColor(firstAccentBg);
-    txtKeyNames.forEach((TxtName, i) => {
-      UISkin.dominant[_vdd[TxtName]] = tinycolor(_txtd)
-        .setAlpha(1 - (i + 1) * 0.2)
-        .toHexString();
-
-      UISkin.accent[_vda[TxtName]] = tinycolor(_txta)
-        .setAlpha(1 - (i + 1) * 0.2)
-        .toHexString();
-    });
 
     const createShadow = (c) => {
-      return tinycolor(c).desaturate(10).darken(20).toHexString();
+      return tinycolor(c).desaturate(2).darken(6).toHexString();
     };
 
     const createGlass = (c1) => {
       return tinycolor(c1).setAlpha(0.6).toRgbString();
     };
 
-    let accentShadow = createShadow(firstAccentBg);
-    let dominantShadow = createShadow(firstDominantBg);
-
-    const dominantGlass = createGlass(firstDominantBg);
-    const accentGlass = createGlass(firstAccentBg);
-
     UISkin.order.forEach((name, i) => {
-      let _vd = this.verbalData(`sk_${name}`);
+      const _vd = this.verbalData(name);
+      UISkin[name] = {};
+      const bg = colors[name];
+      UISkin[name][_vd.nameBg] = bg;
+      bgKeyNames.forEach((bgName, i) => {
+        UISkin[name][_vd[bgName]] = tinycolor(bg)
+          .lighten(5 * (i + 1))
+          .toHexString();
+      });
+      const txt = guessVisibleColor(bg);
+
+      txtKeyNames.forEach((txtName, i) => {
+        UISkin[name][_vd[txtName]] = tinycolor(txt)
+          .setAlpha(1 - (i + 1) * 0.2)
+          .toHexString();
+      });
+
+      UISkin[name][`${_vd.name}Shadow`] = createShadow(bg);
+      UISkin[name][`${_vd.name}Glass`] = createGlass(bg);
+    });
+    const uiPrefix = "--sk_";
+    UISkin.order.forEach((name, i) => {
+      let _vd = this.verbalData(`${name}`);
       this.root.style.setProperty(
-        `--${_vd.nameBg}`,
+        `${uiPrefix}${_vd.nameBg}`,
         `${UISkin[name][_vd.nameBg]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameBgHov}`,
+        `${uiPrefix}${_vd.nameBgHov}`,
         `${UISkin[name][_vd.nameBgHov]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameBg2}`,
+        `${uiPrefix}${_vd.nameBg2}`,
         `${UISkin[name][_vd.nameBg2]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameBg2Hov}`,
+        `${uiPrefix}${_vd.nameBg2Hov}`,
         `${UISkin[name][_vd.nameBg2Hov]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameBg3}`,
+        `${uiPrefix}${_vd.nameBg3}`,
         `${UISkin[name][_vd.nameBg3]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameBg3Hov}`,
+        `${uiPrefix}${_vd.nameBg3Hov}`,
         `${UISkin[name][_vd.nameBg3Hov]}`
       );
-
       this.root.style.setProperty(
-        `--${_vd.nameTxt}`,
+        `${uiPrefix}${_vd.nameTxt}`,
         `${UISkin[name][_vd.nameTxt]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameTxt2}`,
+        `${uiPrefix}${_vd.nameTxt2}`,
         `${UISkin[name][_vd.nameTxt2]}`
       );
       this.root.style.setProperty(
-        `--${_vd.nameTxt3}`,
+        `${uiPrefix}${_vd.nameTxt3}`,
         `${UISkin[name][_vd.nameTxt3]}`
       );
-      this.root.style.setProperty(`--${_vd.name}Shadow`, `${dominantShadow}`);
-      this.root.style.setProperty(`--${_vd.name}Glass`, `${dominantGlass}`);
+      this.root.style.setProperty(
+        `${uiPrefix}${_vd.name}Shadow`,
+        `${UISkin[name][`${_vd.name}Shadow`]}`
+      );
+      this.root.style.setProperty(
+        `${uiPrefix}${_vd.name}Glass`,
+        `${UISkin[name][`${_vd.name}Glass`]}`
+      );
     });
   }
 
@@ -741,6 +729,13 @@ class Skinner {
     });
     this.generateUiPalette(this.ui.colors["light"]);
     // this.emit("init");
+  }
+
+  loadSavedConfig(configOverrides) {
+    this.prebuildState(configOverrides);
+    this.tree.forEach((rn) => {
+      this.rebuild(rn.name);
+    });
   }
 
   getShadeStep(color, isDark, index) {
@@ -1242,7 +1237,7 @@ class Skinner {
 
   createButton(label, icon) {
     const _t = this;
-    const buttonEl = document.createElement("div");
+    const buttonEl = document.createElement("button");
     buttonEl.className = "sk_btn";
     const lbl = document.createElement("span");
     lbl.innerText = label;
@@ -1252,6 +1247,7 @@ class Skinner {
       ic.innerHTML = _t.ui.icons[icon];
       buttonEl.appendChild(ic);
     }
+
     buttonEl.appendChild(lbl);
 
     return buttonEl;
@@ -1376,6 +1372,35 @@ class Skinner {
 
   isOverlay(name) {
     return name === "overlay";
+  }
+
+  createTextArea() {
+    const _t = this;
+    const _input = document.createElement("textarea");
+    _input.spellcheck = false;
+    _input.placeholder = "enter copied config";
+    _input.className = "sk_input_config sk_scrollbar";
+
+    let wrapper = document.createElement("div");
+    wrapper.className = "sk_input_wrapper";
+
+    const load = this.createButton("load", "download");
+    load.classList.add("variant_load");
+    load.addEventListener("click", () => {
+      const _config = _input.value ? JSON.parse(_input.value) : null;
+      console.log(_config);
+
+      _t.loadSavedConfig(_config);
+      _input.value = "";
+    });
+
+    wrapper.appendChild(_input);
+    wrapper.appendChild(load);
+
+    return {
+      el: wrapper,
+      inputRef: _input,
+    };
   }
 
   buildUI() {
@@ -1538,15 +1563,18 @@ class Skinner {
 
     this.ui.saveTrigger = this.createButton("save", "download");
 
-    this.ui.loadTrigger = this.createButton("load", "download");
+    this.ui.saveTrigger.addEventListener("click", () => this.saveConfig());
 
     this.ui.downloadTrigger = this.createButton("variables", "download");
+
     this.ui.downloadTrigger.addEventListener("click", () =>
       this.makeDownloadRequest("sport")
     );
+
+    const configInput = this.createTextArea();
     this.ui.footer.appendChild(this.ui.downloadTrigger);
     this.ui.footer.appendChild(this.ui.saveTrigger);
-    this.ui.footer.appendChild(this.ui.loadTrigger);
+    this.ui.footer.appendChild(configInput.el);
 
     this.addStringAnim();
   }
@@ -1645,6 +1673,60 @@ class Skinner {
     });
   }
 
+  cloneState(state) {
+    function omitCssReplacer(key, value) {
+      if (key === "css") {
+        return undefined;
+      }
+      return value;
+    }
+
+    const jsonString = JSON.stringify(state, omitCssReplacer);
+    return JSON.parse(jsonString);
+  }
+
+  saveConfig() {
+    const clonedState = this.cloneState(this.state);
+    this.copyTextToClipboard(clonedState);
+    return clonedState;
+  }
+
+  copyTextToClipboard(text) {
+    let _text = JSON.stringify(text);
+
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(_text);
+      return;
+    }
+    navigator.clipboard.writeText(_text).then(
+      function () {
+        console.log("Async: Copying to clipboard was successful!");
+      },
+      function (err) {
+        console.error("Async: Could not copy text: ", err);
+      }
+    );
+  }
+
+  // saveConfig() {
+  //   // this.message("config saved", true);
+  //   _t.essencesArray.forEach((essenceObj) => {
+  //     css += _t.state[essenceObj.name].css;
+  //   });
+
+  //   this.copyTextToClipboard(config);
+
+  //   let timeout = null;
+  //   if (!timeout) {
+  //     timeout = window.setTimeout(() => {
+  //       this.message("", false);
+  //       clearTimeout(timeout);
+  //     }, 1000);
+  //   }
+
+  //   return config;
+  // }
+
   // updateEssenceUI(name) {
   //   this.ui.essenceGroups[name].className =
   // }
@@ -1715,14 +1797,13 @@ body {
   column-gap: 6px;
   padding: 0 8px;
   height: var(--skinnerToolboxFooterHeight);
-  background: var(--sk_dominantGlass);
+  background: var(--sk_dominantBg2);
   position: absolute;
   border-top: 1px solid var(--sk_dominantBg3Hover);
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  backdrop-filter: blur(12px);
 }
 
 .nik_root_mobile #dm-main-container {
@@ -2290,13 +2371,15 @@ height: 100%;
 
 .sk_btn {
   appearance: none;
-  border: 1px solid var(--sk_dominantBg2Hover);
+  border:0;
+  border-top: 1px solid var(--sk_buttonBg2);
+  border-bottom: 1px solid var(--sk_buttonShadow);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
-  background-color: var(--sk_dominantBg2);
-  color: var(--sk_dominantTxt);
-  fill: var(--sk_dominantTxt2);
+  background-color: var(--sk_buttonBg);
+  color: var(--sk_buttonTxt);
+  fill: var(--sk_buttonTxt);
   display: block;
   text-transform: capitalize;
   font-size: 12px;
@@ -2311,6 +2394,12 @@ height: 100%;
   column-gap: 4px;
 }
 
+.sk_btn.variant_load{
+    right: 0;
+    position: absolute;
+    z-index: 90;
+}
+
 .sk_btn.state_active{
     background: conic-gradient(from 90deg at 50% 50%, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
     color: #fff;
@@ -2323,23 +2412,23 @@ height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--sk_dominantTxt2);
+    color: var(--sk_buttonTxt2);
 }
 
 .sk_btn:hover {
-  background-color: var(--sk_dominantBg2);
+  background-color: var(--sk_buttonBgHover);
 }
 
 .sk_btn.variant_cta {
   background-color: var(--sk_accentBg);
-  border-color: var(--sk_accentBg2);
   color: var(--sk_accentTxt);
+  border-top: 1px solid var(--sk_accentBg2);
+  border-bottom: 1px solid var(--sk_accentShadow);
   position: relative;
 }
 
 .sk_btn.variant_cta:hover {
-  border-color: var(--sk_accentBg);
-  background-color: var(--sk_accentBg);
+  background-color: var(--sk_accentBgHover);
   color: var(--sk_accentTxt);
 }
 /* view switchers */
@@ -2973,24 +3062,24 @@ border-radius: 50%;*/
   width: 19.5em;
 }
 
-.nik_skinner_input_wrapper {
+.sk_input_wrapper {
   position: relative;
   height: var(--skinnerBtnHeight);
   flex-grow: 1;
   min-width: 1px;
 }
 
-.nik_skinner_input {
+.sk_input_config {
   margin: 0;
   padding: 0 8px;
   background-color: var(--sk_dominantBg);
-  color: var(--sk_dominantTxt2);
+  color: var(--sk_dominantTxt);
   border: 0;
-  border-radius: 2px;
-  border: 1px solid var(--sk_dominantBg3Hover);
+  border-radius: 1px;
+  border: 1px solid var(--sk_dominantShadow);
+  border-bottom: 1px solid var(--sk_dominantBg3Hover);
   outline: 0;
   font-size: 11px;
-  text-transform: capitalize;
   display: block;
   cursor: pointer;
   transition: height 0.2s;
@@ -3007,7 +3096,7 @@ border-radius: 50%;*/
   z-index: 80;
 }
 
-.nik_skinner_input:focus {
+.sk_input_config:focus {
   height: 300px;
   overflow: auto;
 }
