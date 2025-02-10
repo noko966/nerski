@@ -558,6 +558,7 @@ class Skinner {
     Object.keys(copySourceObject).forEach((key) => {
       if (
         typeof copySourceObject[key] === "object" &&
+        copySourceObject[key] !== null &&
         !Array.isArray(copySourceObject[key])
       ) {
         // If property has nested object, call the function recursively
@@ -1381,7 +1382,10 @@ class Skinner {
     _input.placeholder = "enter copied config";
     _input.className = "sk_input_config sk_scrollbar";
 
-    let wrapper = document.createElement("div");
+    const root = document.createElement("div");
+    root.className = "sk_config_root";
+
+    const wrapper = document.createElement("div");
     wrapper.className = "sk_input_wrapper";
 
     const load = this.createButton("load", "download");
@@ -1393,12 +1397,12 @@ class Skinner {
       _t.loadSavedConfig(_config);
       _input.value = "";
     });
-
     wrapper.appendChild(_input);
-    wrapper.appendChild(load);
+    root.appendChild(wrapper);
+    root.appendChild(load);
 
     return {
-      el: wrapper,
+      el: root,
       inputRef: _input,
     };
   }
@@ -1566,6 +1570,7 @@ class Skinner {
     this.ui.saveTrigger.addEventListener("click", () => this.saveConfig());
 
     this.ui.downloadTrigger = this.createButton("variables", "download");
+    this.ui.downloadTrigger.classList.add("variant_cta");
 
     this.ui.downloadTrigger.addEventListener("click", () =>
       this.makeDownloadRequest("sport")
@@ -2395,9 +2400,15 @@ height: 100%;
 }
 
 .sk_btn.variant_load{
-    right: 0;
-    position: absolute;
-    z-index: 90;
+    
+}
+
+.sk_config_root{
+  display: flex;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 1px;
+    column-gap: 4px;
 }
 
 .sk_btn.state_active{
@@ -3070,12 +3081,15 @@ border-radius: 50%;*/
 }
 
 .sk_input_config {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
   margin: 0;
   padding: 0 8px;
   background-color: var(--sk_dominantBg);
   color: var(--sk_dominantTxt);
   border: 0;
-  border-radius: 1px;
+  border-radius: 4px;
   border: 1px solid var(--sk_dominantShadow);
   border-bottom: 1px solid var(--sk_dominantBg3Hover);
   outline: 0;

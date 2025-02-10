@@ -42,7 +42,7 @@ html {
 }
 
 .demo_sidebar_root > .demo_list_wrapper {
-  background-color: var(--eventBorder);
+  /* background-color: var(--eventBorder); */
 }
 
 .demo_main_root > .demo_list_wrapper {
