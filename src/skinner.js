@@ -271,8 +271,6 @@ class Skinner {
         merged.Background.isActive = true;
       }
 
-      console.log(merged);
-
       this.state[essenceName] = merged;
     });
   }
@@ -540,8 +538,6 @@ class Skinner {
     } else {
       t.state[name][prop][key] = newVal;
     }
-
-    console.log(t.state[name]);
 
     // this.emit("statechange", {
     //   name,
@@ -1047,15 +1043,15 @@ class Skinner {
     };
   }
 
-  createBackgrounPicker(name, type) {
-    const _type = type;
+  createBackgrounPicker(name, mode) {
+    const _mode = mode;
     const _t = this;
     const backgroundPickerEl = document.createElement("div");
     backgroundPickerEl.className = "sk_picker_trigger";
 
     backgroundPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Background.color;
-      _t.handlePicker(evt, color, _type, (newColor) => {
+      _t.handlePicker(evt, color, _mode, (newColor) => {
         _t.updateEssenceState(name, "Background", "color", newColor);
         this.build(name);
       });
@@ -1392,7 +1388,7 @@ class Skinner {
     load.classList.add("variant_load");
     load.addEventListener("click", () => {
       const _config = _input.value ? JSON.parse(_input.value) : null;
-      console.log(_config);
+      // console.log(_config);
 
       _t.loadSavedConfig(_config);
       _input.value = "";
@@ -1623,16 +1619,12 @@ class Skinner {
     let y = event.clientY;
     const gtadientState = _t.state[essence].Gradient;
 
-    const SKPickerInstance = new SKPicker(
-      null,
-      gtadientState.stops[0],
-      "gradient",
-      {
-        stops: gtadientState.stops,
-        angle: gtadientState.angle,
-        type: gtadientState.type,
-      }
-    );
+    const SKPickerInstance = new SKPicker({
+      mode: "gradient",
+      stops: gtadientState.stops,
+      angle: gtadientState.angle,
+      type: gtadientState.type,
+    });
     SKPickerInstance.init();
 
     SKPickerInstance.show(x, y);
@@ -1650,7 +1642,7 @@ class Skinner {
     });
   }
 
-  handlePicker(event, color, type, onChangeCallback) {
+  handlePicker(event, color, mode, onChangeCallback) {
     if (this.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
@@ -1662,7 +1654,10 @@ class Skinner {
     const x = event.clientX;
     const y = event.clientY;
 
-    const SKPickerInstance = new SKPicker(null, currentColor, type);
+    const SKPickerInstance = new SKPicker({
+      default: currentColor,
+      mode: mode,
+    });
     SKPickerInstance.init();
     SKPickerInstance.show(x, y);
 
@@ -2424,6 +2419,8 @@ height: 100%;
     align-items: center;
     justify-content: center;
     color: var(--sk_buttonTxt2);
+    fill: var(--sk_buttonTxt2);
+    stroke: var(--sk_buttonTxt2);
 }
 
 .sk_btn:hover {
@@ -3472,6 +3469,30 @@ border-radius: 50%;*/
     z-index: 20;
     background: linear-gradient(90deg, rgb(189 24 7 / 17%), rgb(189 24 7 / 0%) 50%);
     pointer-events: none;
+}
+
+.sk_g_picker_root.state_visible {
+    display: flex;
+}
+.sk_g_picker_root{
+display: none;
+    --input_size: 28px;
+    --solid_size: 24px;
+    position: fixed;
+    width: 250px;
+    height: auto;
+    z-index: calc(var(--sk_zind) + 100);
+    top: 0px;
+    transform: translate(0, 0);
+    border: none;
+    background: var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBgHover);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    border-radius: 4px;
+    flex-direction: column;
+    row-gap: 4px;
 }
 
 `;

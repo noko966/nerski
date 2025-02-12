@@ -3,24 +3,34 @@ import Moveable from "./moveable";
 const tinycolor = require("tinycolor2");
 
 export default class SKPicker {
-  constructor(rootElement, currentColor, mode, gradientConfig) {
-    this.rootElement = rootElement || document.body;
+  static DEFAULT_OPTIONS = {
+    disabled: false,
+    lockOpacity: false,
+    container: document.body,
+    swatches: null,
+    mode: "color",
+    default: "#42445a",
+    closeWithKey: "Escape",
+  };
+  constructor(opt) {
+    this.options = opt = Object.assign({ ...SKPicker.DEFAULT_OPTIONS }, opt);
+
     this.root = null;
 
     this.icons = {
       eyeDropper: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.1374 9.21573L5.00012 17L2.15698 17.8432L2.50012 15L10.7844 6.86279" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M17.7332 3.67055C17.2391 4.90977 16.4313 6.33722 15.4744 7.72545L14.9097 9.96075C14.8156 10.3215 14.3685 10.447 14.1019 10.1804L10.7842 6.86271L9.81951 5.898C9.55285 5.63134 9.67834 5.18428 10.047 5.09016L12.1568 4.56467C13.5685 3.57643 15.0274 2.73722 16.2979 2.23526C16.7607 2.06271 17.2077 2.1882 17.4901 2.47839C17.7881 2.76859 17.9293 3.21565 17.7411 3.67055H17.7332Z" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.1374 9.21573L5.00012 17L2.15698 17.8432L2.50012 15L10.7844 6.86279" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.7332 3.67055C17.2391 4.90977 16.4313 6.33722 15.4744 7.72545L14.9097 9.96075C14.8156 10.3215 14.3685 10.447 14.1019 10.1804L10.7842 6.86271L9.81951 5.898C9.55285 5.63134 9.67834 5.18428 10.047 5.09016L12.1568 4.56467C13.5685 3.57643 15.0274 2.73722 16.2979 2.23526C16.7607 2.06271 17.2077 2.1882 17.4901 2.47839C17.7881 2.76859 17.9293 3.21565 17.7411 3.67055H17.7332Z"  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 `,
       removeStop: `
 <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1.02026 1L5.02026 5" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M0.979981 5L4.97998 1" stroke="#A5A5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1.02026 1L5.02026 5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M0.979981 5L4.97998 1"  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`,
     };
 
-    this._mode = mode || "color";
+    this._mode = opt.mode || "color";
 
     this._gradientConfig = gradientConfig || {};
 
@@ -44,6 +54,8 @@ export default class SKPicker {
       activeStopId: "gradStop0",
     };
 
+    this.currentColor = opt.default;
+
     this._outsideClickHandler = null; // ADDED
     this.swatchesWrapper = null;
     this.swatchColors = [];
@@ -66,8 +78,6 @@ export default class SKPicker {
       cancel: [],
       swatchselect: [],
     };
-
-    this._color = tinycolor(currentColor).toHexString();
 
     this._recalc = true;
 
@@ -149,6 +159,8 @@ export default class SKPicker {
     el.style.left = `${_x}px`;
     el.style.top = `${_y}px`;
   }
+
+  static create = (options) => new SKPicker(options);
 
   createStyle() {
     const styleEl = document.createElement("style");
@@ -249,55 +261,39 @@ export default class SKPicker {
     }
 
     .sk_picker_canvas_root{
+      position: relative;
         width: 100%;
         height: 60px;
         border-radius: 4px;
         border: 1px solid var(--sk_dominantBg);
     }
 
-    .sk_picker_canvas_hue{
-      position: relative;
-      height: 100%;
-      border-radius: inherit;
-    }
-
-
-   .sk_picker_btn {
-    appearance: none;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    text-align: center;
-    height: var(--input_size);
-    text-decoration: none;
-    background-color: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt2);
-    text-transform: capitalize;
-    font-size: 12px;
-    position: relative;
-    font-weight: 500;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 4px;
-    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
-    }
-    .sk_picker_btn.variant_primary{
+    .sk_picker_canvas_root::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
     width: 100%;
-    background-color: var(--sk_accentBg);
-    color: var(--sk_accentTxt);
-    }
-    .sk_picker_btn.variant_icon{
-    height: var(--input_size);
-    width: var(--input_size);
-    padding: 0;
-    }
+    height: 100%;
+    background-color: white;
+background-image:
+  linear-gradient(45deg, #ccc 25%, transparent 25%),
+  linear-gradient(-45deg, #ccc 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, #ccc 75%),
+  linear-gradient(-45deg, transparent 75%, #ccc 75%);
+background-size:20px 20px;
+background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
 
-    .sk_picker_gradient_stops_wrapper{
-display: flex;
+  .sk_picker_canvas_hue{
+    position: relative;
+    height: 100%;
+    border-radius: inherit;
+  }
+
+
+  .sk_picker_gradient_stops_wrapper{
+    display: flex;
     flex-direction: row;
     align-items: center;
         column-gap: 8px;
@@ -316,7 +312,7 @@ display: flex;
     }
     .sk_picker_gradient_stop_remove{
     appearance: none;
-        position: absolute;
+    position: absolute;
     top: 0;
     right: 0;
     width: 12px;
@@ -346,21 +342,7 @@ display: flex;
     width: 100%;
     border: 1px solid var(--sk_dominantBg3Hover);
     }
-    .sk_picker_input {
-    appearance: none;
-    width: 50px;
-    font-size: 11px;
-    height: var(--input_size);
-    font-weight: 500;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    border-radius: 2px;
-    text-align: right;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3);
-    outline: 0;
-    padding: 0 6px;
-  }
+    
     .sk_widget_separator_hor{
         width: 100%;
     height: 1px;
@@ -418,7 +400,7 @@ display: flex;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
 
-    this.rootElement.appendChild(styleEl);
+    opt.container.appendChild(styleEl);
     return style;
   }
 
@@ -430,7 +412,7 @@ display: flex;
     if (!this.isOpen()) {
       this.root.classList.add("state_visible");
       this._rePositioningPicker(x, y);
-      this.updateSliders();
+      this.setColorHSVA(this.currentColor);
       this._emit("show", this);
       return this;
     }
@@ -466,7 +448,61 @@ display: flex;
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
 
-  createPicker() {
+  applyColor() {
+    const cssRGBaString = tinycolor(this._color).toRgbString();
+    // preview.lastColor.style.setProperty("--pcr-color", cssRGBaString);
+    // Save last color
+    this._lastColor = (() => {
+      return this._color;
+    })();
+
+    if (!this._initializingActive) {
+      this._emit("save", this._color);
+    }
+
+    return this;
+  }
+
+  setColorHSVA(color) {
+    const _t = this;
+    const recalc = this._recalc;
+    this._recalc = false;
+    if (!tinycolor(color).isValid()) {
+      return false;
+    }
+
+    _t._color = tinycolor(color).toHsv();
+
+    _t._hue.update(_t._color.h / 360);
+    if (_t._mode === "opacity") {
+      _t._opacity.update(_t._color.a);
+    }
+    _t._palette.update(_t._color.s, 1 - _t._color.v);
+
+    _t.applyColor();
+    if (recalc) {
+      _t._updateOutput();
+    }
+
+    // Restore old state
+    _t._recalc = recalc;
+    return true;
+  }
+
+  _updateOutput(eventSource) {
+    const _color = tinycolor(this._color).toHex8String();
+    this.inputEl.value = _color;
+    // Fire listener if initialization is finish
+    if (!this._initializingActive && this._recalc) {
+      this._emit("change", _color, eventSource, this);
+    }
+  }
+
+  getColor() {
+    return this._color;
+  }
+
+  createPaletteElement() {
     let _that = this;
     const root = document.createElement("div");
     root.className = "sk_picker_canvas_root";
@@ -482,45 +518,68 @@ display: flex;
 
     this.pickerRoot = root;
 
-    this.slSlider = Moveable({
+    this._palette = Moveable({
       element: hand,
-      wrapper: root,
+      wrapper: hue,
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(x, y) {
-        const c = _that._color;
-        // const { lastColor, currentColor } = _root.preview;
-        const _sv = tinycolor(c).toHsv();
+        const color = _that.getColor();
 
-        // Update the input field only if the user is currently not typing
         if (_that._recalc) {
-          // Calculate saturation based on the position
-          _sv.s = x;
+          color.s = x;
 
-          // Calculate the value
-          _sv.v = 1 - y;
+          color.v = 1 - y;
 
-          // Prevent falling under zero
-          _sv.v < 0 ? (_sv.v = 0) : 0;
-
-          this.wrapper.style.background = `
-              linear-gradient(to top, rgba(0, 0, 0, 1), transparent),
-              linear-gradient(to left, hsl(${_sv.h}, 100%, 50%), rgba(255, 255, 255, 1))
-          `;
-          
-          let _chx = tinycolor(_sv).toHexString();
-          // Change current color
-          // currentColor.style.setProperty("--pcr-color", cssRGBaString);
-          _that.setBackground(_chx, "picker_canvas");
-          _that.inputEl.value = _chx;
+          color.v < 0 ? (color.v = 0) : 0;
+          _that._updateOutput("slider");
         }
+
+        const cssRGBaString = tinycolor(color).toRgbString();
+        this.element.style.background = cssRGBaString;
+        this.wrapper.style.background = `
+          linear-gradient(to top, rgba(0, 0, 0, ${color.a}), transparent),
+          linear-gradient(to left, hsla(${color.h}, 100%, 50%, ${color.a}), rgba(255, 255, 255, ${color.a}))
+      `;
       },
     });
 
     return root;
   }
 
-  createOpacitySlider() {
+  createHueElement() {
+    let _that = this;
+    const root = document.createElement("div");
+    const hand = document.createElement("div");
+    const track = document.createElement("div");
+
+    root.className = "sk_picker_slider_root variant_hue";
+    hand.className = "sk_picker_slider_hand";
+    track.className = "sk_picker_slider_track";
+
+    root.appendChild(hand);
+    root.appendChild(track);
+    this._hue = Moveable({
+      lock: "v",
+      element: hand,
+      wrapper: root,
+
+      onstop: () => _that._emit("changestop", "slider", _that),
+      onchange(v) {
+        const color = _that.getColor();
+
+        if (_that._recalc) {
+          color.h = v * 360;
+        }
+        this.element.style.backgroundColor = `hsl(${color.h}, 100%, 50%)`;
+        _that._palette.trigger();
+      },
+    });
+
+    return root;
+  }
+
+  createOpacityElement() {
     let _that = this;
     const root = document.createElement("div");
     const hand = document.createElement("div");
@@ -532,89 +591,27 @@ display: flex;
 
     root.appendChild(hand);
     root.appendChild(track);
-    this.oSlider = Moveable({
+    this._opacity = Moveable({
       lock: "v",
       element: hand,
       wrapper: root,
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(v) {
-        let hsl = tinycolor(_that._color).toHsl();
-        let color = _that._color;
-        // Update the input field only if the user is currently not typing
+        const color = _that.getColor();
+
         if (_that._recalc) {
-          const alpha = Math.round(v * 1e2) / 100;
-
-          // Update color
-
-          // Prevent falling under zero
-          let _chx = tinycolor(hsl).setAlpha(alpha).toRgbString();
-          // Set picker and gradient color
-
-          _that.slSlider.trigger();
-          this.wrapper.style.setProperty("--bg", `rgba(0, 0, 0, ${alpha})`);
-          _that.setBackground(_chx, "picker_opacity");
-          _that.inputEl.value = _chx;
+          color.a = Math.round(v * 1e2) / 100;
         }
+        this.wrapper.style.background = `rgba(0, 0, 0, ${color.a})`;
+        this.element.style.background = `rgba(0, 0, 0, ${color.a})`;
+        _that._palette.trigger();
       },
     });
 
     return root;
   }
 
-  createSlider(type) {
-    let _that = this;
-    const root = document.createElement("div");
-    const hand = document.createElement("div");
-    const track = document.createElement("div");
-    let variantCN;
-    switch (type) {
-      case "hue":
-        variantCN = "variant_hue";
-        break;
-      case "opacity":
-        variantCN = "variant_hue";
-        break;
-
-      default:
-        variantCN = "";
-        break;
-    }
-
-    root.className = "sk_picker_slider_root " + variantCN;
-    hand.className = "sk_picker_slider_hand";
-    track.className = "sk_picker_slider_track";
-
-    root.appendChild(hand);
-    root.appendChild(track);
-    this.hSlider = Moveable({
-      lock: "v",
-      element: hand,
-      wrapper: root,
-
-      onstop: () => _that._emit("changestop", "slider", _that),
-      onchange(v) {
-        let hsl = tinycolor(_that._color).toHsl();
-        // Update the input field only if the user is currently not typing
-        if (_that._recalc) {
-          hsl.h = v * 360;
-
-          // Prevent falling under zero
-          let _chx = tinycolor(hsl).toHexString();
-          // Set picker and gradient color
-
-          _that.slSlider.trigger();
-          this.element.style.background = _chx;
-          _that.setBackground(_chx, "picker_hue");
-          _that.inputEl.value = _chx;
-        }
-      },
-    });
-
-    return root;
-  }
-
-  // ADDED: auto-destroy for "input" or "outside"
   setBackground(color, source = "no") {
     const _t = this;
     let _color = color;
@@ -648,17 +645,17 @@ display: flex;
 
     this.solids.forEach((color) => this.addSwatch(color));
 
-    this.saturationControl = this.createPicker();
-    this.hueControl = this.createSlider("hue");
+    const paletteElement = this.createPaletteElement();
+    const hueElement = this.createHueElement();
 
     // 6. Create an input field
     this.inputEl = document.createElement("input");
     this.inputEl.type = "text";
-    this.inputEl.className = "sk_picker_input sk_grow";
+    this.inputEl.className = "sk_input_text sk_grow";
 
     // 7. Create an eyedropper button (optional)
     this.eyedropperTrigger = document.createElement("button");
-    this.eyedropperTrigger.className = "sk_picker_btn variant_icon";
+    this.eyedropperTrigger.className = "sk_btn variant_icon";
     this.eyedropperTrigger.innerHTML = this.icons.eyeDropper;
 
     // If you have an eyedropper handler, store it similarly
@@ -671,7 +668,7 @@ display: flex;
           .then((colorResult) => {
             if (colorResult && colorResult.sRGBHex) {
               // Use the color from EyeDropper
-              this.setBackground(colorResult.sRGBHex, "eyedropper");
+              this.setColorHSVA(colorResult.sRGBHex);
             }
           })
           .catch((error) => {
@@ -694,12 +691,12 @@ display: flex;
 
     const slidersWrapper = document.createElement("div");
     slidersWrapper.className = "sk_widget_block";
-    slidersWrapper.appendChild(this.saturationControl);
+    slidersWrapper.appendChild(paletteElement);
     slidersWrapper.appendChild(this.createSeparator());
-    slidersWrapper.appendChild(this.hueControl);
+    slidersWrapper.appendChild(hueElement);
     if (this._mode === "opacity") {
-      this.opacityControl = this.createOpacitySlider();
-      slidersWrapper.appendChild(this.opacityControl);
+      const opacitySlider = this.createOpacityElement();
+      slidersWrapper.appendChild(opacitySlider);
     }
 
     const actionsWrapper = document.createElement("div");
@@ -711,7 +708,7 @@ display: flex;
     inputsWrapper.appendChild(this.eyedropperTrigger);
 
     this.applyAndClose = document.createElement("button");
-    this.applyAndClose.className = "sk_picker_btn variant_primary";
+    this.applyAndClose.className = "sk_btn variant_cta sk_grow";
     this.applyAndClose.innerText = "Apply";
     slidersWrapper.appendChild(this.createSeparator());
     slidersWrapper.appendChild(inputsWrapper);
@@ -725,7 +722,7 @@ display: flex;
     this.root.appendChild(actionsWrapper); // Actions
 
     // Finally, attach the entire picker to the designated root element
-    this.rootElement.appendChild(this.root);
+    opt.container.appendChild(this.root);
 
     // 9. Return the root, in case needed
     return this.root;
@@ -743,25 +740,14 @@ display: flex;
     return el;
   }
 
-  updateSliders() {
-    let _hsv = tinycolor(this._color).toHsv();
-    this.hSlider.update(_hsv.h / 360);
-    if (this._mode === "opacity") {
-      const opacity = tinycolor(this._color).getAlpha();
-      this.oSlider.update(opacity);
-    }
-    this.slSlider.update(_hsv.s, 1 - _hsv.v);
-    this.inputEl.value = this._color;
-    return true;
-  }
+  updateSliders() {}
 
   init() {
     this.createUI();
     this._bindEvents();
     this.createStyle();
+    this.setColorHSVA(this.currentColor);
     this._initializingActive = false;
-    this.setBackground(this._color);
-
     this._emit("init");
   }
 
@@ -798,15 +784,17 @@ display: flex;
 
       // User input
       _.on(inputEl, ["keyup", "input"], (e) => {
-        let _c = tinycolor(e.target.value).toHexString();
-        this.setBackground(_c);
+        if (this.setColorHSVA(e.target.value) && !this._initializingActive) {
+          this._emit("change", this._color, "input", this);
+          this._emit("changestop", "input", this);
+        }
         e.stopImmediatePropagation();
       }),
 
       // Detect user input and disable auto-recalculation
       _.on(inputEl, ["focus", "blur"], (e) => {
         this._recalc = e.type === "blur";
-        this._recalc && this.updateSliders();
+        this._recalc && this._updateOutput();
       })
     );
   }
@@ -854,9 +842,9 @@ display: flex;
       // Bind event
       this._eventBindings.push(
         _.on(el, "click", () => {
-          this.setBackground(_c);
-          this.updateSliders();
+          this.setColorHSVA(_c);
           this._emit("swatchselect", _c);
+          this._emit("change", _c, "swatch", this);
         })
       );
 
@@ -868,8 +856,7 @@ display: flex;
 
   setActiveGradientStop(key) {
     this.gradient.activeStopId = key;
-    this.setBackground(this.gradient.stops[key].color);
-    this.updateSliders();
+    this.setColorHSVA(this.gradient.stops[key].color);
   }
 
   generateGradientString() {
@@ -939,7 +926,7 @@ display: flex;
 
     const addStopBtn = document.createElement("button");
     addStopBtn.innerText = "+";
-    addStopBtn.className = "sk_picker_btn variant_icon";
+    addStopBtn.className = "sk_btn variant_icon";
     addStopBtn.addEventListener("click", () => {
       const keys = Object.keys(this.gradient.stops);
 
@@ -965,7 +952,7 @@ display: flex;
     widgetSection.className = "sk_widget_block_section";
 
     const angleInput = document.createElement("input");
-    angleInput.className = "sk_picker_input";
+    angleInput.className = "sk_input_text";
     angleInput.type = "number";
     angleInput.value = this.gradient.angle;
 
@@ -980,12 +967,12 @@ display: flex;
     this._eventBindings.push(
       _.on(angleInput, "change", (e) => {
         this.gradient.angle = e.target.value;
-        this.setBackground(this._color);
+        // this.setBackground(this._color);
         angleRangeSlider.value = e.target.value;
       }),
       _.on(angleRangeSlider, "change", (e) => {
         this.gradient.angle = e.target.value;
-        this.setBackground(this._color);
+        // this.setBackground(this._color);
         angleInput.value = e.target.value;
       })
     );
@@ -1010,7 +997,7 @@ display: flex;
         _.on(radio, "change", (e) => {
           if (e.target.checked) {
             this.gradient.type = e.target.value;
-            this.setBackground(this._color);
+            // this.setBackground(this._color);
           }
         })
       );
