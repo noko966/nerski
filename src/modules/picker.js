@@ -254,17 +254,17 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     border-radius: inherit;
   }
 
+
   .sk_g_picker_markers{
-   
     position: relative;
     z-index: 1;
   }
 
-  .asd{
-  height: 2em;
+  .sk_g_picker_preview{
+  height: 50px;
     width: 100%;
     position: relative;
-    border-radius: 0.15em;
+    border-radius: 2px;
     overflow: hidden;
     cursor: pointer;
   }
@@ -390,11 +390,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       this.root.classList.add("state_visible");
       this._rePositioningPicker(x, y);
       this.setColorHSVA(this.currentColor);
-      if (this.options.mode === "gradient") {
-        for (const [color, loc] of this.options.stops) {
-          this.addStop(color, loc, true);
-        }
-      }
+
       this._emit("show", this);
       return this;
     }
@@ -462,6 +458,13 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     _t.applyColor();
     if (recalc) {
       _t._updateOutput();
+    }
+    if (this.options.mode === "gradient") {
+      if (this._focusedStop) {
+        this._focusedStop.color = tinycolor(color).toHex8String();
+        this._render();
+      }
+      this._emit("gradientchange");
     }
 
     // Restore old state
@@ -686,7 +689,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       gradModeEl.className = "sk_g_picker_mode";
 
       const previewEl = document.createElement("div");
-      previewEl.className = "sk_widget_block sk_g_picker_result";
+      previewEl.className = "sk_widget_block sk_g_picker_preview";
 
       const resultEl = document.createElement("div");
       resultEl.className = "sk_widget_block sk_g_picker_result";
@@ -761,7 +764,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     g_type_el.setAttribute("data-mode", g_type);
 
     // Fire event
-    !silent && this._emit("change", this);
+    !silent && this._emit("gradientchange", this);
   }
 
   _resolveColorStopPosition(x) {
@@ -948,12 +951,21 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
   init() {
     this.createUI();
     this._bindEvents();
+    if (this.options.mode === "gradient") {
+      for (const [color, loc] of this.options.stops) {
+        this.addStop(color, loc, true);
+      }
+      this._bindGradientEvents();
+    }
+
     this.createStyle();
 
     this.setColorHSVA(this.currentColor);
     this._initializingActive = false;
     this._emit("init");
   }
+
+  _bindGradientEvents() {}
 
   _bindEvents() {
     let that = this;

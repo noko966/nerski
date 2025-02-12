@@ -1619,9 +1619,21 @@ class Skinner {
     let y = event.clientY;
     const gtadientState = _t.state[essence].Gradient;
 
+    function mapArrayBetweenZeroAndOne(arr) {
+      const n = arr.length;
+      if (n <= 1) {
+        return arr.map((item) => [item, 0]);
+      }
+
+      return arr.map((item, index) => {
+        const normalizedValue = index / (n - 1);
+        return [item, normalizedValue];
+      });
+    }
+
     const SKPickerInstance = new SKPicker({
       mode: "gradient",
-      stops: gtadientState.stops,
+      stops: mapArrayBetweenZeroAndOne(gtadientState.stops),
       angle: gtadientState.angle,
       type: gtadientState.type,
     });
