@@ -965,7 +965,14 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     this._emit("init");
   }
 
-  _bindGradientEvents() {}
+  _bindGradientEvents() {
+    _.on(this.g_preview_el, "click", (e) => {
+      this.addStop(
+        tinycolor(this._color).toHex8String(),
+        this._resolveColorStopPosition(e.pageX)
+      );
+    });
+  }
 
   _bindEvents() {
     let that = this;
