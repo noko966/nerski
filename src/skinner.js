@@ -766,6 +766,37 @@ class Skinner {
     });
   }
 
+  // createGradients_(name) {
+  //   const _t = this;
+  //   const _name = name;
+  //   const _vd = _t.verbalData(_name);
+  //   const BackgroundState = _t.state[_name].Background;
+  //   const GradientState = _t.state[_name].Gradient;
+  //   const angle = GradientState.angle;
+  //   const type = GradientState.type;
+
+  //   if (GradientState.isActive) {
+  //     const stops =
+  //       GradientState.stops && GradientState.stops.length > 0
+  //         ? GradientState.stops
+  //         : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+  //     GradientState.stops = stops;
+  //     let str = "";
+  //     const stopsString = stops.map((s) => s).join(", ");
+  //     if (type === "linear") {
+  //       str = `linear-gradient(${angle}deg, ${stopsString})`;
+  //     } else if (type === "radial") {
+  //       str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+  //     } else if (type === "conic") {
+  //       str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+  //     }
+  //     _t.skin[_vd.nameG] = str;
+  //   } else {
+  //     const _color = BackgroundState.color;
+  //     _t.skin[_vd.nameG] = _color;
+  //   }
+  // }
+
   createGradients(name) {
     const _t = this;
     const _name = name;
@@ -774,6 +805,7 @@ class Skinner {
     const GradientState = _t.state[_name].Gradient;
     const angle = GradientState.angle;
     const type = GradientState.type;
+    const color = GradientState.color;
 
     if (GradientState.isActive) {
       const stops =
@@ -781,16 +813,21 @@ class Skinner {
           ? GradientState.stops
           : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
       GradientState.stops = stops;
-      let str = "";
-      const stopsString = stops.map((s) => s).join(", ");
-      if (type === "linear") {
-        str = `linear-gradient(${angle}deg, ${stopsString})`;
-      } else if (type === "radial") {
-        str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
-      } else if (type === "conic") {
-        str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
-      }
-      _t.skin[_vd.nameG] = str;
+      // const stops =
+      //   GradientState.stops && GradientState.stops.length > 0
+      //     ? GradientState.stops
+      //     : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+      // GradientState.stops = stops;
+      // let str = "";
+      // const stopsString = stops.map((s) => s).join(", ");
+      // if (type === "linear") {
+      //   str = `linear-gradient(${angle}deg, ${stopsString})`;
+      // } else if (type === "radial") {
+      //   str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+      // } else if (type === "conic") {
+      //   str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+      // }
+      _t.skin[_vd.nameG] = color;
     } else {
       const _color = BackgroundState.color;
       _t.skin[_vd.nameG] = _color;
@@ -1086,6 +1123,7 @@ class Skinner {
         _t.updateEssenceState(name, "Gradient", "angle", data.angle);
         _t.updateEssenceState(name, "Gradient", "stops", data.stops);
         _t.updateEssenceState(name, "Gradient", "type", data.type);
+        _t.updateEssenceState(name, "Gradient", "color", data.color);
         this.build(name);
       });
     });
@@ -1644,7 +1682,9 @@ class Skinner {
     self.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("gradientchange", (grad, source, instance) => {
-      console.log("Picker color changed:", grad, "Source:", source);
+      // console.log("Picker color changed:", grad, "Source:", source);
+      console.log(grad);
+
       onChangeCallback(grad);
     });
 

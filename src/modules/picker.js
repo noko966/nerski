@@ -20,11 +20,35 @@ export default class SKPicker {
   };
   constructor(opt) {
     this.options = opt = Object.assign({ ...SKPicker.DEFAULT_OPTIONS }, opt);
-
+    this._focusedStop = null;
     this.g_stops = [];
     this.g_angle = this.options.angle;
-    this.g_type = this.options.type;
+    this.g_mode = this.options.type;
     this.root = null;
+
+    this.g_modes = ["linear", "radial", "conic"];
+
+    // Liniear angle
+    this.g_angles = [
+      { angle: 0, name: "to top" },
+      { angle: 90, name: "to right" },
+      { angle: 180, name: "to bottom" },
+      { angle: 270, name: "to left" },
+    ];
+
+    // Radial direction
+    this.g_direction = "circle at center";
+    this.g_directions = [
+      { pos: "tl", css: "circle at left top" },
+      { pos: "tm", css: "circle at center top" },
+      { pos: "tr", css: "circle at right top" },
+      { pos: "r", css: "circle at right" },
+      { pos: "m", css: "circle at center" },
+      { pos: "l", css: "circle at left" },
+      { pos: "br", css: "circle at right bottom" },
+      { pos: "bm", css: "circle at center bottom" },
+      { pos: "bl", css: "circle at left bottom" },
+    ];
 
     this.simplifyEvent = this.simplifyEvent.bind(this);
     this.icons = {
@@ -254,12 +278,102 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     border-radius: inherit;
   }
 
+  .sk_g_picker_mode{
+        height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border: 2px solid white;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0.25;
+    transition: all 0.3s;
+    }
+
+    .sk_g_picker_mode::before{
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    transition: all 0.3s;
+    }
+.sk_g_picker_mode[data-mode=linear]::before {
+    height: 2px;
+    width: 70%;
+    background: white;
+    transform: rotate(45deg);
+    border-radius: 50em
+}
+
+.sk_g_picker_mode[data-mode=radial]::before {
+    height: 50%;
+    width: 50%;
+    border-radius: 100%;
+    border: 2px solid white
+}
+
+.sk_g_picker_mode[data-mode=conic]::before {
+    height: 0;
+    width: 0;
+    border: 5px solid transparent;
+    border-color: white white transparent transparent
+}
+        
 
   .sk_g_picker_markers{
     position: relative;
     z-index: 1;
   }
-
+    .sk_g_picker_position{
+    height: 80px;
+    width: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: all 0.3s;
+    position: absolute;
+    margin: auto;
+    }
+.sk_g_picker_angle{
+    height: 10px;
+    width: 10px;
+    background: white;
+    border-radius: 50%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: all 0.3s;
+    position: absolute;
+    margin: auto;
+    opacity: 0.25;
+  }
+    .sk_g_picker_result{
+    position: relative;
+    height: 100px;
+    width: 100%;
+    }
+    .sk_g_picker_arrow{
+    height: 2px;
+    width: 2em;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+    background: white;
+    border-radius: 1em;
+    margin: auto 0;
+    transform-origin: left;
+    }
   .sk_g_picker_preview{
   height: 50px;
     width: 100%;
@@ -277,11 +391,13 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 
 .sk_g_stop {
+    --size: 14px;
     position: absolute;
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--sk_dominantBgHover);
+    width: var(--size);
+    height: var(--size);
+    margin-left: calc(var(--size) / -2);
     border-radius: 4px;
+    background: currentColor;
     z-index: 10;
     }
     .sk_g_stop.state_ative{
@@ -312,7 +428,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     }
 
     .sk_picker_gradient_preview {
-        height: 32px;
+    height: 32px;
     border-radius: 4px;
     position: relative;
     background-image: var(--grad);
@@ -321,7 +437,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     }
     
     .sk_widget_separator_hor{
-        width: 100%;
+    width: 100%;
     height: 1px;
     flex-shrink: 0;
     padding: 0 12px;
@@ -458,13 +574,6 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     _t.applyColor();
     if (recalc) {
       _t._updateOutput();
-    }
-    if (this.options.mode === "gradient") {
-      if (this._focusedStop) {
-        this._focusedStop.color = tinycolor(color).toHex8String();
-        this._render();
-      }
-      this._emit("gradientchange");
     }
 
     // Restore old state
@@ -682,9 +791,6 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     this.root.appendChild(pickerBlock);
 
     if (this.options.mode === "gradient") {
-      const interactionsRoot = document.createElement("div");
-      interactionsRoot.className = "sk_widget_block sk_g_picker_interactions";
-
       const gradModeEl = document.createElement("div");
       gradModeEl.className = "sk_g_picker_mode";
 
@@ -695,7 +801,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       resultEl.className = "sk_widget_block sk_g_picker_result";
 
       const posEl = document.createElement("div");
-      posEl.className = "sk_widget_block sk_g_picker_position";
+      posEl.className = "sk_g_picker_position";
 
       const resultMarkers = document.createElement("div");
       resultMarkers.className = "sk_g_picker_markers";
@@ -707,18 +813,18 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
       this.g_markers_el = resultMarkers;
       this.g_result_el = resultEl;
-      this.g_type_el = gradModeEl;
+      this.g_mode_el = gradModeEl;
       this.g_arrow_el = arrowEl;
       this.g_angle_el = angleEl;
       this.g_preview_el = previewEl;
       this.g_pos_el = posEl;
 
-      g_pickerBlock.appendChild(interactionsRoot);
-      interactionsRoot.appendChild(arrowEl);
-      interactionsRoot.appendChild(angleEl);
+      angleEl.appendChild(arrowEl);
+      resultEl.appendChild(gradModeEl);
+      resultEl.appendChild(angleEl);
+      resultEl.appendChild(posEl);
       g_pickerBlock.appendChild(resultEl);
       g_pickerBlock.appendChild(previewEl);
-      g_pickerBlock.appendChild(posEl);
       g_pickerBlock.appendChild(resultMarkers);
       this.root.appendChild(g_pickerBlock);
     }
@@ -728,16 +834,16 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     return this.root;
   }
 
-  _render(silent = false) {
+  _render() {
     const {
       g_preview_el,
       g_result_el,
       g_arrow_el,
       g_angle_el,
       g_pos_el,
-      g_type_el,
+      g_mode_el,
     } = this;
-    const { g_stops, g_type, g_angle } = this;
+    const { g_stops, g_mode, g_angle } = this;
     g_stops.sort((a, b) => a.loc - b.loc);
 
     for (const { color, el, loc } of g_stops) {
@@ -756,15 +862,22 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     g_result_el.style.background = this.getGradient().toString();
 
     // Show / hide g_angle_el control. Update switch button
-    g_pos_el.style.opacity = g_type === "radial" ? "" : "0";
-    g_pos_el.style.visibility = g_type === "radial" ? "" : "hidden";
-    g_angle_el.style.opacity = g_type === "linear" ? "" : "0";
-    g_angle_el.style.visibility = g_type === "linear" ? "" : "hidden";
+    g_pos_el.style.opacity = g_mode === "radial" ? "" : "0";
+    g_pos_el.style.visibility = g_mode === "radial" ? "" : "hidden";
+    g_angle_el.style.opacity = g_mode === "linear" ? "" : "0";
+    g_angle_el.style.visibility = g_mode === "linear" ? "" : "hidden";
 
-    g_type_el.setAttribute("data-mode", g_type);
+    g_mode_el.setAttribute("data-mode", g_mode);
 
+    const gradientConfig = {
+      type: this.g_mode,
+      angle: this.g_angle,
+      direction: this.g_direction,
+      stops: this.g_stops,
+      color: this.getGradient(),
+    };
     // Fire event
-    !silent && this._emit("gradientchange", this);
+    this._emit("gradientchange", gradientConfig);
   }
 
   _resolveColorStopPosition(x) {
@@ -790,7 +903,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
     const stop = {
       el,
-      loc,
+      loc,                                                                                                    
       _color,
 
       listener: _.on(el, ["mousedown", "touchstart"], (e) => {
@@ -874,8 +987,8 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
     const { type, stops, modifier } = parsed;
     const oldStops = [...this.g_stops];
-    if (this.g_type.includes(type)) {
-      this.g_type = type;
+    if (this.g_mode.includes(type)) {
+      this.g_mode = type;
 
       // Apply new stops
       for (const stop of stops) {
@@ -901,7 +1014,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     return false;
   }
 
-  getGradient(type = this.g_type) {
+  getGradient(type = this.g_mode) {
     const linearStops = this.getStops().toString(type);
 
     switch (type) {
@@ -920,7 +1033,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       location: v.loc,
     }));
 
-    const type = this.g_type;
+    const type = this.g_mode;
     stops.toString = function (_type = type) {
       switch (_type) {
         case "linear":
@@ -951,27 +1064,86 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
   init() {
     this.createUI();
     this._bindEvents();
+
+    this.createStyle();
+
+    this.setColorHSVA(this.currentColor);
+
+    this._initializingActive = false;
+
+    this._emit("init");
+    console.log("ste");
+
     if (this.options.mode === "gradient") {
       for (const [color, loc] of this.options.stops) {
         this.addStop(color, loc, true);
       }
       this._bindGradientEvents();
+      this.on("change", (color) => {
+        if (this._focusedStop) {
+          this._focusedStop.color = tinycolor(color).toHex8String();
+          this._render(true);
+        }
+      });
     }
-
-    this.createStyle();
-
-    this.setColorHSVA(this.currentColor);
-    this._initializingActive = false;
-    this._emit("init");
   }
 
   _bindGradientEvents() {
-    _.on(this.g_preview_el, "click", (e) => {
-      this.addStop(
-        tinycolor(this._color).toHex8String(),
-        this._resolveColorStopPosition(e.pageX)
-      );
-    });
+    this._eventBindings.push(
+      _.on(this.g_mode_el, ["mousedown", "touchstart"], (e) => {
+        const nextIndex = this.g_modes.indexOf(this.g_mode) + 1;
+        this.g_mode =
+          this.g_modes[nextIndex === this.g_modes.length ? 0 : nextIndex];
+
+        // Repaint
+        this._render(true);
+
+        // Prevent some things
+        e.stopPropagation();
+      }),
+
+      _.on(this.g_preview_el, "click", (e) => {
+        this.addStop(
+          tinycolor(this._color).toHex8String(),
+          this._resolveColorStopPosition(e.pageX)
+        );
+      }),
+
+      _.on(this.g_result_el, ["mousedown", "touchstart"], (e) => {
+        e.preventDefault();
+
+        if (this.g_mode !== "linear") {
+          return;
+        }
+
+        this.g_angle_el.classList.add(`gpcr-active`);
+        const m = _.on(window, ["mousemove", "touchmove"], (e) => {
+          const { x, y } = this.simplifyEvent(e);
+          const box = this.g_angle_el.getBoundingClientRect();
+
+          // Calculate angle relative to the center
+          const boxcx = box.left + box.width / 2;
+          const boxcy = box.top + box.height / 2;
+          const radians = Math.atan2(x - boxcx, y - boxcy) - Math.PI;
+          const degrees = Math.abs((radians * 180) / Math.PI);
+
+          // ctrl and shift can be used to divide / quarter the snapping points
+          const div = [1, 2, 4][Number(e.shiftKey || e.ctrlKey * 2)];
+          this.setLinearAngle(degrees - (degrees % (45 / div)));
+        });
+
+        const s = _.on(window, ["mouseup", "touchend", "touchcancel"], () => {
+          this.g_angle_el.classList.remove(`gpcr-active`);
+          _.off(...m);
+          _.off(...s);
+        });
+      }),
+      _.on(this.g_pos_el, ["mousedown", "touchstart"], (e) => {
+        const pos = e.target.getAttribute("data-pos");
+        const pair = this.g_directions.find((v) => v.pos === pos);
+        this.setRadialPosition((pair && pair.css) || this.g_direction);
+      })
+    );
   }
 
   _bindEvents() {
@@ -1085,5 +1257,24 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       y: tap.clientY,
       target: tap.target,
     };
+  }
+
+  getLinearAngle() {
+    return this.g_mode === "linear" ? this.g_angle : -1;
+  }
+  setLinearAngle(angle) {
+    angle =
+      typeof angle === "number"
+        ? angle
+        : normalize.angleToDegrees(angle) ||
+          (this.g_angles.find((v) => v.name === angle) || {}).angle;
+
+    if (typeof angle === "number") {
+      this.g_angle = angle;
+      this._render();
+      return true;
+    }
+
+    return false;
   }
 }
