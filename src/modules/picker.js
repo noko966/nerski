@@ -154,7 +154,7 @@ export default class SKPicker {
     const style = `
     .sk_picker_root{
     display: none;
-    --input_size: 28px;
+        --input_size: 28px;
     --solid_size: 24px;
     position: fixed;
     height: auto;
@@ -162,11 +162,10 @@ export default class SKPicker {
     top: 0px;
     transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantBg);
-    border: 1px solid var(--sk_dominantBgHover);
-    backdrop-filter: blur(5px);
+    background: var(--sk_dominantBg2);
+    border: 1px solid var(--sk_dominantBg);
     align-items: stretch;
-    padding: 6px;
+    padding: 4px;
     border-radius: 4px;
     column-gap: 4px;
     }
@@ -186,7 +185,7 @@ export default class SKPicker {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 6px;
+    padding: 0px;
     background: var(--sk_dominantBg2);
     border: 1px solid var(--sk_dominantBg2Hover);
     border-radius: 4px;
@@ -224,8 +223,8 @@ export default class SKPicker {
     }
     .sk_picker_slider_track {
       height: 16px;
-      border-radius: 4px;
-      border: 1px solid var(--sk_dominantBg);
+      border-radius: 2px;
+      border: 1px solid var(--sk_dominantShadow);
       background: var(--bg);
     }
     .sk_picker_slider_root.variant_hue{
@@ -248,11 +247,11 @@ export default class SKPicker {
     }
 
     .sk_picker_canvas_root{
-      position: relative;
-        width: 100%;
-        height: 60px;
-        border-radius: 4px;
-        border: 1px solid var(--sk_dominantBg);
+          position: relative;
+    width: 100%;
+    height: 70px;
+    border-radius: 2px;
+    border: 1px solid var(--sk_dominantShadow);
     }
 
     .sk_picker_canvas_root::before {
@@ -357,9 +356,11 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     opacity: 0.25;
   }
     .sk_g_picker_result{
-    position: relative;
-    height: 100px;
+        position: relative;
     width: 100%;
+    height: 70px;
+    border-radius: 2px;
+    border: 1px solid var(--sk_dominantShadow);
     }
     .sk_g_picker_arrow{
     height: 2px;
@@ -375,12 +376,13 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     transform-origin: left;
     }
   .sk_g_picker_preview{
-  height: 50px;
+    height: 24px;
     width: 100%;
     position: relative;
-    border-radius: 2px;
     overflow: hidden;
     cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid var(--sk_dominantShadow);
   }
 
   .sk_picker_gradient_stops_wrapper{
@@ -484,6 +486,10 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     .sk_grow{
     flex-grow: 1;
     min-width: 1px;
+    }
+    .sk_widget_footer_row{
+    display: flex;
+    align-items: center;
     }
     .sk_widget_row {
     display: flex;
@@ -787,18 +793,18 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     pickerBlock.appendChild(swatchesWidget);
     swatchesWidget.appendChild(this.swatchesWrapper);
 
-    pickerBlock.appendChild(actionsWrapper);
     this.root.appendChild(pickerBlock);
 
     if (this.options.mode === "gradient") {
       const gradModeEl = document.createElement("div");
       gradModeEl.className = "sk_g_picker_mode";
 
+      const previewElWrapper = document.createElement("div");
+      previewElWrapper.className = "sk_widget_block";
       const previewEl = document.createElement("div");
-      previewEl.className = "sk_widget_block sk_g_picker_preview";
-
+      previewEl.className = "sk_g_picker_preview";
       const resultEl = document.createElement("div");
-      resultEl.className = "sk_widget_block sk_g_picker_result";
+      resultEl.className = "sk_g_picker_result";
 
       const posEl = document.createElement("div");
       posEl.className = "sk_g_picker_position";
@@ -823,12 +829,15 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       resultEl.appendChild(gradModeEl);
       resultEl.appendChild(angleEl);
       resultEl.appendChild(posEl);
-      g_pickerBlock.appendChild(resultEl);
-      g_pickerBlock.appendChild(previewEl);
-      g_pickerBlock.appendChild(resultMarkers);
+      previewElWrapper.appendChild(resultEl);
+      previewElWrapper.appendChild(previewEl);
+      g_pickerBlock.appendChild(previewElWrapper);
+      previewElWrapper.appendChild(resultMarkers);
+
       this.root.appendChild(g_pickerBlock);
     }
 
+    this.root.appendChild(actionsWrapper);
     this.options.container.appendChild(this.root);
 
     return this.root;
