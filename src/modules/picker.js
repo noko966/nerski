@@ -873,7 +873,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       type: this.g_mode,
       angle: this.g_angle,
       direction: this.g_direction,
-      stops: this.g_stops,
+      stops: this.g_stops.map((s) => [s.color, s.loc]),
       color: this.getGradient(),
     };
     // Fire event
@@ -903,16 +903,15 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
     const stop = {
       el,
-      loc,                                                                                                    
-      _color,
+      loc,
+      color: _color,
 
       listener: _.on(el, ["mousedown", "touchstart"], (e) => {
         e.preventDefault();
         const markersbcr = g_markers_el.getBoundingClientRect();
-        this.setColorHSVA(stop._color);
+        this.setColorHSVA(stop.color);
         this._focusedStop = stop;
         let hidden = false;
-
         // Listen for mouse / touch movements
         const m = _.on(window, ["mousemove", "touchmove"], (e) => {
           const { x, y } = this.simplifyEvent(e);
@@ -1072,13 +1071,15 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     this._initializingActive = false;
 
     this._emit("init");
-    console.log("ste");
-
     if (this.options.mode === "gradient") {
+      this._bindGradientEvents();
+
       for (const [color, loc] of this.options.stops) {
         this.addStop(color, loc, true);
       }
-      this._bindGradientEvents();
+
+      this._render(true);
+
       this.on("change", (color) => {
         if (this._focusedStop) {
           this._focusedStop.color = tinycolor(color).toHex8String();

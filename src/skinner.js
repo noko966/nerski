@@ -71,7 +71,7 @@ class Skinner {
     this.rootNodes = [];
     this.state = {};
     this.skin = {};
-
+    this.pickerInstance = null;
     this.cn = {
       styleId: "sk_style",
     };
@@ -797,6 +797,36 @@ class Skinner {
   //   }
   // }
 
+  createGradientString(gradientConfig) {
+    const _gc = gradientConfig;
+    let str = "";
+    function createStopsString(gradientConfig) {
+      const _gc = gradientConfig;
+      let res = "";
+      switch (_gc.type) {
+        case "linear":
+        case "radial":
+          return _gc.stops.map((s) => `${s[0]} ${s[1]}%`).join(",");
+        case "conic":
+          return _gc.stops.map((s) => `${s[0]} ${s[1] * 360}deg`).join(",");
+      }
+      return res;
+    }
+
+    const stopsString = createStopsString(_gc);
+
+    switch (_gc.type) {
+      case "linear":
+        return (str = `linear-gradient(${_gc.angle}deg, ${stopsString})`);
+      case "radial":
+        return (str = `radial-gradient(${_gc.angle}, ${stopsString})`);
+      case "conic":
+        return (str = `conic-gradient(${stopsString})`);
+    }
+
+    return str;
+  }
+
   createGradients(name) {
     const _t = this;
     const _name = name;
@@ -811,8 +841,13 @@ class Skinner {
       const stops =
         GradientState.stops && GradientState.stops.length > 0
           ? GradientState.stops
-          : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+          : [
+              [_t.skin[_vd.nameBg], 0],
+              [_t.skin[_vd.nameBg3], 1],
+            ];
       GradientState.stops = stops;
+
+      const gradient = this.createGradientString(GradientState);
       // const stops =
       //   GradientState.stops && GradientState.stops.length > 0
       //     ? GradientState.stops
@@ -827,7 +862,7 @@ class Skinner {
       // } else if (type === "conic") {
       //   str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
       // }
-      _t.skin[_vd.nameG] = color;
+      _t.skin[_vd.nameG] = gradient;
     } else {
       const _color = BackgroundState.color;
       _t.skin[_vd.nameG] = _color;
@@ -1645,10 +1680,22 @@ class Skinner {
     document.body.removeChild(element);
   }
 
+  mapArrayBetweenZeroAndOne(arr) {
+    const n = arr.length;
+    if (n <= 1) {
+      return arr.map((item) => [item, 0]);
+    }
+
+    return arr.map((item, index) => {
+      const normalizedValue = index / (n - 1);
+      return [item, normalizedValue];
+    });
+  }
+
   handleGradientPicker(event, essence, onChangeCallback) {
     const _vd = this.verbalData(essence);
     const _t = this;
-    if (self.pickerInstance) {
+    if (_t.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
@@ -1657,21 +1704,9 @@ class Skinner {
     let y = event.clientY;
     const gtadientState = _t.state[essence].Gradient;
 
-    function mapArrayBetweenZeroAndOne(arr) {
-      const n = arr.length;
-      if (n <= 1) {
-        return arr.map((item) => [item, 0]);
-      }
-
-      return arr.map((item, index) => {
-        const normalizedValue = index / (n - 1);
-        return [item, normalizedValue];
-      });
-    }
-
     const SKPickerInstance = new SKPicker({
       mode: "gradient",
-      stops: mapArrayBetweenZeroAndOne(gtadientState.stops),
+      stops: _t.mapArrayBetweenZeroAndOne(gtadientState.stops),
       angle: gtadientState.angle,
       type: gtadientState.type,
     });
@@ -1679,23 +1714,24 @@ class Skinner {
 
     SKPickerInstance.show(x, y);
 
-    self.pickerInstance = SKPickerInstance;
+    _t.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("gradientchange", (grad, source, instance) => {
       // console.log("Picker color changed:", grad, "Source:", source);
-      console.log(grad);
+      console.log("changed");
 
       onChangeCallback(grad);
     });
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      self.pickerInstance = null;
+      _t.pickerInstance = null;
     });
   }
 
   handlePicker(event, color, mode, onChangeCallback) {
-    if (this.pickerInstance) {
+    const _t = this;
+    if (_t.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
@@ -1713,7 +1749,7 @@ class Skinner {
     SKPickerInstance.init();
     SKPickerInstance.show(x, y);
 
-    this.pickerInstance = SKPickerInstance;
+    _t.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("change", (color, source, instance) => {
       onChangeCallback(color);
@@ -1721,7 +1757,7 @@ class Skinner {
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      this.pickerInstance = null;
+      _t.pickerInstance = null;
     });
   }
 
