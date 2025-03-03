@@ -558,15 +558,15 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("backgroundColor", color);
-        this.updateControl("backgroundColor", color);
+      this.handleGradientPicker(e, (color) => {
+        this.modifyKey("backgroundColor", color.str);
+        this.updateControl("backgroundColor", color.str);
       });
     };
 
     // **New** callback for Text Color
     const handleTextColorPickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
+      this.handlePicker(e, (color) => {
         this.modifyKey("color", color);
         this.updateControl("color", color);
       });
@@ -599,13 +599,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     // Background picker
     this.BgPicker = this.createColorBox(
-      "sk_picker_trigger",
+      "nik_skinner_control_group_picker",
       handlePickerCallBack
     );
 
     // **New** text color picker
     this.TextColorPicker = this.createColorBox(
-      "sk_picker_trigger",
+      "nik_skinner_control_group_picker",
       handleTextColorPickerCallBack
     );
 
@@ -983,25 +983,23 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     return path.join(" > ");
   }
 
-
-
-  handlePicker(event, color, type, onChangeCallback) {
-    if (this.pickerInstance) {
+  handlePicker(event, onChangeCallback) {
+    let self = this;
+    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
+    if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
 
-    // Extract the current color from your state
-    const currentColor = color;
+    let x = event.clientX;
+    let y = event.clientY;
 
-    const x = event.clientX;
-    const y = event.clientY;
-
-    const SKPickerInstance = new SKPicker(null, currentColor, type);
+    const SKPickerInstance = new SKPicker(null, currentColor);
     SKPickerInstance.init();
+
     SKPickerInstance.show(x, y);
 
-    this.pickerInstance = SKPickerInstance;
+    self.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("change", (color, source, instance) => {
       onChangeCallback(color);
@@ -1009,48 +1007,40 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      this.pickerInstance = null;
+      self.pickerInstance = null;
     });
   }
 
-  handleGradientPicker(event, essence, onChangeCallback) {
-      const _vd = this.verbalData(essence);
-      const _t = this;
-      if (self.pickerInstance) {
-        console.log("A picker is already open. Please close it first.");
-        return;
-      }
-  
-      let x = event.clientX;
-      let y = event.clientY;
-      const gtadientState = _t.state[essence].Gradient;
-  
-      const SKPickerInstance = new SKPicker(
-        null,
-        gtadientState.stops[0],
-        "gradient",
-        {
-          stops: gtadientState.stops,
-          angle: gtadientState.angle,
-          type: gtadientState.type,
-        }
-      );
-      SKPickerInstance.init();
-  
-      SKPickerInstance.show(x, y);
-  
-      self.pickerInstance = SKPickerInstance;
-  
-      SKPickerInstance.on("gradientchange", (grad, source, instance) => {
-        console.log("Picker color changed:", grad, "Source:", source);
-        onChangeCallback(grad);
-      });
-  
-      SKPickerInstance.on("hide", (source, instance) => {
-        instance.destroy();
-        self.pickerInstance = null;
-      });
+  handleGradientPicker(event, onChangeCallback) {
+    let self = this;
+    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
     }
+
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const SKPickerInstance = new SKPicker(null, currentColor, "gradient", {
+      stops: [currentColor],
+    });
+    SKPickerInstance.init();
+
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("gradientchange", (grad, source, instance) => {
+      console.log("Picker color changed:", grad, "Source:", source);
+      onChangeCallback(grad);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
+    });
+  }
 }
 
 export { MouseIntersectStyler };

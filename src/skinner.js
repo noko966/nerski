@@ -76,6 +76,10 @@ class Skinner {
       styleId: "sk_style",
     };
 
+    this.patientRoot = patientRoot || document.body;
+
+    this.isStylerToggledOn = false;
+
     this.essencesArray = [
       {
         name: "body",
@@ -729,6 +733,35 @@ class Skinner {
       this.rebuild(rn.name);
     });
     this.generateUiPalette(this.ui.colors["light"]);
+
+    this.customStyler = new MouseIntersectStyler(
+      "*",
+      ()=>{},
+      ()=>{},
+      ()=>{},
+      this.patientRoot
+    );
+
+    if (this.toolBox) {
+      this.ui.root.addEventListener("mouseover", () => {
+        // If styler is running, stop it when entering toolbox
+        if (this.customStyler && this.customStyler.isRunning) {
+          this.customStyler.stop();
+        }
+      });
+
+      this.ui.root.addEventListener("mouseout", () => {
+        // Only restart if styler is toggled on AND not running
+        if (
+          this.isStylerToggledOn &&
+          !this.isPickerOpen &&
+          this.customStyler &&
+          !this.customStyler.isRunning
+        ) {
+          this.customStyler.start();
+        }
+      });
+    }
     // this.emit("init");
   }
 
@@ -1420,6 +1453,7 @@ class Skinner {
     const uiTriggerRef = this.createSwitch();
     this.ui.themeTrigger = this.createSwitch();
     this.ui.collapseTrigger = this.createSwitch();
+    this.ui.customStylerTrigger = this.createSwitch();
     this.ui.themeTrigger.chb.addEventListener("change", (e) => {
       let uiTheme = e.currentTarget.checked
         ? this.ui.colors["dark"]
@@ -1427,7 +1461,17 @@ class Skinner {
       this.generateUiPalette(uiTheme);
     });
 
+    this.ui.customStylerTrigger.chb.addEventListener("change", (e) => {
+      if (this.customStyler) {
+        // Toggle the boolean flag
+        this.isStylerToggledOn = !this.isStylerToggledOn;
+        // this.toggleBtn.classList.toggle("state_active");
+        this.customStyler.toggleStyler();
+      }
+    });
+
     this.ui.toolsPanel.appendChild(this.ui.themeTrigger.el);
+    this.ui.toolsPanel.appendChild(this.ui.customStylerTrigger.el);
     this.ui.toolsPanel.appendChild(this.ui.collapseTrigger.el);
 
     this.root.appendChild(this.ui.root);
@@ -1604,6 +1648,28 @@ class Skinner {
       "data:text/css;charset=utf-8," + encodeURIComponent(wrappedInRoot)
     );
     element.setAttribute("download", name + "_" + fileNameSuffix + ".css");
+    element.style.display = "none";
+
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  async makeCustomDownloadRequest() {
+    let css = this.customStyler.createCss();
+    var element = document.createElement("a");
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var fileNameSuffix = hours + "-" + minutes;
+    element.setAttribute(
+      "href",
+      "data:text/css;charset=utf-8," + encodeURIComponent(css)
+    );
+    element.setAttribute(
+      "download",
+      "sk_custom_css" + "_" + fileNameSuffix + ".css"
+    );
     element.style.display = "none";
 
     document.body.appendChild(element);

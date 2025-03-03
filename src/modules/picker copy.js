@@ -466,11 +466,6 @@ display: flex;
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
 
-
-  getColor(){
-    return tinycolor(this._color).toHsv();
-  }
-
   createPicker() {
     let _that = this;
     const root = document.createElement("div");
@@ -494,10 +489,6 @@ display: flex;
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(x, y) {
         const c = _that._color;
-
-        let cc = _that.getColor();
-        console.log(cc, "here");
-        
         // const { lastColor, currentColor } = _root.preview;
         const _sv = tinycolor(c).toHsv();
 
