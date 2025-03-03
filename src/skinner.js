@@ -53,13 +53,6 @@ class Skinner {
     c-0.2-0.2-0.4-0.5-0.4-0.9c0-0.6,0.5-1.2,1.1-1.2c0,0,0.1,0,0.1,0h15l0.1,0c0.3,0,0.5,0.1,0.8,0.4c0.3,0.3,0.4,0.6,0.4,1
     C20.7,16.8,20.1,17.3,19.4,17.3z"/>
   </svg>`,
-        border: `
-      <svg class="sk_border_svg" preserveAspectRatio="none" vector-effect="non-scaling-stroke" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 649 39" style="enable-background:new 0 0 649 39;" xml:space="preserve">
-
-<path class="tl" d="M308.2,1.5H5.5c-2.2,0-4,1.8-4,4v28c0,2.2,1.8,4,4,4h63.7"/>
-<path class="br" d="M580.4,1.5h63.1c2.2,0,4,1.8,4,4v28c0,2.2-1.8,4-4,4H340.8"/>
-</svg>`,
       },
 
       wrapper: null,
@@ -71,7 +64,7 @@ class Skinner {
     this.rootNodes = [];
     this.state = {};
     this.skin = {};
-
+    this.pickerInstance = null;
     this.cn = {
       styleId: "sk_style",
     };
@@ -274,8 +267,6 @@ class Skinner {
       if (this.rootNodes.includes(essenceName)) {
         merged.Background.isActive = true;
       }
-
-      console.log(merged);
 
       this.state[essenceName] = merged;
     });
@@ -545,8 +536,6 @@ class Skinner {
       t.state[name][prop][key] = newVal;
     }
 
-    console.log(t.state[name]);
-
     // this.emit("statechange", {
     //   name,
     //   newValue: newVal,
@@ -803,6 +792,67 @@ class Skinner {
     });
   }
 
+  // createGradients_(name) {
+  //   const _t = this;
+  //   const _name = name;
+  //   const _vd = _t.verbalData(_name);
+  //   const BackgroundState = _t.state[_name].Background;
+  //   const GradientState = _t.state[_name].Gradient;
+  //   const angle = GradientState.angle;
+  //   const type = GradientState.type;
+
+  //   if (GradientState.isActive) {
+  //     const stops =
+  //       GradientState.stops && GradientState.stops.length > 0
+  //         ? GradientState.stops
+  //         : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+  //     GradientState.stops = stops;
+  //     let str = "";
+  //     const stopsString = stops.map((s) => s).join(", ");
+  //     if (type === "linear") {
+  //       str = `linear-gradient(${angle}deg, ${stopsString})`;
+  //     } else if (type === "radial") {
+  //       str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+  //     } else if (type === "conic") {
+  //       str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+  //     }
+  //     _t.skin[_vd.nameG] = str;
+  //   } else {
+  //     const _color = BackgroundState.color;
+  //     _t.skin[_vd.nameG] = _color;
+  //   }
+  // }
+
+  createGradientString(gradientConfig) {
+    const _gc = gradientConfig;
+    let str = "";
+    function createStopsString(gradientConfig) {
+      const _gc = gradientConfig;
+      let res = "";
+      switch (_gc.type) {
+        case "linear":
+        case "radial":
+          return _gc.stops.map((s) => `${s[0]} ${s[1] * 100}%`).join(",");
+        case "conic":
+          return _gc.stops.map((s) => `${s[0]} ${s[1] * 360}deg`).join(",");
+      }
+      return res;
+    }
+
+    const stopsString = createStopsString(_gc);
+
+    switch (_gc.type) {
+      case "linear":
+        return (str = `linear-gradient(${_gc.angle}deg, ${stopsString})`);
+      case "radial":
+        return (str = `radial-gradient(${_gc.angle}, ${stopsString})`);
+      case "conic":
+        return (str = `conic-gradient(${stopsString})`);
+    }
+
+    return str;
+  }
+
   createGradients(name) {
     const _t = this;
     const _name = name;
@@ -811,23 +861,34 @@ class Skinner {
     const GradientState = _t.state[_name].Gradient;
     const angle = GradientState.angle;
     const type = GradientState.type;
+    const color = GradientState.color;
 
     if (GradientState.isActive) {
       const stops =
         GradientState.stops && GradientState.stops.length > 0
           ? GradientState.stops
-          : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+          : [
+              [_t.skin[_vd.nameBg], 0],
+              [_t.skin[_vd.nameBg3], 1],
+            ];
       GradientState.stops = stops;
-      let str = "";
-      const stopsString = stops.map((s) => s).join(", ");
-      if (type === "linear") {
-        str = `linear-gradient(${angle}deg, ${stopsString})`;
-      } else if (type === "radial") {
-        str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
-      } else if (type === "conic") {
-        str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
-      }
-      _t.skin[_vd.nameG] = str;
+
+      const gradient = this.createGradientString(GradientState);
+      // const stops =
+      //   GradientState.stops && GradientState.stops.length > 0
+      //     ? GradientState.stops
+      //     : [_t.skin[_vd.nameBg], _t.skin[_vd.nameBg3]];
+      // GradientState.stops = stops;
+      // let str = "";
+      // const stopsString = stops.map((s) => s).join(", ");
+      // if (type === "linear") {
+      //   str = `linear-gradient(${angle}deg, ${stopsString})`;
+      // } else if (type === "radial") {
+      //   str = `radial-gradient(circle at 50% 50%, ${stopsString})`;
+      // } else if (type === "conic") {
+      //   str = `conic-gradient(from 90deg at 50% 50%, ${stopsString})`;
+      // }
+      _t.skin[_vd.nameG] = gradient;
     } else {
       const _color = BackgroundState.color;
       _t.skin[_vd.nameG] = _color;
@@ -1080,15 +1141,15 @@ class Skinner {
     };
   }
 
-  createBackgrounPicker(name, type) {
-    const _type = type;
+  createBackgrounPicker(name, mode) {
+    const _mode = mode;
     const _t = this;
     const backgroundPickerEl = document.createElement("div");
     backgroundPickerEl.className = "sk_picker_trigger";
 
     backgroundPickerEl.addEventListener("click", (evt) => {
       const color = _t.state[name].Background.color;
-      _t.handlePicker(evt, color, _type, (newColor) => {
+      _t.handlePicker(evt, color, _mode, (newColor) => {
         _t.updateEssenceState(name, "Background", "color", newColor);
         this.build(name);
       });
@@ -1123,6 +1184,7 @@ class Skinner {
         _t.updateEssenceState(name, "Gradient", "angle", data.angle);
         _t.updateEssenceState(name, "Gradient", "stops", data.stops);
         _t.updateEssenceState(name, "Gradient", "type", data.type);
+        _t.updateEssenceState(name, "Gradient", "color", data.color);
         this.build(name);
       });
     });
@@ -1425,7 +1487,7 @@ class Skinner {
     load.classList.add("variant_load");
     load.addEventListener("click", () => {
       const _config = _input.value ? JSON.parse(_input.value) : null;
-      console.log(_config);
+      // console.log(_config);
 
       _t.loadSavedConfig(_config);
       _input.value = "";
@@ -1502,11 +1564,6 @@ class Skinner {
       const group = document.createElement("div");
       group.className = "sk_control_group";
       this.isOverlay(name) && group.classList.add("variant_overlay");
-      const svgBorder = document.createElement("div");
-      svgBorder.className = "sk_border_svg_wrapper";
-      svgBorder.innerHTML = this.ui.icons.border;
-
-      svgBorder;
       const groupLabel = document.createElement("span");
       groupLabel.className = "sk_control_group_label";
 
@@ -1515,8 +1572,6 @@ class Skinner {
       groupChild1.className = "sk_checkbox_wrapper";
       const groupChild2 = document.createElement("div");
       groupChild2.className = "sk_checkbox_wrapper";
-
-      group.append(svgBorder);
 
       if (essenceState.Background && essenceState.Background.isActive) {
         group.classList.add("state_active");
@@ -1677,10 +1732,22 @@ class Skinner {
     document.body.removeChild(element);
   }
 
+  mapArrayBetweenZeroAndOne(arr) {
+    const n = arr.length;
+    if (n <= 1) {
+      return arr.map((item) => [item, 0]);
+    }
+
+    return arr.map((item, index) => {
+      const normalizedValue = index / (n - 1);
+      return [item, normalizedValue];
+    });
+  }
+
   handleGradientPicker(event, essence, onChangeCallback) {
     const _vd = this.verbalData(essence);
     const _t = this;
-    if (self.pickerInstance) {
+    if (_t.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
@@ -1689,35 +1756,34 @@ class Skinner {
     let y = event.clientY;
     const gtadientState = _t.state[essence].Gradient;
 
-    const SKPickerInstance = new SKPicker(
-      null,
-      gtadientState.stops[0],
-      "gradient",
-      {
-        stops: gtadientState.stops,
-        angle: gtadientState.angle,
-        type: gtadientState.type,
-      }
-    );
+    const SKPickerInstance = new SKPicker({
+      mode: "gradient",
+      stops: gtadientState.stops,
+      angle: gtadientState.angle,
+      type: gtadientState.type,
+    });
     SKPickerInstance.init();
 
     SKPickerInstance.show(x, y);
 
-    self.pickerInstance = SKPickerInstance;
+    _t.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("gradientchange", (grad, source, instance) => {
-      console.log("Picker color changed:", grad, "Source:", source);
+      // console.log("Picker color changed:", grad, "Source:", source);
+      console.log("changed");
+
       onChangeCallback(grad);
     });
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      self.pickerInstance = null;
+      _t.pickerInstance = null;
     });
   }
 
-  handlePicker(event, color, type, onChangeCallback) {
-    if (this.pickerInstance) {
+  handlePicker(event, color, mode, onChangeCallback) {
+    const _t = this;
+    if (_t.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
@@ -1728,11 +1794,14 @@ class Skinner {
     const x = event.clientX;
     const y = event.clientY;
 
-    const SKPickerInstance = new SKPicker(null, currentColor, type);
+    const SKPickerInstance = new SKPicker({
+      default: currentColor,
+      mode: mode,
+    });
     SKPickerInstance.init();
     SKPickerInstance.show(x, y);
 
-    this.pickerInstance = SKPickerInstance;
+    _t.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("change", (color, source, instance) => {
       onChangeCallback(color);
@@ -1740,7 +1809,7 @@ class Skinner {
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      this.pickerInstance = null;
+      _t.pickerInstance = null;
     });
   }
 
@@ -1813,9 +1882,9 @@ class Skinner {
   --skinnerToolboxFooterHeight: 48px;
   --skinnerBtnHeight: 28px;
   --skinnerToolboxCollapserSize: 42px;
-  --control-picker-size: 28px;
+  --control-picker-size: 24px;
   --control-picker-size-border: calc(var(--control-picker-size) - 4px);
-  --controls-row-height: 34px;
+  --controls-row-height: 36px;
   --controls-ui-gap: 6px;
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
@@ -2191,7 +2260,7 @@ body {
   height: var(--controls-row-height);
   display: flex;
   flex-direction: column;
-  column-gap: 6px;
+  column-gap: 1px;
   position: relative;
   transition: box-shadow 0.2s;
   box-shadow: -2px 0px 0 0px var(--sk_dominantBg2Hover);
@@ -2202,6 +2271,11 @@ body {
   align-items: center;
   border-radius: 4px;
   opacity: 0.5;
+      background: linear-gradient(0deg, var(--sk_dominantBg2) 0%, var(--sk_dominantBg) 48.21426023755949%, var(--sk_dominantBg2) 100%);
+      overflow: hidden;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid var(--sk_dominantBg3Hover);
 }
 
 .sk_control_group.variant_overlay{
@@ -2258,38 +2332,6 @@ body {
 .sk_picker_trigger.state_disabled{
     pointer-events: none;
     opacity: 0.2;
-}
-
-.sk_border_svg_wrapper{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% + 5px);
-    height: calc(100% + 5px);
-    background: var(--sk_dominantBg);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.sk_border_svg{
-fill: none;
-stroke-width: 6px;
-stroke: url(#strokeGradient);
-width: 100%;
-height: 100%;
-}
-
-.sk_border_svg > .tl{
-    transition: stroke-dashoffset 0.5s;
-    stroke-dasharray: 60 406;
-    stroke-dashoffset: var(--tl);
-}
-
-.sk_border_svg > .br{
-  transition: stroke-dashoffset 0.5s;
-    stroke-dasharray: 60 406;
-    stroke-dashoffset: var(--br);
 }
 
 .sk_picker_trigger::before{
@@ -2490,6 +2532,8 @@ height: 100%;
     align-items: center;
     justify-content: center;
     color: var(--sk_buttonTxt2);
+    fill: var(--sk_buttonTxt2);
+    stroke: var(--sk_buttonTxt2);
 }
 
 .sk_btn:hover {
@@ -2621,14 +2665,14 @@ height: 100%;
 .sk_input_text {
   width: 50px;
   font-size: 11px;
-  height: 28px;
+  height: 24px;
   font-weight: 500;
   background: var(--sk_dominantBg);
   color: var(--sk_dominantTxt2);
-  border-radius: 2px;
+  border-radius: 4px;
   text-align: right;
   border: 0;
-  border: 1px solid var(--sk_dominantBg2);
+  border: 1px solid var(--sk_dominantShadow);
   outline: 0;
   padding: 0 6px;
 }
@@ -2646,7 +2690,6 @@ height: 100%;
 
 .sk_checkbox_wrapper {
   display: flex;
-  border: 1px solid var(--sk_dominantBg3Hover);
   height: var(--controls-row-height);
   align-items: center;
   justify-content: center;
@@ -2657,8 +2700,7 @@ height: 100%;
   flex-shrink: 0;
   border-radius: 0;
   column-gap: 4px;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 2px 8px;
 }
 
 .sk_checkbox_wrapper.variant_blur{
@@ -2702,7 +2744,7 @@ height: 100%;
 .sk_checkbox_wrapper.sk_checkbox_wrapper-range {
   width: 100%;
   justify-content: flex-start;
-  padding: 2px 4px;
+  padding: 4px 8px;
 }
 
 .nik_skinner_control_group_checkbox_wrapper > input {
@@ -2879,7 +2921,7 @@ input[type="range"]:focus {
 
 input[type="range"]::-webkit-slider-runnable-track {
   background: var(--sk_dominantBg);
-    border: 1px solid var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantShadow);
   border-radius: 2px;
   width: 100%;
   height: 8px;
@@ -2887,18 +2929,16 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-      margin-top: -6px;
-    width: 18px;
-    height: 18px;
-    background-color: var(--sk_dominantBg);
-    border: 1px solid var(--sk_dominantBg2);
+      margin-top: calc(var(--chbSize) / -3);
+    width: var(--chbSize);
+    height: var(--chbH);
+    background-color: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantShadow);
     border-radius: 50%;
     cursor: pointer;
     -webkit-appearance: none;
-    box-shadow: inset 0 0 0px 2px var(--sk_dominantTxt);
-
+    box-shadow: inset 0 0 0px 6px var(--sk_dominantBgHover);
 }
-
 
 input[type="range"]::-moz-range-track {
   background: var(--sk_dominantBg);
@@ -3017,7 +3057,7 @@ how to remove the virtical space around the range input in IE*/
 }
 
 :root {
-  --chbSize: 24px;
+  --chbSize: 20px;
   --chbH: var(--chbSize);
   --wrapperChbSize: 42px;
   --chbSizeBorder: 1px;
@@ -3034,8 +3074,8 @@ how to remove the virtical space around the range input in IE*/
   height: 100%;
   background-color: var(--sk_dominantBg);
   cursor: pointer;
-  border: var(--chbSizeBorder) solid var(--sk_dominantBg2);
-  border-radius: 4px;
+      border: var(--chbSizeBorder) solid var(--sk_dominantShadow);
+    border-radius: 6px;
   color: var(--sk_dominantBg);
   transition: background 0.2s;
 }
@@ -3538,6 +3578,30 @@ border-radius: 50%;*/
     z-index: 20;
     background: linear-gradient(90deg, rgb(189 24 7 / 17%), rgb(189 24 7 / 0%) 50%);
     pointer-events: none;
+}
+
+.sk_g_picker_root.state_visible {
+    display: flex;
+}
+.sk_g_picker_root{
+display: none;
+    --input_size: 28px;
+    --solid_size: 24px;
+    position: fixed;
+    width: 250px;
+    height: auto;
+    z-index: calc(var(--sk_zind) + 100);
+    top: 0px;
+    transform: translate(0, 0);
+    border: none;
+    background: var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBgHover);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    border-radius: 4px;
+    flex-direction: column;
+    row-gap: 4px;
 }
 
 `;
