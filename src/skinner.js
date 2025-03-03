@@ -725,9 +725,9 @@ class Skinner {
 
     this.customStyler = new MouseIntersectStyler(
       "*",
-      ()=>{},
-      ()=>{},
-      ()=>{},
+      () => {},
+      () => {},
+      () => {},
       this.patientRoot
     );
 
@@ -3582,6 +3582,10 @@ border-radius: 50%;*/
 
 .sk_g_picker_root.state_visible {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
+}
 }
 .sk_g_picker_root{
 display: none;

@@ -162,35 +162,67 @@ export default class SKPicker {
     top: 0px;
     transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantBg2);
+    background: var(--sk_dominantBgHover);
     border: 1px solid var(--sk_dominantBg);
     align-items: stretch;
-    padding: 4px;
+    padding: 6px;
     border-radius: 4px;
     column-gap: 4px;
     }
     .sk_block_picker {
-    width: 200px;
+        width: 200px;
     flex-shrink: 0;
+    flex-direction: column;
+    row-gap: 4px;
+    
+    }
+    .sk_block_picker_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
     }
     .sk_picker_root.state_visible{
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
     }
     .sk_picker_controls_row{
     display: flex;
     align-items: center;
     column-gap: 6px;
     }
+    .sk_widget_header {
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
+    height: 20px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 0 4px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+border-bottom: 0;
+}
     .sk_widget_block{
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 0px;
+    padding: 8px;
     background: var(--sk_dominantBg2);
     border: 1px solid var(--sk_dominantBg2Hover);
     border-radius: 4px;
-    flex-direction: column;
     row-gap: 4px;
+    background: var(--sk_dominantBg2);
+    padding: 8px;
+    border: 1px solid var(--sk_dominantBg2Hover);
+    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: 0;
     }
     .sk_picker_solid{
     height: var(--solid_size);
@@ -490,6 +522,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     .sk_widget_footer_row{
     display: flex;
     align-items: center;
+    column-gap: 8px;
     }
     .sk_widget_row {
     display: flex;
@@ -548,12 +581,58 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     this._eventListener[event].forEach((cb) => cb(...args, this));
   }
 
+  applyColor() {
+    const cssRGBaString = tinycolor(this._color).toRgbString();
+    this._lastColor = (() => {
+      return this._color;
+    })();
 
-  getColor(){
-    return tinycolor(this._color).toHsv();
+    if (!this._initializingActive) {
+      this._emit("save", this._color);
+    }
+
+    return this;
   }
 
-  createPicker() {
+  setColorHSVA(color) {
+    const _t = this;
+    const recalc = this._recalc;
+    this._recalc = false;
+    if (!tinycolor(color).isValid()) {
+      return false;
+    }
+
+    _t._color = tinycolor(color).toHsv();
+
+    _t._hue.update(_t._color.h / 360);
+    if (_t.options.mode === "opacity") {
+      _t._opacity.update(_t._color.a);
+    }
+    _t._palette.update(_t._color.s, 1 - _t._color.v);
+
+    _t.applyColor();
+    if (recalc) {
+      _t._updateOutput();
+    }
+
+    // Restore old state
+    _t._recalc = recalc;
+    return true;
+  }
+
+  _updateOutput(eventSource) {
+    const _color = tinycolor(this._color).toHex8String();
+    this.inputEl.value = _color;
+    if (!this._initializingActive && this._recalc) {
+      this._emit("change", _color, eventSource, this);
+    }
+  }
+
+  getColor() {
+    return this._color;
+  }
+
+  createPaletteElement() {
     let _that = this;
     const root = document.createElement("div");
     root.className = "sk_picker_canvas_root";
@@ -575,30 +654,15 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(x, y) {
-        const c = _that._color;
-
-        let cc = _that.getColor();
-        console.log(cc, "here");
-        
-        // const { lastColor, currentColor } = _root.preview;
-        const _sv = tinycolor(c).toHsv();
+        const color = _that.getColor();
 
         if (_that._recalc) {
           color.s = x;
 
           color.v = 1 - y;
 
-          // Prevent falling under zero
-          _sv.v < 0 ? (_sv.v = 0) : 0;
-
-          this.wrapper.style.background = `
-              linear-gradient(to top, rgba(0, 0, 0, 1), transparent),
-              linear-gradient(to left, hsl(${_sv.h}, 100%, 50%), rgba(255, 255, 255, 1))
-          `;
-          let _chx = tinycolor(_sv).toHexString();
-          // currentColor.style.setProperty("--pcr-color", cssRGBaString);
-          _that.setBackground(_chx, "picker_canvas");
-          _that.inputEl.value = _chx;
+          color.v < 0 ? (color.v = 0) : 0;
+          _that._updateOutput("slider");
         }
 
         const cssRGBaString = tinycolor(color).toRgbString();
@@ -664,19 +728,10 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
       onstop: () => _that._emit("changestop", "slider", _that),
       onchange(v) {
-        let hsl = tinycolor(_that._color).toHsl();
-        let color = _that._color;
+        const color = _that.getColor();
+
         if (_that._recalc) {
-          const alpha = Math.round(v * 1e2) / 100;
-
-          // Prevent falling under zero
-          let _chx = tinycolor(hsl).setAlpha(alpha).toRgbString();
-          // Set picker and gradient color
-
-          _that.slSlider.trigger();
-          this.wrapper.style.setProperty("--bg", `rgba(0, 0, 0, ${alpha})`);
-          _that.setBackground(_chx, "picker_opacity");
-          _that.inputEl.value = _chx;
+          color.a = Math.round(v * 1e2) / 100;
         }
         this.wrapper.style.background = `rgba(0, 0, 0, ${color.a})`;
         this.element.style.background = `rgba(0, 0, 0, ${color.a})`;
@@ -687,17 +742,27 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     return root;
   }
 
+  createUiHeader(label) {
+    const root = document.createElement("div");
+    root.className = "sk_widget_header";
+    root.innerText = label || "label";
+    return root;
+  }
+
   createUI() {
     this.root = document.createElement("div");
     this.root.className = "sk_picker_root";
-
+    const pickerBlocksWrapper = document.createElement("div");
+    pickerBlocksWrapper.className = "sk_block_picker_wrapper";
     const pickerBlock = document.createElement("div");
     pickerBlock.className = "sk_block_picker";
     const g_pickerBlock = document.createElement("div");
     g_pickerBlock.className = "sk_block_picker";
     this.swatchesWrapper = document.createElement("div");
-    this.swatchesWrapper.className = "sk_swatches_wrapper sk_picker_scroll";
+    this.swatchesWrapper.className = "sk_swatches_wrapper sk_picker_scroll ";
 
+    const swatchesWidgetRoot = document.createElement("div");
+    swatchesWidgetRoot.className = "sk_block_picker";
     const swatchesWidget = document.createElement("div");
     swatchesWidget.className = "sk_widget_block";
 
@@ -760,18 +825,28 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     inputsWrapper.appendChild(this.inputEl);
     inputsWrapper.appendChild(this.eyedropperTrigger);
 
+    this.cancelAndClose = document.createElement("button");
+    this.cancelAndClose.className = "sk_btn sk_grow";
+    this.cancelAndClose.innerText = "Cancel";
+
     this.applyAndClose = document.createElement("button");
     this.applyAndClose.className = "sk_btn variant_cta sk_grow";
     this.applyAndClose.innerText = "Apply";
     slidersWrapper.appendChild(this.createSeparator());
     slidersWrapper.appendChild(inputsWrapper);
+    actionsWrapper.appendChild(this.cancelAndClose);
     actionsWrapper.appendChild(this.applyAndClose);
 
+    pickerBlock.appendChild(this.createUiHeader("picker"));
     pickerBlock.appendChild(slidersWrapper);
-    pickerBlock.appendChild(swatchesWidget);
+    swatchesWidgetRoot.appendChild(this.createUiHeader("swatches"));
+    swatchesWidgetRoot.appendChild(swatchesWidget);
     swatchesWidget.appendChild(this.swatchesWrapper);
 
     this.root.appendChild(pickerBlock);
+
+    pickerBlocksWrapper.appendChild(pickerBlock);
+    pickerBlocksWrapper.appendChild(swatchesWidgetRoot);
 
     if (this.options.mode === "gradient") {
       const gradModeEl = document.createElement("div");
@@ -809,12 +884,14 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       resultEl.appendChild(posEl);
       previewElWrapper.appendChild(resultEl);
       previewElWrapper.appendChild(previewEl);
+      g_pickerBlock.appendChild(this.createUiHeader("gradient"));
       g_pickerBlock.appendChild(previewElWrapper);
       previewElWrapper.appendChild(resultMarkers);
 
-      this.root.appendChild(g_pickerBlock);
+      pickerBlocksWrapper.appendChild(g_pickerBlock);
     }
 
+    this.root.appendChild(pickerBlocksWrapper);
     this.root.appendChild(actionsWrapper);
     this.options.container.appendChild(this.root);
 
