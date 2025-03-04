@@ -4234,7 +4234,7 @@ border-radius: 50%;*/
 .sk_svg{
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.5px;
+    stroke-width: 1px;
     width: 22px;
     height: 22px;
 }

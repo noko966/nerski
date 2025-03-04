@@ -173,8 +173,6 @@ export default class SKPicker {
         width: 200px;
     flex-shrink: 0;
     flex-direction: column;
-    row-gap: 4px;
-    
     }
     .sk_block_picker_wrapper {
     display: flex;
@@ -193,37 +191,9 @@ export default class SKPicker {
     align-items: center;
     column-gap: 6px;
     }
-    .sk_widget_header {
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    height: 20px;
-    border: 1px solid var(--sk_dominantBg2);
-    padding: 0 4px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-border-bottom: 0;
-}
-    .sk_widget_block{
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 8px;
-    background: var(--sk_dominantBg2);
-    border: 1px solid var(--sk_dominantBg2Hover);
-    border-radius: 4px;
-    row-gap: 4px;
-    background: var(--sk_dominantBg2);
-    padding: 8px;
-    border: 1px solid var(--sk_dominantBg2Hover);
-    border-radius: 4px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-top: 0;
-    }
+    
+    
+  
     .sk_picker_solid{
     height: var(--solid_size);
     width: var(--solid_size);
@@ -744,7 +714,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 
   createUiHeader(label) {
     const root = document.createElement("div");
-    root.className = "sk_widget_header";
+    root.className = "sk_widget_block_header";
     root.innerText = label || "label";
     return root;
   }
@@ -755,16 +725,16 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     const pickerBlocksWrapper = document.createElement("div");
     pickerBlocksWrapper.className = "sk_block_picker_wrapper";
     const pickerBlock = document.createElement("div");
-    pickerBlock.className = "sk_block_picker";
+    pickerBlock.className = "sk_block_picker sk_widget_collapse_block";
     const g_pickerBlock = document.createElement("div");
-    g_pickerBlock.className = "sk_block_picker";
+    g_pickerBlock.className = "sk_block_picker sk_widget_collapse_block";
     this.swatchesWrapper = document.createElement("div");
     this.swatchesWrapper.className = "sk_swatches_wrapper sk_picker_scroll ";
 
     const swatchesWidgetRoot = document.createElement("div");
-    swatchesWidgetRoot.className = "sk_block_picker";
+    swatchesWidgetRoot.className = "sk_block_picker sk_widget_collapse_block";
     const swatchesWidget = document.createElement("div");
-    swatchesWidget.className = "sk_widget_block";
+    swatchesWidget.className = "sk_widget_block_content";
 
     this.solids.forEach((color) => this.addSwatch(color));
 
@@ -774,7 +744,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     // 6. Create an input field
     this.inputEl = document.createElement("input");
     this.inputEl.type = "text";
-    this.inputEl.className = "sk_input_text sk_grow";
+    this.inputEl.className = "sk_input_text sk_grow variant_large";
 
     // 7. Create an eyedropper button (optional)
     this.eyedropperTrigger = document.createElement("button");
@@ -808,7 +778,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     });
 
     const slidersWrapper = document.createElement("div");
-    slidersWrapper.className = "sk_widget_block";
+    slidersWrapper.className = "sk_widget_block_content sk_layout_col";
     slidersWrapper.appendChild(paletteElement);
     slidersWrapper.appendChild(this.createSeparator());
     slidersWrapper.appendChild(hueElement);
@@ -853,7 +823,7 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       gradModeEl.className = "sk_g_picker_mode";
 
       const previewElWrapper = document.createElement("div");
-      previewElWrapper.className = "sk_widget_block";
+      previewElWrapper.className = "sk_widget_block_content sk_layout_col";
       const previewEl = document.createElement("div");
       previewEl.className = "sk_g_picker_preview";
       const resultEl = document.createElement("div");

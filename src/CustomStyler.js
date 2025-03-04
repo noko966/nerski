@@ -110,9 +110,8 @@ class MouseIntersectStyler {
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
-        e1 + 1
-      }px, ${color} ${e1 + 2}px`;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${e1 + 1
+        }px, ${color} ${e1 + 2}px`;
     });
 
     // Join all stops into a comma-separated list
@@ -324,13 +323,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
       CSSVariableRuleStart += `
         --${dataSk}Bg: ${tinycolor(_skin.bg)
-        .lighten(level * 2 + ind * 1)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
+          .lighten(level * 2 + ind * 1)
+          .setAlpha(0.1 + level * 0.01)
+          .toRgbString()};
         --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
         --${dataSk}Accent: ${tinycolor(_skin.acc)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
+          .setAlpha(0.1 + level * 0.01)
+          .toRgbString()};
           
       `;
 
@@ -417,27 +416,17 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     top: 0px;
     transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantBg);
-    border: 1px solid var(--sk_dominantBgHover);
-    backdrop-filter: blur(5px);
+    background: var(--sk_dominantBgHover);
+    border: 1px solid var(--sk_dominantBg);
     flex-direction: column;
     align-items: stretch;
     padding: 6px;
     border-radius: 4px;
     display: flex;
     flex-direction: column;
-    row-gap: 4px;
-    box-shadow: 0 0 0 4px var(--sk_dominantShadow);
+    row-gap: 8px;
       }
-    .sk_widget_collapse_block {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    background: var(--sk_dominantBg2);
-    border: 1px solid var(--sk_dominantBg2Hover);
-    border-radius: 4px;
-    overflow: hidden;
-}
+    
 
       .sk_ui_custom_change_root.state-reveal {
         animation: appear 0.3s;
@@ -527,27 +516,7 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     color: var(--sk_accentTxt);
     }
    
-    .sk_widget_block_header{
-    height: 24px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt);
-    font-size: 10px;
-    column-gap: 6px;
-    }
-    .sk_widget_block_content{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 6px;
-    background: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt);
-    font-size: 10px;
     
-    }
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
@@ -644,19 +613,27 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     pickersElWrapper.appendChild(separatorEl);
     pickersElWrapper.appendChild(controlWrapperColor.element);
 
+
+    const padControlGroup = this.createUnputsGroupControl();
+
+    paddingBlockContent.appendChild(padControlGroup);
+
     paddingBlock.appendChild(paddingBlockHeader);
     paddingBlock.appendChild(paddingBlockContent);
-    paddingBlockContent.appendChild(paddingInputs.top);
-    paddingBlockContent.appendChild(paddingInputs.right);
-    paddingBlockContent.appendChild(paddingInputs.bottom);
-    paddingBlockContent.appendChild(paddingInputs.left);
+    // paddingBlockContent.appendChild(paddingInputs.top);
+    // paddingBlockContent.appendChild(paddingInputs.right);
+    // paddingBlockContent.appendChild(paddingInputs.bottom);
+    // paddingBlockContent.appendChild(paddingInputs.left);
 
     radiusBlock.appendChild(radiusBlockHeader);
     radiusBlock.appendChild(radiusBlockContent);
     radiusBlockContent.appendChild(borderRadiusInput);
 
+
     root.appendChild(colorBlock);
     root.appendChild(paddingBlock);
+    // root.appendChild(padControlGroup);
+
     root.appendChild(radiusBlock);
 
     buttonWrapper.appendChild(this.hideUITrigger);
@@ -672,6 +649,90 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     this.UIRoot = root;
   }
+
+  createUnputControl(callback, indicator) {
+    const icons = {
+      x: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,16.5v-13"/>
+<path d="M3.5,3.5v13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      y: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,16.5h13"/>
+<path d="M16.5,3.5h-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      s: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,3.5v13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      t: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,3.5h-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`, e: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,16.5v-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`, b: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,16.5h13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+    }
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "sk_input_control_group";
+    const input = document.createElement("input");
+    input.className = "sk_input variant_quatro";
+    input.addEventListener("change", callback);
+    
+    const i = document.createElement('i');
+    i.className = "sk_input_control_icon";
+    i.innerHTML = icons[indicator] || icons['x'];
+    inputWrapper.appendChild(i)
+    inputWrapper.appendChild(input)
+    return inputWrapper;
+  }
+
+  createUnputsGroupControl() {
+    const cx = this.createUnputControl(()=>{}, "x");
+    const cy = this.createUnputControl(()=>{}, "y");
+    const cs = this.createUnputControl(()=>{}, "s");
+    const ct = this.createUnputControl(()=>{}, "t");
+    const ce = this.createUnputControl(()=>{}, "e");
+    const cb = this.createUnputControl(()=>{}, "b");
+
+    const controlWrapper1 = document.createElement("div");
+    controlWrapper1.className = "sk_input_control_group_block";
+    controlWrapper1.appendChild(cx);
+    controlWrapper1.appendChild(cy);
+
+
+    const controlWrapper2 = document.createElement("div");
+    controlWrapper2.className = "sk_input_control_group_block";
+    controlWrapper2.appendChild(cs);
+    controlWrapper2.appendChild(ct);
+    controlWrapper2.appendChild(ce);
+    controlWrapper2.appendChild(cb);
+
+    const controlsRoot = document.createElement("div");
+    controlsRoot.appendChild(controlWrapper1);
+    controlsRoot.appendChild(controlWrapper2);
+
+
+    return controlsRoot;
+
+  }
+
 
   createColorBox(className, callBack) {
     let div = document.createElement("div");
@@ -1014,43 +1075,43 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
   }
 
   handleGradientPicker(event, essence, onChangeCallback) {
-      const _vd = this.verbalData(essence);
-      const _t = this;
-      if (self.pickerInstance) {
-        console.log("A picker is already open. Please close it first.");
-        return;
-      }
-  
-      let x = event.clientX;
-      let y = event.clientY;
-      const gtadientState = _t.state[essence].Gradient;
-  
-      const SKPickerInstance = new SKPicker(
-        null,
-        gtadientState.stops[0],
-        "gradient",
-        {
-          stops: gtadientState.stops,
-          angle: gtadientState.angle,
-          type: gtadientState.type,
-        }
-      );
-      SKPickerInstance.init();
-  
-      SKPickerInstance.show(x, y);
-  
-      self.pickerInstance = SKPickerInstance;
-  
-      SKPickerInstance.on("gradientchange", (grad, source, instance) => {
-        console.log("Picker color changed:", grad, "Source:", source);
-        onChangeCallback(grad);
-      });
-  
-      SKPickerInstance.on("hide", (source, instance) => {
-        instance.destroy();
-        self.pickerInstance = null;
-      });
+    const _vd = this.verbalData(essence);
+    const _t = this;
+    if (self.pickerInstance) {
+      console.log("A picker is already open. Please close it first.");
+      return;
     }
+
+    let x = event.clientX;
+    let y = event.clientY;
+    const gtadientState = _t.state[essence].Gradient;
+
+    const SKPickerInstance = new SKPicker(
+      null,
+      gtadientState.stops[0],
+      "gradient",
+      {
+        stops: gtadientState.stops,
+        angle: gtadientState.angle,
+        type: gtadientState.type,
+      }
+    );
+    SKPickerInstance.init();
+
+    SKPickerInstance.show(x, y);
+
+    self.pickerInstance = SKPickerInstance;
+
+    SKPickerInstance.on("gradientchange", (grad, source, instance) => {
+      console.log("Picker color changed:", grad, "Source:", source);
+      onChangeCallback(grad);
+    });
+
+    SKPickerInstance.on("hide", (source, instance) => {
+      instance.destroy();
+      self.pickerInstance = null;
+    });
+  }
 }
 
 export { MouseIntersectStyler };

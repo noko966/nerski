@@ -35,24 +35,34 @@ class Skinner {
         },
       },
       icons: {
-        moon: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <path d="M22.2,16.6c-1.7,3-4.7,5.1-8.1,5.5c-0.5,0.1-1,0.1-1.5,0.1c-6.1,0-11-5-10.9-11.1 c0-3.7,1.9-7.2,5.1-9.2c0.4-0.2,0.9-0.1,1.1,0.3C8,2.4,8,2.7,7.9,3C5.3,7.5,7,13.3,11.5,15.8c1.8,1,3.8,1.4,5.8,1.1 c1.3-0.2,2.6-0.6,3.7-1.4c0.4-0.2,0.9-0.1,1.1,0.2C22.4,16,22.4,16.3,22.2,16.6L22.2,16.6z"/></svg>`,
+        sun: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+		<path  d="M9,12.2c1.8,0,3.2-1.5,3.2-3.2S10.8,5.8,9,5.8S5.8,7.2,5.8,9S7.2,12.2,9,12.2z M9,2.5v1 M9,14.5v1 M15.5,9h-1
+	 M3.5,9h-1 M13.6,4.4l-0.7,0.7 M5.1,12.9l-0.7,0.7 M13.6,13.6l-0.7-0.7 M5.1,5.1L4.4,4.4"/></svg>`,
+        moon: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+		<path  d="M9,2.5v1 M9,14.5v1 M3.5,9h-1 M5.1,12.9l-0.7,0.7 M5.1,5.1L4.4,4.4 M9,5.5c-0.9,0-1.8,0.4-2.5,1
+	c-0.7,0.7-1,1.5-1,2.5s0.4,1.8,1,2.5c0.7,0.7,1.5,1,2.5,1V5.5z M14.5,9h1 M12.9,12.9l0.7,0.7 M12.9,5.1l0.7-0.7"/></svg>`,
         chb: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><polyline class="sk_svg_path_checkbox" points="4.5,9.4 8.6,13.6 15.7,6.5 "/></svg>`,
         copy: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_copy" d="M13.5,16.9H9.5c-1.5,0-2.8-1.2-2.8-2.8V8.9c0-1.5,1.2-2.8,2.8-2.8h3.9c1.5,0,2.8,1.2,2.8,2.8v5.3 C16.2,15.7,15,16.9,13.5,16.9z M12.6,4.2c-0.5-0.6-1.3-1-2.1-1H6.5C5,3.1,3.8,4.3,3.8,5.9v5.3c0,0.9,0.4,1.6,1,2.1"/></svg>`,
         download: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_copy" d="M13.1,9.8l-2.7,2.7c-0.1,0.1-0.3,0.1-0.4,0L7.4,9.8 M10.2,4.2v8.2 M4.5,11.5v3.9c0,0.4,0.4,0.8,0.8,0.8h9.3 c0.4,0,0.8-0.4,0.8-0.8v-3.9"/></svg>`,
         saveToDb: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="sk_svg_path_save" d="M9.8,15.8V9.1 M11.6,10.7l-1.6-1.6C9.9,9,9.7,9,9.5,9.2l-1.6,1.6 M12.7,13c0.4,0.2,0.8,0.3,1.2,0.3 c1.4,0,2.4-1.1,2.4-2.4s-1.1-2.4-2.4-2.4c-0.4,0-0.7,0.1-1,0.2c0-2.1-1.6-3.9-3.5-3.9S5.8,6.4,5.8,8.5c-1.2,0.2-2.1,1.2-2.1,2.4 c0,1.4,1.1,2.4,2.4,2.4c0.4,0,0.8-0.1,1.1-0.3"/></svg>`,
         recolor: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><g class="sk_svg_path_load"><path class="st0" d="M10,14.2c1.6,0,2.8-1.3,2.8-2.8S11.4,7.7,10,5.2c-1.4,2.5-2.8,4.6-2.8,6.2S8.4,14.2,10,14.2z"/> <line class="st0" x1="15.7" y1="16.4" x2="4.3" y2="16.4"/><g></svg>`,
         showHide: `<svg class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve"><path class="svg_path_top" d="M2.4,9.9c0.6,0,2.9,4.9,7.6,4.9s7-4.9,7.6-4.9"/><path class="svg_path_bot_t" d="M17.6,9.9c-0.6,0-2.9,4.9-7.6,4.9S3,9.9,2.4,9.9 M10,17.5v-1.7 M6.3,14.8l-0.8,1.4 M2.7,13.7l1-0.9 M13.7,14.8 l0.8,1.4 M16.3,12.8l1,0.9"/><path class="svg_path_top" d="M17.6,9.9c-0.6,0-2.9-4.9-7.6-4.9S3,9.9,2.4,9.9 M11.6,9.9c0,0.9-0.7,1.6-1.6,1.6s-1.6-0.7-1.6-1.6 S9.1,8.2,10,8.2S11.6,9,11.6,9.9z"/></svg>`,
-        brush: `<svg  class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
-  <path d="M21.4,14.1c-0.3-0.3-0.6-0.5-1-0.6l0.4-8.1c0.1-1-0.2-2.1-0.9-2.9c-0.7-0.8-1.7-1.2-2.8-1.2H6.8
-    C5.8,1.3,4.7,1.7,4,2.5C3.3,3.3,3,4.3,3.1,5.4l0.4,8.1c-1,0.4-1.8,1.4-1.8,2.6c0,0.7,0.3,1.4,0.8,1.9c0.5,0.5,1.2,0.8,1.9,0.8h4.2
-    v0.8c0,1.8,1.5,3.2,3.2,3.2s3.2-1.5,3.2-3.2v-0.8h4.1c1.5,0,2.7-1.1,2.8-2.5C22.3,15.4,22,14.6,21.4,14.1z M5.1,3.5
-    c0.4-0.5,1-0.7,1.7-0.7h0.4V7c0,0.4,0.3,0.8,0.8,0.8S8.7,7.4,8.7,7V2.8h2.5V4c0,0.4,0.3,0.8,0.8,0.8s0.8-0.3,0.8-0.8V2.8h4.4
-    c0.6,0,1.2,0.3,1.7,0.7c0.4,0.5,0.6,1.1,0.6,1.7c0,0,0,0,0,0l-0.4,8H5l-0.4-8C4.5,4.6,4.7,4,5.1,3.5z M19.4,17.3h-4.9
-    c-0.4,0-0.8,0.3-0.8,0.8v1.5c0,1-0.8,1.8-1.8,1.8s-1.8-0.8-1.8-1.8V18c0-0.4-0.3-0.8-0.8-0.8h-5c-0.3,0-0.6-0.1-0.9-0.4
-    c-0.2-0.2-0.4-0.5-0.4-0.9c0-0.6,0.5-1.2,1.1-1.2c0,0,0.1,0,0.1,0h15l0.1,0c0.3,0,0.5,0.1,0.8,0.4c0.3,0.3,0.4,0.6,0.4,1
-    C20.7,16.8,20.1,17.3,19.4,17.3z"/>
-  </svg>`,
+        brush: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+
+<path d="M5.5,11.5l-0.8,3.8c0,0.1,0,0.3,0,0.4c0,0.1,0.1,0.3,0.2,0.4c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.3,0.1,0.4,0.1
+	h8.6c0.1,0,0.3,0,0.4-0.1c0.1-0.1,0.3-0.2,0.3-0.3c0.1-0.1,0.2-0.2,0.2-0.4c0-0.1,0-0.3,0-0.4l-0.8-3.8 M14.5,8.5
+	c0.3,0,0.5,0.1,0.7,0.3c0.2,0.2,0.3,0.4,0.3,0.7v2h-11v-2c0-0.3,0.1-0.5,0.3-0.7C5,8.6,5.2,8.5,5.5,8.5H7c0.3,0,0.5-0.1,0.7-0.3
+	C7.9,8,8,7.8,8,7.5v-2c0-0.5,0.2-1,0.6-1.4C9,3.7,9.5,3.5,10,3.5s1,0.2,1.4,0.6C11.8,4.5,12,5,12,5.5v2c0,0.3,0.1,0.5,0.3,0.7
+	c0.2,0.2,0.4,0.3,0.7,0.3H14.5z M10,16.5V14"/>
+</svg>
+`,
+collapse: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+
+<path d="M7.5,13.5h8c0.6,0,1-0.4,1-1v-8c0-0.6-0.4-1-1-1h-8c-0.6,0-1,0.4-1,1v8C6.5,13.1,6.9,13.5,7.5,13.5z M13.5,16.5
+	h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.5l4-4"/>
+</svg>`
       },
 
       wrapper: null,
@@ -1316,19 +1326,29 @@ class Skinner {
     return chbRef;
   }
 
-  createSwitch() {
-    const lbl = document.createElement("label");
-    lbl.className = "sk_switch_root";
+  createSwitch(lbl, i) {
+    const txt = document.createElement("span");
+    txt.innerText = lbl || "default";
+    txt.className = "sk_switch_lbl";
+
+    const _lbl = document.createElement("label");
+    _lbl.className = "sk_switch_root";
     const input = document.createElement("input");
     input.type = "checkbox";
     input.className = "sk_switch_input";
     const ic = document.createElement("i");
     ic.className = "sk_switch_imitator";
 
-    lbl.appendChild(input);
-    lbl.appendChild(ic);
+    const icon = document.createElement("i");
+    icon.className = "sk_switch_icon";
+    icon.innerHTML = this.ui.icons[i] || this.ui.icons["brush"];
 
-    return { el: lbl, chb: input };
+    _lbl.appendChild(txt);
+    _lbl.appendChild(input);
+    _lbl.appendChild(ic);
+    _lbl.appendChild(icon);
+
+    return { el: _lbl, chb: input };
   }
 
   createButton(label, icon) {
@@ -1513,9 +1533,9 @@ class Skinner {
     this.ui.toolsPanel = document.createElement("div");
     this.ui.toolsPanel.className = "sk_tools_root";
     const uiTriggerRef = this.createSwitch();
-    this.ui.themeTrigger = this.createSwitch();
-    this.ui.collapseTrigger = this.createSwitch();
-    this.ui.customStylerTrigger = this.createSwitch();
+    this.ui.themeTrigger = this.createSwitch("theme", "moon");
+    this.ui.collapseTrigger = this.createSwitch("collapse", "collapse");
+    this.ui.customStylerTrigger = this.createSwitch("paint", "brush");
     this.ui.themeTrigger.chb.addEventListener("change", (e) => {
       let uiTheme = e.currentTarget.checked
         ? this.ui.colors["dark"]
@@ -2144,13 +2164,11 @@ body {
 }
 
 .sk_tools_root{
-  background: var(--sk_dominantBg);
+  background: var(--sk_dominantBgHover);
     color: var(--sk_dominantTxt);
     position: absolute;
     right: 0;
     top: 0;
-    width: 60px;
-    height: 100px;
     transform: translateX(calc(100% + 12px));
     border-radius: 4px;
     border: 1px solid var(--sk_dominantBg2);
@@ -2676,6 +2694,53 @@ body {
   outline: 0;
   padding: 0 6px;
 }
+  .sk_widget_collapse_block {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--sk_dominantBg2);
+    border: 1px solid var(--sk_dominantBg2Hover);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.sk_widget_block_header{
+    height: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt);
+    font-size: 9px;
+    column-gap: 6px;
+    }
+    .sk_widget_block_content{
+    width: 100%;
+    display: flex;
+        flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt);
+    font-size: 10px;
+    }
+    .sk_layout_row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 4px;
+    }
+    .sk_layout_col{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 4px;
+    }
+
+.sk_input_text.variant_large{
+height: var(--skinnerBtnHeight);
+}
 
 .nik_skinner_header_control_radius {
   width: 200px;
@@ -2959,8 +3024,19 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .sk_switch_root {
-  position: relative;
+  display: flex;
+    position: relative;
+    align-items: center;
+    column-gap: 6px;
+    background: var(--sk_dominantBg2);
+    padding: 4px 6px;
+    border-radius: 4px;
 }
+  .sk_switch_lbl{
+    font-size: 9px;
+    width: 40px;
+    flex-shrink: 0;
+  }
 
 .sk_switch_input{
   display: none;
@@ -2976,6 +3052,11 @@ input[type="range"]::-moz-range-thumb {
 --trackBg: var(--sk_accentBg);
 --thumbBg: var(--sk_accentTxt);
   --tr: 16px;
+}
+
+.sk_switch_root > .sk_switch_input:checked ~ .sk_switch_icon{
+    background: conic-gradient(from 90deg at 50% 50%, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
+    color: #fff;
 }
 
 .sk_switch_imitator {
@@ -2999,6 +3080,20 @@ input[type="range"]::-moz-range-thumb {
   transform: translate(var(--tr));
   border-radius: 50%;
   transition: all 0.2s;
+}
+
+.sk_switch_icon {
+    --size: 24px;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt);
+    border-radius: 4px;
+    display: flex;
+      position: relative;
+    align-items: center;
+    justify-content: center;
 }
 
 input[type="range"]::-ms-track {
@@ -3606,6 +3701,36 @@ display: none;
     border-radius: 4px;
     flex-direction: column;
     row-gap: 4px;
+}
+
+.sk_input_control_group{
+  position: relative;
+  width: calc(50% - 4px);
+}
+
+.sk_input_control_group > .sk_input {
+    width: 100%;
+} 
+
+.sk_input_control_group_block{
+    column-gap: 8px;
+    row-gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    color: var(--sk_dominantTxt2);
+
+}
+.sk_input_control_icon{
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1px;
+    width: 18px;
+    height: 18px;
+    display: block;
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translate(0, -50%);
 }
 
 `;
