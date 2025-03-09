@@ -110,8 +110,9 @@ class MouseIntersectStyler {
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${e1 + 1
-        }px, ${color} ${e1 + 2}px`;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
+        e1 + 1
+      }px, ${color} ${e1 + 2}px`;
     });
 
     // Join all stops into a comma-separated list
@@ -237,6 +238,8 @@ ${cn} > * {
     :root{
     `;
 
+    console.log(this.skin);
+
     for (const key in this.skin) {
       const _skin = this.skin[key];
 
@@ -250,8 +253,16 @@ color: unset;
       css += `${key} {
 background: var(--SK_custom${_skin.varPrefix}Bg);
 color: var(--SK_custom${_skin.varPrefix}Txt);
-}
-`;
+}`;
+
+      css += `${key} {
+  padding-inline-start: ${_skin["padding-left"]}px;
+  padding-top: ${_skin["padding-top"]}px;
+  padding-inline-end: ${_skin["padding-right"]}px;
+  padding-bottom: ${_skin["padding-bottom"]}px;
+  }`;
+
+      // nik
     }
 
     const res = `
@@ -323,13 +334,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
       CSSVariableRuleStart += `
         --${dataSk}Bg: ${tinycolor(_skin.bg)
-          .lighten(level * 2 + ind * 1)
-          .setAlpha(0.1 + level * 0.01)
-          .toRgbString()};
+        .lighten(level * 2 + ind * 1)
+        .setAlpha(0.1 + level * 0.01)
+        .toRgbString()};
         --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
         --${dataSk}Accent: ${tinycolor(_skin.acc)
-          .setAlpha(0.1 + level * 0.01)
-          .toRgbString()};
+        .setAlpha(0.1 + level * 0.01)
+        .toRgbString()};
           
       `;
 
@@ -555,16 +566,6 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     let controlWrapperColor = this.createControl("text", "variant_color");
 
     // Padding input
-    let padInputVariants = ["top", "right", "left", "bottom"];
-    let paddingInputs = {};
-    padInputVariants.forEach((v) => {
-      paddingInputs[v] = document.createElement("input");
-      paddingInputs[v].className = "sk_input";
-      paddingInputs[v].type = "number";
-      paddingInputs[v].addEventListener("change", (e) => {
-        self.modifyKey(`padding-${v}`, e.target.value);
-      });
-    });
 
     // Background picker
     this.BgPicker = this.createColorBox(
@@ -612,23 +613,17 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     pickersElWrapper.appendChild(controlWrapperBg.element);
     pickersElWrapper.appendChild(separatorEl);
     pickersElWrapper.appendChild(controlWrapperColor.element);
-
-
-    const padControlGroup = this.createUnputsGroupControl();
+    this.stylerControls = {};
+    const padControlGroup = this.createInputsGroupControl();
 
     paddingBlockContent.appendChild(padControlGroup);
 
     paddingBlock.appendChild(paddingBlockHeader);
     paddingBlock.appendChild(paddingBlockContent);
-    // paddingBlockContent.appendChild(paddingInputs.top);
-    // paddingBlockContent.appendChild(paddingInputs.right);
-    // paddingBlockContent.appendChild(paddingInputs.bottom);
-    // paddingBlockContent.appendChild(paddingInputs.left);
 
     radiusBlock.appendChild(radiusBlockHeader);
     radiusBlock.appendChild(radiusBlockContent);
     radiusBlockContent.appendChild(borderRadiusInput);
-
 
     root.appendChild(colorBlock);
     root.appendChild(paddingBlock);
@@ -641,16 +636,15 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     document.body.appendChild(style);
     document.body.appendChild(root);
 
-    this.stylerControls = {};
     this.stylerControls.backgroundColor = this.BgPicker;
     this.stylerControls.color = this.TextColorPicker;
-    this.stylerControls.padding = paddingInputs;
+
     this.stylerControls.borderRadius = borderRadiusInput;
 
     this.UIRoot = root;
   }
 
-  createUnputControl(callback, indicator) {
+  createInputControl(callback, indicator) {
     const icons = {
       x: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
@@ -677,62 +671,86 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 <path d="M16.5,3.5h-13"/>
 <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
 </svg>
-`, e: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+`,
+      e: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path d="M16.5,16.5v-13"/>
 <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
 </svg>
-`, b: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+`,
+      b: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path d="M3.5,16.5h13"/>
 <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
 </svg>
 `,
-    }
+    };
     const inputWrapper = document.createElement("div");
     inputWrapper.className = "sk_input_control_group";
     const input = document.createElement("input");
+    input.type = "number";
     input.className = "sk_input variant_quatro";
-    input.addEventListener("change", callback);
-    
-    const i = document.createElement('i');
+    input.addEventListener("change", (e) => callback(e));
+
+    const i = document.createElement("i");
     i.className = "sk_input_control_icon";
-    i.innerHTML = icons[indicator] || icons['x'];
-    inputWrapper.appendChild(i)
-    inputWrapper.appendChild(input)
-    return inputWrapper;
+    i.innerHTML = icons[indicator] || icons["x"];
+    inputWrapper.appendChild(i);
+    inputWrapper.appendChild(input);
+    return {
+      inputWrapperEl: inputWrapper,
+      inputEl: input,
+    };
   }
 
-  createUnputsGroupControl() {
-    const cx = this.createUnputControl(()=>{}, "x");
-    const cy = this.createUnputControl(()=>{}, "y");
-    const cs = this.createUnputControl(()=>{}, "s");
-    const ct = this.createUnputControl(()=>{}, "t");
-    const ce = this.createUnputControl(()=>{}, "e");
-    const cb = this.createUnputControl(()=>{}, "b");
+  createInputsGroupControl() {
+    const _t = this;
+    const cx = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-left`, e.target.value);
+      _t.modifyKey(`padding-right`, e.target.value);
+    }, "x");
+    const cy = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-top`, e.target.value);
+      _t.modifyKey(`padding-bottom`, e.target.value);
+    }, "y");
+
+    const cs = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-left`, e.target.value);
+    }, "s");
+    const ct = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-top`, e.target.value);
+    }, "t");
+    const ce = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-right`, e.target.value);
+    }, "e");
+    const cb = _t.createInputControl((e) => {
+      _t.modifyKey(`padding-bottom`, e.target.value);
+    }, "b");
 
     const controlWrapper1 = document.createElement("div");
     controlWrapper1.className = "sk_input_control_group_block";
-    controlWrapper1.appendChild(cx);
-    controlWrapper1.appendChild(cy);
-
+    controlWrapper1.appendChild(cx.inputWrapperEl);
+    controlWrapper1.appendChild(cy.inputWrapperEl);
 
     const controlWrapper2 = document.createElement("div");
     controlWrapper2.className = "sk_input_control_group_block";
-    controlWrapper2.appendChild(cs);
-    controlWrapper2.appendChild(ct);
-    controlWrapper2.appendChild(ce);
-    controlWrapper2.appendChild(cb);
+    controlWrapper2.appendChild(cs.inputWrapperEl);
+    controlWrapper2.appendChild(ct.inputWrapperEl);
+    controlWrapper2.appendChild(ce.inputWrapperEl);
+    controlWrapper2.appendChild(cb.inputWrapperEl);
 
     const controlsRoot = document.createElement("div");
     controlsRoot.appendChild(controlWrapper1);
     controlsRoot.appendChild(controlWrapper2);
 
+    _t.stylerControls.padding = {};
+    _t.stylerControls.padding.top = ct.inputEl;
+    _t.stylerControls.padding.right = ce.inputEl;
+    _t.stylerControls.padding.bottom = cb.inputEl;
+    _t.stylerControls.padding.left = cs.inputEl;
 
     return controlsRoot;
-
   }
-
 
   createColorBox(className, callBack) {
     let div = document.createElement("div");
@@ -1043,8 +1061,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 
     return path.join(" > ");
   }
-
-
 
   handlePicker(event, color, type, onChangeCallback) {
     if (this.pickerInstance) {
