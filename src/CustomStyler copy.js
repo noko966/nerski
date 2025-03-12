@@ -434,8 +434,8 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     flex-direction: column;
     align-items: stretch;
     background: var(--sk_dominantBg2);
-    border: 1px solid var(--sk_dominantBg2Hover);
-    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg3Hover);
+    border-radius: 8px;
     overflow: hidden;
 }
 

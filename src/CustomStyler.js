@@ -1,5 +1,6 @@
 var tinycolor = require("tinycolor2");
 import SKPicker from "./modules/picker.js";
+import Moveable from "./modules/moveable";
 
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
@@ -419,6 +420,474 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     style.innerHTML = `
       .sk_ui_custom_change_root {
     --input_size: 28px;
+    --inputsOverlay: #ffffff20;
+    --inputsCta: #ffffffaa;
+    --solid_size: 24px;
+    position: fixed;
+    width: 250px;
+    height: auto;
+    z-index: var(--sk_zind);
+    top: 0px;
+    transform: translate(0, 0);
+    border: none;
+    background: var(--sk_dominantGlass);
+    border: 1px solid var(--sk_dominantBg);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+    row-gap: 8px;
+      }
+    
+
+      .sk_ui_custom_change_root.state-reveal {
+        animation: appear 0.3s;
+      }
+        @keyframes appear {
+          0%   { opacity: 0; }
+          100% { opacity: 1; }
+        }
+          .sk_styler_control_row {
+    display: flex;
+    align-items: center;
+    column-gap: var(--controls-ui-gap);
+    
+}
+    .sk_styler_control_row_label {
+    flex-grow: 1;
+    min-width: 1px;
+    font-size: 10px;
+    text-align: right;
+}
+    .sk_styler_control_row.variant_color{
+        width: calc(50% - 5px);
+    }
+
+    .sk_styler_control_holder > .pickr {
+    position: absolute;
+}
+
+.row{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    column-gap: 4px;
+}
+
+.sk_block_separator_y{
+    width: 1px;
+    flex-shrink:0;
+    height: 24px;
+    background: var(--sk_dominantBg);
+    flex-shrink: 0;
+
+}
+
+.sk_input {
+    appearance: none;
+    width: 50px;
+    font-size: 11px;
+    height: var(--input_size);
+    font-weight: 500;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
+    border-radius: 4px;
+    text-align: right;
+    border: 0;
+    border: 1px solid var(--sk_dominantShadow);
+    outline: 0;
+    padding: 0 6px;
+}
+
+.sk_btn {
+    appearance: none;
+    border: 0;
+    border: 1px solid var(--sk_dominantBg3Hover);
+    text-align: center;
+    height: var(--input_size);
+    text-decoration: none;
+    background-color: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 4px;
+    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
+}
+    .sk_btn.variant_primary{
+        width: 100%;
+    background-color: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
+    }
+
+
+
+    /*********** Baseline, reset styles ***********/
+input[type="range"].sk_control_padding {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100px;
+  height: 100%;
+  margin: 0;
+  width: 100px;
+}
+
+/* Removes default focus */
+input[type="range"].sk_control_padding:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_padding::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: 0px; /* Centers thumb on the track */
+  background-color: var(--inputsCta);
+  border-radius: 0px;
+  height: 100%;
+  width: 5px;
+}
+
+input[type="range"].sk_control_padding:focus::-webkit-slider-thumb {
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"].sk_control_padding::-moz-range-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_padding::-moz-range-thumb {
+  background-color: var(--inputsOverlay);
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 0px;
+  height: 100%;
+  width: 5px;
+}
+
+input[type="range"].sk_control_padding:focus::-moz-range-thumb{
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+.sk_control_padding.variant_start{
+position: absolute;
+top: 0;
+bottom: 0;
+left: 0;
+}
+
+.sk_control_padding.variant_end{
+position: absolute;
+top: 0;
+bottom: 0;
+right: 0;
+}
+  .sk_flip{
+  direction: rtl;}
+
+   
+  .sk_control_radius_root{
+  --size: 40px;
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  transform: rotate(-90deg);
+    z-index: 10;
+  }
+
+  .sk_control_radius_root.variant_bl{
+    bottom: 0;
+    left: 0;
+  }
+
+  .sk_control_radius_root.variant_bl > .sk_control_radius{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .sk_control_radius_indicator{
+  background-color: var(--inputsOverlay);
+  width: var(--radius);
+  height: var(--radius);
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+  
+
+
+      /*********** Baseline, reset styles ***********/
+input[type="range"].sk_control_radius {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+}
+
+/* Removes default focus */
+input[type="range"].sk_control_radius:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"].sk_control_radius::-webkit-slider-runnable-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_radius::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: 0px; /* Centers thumb on the track */
+  background-color: var(--inputsCta);
+  border-radius: 0px;
+  height: 100%;
+  width: 5px;
+}
+
+input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"].sk_control_radius::-moz-range-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_radius::-moz-range-thumb {
+  background-color: var(--inputsOverlay);
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 0px;
+  height: 100%;
+  width: 5px;
+}
+
+input[type="range"].sk_control_radius:focus::-moz-range-thumb{
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+  
+    
+    `;
+    const root = document.createElement("div");
+    root.className = "sk_ui_custom_change_root";
+    root.style.left = "50%";
+    root.style.top = "50%";
+    root.style.opacity = 0;
+    root.style.pointerEvents = "none";
+
+    // Callback for color picker
+    const handlePickerCallBack = (e) => {
+      this.handlePicker(e, null, null, (color) => {
+        this.modifyKey("backgroundColor", color);
+        this.updateControl("backgroundColor", color);
+      });
+    };
+
+    // **New** callback for Text Color
+    const handleTextColorPickerCallBack = (e) => {
+      this.handlePicker(e, null, null, (color) => {
+        this.modifyKey("color", color);
+        this.updateControl("color", color);
+      });
+    };
+
+    // Apply button
+    const buttonWrapper = document.createElement("div");
+    buttonWrapper.className = "sk_widget_footer_row";
+
+    this.hideUITrigger = document.createElement("button");
+    this.hideUITrigger.className = "sk_btn variant_primary";
+    this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
+    this.hideUITrigger.innerText = "apply";
+
+    // Control wrappers for various properties
+    let controlWrapperBg = this.createControl("background", "variant_color");
+    let controlWrapperColor = this.createControl("text", "variant_color");
+
+    // Padding input
+
+    // Background picker
+    this.BgPicker = this.createColorBox(
+      "sk_picker_trigger",
+      handlePickerCallBack
+    );
+
+    // **New** text color picker
+    this.TextColorPicker = this.createColorBox(
+      "sk_picker_trigger",
+      handleTextColorPickerCallBack
+    );
+
+    this.paddingRangeStart = document.createElement("input");
+    this.paddingRangeStart.type = "range";
+    this.paddingRangeStart.className = "sk_control_padding variant_start";
+
+    this.paddingRangeStart.min = 0;
+    this.paddingRangeStart.max = 100;
+
+    this.paddingRangeStart.addEventListener("change", (e) => {
+      this.modifyKey(`padding-left`, e.target.value);
+    });
+
+    root.appendChild(this.paddingRangeStart);
+
+    this.paddingRangeEnd = document.createElement("input");
+    this.paddingRangeEnd.type = "range";
+    this.paddingRangeEnd.className = "sk_control_padding variant_end sk_flip";
+
+    this.paddingRangeEnd.min = 0;
+    this.paddingRangeEnd.max = 100;
+
+    this.paddingRangeEnd.addEventListener("change", (e) => {
+      this.modifyKey(`padding-right`, e.target.value);
+    });
+
+    root.appendChild(this.paddingRangeEnd);
+
+    const radiusBLRoot = document.createElement("div");
+    radiusBLRoot.className = "sk_control_radius_root variant_bl";
+
+    this.radiusBL = document.createElement("input");
+    this.radiusBL.type = "range";
+    this.radiusBL.className = "sk_control_radius";
+
+    this.radiusBL.addEventListener("change", (e) => {
+      const radius = e.target.value;
+      radiusBLRoot.style.setProperty("--radius", `${radius}px`);
+      radiusBLRoot.style.setProperty("--width", `${radius * 2}px`);
+      this.modifyKey(`border-radius`, `${radius}px`);
+    });
+
+    const radiusBLIndicator = document.createElement("div");
+    radiusBLIndicator.className = "sk_control_radius_indicator";
+
+    radiusBLRoot.appendChild(this.radiusBL);
+    radiusBLRoot.appendChild(radiusBLIndicator);
+    root.appendChild(radiusBLRoot);
+
+    // Border-radius input
+    // const borderRadiusInput = document.createElement("input");
+    // borderRadiusInput.type = "number";
+    // borderRadiusInput.className = "sk_input";
+    // borderRadiusInput.placeholder = "Border Radius (px)";
+    // borderRadiusInput.addEventListener("change", (e) => {
+    //   self.modifyKey("borderRadius", e.target.value + "px");
+    // });
+
+    // controlWrapperBg.inside.appendChild(this.BgPicker);
+    // controlWrapperColor.inside.appendChild(this.TextColorPicker);
+
+    // const colorBlock = this.createControlRoot();
+    // const colorBlockHeader = this.createControlHeader("Color");
+    // const colorBlockContent = this.createControlContent();
+
+    // const paddingBlock = this.createControlRoot();
+    // const paddingBlockHeader = this.createControlHeader("Padding");
+    // const paddingBlockContent = this.createControlContent();
+
+    // const radiusBlock = this.createControlRoot();
+    // const radiusBlockHeader = this.createControlHeader("Radius");
+    // const radiusBlockContent = this.createControlContent();
+
+    // colorBlock.appendChild(colorBlockHeader);
+    // colorBlock.appendChild(colorBlockContent);
+    // const pickersElWrapper = document.createElement("div");
+    // pickersElWrapper.className = "row";
+    // const separatorEl = document.createElement("div");
+    // separatorEl.className = "sk_block_separator_y";
+    // colorBlockContent.appendChild(pickersElWrapper);
+    // pickersElWrapper.appendChild(controlWrapperBg.element);
+    // pickersElWrapper.appendChild(separatorEl);
+    // pickersElWrapper.appendChild(controlWrapperColor.element);
+    // const padControlGroup = this.createInputsGroupControl();
+
+    // paddingBlockContent.appendChild(padControlGroup);
+
+    // paddingBlock.appendChild(paddingBlockHeader);
+    // paddingBlock.appendChild(paddingBlockContent);
+
+    // radiusBlock.appendChild(radiusBlockHeader);
+    // radiusBlock.appendChild(radiusBlockContent);
+    // radiusBlockContent.appendChild(borderRadiusInput);
+
+    // root.appendChild(colorBlock);
+    // root.appendChild(paddingBlock);
+    // // root.appendChild(padControlGroup);
+
+    // root.appendChild(radiusBlock);
+
+    // buttonWrapper.appendChild(this.hideUITrigger);
+    // root.appendChild(buttonWrapper);
+    this.stylerControls = {};
+
+    document.body.appendChild(style);
+    document.body.appendChild(root);
+    this.stylerControls.padding = {};
+    this.stylerControls.padding.top = {};
+    this.stylerControls.padding.right = this.paddingRangeEnd;
+    this.stylerControls.padding.bottom = {};
+    this.stylerControls.padding.left = this.paddingRangeStart;
+    this.stylerControls.borderRadius = {};
+    this.stylerControls.backgroundColor = this.BgPicker;
+    this.stylerControls.color = this.TextColorPicker;
+
+    // this.stylerControls.borderRadius = borderRadiusInput;
+
+    this.UIRoot = root;
+  }
+  createUI2() {
+    let self = this;
+    if (this.UIRoot) return; // Prevent duplicate UI creation
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .sk_ui_custom_change_root {
+    --input_size: 28px;
     --solid_size: 24px;
     position: fixed;
     width: 250px;
@@ -490,10 +959,10 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     font-weight: 500;
     background: var(--sk_dominantBg);
     color: var(--sk_dominantTxt2);
-    border-radius: 2px;
+    border-radius: 4px;
     text-align: right;
     border: 0;
-    border: 1px solid var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantShadow);
     outline: 0;
     padding: 0 6px;
 }
@@ -841,6 +1310,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     if (!this.UIRoot) return;
 
     const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
+    const bounds = currentElement.getBoundingClientRect();
     const bg = elementStyles.background;
     const txt = elementStyles.text;
     const padding = this.parseProp(elementStyles.padding);
@@ -875,8 +1345,12 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     y = Math.max(y, 10);
 
     // Set the adjusted position
-    this.UIRoot.style.left = `${x}px`;
-    this.UIRoot.style.top = `${y}px`;
+    const gap = 12;
+
+    this.UIRoot.style.left = `${x - gap}px`;
+    this.UIRoot.style.top = `${y - gap}px`;
+    this.UIRoot.style.width = `${bounds.width + gap * 2}px`;
+    this.UIRoot.style.height = `${bounds.height + gap * 2}px`;
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
 

@@ -57,12 +57,12 @@ class Skinner {
 	c0.2,0.2,0.4,0.3,0.7,0.3H14.5z M10,16.5V14"/>
 </svg>
 `,
-collapse: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        collapse: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 
 <path d="M7.5,13.5h8c0.6,0,1-0.4,1-1v-8c0-0.6-0.4-1-1-1h-8c-0.6,0-1,0.4-1,1v8C6.5,13.1,6.9,13.5,7.5,13.5z M13.5,16.5
 	h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.5l4-4"/>
-</svg>`
+</svg>`,
       },
 
       wrapper: null,
@@ -2699,8 +2699,8 @@ body {
     flex-direction: column;
     align-items: stretch;
     background: var(--sk_dominantBg2);
-    border: 1px solid var(--sk_dominantBg2Hover);
-    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg3Hover);
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -2710,8 +2710,8 @@ body {
     display: flex;
     align-items: center;
     padding: 0 8px;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt);
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
     font-size: 9px;
     column-gap: 6px;
     }
