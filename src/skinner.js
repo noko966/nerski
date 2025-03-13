@@ -463,8 +463,8 @@ class Skinner {
       return tinycolor(c).desaturate(2).darken(6).toHexString();
     };
 
-    const createGlass = (c1) => {
-      return tinycolor(c1).setAlpha(0.6).toRgbString();
+    const createGlass = (c1, alpha) => {
+      return tinycolor(c1).setAlpha(alpha || 0.5).toRgbString();
     };
 
     UISkin.order.forEach((name, i) => {
@@ -486,7 +486,8 @@ class Skinner {
       });
 
       UISkin[name][`${_vd.name}Shadow`] = createShadow(bg);
-      UISkin[name][`${_vd.name}Glass`] = createGlass(bg);
+      UISkin[name][`${_vd.name}Glass`] = createGlass(0.5);
+      UISkin[name][`${_vd.name}Glass2`] = createGlass(0.1);
     });
     const uiPrefix = "--sk_";
     UISkin.order.forEach((name, i) => {
@@ -534,6 +535,10 @@ class Skinner {
       this.root.style.setProperty(
         `${uiPrefix}${_vd.name}Glass`,
         `${UISkin[name][`${_vd.name}Glass`]}`
+      );
+      this.root.style.setProperty(
+        `${uiPrefix}${_vd.name}Glass2`,
+        `${UISkin[name][`${_vd.name}Glass2`]}`
       );
     });
   }

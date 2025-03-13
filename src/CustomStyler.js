@@ -111,9 +111,8 @@ class MouseIntersectStyler {
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
-        e1 + 1
-      }px, ${color} ${e1 + 2}px`;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${e1 + 1
+        }px, ${color} ${e1 + 2}px`;
     });
 
     // Join all stops into a comma-separated list
@@ -263,6 +262,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
   padding-bottom: ${_skin["padding-bottom"]}px;
   }`;
 
+  css += `${key} {
+    border-top-left-radius: ${_skin["borderRadiusTL"]};
+    border-top-right-radius: ${_skin["borderRadiusTR"]};
+    border-bottom-right-radius: ${_skin["borderRadiusBR"]};
+    border-bottom-left-radius: ${_skin["borderRadiusBL"]};
+    }`;
+
       // nik
     }
 
@@ -292,7 +298,10 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     this.skin[name]["varPrefix"] = uniqueClass;
 
-    this.skin[name]["borderRadius"] = cs.borderRadius;
+    this.skin[name]["borderRadiusTL"] = cs.borderRadiusTL;
+    this.skin[name]["borderRadiusTR"] = cs.borderRadiusTR;
+    this.skin[name]["borderRadiusBR"] = cs.borderRadiusBR;
+    this.skin[name]["borderRadiusBL"] = cs.borderRadiusBL;
   }
 
   createCSSBasedOnTree(tree) {
@@ -335,13 +344,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
       CSSVariableRuleStart += `
         --${dataSk}Bg: ${tinycolor(_skin.bg)
-        .lighten(level * 2 + ind * 1)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
+          .lighten(level * 2 + ind * 1)
+          .setAlpha(0.1 + level * 0.01)
+          .toRgbString()};
         --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
         --${dataSk}Accent: ${tinycolor(_skin.acc)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
+          .setAlpha(0.1 + level * 0.01)
+          .toRgbString()};
           
       `;
 
@@ -430,7 +439,7 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     top: 0px;
     transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantGlass);
+    background: var(--sk_dominantGlass2);
     border: 1px solid var(--sk_dominantBg);
     flex-direction: column;
     align-items: stretch;
@@ -538,9 +547,9 @@ input[type="range"].sk_control_padding {
   background: transparent;
   cursor: pointer;
   width: 100px;
-  height: 100%;
   margin: 0;
   width: 100px;
+  height: calc(100% + 24px);
 }
 
 /* Removes default focus */
@@ -561,11 +570,11 @@ input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
 input[type="range"].sk_control_padding::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  margin-top: 0px; /* Centers thumb on the track */
+  margin-top: -6px; /* Centers thumb on the track */
   background-color: var(--inputsCta);
   border-radius: 0px;
-  height: 100%;
-  width: 5px;
+  height: calc(100% + 12px);
+  width: 2px;
 }
 
 input[type="range"].sk_control_padding:focus::-webkit-slider-thumb {
@@ -588,7 +597,7 @@ input[type="range"].sk_control_padding::-moz-range-thumb {
   border: none; /*Removes extra border that FF applies*/
   border-radius: 0px;
   height: 100%;
-  width: 5px;
+  width: 2px;
 }
 
 input[type="range"].sk_control_padding:focus::-moz-range-thumb{
@@ -598,42 +607,66 @@ input[type="range"].sk_control_padding:focus::-moz-range-thumb{
 
 .sk_control_padding.variant_start{
 position: absolute;
-top: 0;
-bottom: 0;
-left: 0;
+    top: 50%;
+    bottom: 0;
+    left: 0;
+    transform: translateY(-50%);
 }
 
 .sk_control_padding.variant_end{
 position: absolute;
-top: 0;
+top: 50%;
 bottom: 0;
 right: 0;
+transform: translateY(-50%);
 }
   .sk_flip{
   direction: rtl;}
-
    
   .sk_control_radius_root{
   --size: 40px;
-  position: absolute;
   width: var(--size);
   height: var(--size);
-  transform: rotate(-90deg);
     z-index: 10;
+    position: absolute;
   }
+
+  .sk_control_radius_root > .sk_control_radius{
+      transform: translate(-50%, -50%) rotate(45deg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  .sk_control_radius_root.variant_tl{
+    top: 0;
+    left: 0;
+    transform: rotate(0deg);
+  }
+
+
+  .sk_control_radius_root.variant_tr{
+    top: 0;
+    right: 0;
+    transform: rotate(90deg);
+  }
+
+    
+
+  .sk_control_radius_root.variant_br{
+    bottom: 0;
+    right: 0;
+    transform: rotate(180deg);
+
+  }
+
 
   .sk_control_radius_root.variant_bl{
     bottom: 0;
     left: 0;
+    transform: rotate(-90deg);
   }
-
-  .sk_control_radius_root.variant_bl > .sk_control_radius{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
+  
+    
   .sk_control_radius_indicator{
   background-color: var(--inputsOverlay);
   width: var(--radius);
@@ -654,7 +687,7 @@ input[type="range"].sk_control_radius {
   background: transparent;
   cursor: pointer;
   width: 100%;
-  height: 4px;
+  height: 2px;
   margin: 0;
 }
 
@@ -666,7 +699,7 @@ input[type="range"].sk_control_radius:focus {
 /******** Chrome, Safari, Opera and Edge Chromium styles ********/
 /* slider track */
 input[type="range"].sk_control_radius::-webkit-slider-runnable-track {
-  background-color: var(--inputsOverlay);
+  background-color: transparent;
   border-radius: 0px;
   height: 100%;
   border: 0;
@@ -678,9 +711,9 @@ input[type="range"].sk_control_radius::-webkit-slider-thumb {
   appearance: none;
   margin-top: 0px; /* Centers thumb on the track */
   background-color: var(--inputsCta);
-  border-radius: 0px;
+  border-radius: 50%;
   height: 100%;
-  width: 5px;
+  width: 4px;
 }
 
 input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
@@ -691,7 +724,7 @@ input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
 /*********** Firefox styles ***********/
 /* slider track */
 input[type="range"].sk_control_radius::-moz-range-track {
-  background-color: var(--inputsOverlay);
+  background-color: transparent;
   border-radius: 0px;
   height: 100%;
   border: 0;
@@ -701,9 +734,9 @@ input[type="range"].sk_control_radius::-moz-range-track {
 input[type="range"].sk_control_radius::-moz-range-thumb {
   background-color: var(--inputsOverlay);
   border: none; /*Removes extra border that FF applies*/
-  border-radius: 0px;
+  border-radius: 50%;
   height: 100%;
-  width: 5px;
+  width: 4px;
 }
 
 input[type="range"].sk_control_radius:focus::-moz-range-thumb{
@@ -790,26 +823,11 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
 
     root.appendChild(this.paddingRangeEnd);
 
-    const radiusBLRoot = document.createElement("div");
-    radiusBLRoot.className = "sk_control_radius_root variant_bl";
 
-    this.radiusBL = document.createElement("input");
-    this.radiusBL.type = "range";
-    this.radiusBL.className = "sk_control_radius";
-
-    this.radiusBL.addEventListener("change", (e) => {
-      const radius = e.target.value;
-      radiusBLRoot.style.setProperty("--radius", `${radius}px`);
-      radiusBLRoot.style.setProperty("--width", `${radius * 2}px`);
-      this.modifyKey(`border-radius`, `${radius}px`);
-    });
-
-    const radiusBLIndicator = document.createElement("div");
-    radiusBLIndicator.className = "sk_control_radius_indicator";
-
-    radiusBLRoot.appendChild(this.radiusBL);
-    radiusBLRoot.appendChild(radiusBLIndicator);
-    root.appendChild(radiusBLRoot);
+    const borderRadiusTL = this.createRadiusControl(root, "TL");
+    const borderRadiusTR = this.createRadiusControl(root, "TR");
+    const borderRadiusBR = this.createRadiusControl(root, "BR");
+    const borderRadiusBL = this.createRadiusControl(root, "BL");
 
     // Border-radius input
     // const borderRadiusInput = document.createElement("input");
@@ -874,12 +892,62 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     this.stylerControls.padding.bottom = {};
     this.stylerControls.padding.left = this.paddingRangeStart;
     this.stylerControls.borderRadius = {};
+    this.stylerControls.borderRadiusTL = borderRadiusTL.input;
+    this.stylerControls.borderRadiusTR = borderRadiusTR.input;
+    this.stylerControls.borderRadiusBR = borderRadiusBR.input;
+    this.stylerControls.borderRadiusBL = borderRadiusBL.input;
     this.stylerControls.backgroundColor = this.BgPicker;
     this.stylerControls.color = this.TextColorPicker;
 
     // this.stylerControls.borderRadius = borderRadiusInput;
 
     this.UIRoot = root;
+  }
+
+  createRadiusControl(root, variant) {
+    const radiusRoot = document.createElement("div");
+    let variantCN = "variant_bl";
+    switch (variant) {
+      case "TL":
+        variantCN = "tl"
+        break;
+      case "TR":
+        variantCN = "tr"
+        break;
+      case "BR":
+        variantCN = "br"
+        break;
+      case "BL":
+        variantCN = "bl"
+        break;
+
+      default:
+        break;
+    }
+
+    radiusRoot.className = `sk_control_radius_root variant_${variantCN}`;
+
+    const radius = document.createElement("input");
+    radius.type = "range";
+    radius.className = "sk_control_radius";
+
+    radius.addEventListener("input", (e) => {
+      const radiusVal = e.target.value;
+      radiusRoot.style.setProperty("--radius", `${radiusVal}px`);
+      radiusRoot.style.setProperty("--width", `${radiusVal * 2}px`);
+      this.modifyKey(`borderRadius${variant}`, `${radiusVal}px`);
+    });
+
+    const radiusIndicator = document.createElement("div");
+    radiusIndicator.className = "sk_control_radius_indicator";
+
+    radiusRoot.appendChild(radius);
+    radiusRoot.appendChild(radiusIndicator);
+    root.appendChild(radiusRoot);
+
+    return {
+      input: radius,
+    }
   }
   createUI2() {
     let self = this;
@@ -1300,7 +1368,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       background: computedStyles.background,
       text: computedStyles.color,
       padding: computedStyles.padding,
-      borderRadius: computedStyles.borderRadius,
+      borderRadiusTL: computedStyles.borderTopLeftRadius,
+      borderRadiusTR: computedStyles.borderTopRightRadius,
+      borderRadiusBR: computedStyles.borderBottomRightRadius,
+      borderRadiusBL: computedStyles.borderBottomLeftRadius,
     };
 
     return styles;
@@ -1314,7 +1385,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const bg = elementStyles.background;
     const txt = elementStyles.text;
     const padding = this.parseProp(elementStyles.padding);
-    const bordeRadius = this.parseProp(elementStyles.borderRadius);
 
     this.stylerControls.backgroundColor.style.background = bg;
     this.stylerControls.color.style.background = txt;
@@ -1322,7 +1392,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.padding.right.value = padding.right.value;
     this.stylerControls.padding.bottom.value = padding.bottom.value;
     this.stylerControls.padding.left.value = padding.left.value;
-    this.stylerControls.borderRadius.value = bordeRadius.top.value;
+    this.stylerControls.borderRadiusTL.value = elementStyles.borderTopLeftRadius;
+    this.stylerControls.borderRadiusTR.value = elementStyles.borderTopRightRadius;
+    this.stylerControls.borderRadiusBR.value = elementStyles.borderBottomRightRadius;
+    this.stylerControls.borderRadiusBL.value = elementStyles.borderBottomLeftRadius;
 
     // Get the window dimensions
     const windowWidth = window.innerWidth;

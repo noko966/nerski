@@ -486,11 +486,17 @@ export default class ViewDemoEuropean {
     this.demo.body = this.createBody();
     this.demo.sidebar = this.createSidebar();
     this.demo.main = this.createMain();
+    const el1 = document.createElement("div");
+    el1.className = "demo_mid_content_list";
+    const el2 = document.createElement("div");
+    el2.className = "demo_mid_content_list";
     const mainListWrapper1 = this.createListWrapper();
     const mainListWrapper2 = this.createListWrapper();
     this.demo.aside = this.createAside();
-    this.demo.main.appendChild(mainListWrapper1);
-    this.demo.main.appendChild(mainListWrapper2);
+    el1.appendChild(mainListWrapper1);
+    el2.appendChild(mainListWrapper2);
+    this.demo.main.appendChild(el1);
+    this.demo.main.appendChild(el2);
 
     this.demo.body.appendChild(this.demo.sidebar);
     this.demo.body.appendChild(this.demo.main);
