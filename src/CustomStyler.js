@@ -21,15 +21,12 @@ class MouseIntersectStyler {
     this.state = {};
     this.activeSelectorId = null;
     this.skin = {};
+    this.colors = {};
   }
 
   init() {
     const self = this;
     this.createUI();
-    // this.boundMouseMove = (event) => self.onMouseMove(event, self.selector);
-    // this.boundClick = (event) => self.oonClick(event);
-    // this.root.addEventListener("mousemove", self.boundMouseMove);
-    // this.root.addEventListener("click", self.boundClick, true);
   }
 
   toggleStyler() {
@@ -45,9 +42,6 @@ class MouseIntersectStyler {
       this.isRunning = true;
       this.boundMouseOver = (event) => this.onMouseOver(event);
       this.boundClick = (event) => this.onClick(event);
-
-      // this.root.addEventListener("mousemove", this.boundMouseMove, true);
-      // this.root.addEventListener("click", this.boundClick, true);
 
       this.editableElements = this.root.querySelectorAll("[data-sk]");
 
@@ -104,21 +98,18 @@ class MouseIntersectStyler {
       "#FF637C",
     ];
 
-    // We'll use 10px for each color band
     const bandSize = 20;
 
-    // Build each color stop pair: "color Xpx, color Ypx"
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${e1 + 1
-        }px, ${color} ${e1 + 2}px`;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
+        e1 + 1
+      }px, ${color} ${e1 + 2}px`;
     });
 
-    // Join all stops into a comma-separated list
     const gradientStops = stops.join(", ");
 
-    // Finally, wrap in a repeating-linear-gradient with a 45deg angle
     const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
 
     let css = `
@@ -161,7 +152,6 @@ ${cn} > * {
       event.preventDefault();
       event.stopPropagation();
 
-      // Use composedPath to find if any element in the path matches the selector
       const path = event.composedPath();
       const hoveredElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
@@ -175,13 +165,11 @@ ${cn} > * {
         let css = this.generateHoverStyle(className);
         this.injectStyle(css);
 
-        // Define handler to clean up on click or mouseout
         const cleanup = () => {
-          this.injectStyle(""); // Implement this method to remove the injected CSS
+          this.injectStyle("");
           target.removeEventListener("mouseleave", handleMouseOut);
         };
 
-        // Handler for mouseout event
         const handleMouseOut = (mouseOutEvt) => {
           cleanup();
         };
@@ -195,11 +183,9 @@ ${cn} > * {
     if (this.isStopped || !this.isRunning) return;
 
     if (this.isRunning) {
-      // Prevent default actions and stop propagation
       event.preventDefault();
       event.stopPropagation();
 
-      // Use composedPath to find if any element in the path matches the selector
       const path = event.composedPath();
       const clickedElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
@@ -217,12 +203,12 @@ ${cn} > * {
     }
   }
 
-  modifyKey(name, value) {
+  modifyKey(group, name, value) {
     const selectedRuleState = this.skin[this.activeSelectorId];
 
     if (selectedRuleState) {
       // Update the rule and state
-      selectedRuleState[name] = value;
+      selectedRuleState[group][name] = value;
 
       let css = this.createCss();
       this.setOrUpdateIframeCustomCss(css, this.root);
@@ -244,32 +230,36 @@ ${cn} > * {
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
---SK_custom${_skin.varPrefix}Bg: ${_skin.backgroundColor};
---SK_custom${_skin.varPrefix}Txt:${_skin.color};`;
+--SK_custom${_skin.varPrefix}Bg: ${_skin.background.main};`;
 
       css += `${key} * {
 color: unset;
 }`;
       css += `${key} {
 background: var(--SK_custom${_skin.varPrefix}Bg);
-color: var(--SK_custom${_skin.varPrefix}Txt);
 }`;
 
       css += `${key} {
-  padding-inline-start: ${_skin["padding-left"]}px;
-  padding-top: ${_skin["padding-top"]}px;
-  padding-inline-end: ${_skin["padding-right"]}px;
-  padding-bottom: ${_skin["padding-bottom"]}px;
+  padding-inline-start: ${_skin.padding.start}px;
+  padding-inline-end: ${_skin.padding.end}px;
+  padding-top: ${_skin.padding.top}px;
+  padding-bottom: ${_skin.padding.bottom}px;
   }`;
 
-  css += `${key} {
-    border-top-left-radius: ${_skin["borderRadiusTL"]};
-    border-top-right-radius: ${_skin["borderRadiusTR"]};
-    border-bottom-right-radius: ${_skin["borderRadiusBR"]};
-    border-bottom-left-radius: ${_skin["borderRadiusBL"]};
+      css += `${key} {
+    border-top-left-radius: ${_skin.radius.tl};
+    border-top-right-radius: ${_skin.radius.tr};
+    border-bottom-right-radius: ${_skin.radius.br};
+    border-bottom-left-radius: ${_skin.radius.bl};
     }`;
 
-      // nik
+      for (const color in _skin.colors) {
+        console.log(color);
+
+        css += `${key} [data-sk-color="${color}"] {
+      color: ${_skin.colors[color]};
+      }`;
+      }
     }
 
     const res = `
@@ -281,100 +271,34 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     return res;
   }
 
-  createKey(name, el) {
+  createKey(name, el, colorElements) {
     this.skin[name] = {};
     const cs = this.getSelectorAffectedCssStyles(el);
     const bg = tinycolor(cs.background).toHexString();
-    const txt = tinycolor(cs.text).toHexString();
     let uniqueClass = el.getAttribute("data-sk");
     const padding = this.parseProp(cs.padding);
 
-    this.skin[name]["backgroundColor"] = bg;
-    this.skin[name]["color"] = txt;
-    this.skin[name]["padding-top"] = padding.top.value;
-    this.skin[name]["padding-right"] = padding.right.value;
-    this.skin[name]["padding-bottom"] = padding.bottom.value;
-    this.skin[name]["padding-left"] = padding.left.value;
+    this.skin[name].colors = {};
+    colorElements.forEach((ce) => {
+      let uniqueAttribute = ce.getAttribute("data-sk-color");
+      let color = tinycolor(getComputedStyle(ce).color).toHexString();
+      this.skin[name].colors[uniqueAttribute] = color;
+    });
+    this.skin[name].background = {};
+    this.skin[name].background.main = bg;
+    this.skin[name].padding = {};
+    this.skin[name].padding["start"] = padding.top.value;
+    this.skin[name].padding["end"] = padding.right.value;
+    this.skin[name].padding["bottom"] = padding.bottom.value;
+    this.skin[name].padding["left"] = padding.left.value;
 
     this.skin[name]["varPrefix"] = uniqueClass;
+    this.skin[name].radius = {};
 
-    this.skin[name]["borderRadiusTL"] = cs.borderRadiusTL;
-    this.skin[name]["borderRadiusTR"] = cs.borderRadiusTR;
-    this.skin[name]["borderRadiusBR"] = cs.borderRadiusBR;
-    this.skin[name]["borderRadiusBL"] = cs.borderRadiusBL;
-  }
-
-  createCSSBasedOnTree(tree) {
-    const rootEl = tree[0];
-    // const repeated = rootEl.cssSelector.repeat(2);
-    const repeated = rootEl.cssSelector;
-    const _skin = {
-      bg: "#1a1a1a",
-      txt: "#fff",
-      acc: "#ffb700",
-    };
-
-    let CSSVariableRuleStart = `
-    ${repeated} *{
-      color: unset;
-      background: unset;
-      border: unset;
-    }
-    ${repeated} {
-      background: ${tinycolor(_skin.bg).toHexString()};
-      color: ${tinycolor(_skin.txt).toHexString()};
-    `;
-
-    let css = ``;
-
-    const usedSelectors = new Set();
-
-    tree.forEach((t) => {
-      const { cssSelector, level, ind, dataSk } = t;
-      const lvl = 4 - level;
-
-      // If we've seen this cssSelector before, skip it
-      if (usedSelectors.has(cssSelector)) {
-        return;
-      }
-      usedSelectors.add(cssSelector);
-
-      // Build a single unique selector
-      const selector = `${cssSelector}`;
-
-      CSSVariableRuleStart += `
-        --${dataSk}Bg: ${tinycolor(_skin.bg)
-          .lighten(level * 2 + ind * 1)
-          .setAlpha(0.1 + level * 0.01)
-          .toRgbString()};
-        --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
-        --${dataSk}Accent: ${tinycolor(_skin.acc)
-          .setAlpha(0.1 + level * 0.01)
-          .toRgbString()};
-          
-      `;
-
-      // Append CSS rule
-      css += `${repeated} ${selector} {
-      background: var(--${dataSk}Bg);
-      color: var(--${dataSk}Txt);
-      backdrop-filter: blur(10px);
-      border-radius: ${Math.abs(lvl + 2)}px;
-      padding: ${Math.abs(lvl * 4)}px;
-    }\n
-    ${repeated} ${selector} [data-sk-text="accent"] {
-      color: var(--${dataSk}Accent);
-    }
-    `;
-    });
-
-    const res = `
-    ${CSSVariableRuleStart}
-    }
-    ${css}
-    `;
-
-    this.setOrUpdateIframeCustomCss(res);
+    this.skin[name].radius["tl"] = cs.borderRadiusTL;
+    this.skin[name].radius["tr"] = cs.borderRadiusTR;
+    this.skin[name].radius["br"] = cs.borderRadiusBR;
+    this.skin[name].radius["bl"] = cs.borderRadiusBL;
   }
 
   createControlRoot() {
@@ -448,7 +372,16 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     display: flex;
     row-gap: 8px;
       }
-    
+    .sk_ui_custom_change_controls_wrapper{
+        position: absolute;
+    top: calc(100% + 16px);
+    right: 0;
+    background: var(--sk_dominantBg);
+    width: 100px;
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 8px;
+    }
 
       .sk_ui_custom_change_root.state-reveal {
         animation: appear 0.3s;
@@ -570,7 +503,7 @@ input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
 input[type="range"].sk_control_padding::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  margin-top: -6px; /* Centers thumb on the track */
+  margin-top: -6px; 
   background-color: var(--inputsCta);
   border-radius: 0px;
   height: calc(100% + 12px);
@@ -687,7 +620,7 @@ input[type="range"].sk_control_radius {
   background: transparent;
   cursor: pointer;
   width: 100%;
-  height: 2px;
+  height: 4px;
   margin: 0;
 }
 
@@ -754,19 +687,14 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     root.style.opacity = 0;
     root.style.pointerEvents = "none";
 
+    const rootControls = document.createElement("div");
+    rootControls.className = "sk_ui_custom_change_controls_wrapper";
+
     // Callback for color picker
     const handlePickerCallBack = (e) => {
       this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("backgroundColor", color);
-        this.updateControl("backgroundColor", color);
-      });
-    };
-
-    // **New** callback for Text Color
-    const handleTextColorPickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("color", color);
-        this.updateControl("color", color);
+        this.modifyKey("background", "main", color);
+        this.updateControl("background", "main", color);
       });
     };
 
@@ -781,7 +709,6 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
 
     // Control wrappers for various properties
     let controlWrapperBg = this.createControl("background", "variant_color");
-    let controlWrapperColor = this.createControl("text", "variant_color");
 
     // Padding input
 
@@ -791,11 +718,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
       handlePickerCallBack
     );
 
-    // **New** text color picker
-    this.TextColorPicker = this.createColorBox(
-      "sk_picker_trigger",
-      handleTextColorPickerCallBack
-    );
+    rootControls.appendChild(this.BgPicker);
 
     this.paddingRangeStart = document.createElement("input");
     this.paddingRangeStart.type = "range";
@@ -805,7 +728,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     this.paddingRangeStart.max = 100;
 
     this.paddingRangeStart.addEventListener("change", (e) => {
-      this.modifyKey(`padding-left`, e.target.value);
+      this.modifyKey("padding", "start", e.target.value);
     });
 
     root.appendChild(this.paddingRangeStart);
@@ -818,107 +741,58 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     this.paddingRangeEnd.max = 100;
 
     this.paddingRangeEnd.addEventListener("change", (e) => {
-      this.modifyKey(`padding-right`, e.target.value);
+      this.modifyKey("padding", "end", e.target.value);
     });
 
+    root.appendChild(rootControls);
     root.appendChild(this.paddingRangeEnd);
+    rootControls.appendChild(this.hideUITrigger);
 
+    const rootBounds = root.getBoundingClientRect();
 
-    const borderRadiusTL = this.createRadiusControl(root, "TL");
-    const borderRadiusTR = this.createRadiusControl(root, "TR");
-    const borderRadiusBR = this.createRadiusControl(root, "BR");
-    const borderRadiusBL = this.createRadiusControl(root, "BL");
+    const borderRadiusTL = this.createRadiusControl(root, "tl");
+    const borderRadiusTR = this.createRadiusControl(root, "tr");
+    const borderRadiusBR = this.createRadiusControl(root, "br");
+    const borderRadiusBL = this.createRadiusControl(root, "bl");
 
-    // Border-radius input
-    // const borderRadiusInput = document.createElement("input");
-    // borderRadiusInput.type = "number";
-    // borderRadiusInput.className = "sk_input";
-    // borderRadiusInput.placeholder = "Border Radius (px)";
-    // borderRadiusInput.addEventListener("change", (e) => {
-    //   self.modifyKey("borderRadius", e.target.value + "px");
-    // });
-
-    // controlWrapperBg.inside.appendChild(this.BgPicker);
-    // controlWrapperColor.inside.appendChild(this.TextColorPicker);
-
-    // const colorBlock = this.createControlRoot();
-    // const colorBlockHeader = this.createControlHeader("Color");
-    // const colorBlockContent = this.createControlContent();
-
-    // const paddingBlock = this.createControlRoot();
-    // const paddingBlockHeader = this.createControlHeader("Padding");
-    // const paddingBlockContent = this.createControlContent();
-
-    // const radiusBlock = this.createControlRoot();
-    // const radiusBlockHeader = this.createControlHeader("Radius");
-    // const radiusBlockContent = this.createControlContent();
-
-    // colorBlock.appendChild(colorBlockHeader);
-    // colorBlock.appendChild(colorBlockContent);
-    // const pickersElWrapper = document.createElement("div");
-    // pickersElWrapper.className = "row";
-    // const separatorEl = document.createElement("div");
-    // separatorEl.className = "sk_block_separator_y";
-    // colorBlockContent.appendChild(pickersElWrapper);
-    // pickersElWrapper.appendChild(controlWrapperBg.element);
-    // pickersElWrapper.appendChild(separatorEl);
-    // pickersElWrapper.appendChild(controlWrapperColor.element);
-    // const padControlGroup = this.createInputsGroupControl();
-
-    // paddingBlockContent.appendChild(padControlGroup);
-
-    // paddingBlock.appendChild(paddingBlockHeader);
-    // paddingBlock.appendChild(paddingBlockContent);
-
-    // radiusBlock.appendChild(radiusBlockHeader);
-    // radiusBlock.appendChild(radiusBlockContent);
-    // radiusBlockContent.appendChild(borderRadiusInput);
-
-    // root.appendChild(colorBlock);
-    // root.appendChild(paddingBlock);
-    // // root.appendChild(padControlGroup);
-
-    // root.appendChild(radiusBlock);
-
-    // buttonWrapper.appendChild(this.hideUITrigger);
-    // root.appendChild(buttonWrapper);
     this.stylerControls = {};
 
     document.body.appendChild(style);
     document.body.appendChild(root);
+
     this.stylerControls.padding = {};
     this.stylerControls.padding.top = {};
-    this.stylerControls.padding.right = this.paddingRangeEnd;
+    this.stylerControls.padding.end = this.paddingRangeEnd;
     this.stylerControls.padding.bottom = {};
-    this.stylerControls.padding.left = this.paddingRangeStart;
-    this.stylerControls.borderRadius = {};
-    this.stylerControls.borderRadiusTL = borderRadiusTL.input;
-    this.stylerControls.borderRadiusTR = borderRadiusTR.input;
-    this.stylerControls.borderRadiusBR = borderRadiusBR.input;
-    this.stylerControls.borderRadiusBL = borderRadiusBL.input;
-    this.stylerControls.backgroundColor = this.BgPicker;
-    this.stylerControls.color = this.TextColorPicker;
-
-    // this.stylerControls.borderRadius = borderRadiusInput;
+    this.stylerControls.padding.start = this.paddingRangeStart;
+    this.stylerControls.radius = {};
+    this.stylerControls.background = {};
+    this.stylerControls.radius.tl = borderRadiusTL.input;
+    this.stylerControls.radius.tr = borderRadiusTR.input;
+    this.stylerControls.radius.br = borderRadiusBR.input;
+    this.stylerControls.radius.bl = borderRadiusBL.input;
+    this.stylerControls.background.main = this.BgPicker;
+    this.stylerControls.colors = {};
 
     this.UIRoot = root;
+    this.UIRootControls = rootControls;
   }
 
   createRadiusControl(root, variant) {
     const radiusRoot = document.createElement("div");
-    let variantCN = "variant_bl";
+    let variantCN = "tl";
     switch (variant) {
-      case "TL":
-        variantCN = "tl"
+      case "tl":
+        variantCN = "tl";
         break;
-      case "TR":
-        variantCN = "tr"
+      case "tr":
+        variantCN = "tr";
         break;
-      case "BR":
-        variantCN = "br"
+      case "br":
+        variantCN = "br";
         break;
-      case "BL":
-        variantCN = "bl"
+      case "bl":
+        variantCN = "bl";
         break;
 
       default:
@@ -935,7 +809,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
       const radiusVal = e.target.value;
       radiusRoot.style.setProperty("--radius", `${radiusVal}px`);
       radiusRoot.style.setProperty("--width", `${radiusVal * 2}px`);
-      this.modifyKey(`borderRadius${variant}`, `${radiusVal}px`);
+      this.modifyKey("radius", `${variant}`, `${radiusVal}px`);
     });
 
     const radiusIndicator = document.createElement("div");
@@ -947,238 +821,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
 
     return {
       input: radius,
-    }
-  }
-  createUI2() {
-    let self = this;
-    if (this.UIRoot) return; // Prevent duplicate UI creation
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .sk_ui_custom_change_root {
-    --input_size: 28px;
-    --solid_size: 24px;
-    position: fixed;
-    width: 250px;
-    height: auto;
-    z-index: var(--sk_zind);
-    top: 0px;
-    transform: translate(0, 0);
-    border: none;
-    background: var(--sk_dominantBgHover);
-    border: 1px solid var(--sk_dominantBg);
-    flex-direction: column;
-    align-items: stretch;
-    padding: 6px;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    row-gap: 8px;
-      }
-    
-
-      .sk_ui_custom_change_root.state-reveal {
-        animation: appear 0.3s;
-      }
-        @keyframes appear {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-          .sk_styler_control_row {
-    display: flex;
-    align-items: center;
-    column-gap: var(--controls-ui-gap);
-    
-}
-    .sk_styler_control_row_label {
-    flex-grow: 1;
-    min-width: 1px;
-    font-size: 10px;
-    text-align: right;
-}
-    .sk_styler_control_row.variant_color{
-        width: calc(50% - 5px);
-    }
-
-    .sk_styler_control_holder > .pickr {
-    position: absolute;
-}
-
-.row{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    column-gap: 4px;
-}
-
-.sk_block_separator_y{
-    width: 1px;
-    flex-shrink:0;
-    height: 24px;
-    background: var(--sk_dominantBg);
-    flex-shrink: 0;
-
-}
-
-.sk_input {
-    appearance: none;
-    width: 50px;
-    font-size: 11px;
-    height: var(--input_size);
-    font-weight: 500;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    border-radius: 4px;
-    text-align: right;
-    border: 0;
-    border: 1px solid var(--sk_dominantShadow);
-    outline: 0;
-    padding: 0 6px;
-}
-
-.sk_btn {
-    appearance: none;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    text-align: center;
-    height: var(--input_size);
-    text-decoration: none;
-    background-color: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt2);
-    text-transform: capitalize;
-    font-size: 12px;
-    position: relative;
-    font-weight: 500;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 4px;
-    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
-}
-    .sk_btn.variant_primary{
-        width: 100%;
-    background-color: var(--sk_accentBg);
-    color: var(--sk_accentTxt);
-    }
-   
-    
-    `;
-    const root = document.createElement("div");
-    root.className = "sk_ui_custom_change_root";
-    root.style.left = "50%";
-    root.style.top = "50%";
-    root.style.opacity = 0;
-    root.style.pointerEvents = "none";
-
-    // Callback for color picker
-    const handlePickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("backgroundColor", color);
-        this.updateControl("backgroundColor", color);
-      });
     };
-
-    // **New** callback for Text Color
-    const handleTextColorPickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("color", color);
-        this.updateControl("color", color);
-      });
-    };
-
-    // Apply button
-    const buttonWrapper = document.createElement("div");
-    buttonWrapper.className = "sk_widget_footer_row";
-
-    this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "sk_btn variant_primary";
-    this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
-    this.hideUITrigger.innerText = "apply";
-
-    // Control wrappers for various properties
-    let controlWrapperBg = this.createControl("background", "variant_color");
-    let controlWrapperColor = this.createControl("text", "variant_color");
-
-    // Padding input
-
-    // Background picker
-    this.BgPicker = this.createColorBox(
-      "sk_picker_trigger",
-      handlePickerCallBack
-    );
-
-    // **New** text color picker
-    this.TextColorPicker = this.createColorBox(
-      "sk_picker_trigger",
-      handleTextColorPickerCallBack
-    );
-
-    // Border-radius input
-    const borderRadiusInput = document.createElement("input");
-    borderRadiusInput.type = "number";
-    borderRadiusInput.className = "sk_input";
-    borderRadiusInput.placeholder = "Border Radius (px)";
-    borderRadiusInput.addEventListener("change", (e) => {
-      self.modifyKey("borderRadius", e.target.value + "px");
-    });
-
-    controlWrapperBg.inside.appendChild(this.BgPicker);
-    controlWrapperColor.inside.appendChild(this.TextColorPicker);
-
-    const colorBlock = this.createControlRoot();
-    const colorBlockHeader = this.createControlHeader("Color");
-    const colorBlockContent = this.createControlContent();
-
-    const paddingBlock = this.createControlRoot();
-    const paddingBlockHeader = this.createControlHeader("Padding");
-    const paddingBlockContent = this.createControlContent();
-
-    const radiusBlock = this.createControlRoot();
-    const radiusBlockHeader = this.createControlHeader("Radius");
-    const radiusBlockContent = this.createControlContent();
-
-    colorBlock.appendChild(colorBlockHeader);
-    colorBlock.appendChild(colorBlockContent);
-    const pickersElWrapper = document.createElement("div");
-    pickersElWrapper.className = "row";
-    const separatorEl = document.createElement("div");
-    separatorEl.className = "sk_block_separator_y";
-    colorBlockContent.appendChild(pickersElWrapper);
-    pickersElWrapper.appendChild(controlWrapperBg.element);
-    pickersElWrapper.appendChild(separatorEl);
-    pickersElWrapper.appendChild(controlWrapperColor.element);
-    this.stylerControls = {};
-    const padControlGroup = this.createInputsGroupControl();
-
-    paddingBlockContent.appendChild(padControlGroup);
-
-    paddingBlock.appendChild(paddingBlockHeader);
-    paddingBlock.appendChild(paddingBlockContent);
-
-    radiusBlock.appendChild(radiusBlockHeader);
-    radiusBlock.appendChild(radiusBlockContent);
-    radiusBlockContent.appendChild(borderRadiusInput);
-
-    root.appendChild(colorBlock);
-    root.appendChild(paddingBlock);
-    // root.appendChild(padControlGroup);
-
-    root.appendChild(radiusBlock);
-
-    buttonWrapper.appendChild(this.hideUITrigger);
-    root.appendChild(buttonWrapper);
-    document.body.appendChild(style);
-    document.body.appendChild(root);
-
-    this.stylerControls.backgroundColor = this.BgPicker;
-    this.stylerControls.color = this.TextColorPicker;
-
-    this.stylerControls.borderRadius = borderRadiusInput;
-
-    this.UIRoot = root;
   }
 
   createInputControl(callback, indicator) {
@@ -1281,6 +924,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     controlsRoot.appendChild(controlWrapper2);
 
     _t.stylerControls.padding = {};
+
     _t.stylerControls.padding.top = ct.inputEl;
     _t.stylerControls.padding.right = ce.inputEl;
     _t.stylerControls.padding.bottom = cb.inputEl;
@@ -1378,6 +1022,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
   }
 
   showUI(x, y, currentElement) {
+    const _t = this;
     if (!this.UIRoot) return;
 
     const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
@@ -1386,16 +1031,16 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const txt = elementStyles.text;
     const padding = this.parseProp(elementStyles.padding);
 
-    this.stylerControls.backgroundColor.style.background = bg;
-    this.stylerControls.color.style.background = txt;
+    this.stylerControls.background.main.style.background = bg;
+    // this.stylerControls.color.style.background = txt;
     this.stylerControls.padding.top.value = padding.top.value;
-    this.stylerControls.padding.right.value = padding.right.value;
+    this.stylerControls.padding.end.value = padding.right.value;
     this.stylerControls.padding.bottom.value = padding.bottom.value;
-    this.stylerControls.padding.left.value = padding.left.value;
-    this.stylerControls.borderRadiusTL.value = elementStyles.borderTopLeftRadius;
-    this.stylerControls.borderRadiusTR.value = elementStyles.borderTopRightRadius;
-    this.stylerControls.borderRadiusBR.value = elementStyles.borderBottomRightRadius;
-    this.stylerControls.borderRadiusBL.value = elementStyles.borderBottomLeftRadius;
+    this.stylerControls.padding.start.value = padding.left.value;
+    this.stylerControls.radius.tl.value = elementStyles.borderTopLeftRadius;
+    this.stylerControls.radius.tr.value = elementStyles.borderTopRightRadius;
+    this.stylerControls.radius.br.value = elementStyles.borderBottomRightRadius;
+    this.stylerControls.radius.bl.value = elementStyles.borderBottomLeftRadius;
 
     // Get the window dimensions
     const windowWidth = window.innerWidth;
@@ -1433,14 +1078,66 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 
     this.activeSelectorId = selector;
 
-    // Add reveal animation
     this.UIRoot.classList.add("state-reveal");
     let timeoutId = setTimeout(() => {
       this.UIRoot.classList.remove("state-reveal");
       timeoutId = null;
     }, 3000);
 
-    this.createKey(selector, currentElement);
+    function getElementsWithColorAttr(rootEl) {
+      if (!rootEl || !rootEl.hasAttribute("data-sk")) {
+        return [];
+      }
+
+      let result = [];
+      let stack = [rootEl];
+
+      while (stack.length > 0) {
+        let current = stack.pop();
+
+        for (let child of current.children) {
+          if (child.hasAttribute("data-sk")) {
+            continue;
+          }
+          if (child.hasAttribute("data-sk-color")) {
+            result.push(child);
+          }
+          stack.push(child);
+        }
+      }
+
+      return result;
+    }
+    const rootBounds = _t.UIRoot.getBoundingClientRect();
+
+    const colorElements = getElementsWithColorAttr(currentElement);
+    colorElements;
+
+    colorElements.forEach((ce) => {
+      let uniqueClass = ce.getAttribute("data-sk-color");
+      const handlePickerCallBack = (e) => {
+        _t.handlePicker(e, null, null, (color) => {
+          _t.modifyKey("colors", uniqueClass, color);
+          _t.updateControl("colors", uniqueClass, color);
+        });
+      };
+
+      const picker = _t.createColorBox(
+        "sk_picker_trigger",
+        handlePickerCallBack
+      );
+      _t.stylerControls.colors[uniqueClass] = picker;
+
+      const bounds = ce.getBoundingClientRect();
+
+      picker.style.top = bounds.top - rootBounds.top + rootBounds.height + "px";
+      picker.style.left = bounds.left - rootBounds.left + "px";
+      picker.style.position = "absolute";
+
+      _t.UIRoot.appendChild(picker);
+    });
+
+    this.createKey(selector, currentElement, colorElements);
   }
 
   hideUI() {
@@ -1451,8 +1148,8 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     }
   }
 
-  updateControl(control, value) {
-    this.stylerControls[control].style.background = value;
+  updateControl(group, control, value) {
+    this.stylerControls[group][control].style.background = value;
   }
 
   setOrUpdateIframeCustomCss(css, target) {
@@ -1507,20 +1204,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
     );
   }
-
-  // generateCssPath(element) {
-  //   console.log({ element });
-
-  //   const path = [];
-  //   while (this.root) {
-  //     const selector = element.className
-  //       ? `.${element.className.trim().split(/\s+/).join(".")}`
-  //       : element.tagName.toLowerCase();
-  //     path.unshift(selector);
-  //     element = element.parentElement;
-  //   }
-  //   return path.join(" > ");
-  // }
 
   generateCssPath(element, options = {}) {
     const {

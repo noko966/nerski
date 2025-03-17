@@ -168,6 +168,7 @@ export default class ViewDemoEuropean {
   createEventTeam(text) {
     const el = document.createElement("span");
     el.className = "demo_event_team";
+    el.setAttribute("data-sk-color", "team");
     el.innerText = text || "team_name";
     return el;
   }
@@ -175,7 +176,7 @@ export default class ViewDemoEuropean {
   createEventScore(text) {
     const el = document.createElement("span");
     el.className = "demo_event_score";
-    el.setAttribute("data-sk-text", "accent");
+    el.setAttribute("data-sk-color", "score");
     el.innerText = text || "0";
     return el;
   }
