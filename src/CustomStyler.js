@@ -271,34 +271,88 @@ background: var(--SK_custom${_skin.varPrefix}Bg);
     return res;
   }
 
-  createKey(name, el, colorElements) {
+  createKey(name, el) {
     this.skin[name] = {};
     const cs = this.getSelectorAffectedCssStyles(el);
     const bg = tinycolor(cs.background).toHexString();
     let uniqueClass = el.getAttribute("data-sk");
     const padding = this.parseProp(cs.padding);
 
+    // Helper function to group elements by `data-sk-color`
+    function getElementsWithColorAttr(rootEl) {
+      if (!rootEl || !rootEl.hasAttribute("data-sk")) {
+        return {};
+      }
+
+      const grouped = {};
+      const stack = [rootEl];
+
+      while (stack.length > 0) {
+        const current = stack.pop();
+
+        for (const child of current.children) {
+          // Skip elements that have their own data-sk
+          if (child.hasAttribute("data-sk")) {
+            continue;
+          }
+
+          // Group by `data-sk-color`
+          if (child.hasAttribute("data-sk-color")) {
+            const color = child.getAttribute("data-sk-color");
+            if (!grouped[color]) {
+              grouped[color] = [];
+            }
+            grouped[color].push(child);
+          }
+
+          stack.push(child);
+        }
+      }
+
+      return grouped;
+    }
+
+    // Set up your skin structure
     this.skin[name].colors = {};
-    colorElements.forEach((ce) => {
-      let uniqueAttribute = ce.getAttribute("data-sk-color");
-      let color = tinycolor(getComputedStyle(ce).color).toHexString();
-      this.skin[name].colors[uniqueAttribute] = color;
-    });
-    this.skin[name].background = {};
-    this.skin[name].background.main = bg;
-    this.skin[name].padding = {};
-    this.skin[name].padding["start"] = padding.top.value;
-    this.skin[name].padding["end"] = padding.right.value;
-    this.skin[name].padding["bottom"] = padding.bottom.value;
-    this.skin[name].padding["left"] = padding.left.value;
+    this.skin[name].background = { main: bg };
+    this.skin[name].padding = {
+      start: padding.top.value,
+      end: padding.right.value,
+      bottom: padding.bottom.value,
+      left: padding.left.value,
+    };
+    this.skin[name].varPrefix = uniqueClass;
+    this.skin[name].radius = {
+      tl: cs.borderRadiusTL,
+      tr: cs.borderRadiusTR,
+      br: cs.borderRadiusBR,
+      bl: cs.borderRadiusBL,
+    };
 
-    this.skin[name]["varPrefix"] = uniqueClass;
-    this.skin[name].radius = {};
+    // Extract up to 3 unique color keys
+    const colorElements = getElementsWithColorAttr(el);
+    const colorKeys = Object.keys(colorElements); // e.g. ["red", "green", "blue", ...]
 
-    this.skin[name].radius["tl"] = cs.borderRadiusTL;
-    this.skin[name].radius["tr"] = cs.borderRadiusTR;
-    this.skin[name].radius["br"] = cs.borderRadiusBR;
-    this.skin[name].radius["bl"] = cs.borderRadiusBL;
+    // Initialize each txt key to an empty object first
+    this.skin[name].colors.txt1 = {};
+    this.skin[name].colors.txt2 = {};
+    this.skin[name].colors.txt3 = {};
+
+    // Map up to 3 unique colors to txt1, txt2, txt3
+    const txtFields = ["txt1", "txt2", "txt3"];
+    for (let i = 0; i < txtFields.length; i++) {
+      // If there is a color for this index, assign it; otherwise, leave as is
+      if (colorKeys[i] != null) {
+        // You can decide how you want to store the color. For example:
+        //   this.skin[name].colors[txtFields[i]] = colorKeys[i];
+        // If you prefer including the array of elements, do something like:
+        //   this.skin[name].colors[txtFields[i]] = {
+        //     color: colorKeys[i],
+        //     elements: colorElements[colorKeys[i]]
+        //   };
+        this.skin[name].colors[txtFields[i]] = colorKeys[i];
+      }
+    }
   }
 
   createControlRoot() {
@@ -1084,34 +1138,9 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       timeoutId = null;
     }, 3000);
 
-    function getElementsWithColorAttr(rootEl) {
-      if (!rootEl || !rootEl.hasAttribute("data-sk")) {
-        return [];
-      }
 
-      let result = [];
-      let stack = [rootEl];
-
-      while (stack.length > 0) {
-        let current = stack.pop();
-
-        for (let child of current.children) {
-          if (child.hasAttribute("data-sk")) {
-            continue;
-          }
-          if (child.hasAttribute("data-sk-color")) {
-            result.push(child);
-          }
-          stack.push(child);
-        }
-      }
-
-      return result;
-    }
     const rootBounds = _t.UIRoot.getBoundingClientRect();
 
-    const colorElements = getElementsWithColorAttr(currentElement);
-    colorElements;
 
     colorElements.forEach((ce) => {
       let uniqueClass = ce.getAttribute("data-sk-color");
