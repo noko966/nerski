@@ -122,41 +122,41 @@ html {
   column-gap: var(--demo_s_b_xs);
 }
 
-.demo_sidebar_items_list_group.variant_sport
+.demo_sidebar_items_list_group.variant_menu_1
   .demo_sidebar_row
   .demo_text.variant_count {
   color: var(--menu_1Txt2);
 }
 
-.demo_sidebar_items_list_group.variant_country .demo_sidebar_row {
+.demo_sidebar_items_list_group.variant_menu_2 .demo_sidebar_row {
   background: var(--menu_2G);
   color: var(--menu_2Txt);
 }
-.demo_sidebar_items_list_group.variant_country
+.demo_sidebar_items_list_group.variant_menu_2
   .demo_sidebar_row
   .demo_text.variant_count {
   color: var(--menu_2Txt2);
 }
 
-.demo_sidebar_items_list_group.variant_champ .demo_sidebar_row {
+.demo_sidebar_items_list_group.variant_menu_3 .demo_sidebar_row {
   background: var(--menu_3G);
   color: var(--menu_3Txt);
 }
-.demo_sidebar_items_list_group.variant_champ
+.demo_sidebar_items_list_group.variant_menu_3
   .demo_sidebar_row
   .demo_text.variant_count {
   color: var(--menu_3Txt2);
 }
 
-.demo_sidebar_items_list_group.variant_sport {
+.demo_sidebar_items_list_group.variant_menu_1 {
   background-color: var(--menu_1Border);
 }
 
-.demo_sidebar_items_list_group.variant_country {
+.demo_sidebar_items_list_group.variant_menu_2 {
   background-color: var(--menu_2Border);
 }
 
-.demo_sidebar_items_list_group.variant_champ {
+.demo_sidebar_items_list_group.variant_menu_3 {
   background-color: var(--menu_3Border);
 }
 
@@ -164,23 +164,23 @@ html {
   background-color: var(--menu_1Accent);
 }
 
-.demo_sidebar_items_list_group.variant_country .demo_icon.variant_icon {
+.demo_sidebar_items_list_group.variant_menu_2 .demo_icon.variant_icon {
   background-color: var(--menu_2Accent);
 }
 
-.demo_sidebar_items_list_group.variant_champ .demo_icon.variant_icon {
+.demo_sidebar_items_list_group.variant_menu_3 .demo_icon.variant_icon {
   background-color: var(--menu_3Accent);
 }
 
-.demo_sidebar_items_list_group.variant_sport .demo_icon.variant_arrow {
+.demo_sidebar_items_list_group.variant_menu_1 .demo_icon.variant_arrow {
   background-color: var(--menu_1Txt3);
 }
 
-.demo_sidebar_items_list_group.variant_country .demo_icon.variant_arrow {
+.demo_sidebar_items_list_group.variant_menu_2 .demo_icon.variant_arrow {
   background-color: var(--menu_2Txt3);
 }
 
-.demo_sidebar_items_list_group.variant_champ .demo_icon.variant_arrow {
+.demo_sidebar_items_list_group.variant_menu_3 .demo_icon.variant_arrow {
   background-color: var(--menu_3Txt3);
 }
 

@@ -103,9 +103,8 @@ class MouseIntersectStyler {
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
-        e1 + 1
-      }px, ${color} ${e1 + 2}px`;
+      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${e1 + 1
+        }px, ${color} ${e1 + 2}px`;
     });
 
     const gradientStops = stops.join(", ");
@@ -217,104 +216,91 @@ ${cn} > * {
 
   createCss() {
     let css = "";
-    console.log(this.root);
-
-    let CSSVariableRuleStart = `
-   
-    :root{
-    `;
-
-    console.log(this.skin);
+    let CSSVariableRuleStart = "";
 
     for (const key in this.skin) {
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
---SK_custom${_skin.varPrefix}Bg: ${_skin.background.main};`;
+        ${key} {
 
-      css += `${key} * {
-color: unset;
-}`;
-      css += `${key} {
-background: var(--SK_custom${_skin.varPrefix}Bg);
-}`;
+        --${_skin.varPrefix}G: ${_skin.background.main};
+        --${_skin.varPrefix}Bg: ${_skin.background.main};
+        
+ `;
 
-      css += `${key} {
-  padding-inline-start: ${_skin.padding.start}px;
-  padding-inline-end: ${_skin.padding.end}px;
-  padding-top: ${_skin.padding.top}px;
-  padding-bottom: ${_skin.padding.bottom}px;
-  }`;
+      // Define CSS variables for padding
 
-      css += `${key} {
-    border-top-left-radius: ${_skin.radius.tl};
-    border-top-right-radius: ${_skin.radius.tr};
-    border-bottom-right-radius: ${_skin.radius.br};
-    border-bottom-left-radius: ${_skin.radius.bl};
-    }`;
+      CSSVariableRuleStart += `
+        --${_skin.varPrefix}Ps: ${_skin.padding.start}px;
+        --${_skin.varPrefix}Pe: ${_skin.padding.end}px;
+        `;
 
-      for (const color in _skin.colors) {
-        console.log(color);
+      // --${_skin.varPrefix}PaddingTop: ${_skin.padding.top}px;
+      // --${_skin.varPrefix}PaddingBottom: ${_skin.padding.bottom}px;
 
-        css += `${key} [data-sk-color="${color}"] {
-      color: ${_skin.colors[color]};
-      }`;
+      // Define CSS variables for border radius
+
+      CSSVariableRuleStart += `
+        --${_skin.varPrefix}RTL: ${_skin.radius.tl};
+        --${_skin.varPrefix}RTR: ${_skin.radius.tr};
+        --${_skin.varPrefix}RBR: ${_skin.radius.br};
+        --${_skin.varPrefix}RBL: ${_skin.radius.bl};
+        `;
+
+      // Define CSS variables for colors
+
+      for (const txt in _skin.colors) {
+        CSSVariableRuleStart += `
+          --${_skin.varPrefix}${txt}: ${_skin.colors[txt]};
+          `
       }
+
+      CSSVariableRuleStart += `
+      padding-inline-start: var(--${_skin.varPrefix}Ps);
+        padding-inline-end: var(--${_skin.varPrefix}Pe);
+        border-top-left-radius: var(--${_skin.varPrefix}RTL);
+        border-top-right-radius: var(--${_skin.varPrefix}RTR);
+        border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
+        border-bottom-left-radius: var(--${_skin.varPrefix}RBL);
+      `
+      CSSVariableRuleStart += `}`;
     }
+
+
+
+    // Apply the CSS variables to the element styles
+
+
+    // Apply the color variables to elements with data-sk-color
+
 
     const res = `
-    ${CSSVariableRuleStart}
-    }
-    ${css}
-    `;
+    ${CSSVariableRuleStart}`
+
 
     return res;
   }
 
+
   createKey(name, el) {
     this.skin[name] = {};
     const cs = this.getSelectorAffectedCssStyles(el);
-    const bg = tinycolor(cs.background).toHexString();
+    const css = this.getSelectorEssenceStyles(el);
     let uniqueClass = el.getAttribute("data-sk");
     const padding = this.parseProp(cs.padding);
 
     // Helper function to group elements by `data-sk-color`
-    function getElementsWithColorAttr(rootEl) {
-      if (!rootEl || !rootEl.hasAttribute("data-sk")) {
-        return {};
-      }
+    this.skin[name].colors = {};
 
-      const grouped = {};
-      const stack = [rootEl];
-
-      while (stack.length > 0) {
-        const current = stack.pop();
-
-        for (const child of current.children) {
-          // Skip elements that have their own data-sk
-          if (child.hasAttribute("data-sk")) {
-            continue;
-          }
-
-          // Group by `data-sk-color`
-          if (child.hasAttribute("data-sk-color")) {
-            const color = child.getAttribute("data-sk-color");
-            if (!grouped[color]) {
-              grouped[color] = [];
-            }
-            grouped[color].push(child);
-          }
-
-          stack.push(child);
-        }
-      }
-
-      return grouped;
-    }
+    this.skin[name].colors = {
+      Txt: css.txt,    // Default text color, can be modified
+      Txt2: css.txt2,    // Default secondary text color
+      Txt3: css.txt3,    // Default tertiary text color
+    };
 
     // Set up your skin structure
-    this.skin[name].colors = {};
-    this.skin[name].background = { main: bg };
+    this.skin[name].background = { main: css.bg };
     this.skin[name].padding = {
       start: padding.top.value,
       end: padding.right.value,
@@ -330,29 +316,27 @@ background: var(--SK_custom${_skin.varPrefix}Bg);
     };
 
     // Extract up to 3 unique color keys
-    const colorElements = getElementsWithColorAttr(el);
-    const colorKeys = Object.keys(colorElements); // e.g. ["red", "green", "blue", ...]
 
-    // Initialize each txt key to an empty object first
-    this.skin[name].colors.txt1 = {};
-    this.skin[name].colors.txt2 = {};
-    this.skin[name].colors.txt3 = {};
+  }
+  createTextColorPickers() {
 
-    // Map up to 3 unique colors to txt1, txt2, txt3
-    const txtFields = ["txt1", "txt2", "txt3"];
-    for (let i = 0; i < txtFields.length; i++) {
-      // If there is a color for this index, assign it; otherwise, leave as is
-      if (colorKeys[i] != null) {
-        // You can decide how you want to store the color. For example:
-        //   this.skin[name].colors[txtFields[i]] = colorKeys[i];
-        // If you prefer including the array of elements, do something like:
-        //   this.skin[name].colors[txtFields[i]] = {
-        //     color: colorKeys[i],
-        //     elements: colorElements[colorKeys[i]]
-        //   };
-        this.skin[name].colors[txtFields[i]] = colorKeys[i];
-      }
-    }
+    const colors = ["Txt", "Txt2", "Txt3"]
+    colors.forEach((clr, i) => {
+
+
+      const handlePickerCallBack = (e) => {
+        this.handlePicker(e, null, null, (color) => {
+          this.modifyKey("colors", clr, color);
+          this.updateControl("colors", clr, color);
+        });
+      };
+
+      const picker = this.createColorBox("sk_picker_trigger", handlePickerCallBack);
+      this.stylerControls.colors[clr] = picker;
+
+      this.pickersWrapper.appendChild(picker);
+
+    });
   }
 
   createControlRoot() {
@@ -426,312 +410,7 @@ background: var(--SK_custom${_skin.varPrefix}Bg);
     display: flex;
     row-gap: 8px;
       }
-    .sk_ui_custom_change_controls_wrapper{
-        position: absolute;
-    top: calc(100% + 16px);
-    right: 0;
-    background: var(--sk_dominantBg);
-    width: 100px;
-    border-radius: 4px;
-    border: 1px solid var(--sk_dominantBg2);
-    padding: 8px;
-    }
-
-      .sk_ui_custom_change_root.state-reveal {
-        animation: appear 0.3s;
-      }
-        @keyframes appear {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-          .sk_styler_control_row {
-    display: flex;
-    align-items: center;
-    column-gap: var(--controls-ui-gap);
     
-}
-    .sk_styler_control_row_label {
-    flex-grow: 1;
-    min-width: 1px;
-    font-size: 10px;
-    text-align: right;
-}
-    .sk_styler_control_row.variant_color{
-        width: calc(50% - 5px);
-    }
-
-    .sk_styler_control_holder > .pickr {
-    position: absolute;
-}
-
-.row{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    column-gap: 4px;
-}
-
-.sk_block_separator_y{
-    width: 1px;
-    flex-shrink:0;
-    height: 24px;
-    background: var(--sk_dominantBg);
-    flex-shrink: 0;
-
-}
-
-.sk_input {
-    appearance: none;
-    width: 50px;
-    font-size: 11px;
-    height: var(--input_size);
-    font-weight: 500;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    border-radius: 4px;
-    text-align: right;
-    border: 0;
-    border: 1px solid var(--sk_dominantShadow);
-    outline: 0;
-    padding: 0 6px;
-}
-
-.sk_btn {
-    appearance: none;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    text-align: center;
-    height: var(--input_size);
-    text-decoration: none;
-    background-color: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt2);
-    text-transform: capitalize;
-    font-size: 12px;
-    position: relative;
-    font-weight: 500;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 4px;
-    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
-}
-    .sk_btn.variant_primary{
-        width: 100%;
-    background-color: var(--sk_accentBg);
-    color: var(--sk_accentTxt);
-    }
-
-
-
-    /*********** Baseline, reset styles ***********/
-input[type="range"].sk_control_padding {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-  width: 100px;
-  margin: 0;
-  width: 100px;
-  height: calc(100% + 24px);
-}
-
-/* Removes default focus */
-input[type="range"].sk_control_padding:focus {
-  outline: none;
-}
-
-/******** Chrome, Safari, Opera and Edge Chromium styles ********/
-/* slider track */
-input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
-  background-color: var(--inputsOverlay);
-  border-radius: 0px;
-  height: 100%;
-  border: 0;
-}
-
-/* slider thumb */
-input[type="range"].sk_control_padding::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  margin-top: -6px; 
-  background-color: var(--inputsCta);
-  border-radius: 0px;
-  height: calc(100% + 12px);
-  width: 2px;
-}
-
-input[type="range"].sk_control_padding:focus::-webkit-slider-thumb {
-  outline: 1px solid var(--inputsCta);
-  outline-offset: 1px;
-}
-
-/*********** Firefox styles ***********/
-/* slider track */
-input[type="range"].sk_control_padding::-moz-range-track {
-  background-color: var(--inputsOverlay);
-  border-radius: 0px;
-  height: 100%;
-  border: 0;
-}
-
-/* slider thumb */
-input[type="range"].sk_control_padding::-moz-range-thumb {
-  background-color: var(--inputsOverlay);
-  border: none; /*Removes extra border that FF applies*/
-  border-radius: 0px;
-  height: 100%;
-  width: 2px;
-}
-
-input[type="range"].sk_control_padding:focus::-moz-range-thumb{
-  outline: 1px solid var(--inputsCta);
-  outline-offset: 1px;
-}
-
-.sk_control_padding.variant_start{
-position: absolute;
-    top: 50%;
-    bottom: 0;
-    left: 0;
-    transform: translateY(-50%);
-}
-
-.sk_control_padding.variant_end{
-position: absolute;
-top: 50%;
-bottom: 0;
-right: 0;
-transform: translateY(-50%);
-}
-  .sk_flip{
-  direction: rtl;}
-   
-  .sk_control_radius_root{
-  --size: 40px;
-  width: var(--size);
-  height: var(--size);
-    z-index: 10;
-    position: absolute;
-  }
-
-  .sk_control_radius_root > .sk_control_radius{
-      transform: translate(-50%, -50%) rotate(45deg);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-  }
-  .sk_control_radius_root.variant_tl{
-    top: 0;
-    left: 0;
-    transform: rotate(0deg);
-  }
-
-
-  .sk_control_radius_root.variant_tr{
-    top: 0;
-    right: 0;
-    transform: rotate(90deg);
-  }
-
-    
-
-  .sk_control_radius_root.variant_br{
-    bottom: 0;
-    right: 0;
-    transform: rotate(180deg);
-
-  }
-
-
-  .sk_control_radius_root.variant_bl{
-    bottom: 0;
-    left: 0;
-    transform: rotate(-90deg);
-  }
-  
-    
-  .sk_control_radius_indicator{
-  background-color: var(--inputsOverlay);
-  width: var(--radius);
-  height: var(--radius);
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    border-radius: 50%;
-  }
-  
-
-
-      /*********** Baseline, reset styles ***********/
-input[type="range"].sk_control_radius {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-  width: 100%;
-  height: 4px;
-  margin: 0;
-}
-
-/* Removes default focus */
-input[type="range"].sk_control_radius:focus {
-  outline: none;
-}
-
-/******** Chrome, Safari, Opera and Edge Chromium styles ********/
-/* slider track */
-input[type="range"].sk_control_radius::-webkit-slider-runnable-track {
-  background-color: transparent;
-  border-radius: 0px;
-  height: 100%;
-  border: 0;
-}
-
-/* slider thumb */
-input[type="range"].sk_control_radius::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  margin-top: 0px; /* Centers thumb on the track */
-  background-color: var(--inputsCta);
-  border-radius: 50%;
-  height: 100%;
-  width: 4px;
-}
-
-input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
-  outline: 1px solid var(--inputsCta);
-  outline-offset: 1px;
-}
-
-/*********** Firefox styles ***********/
-/* slider track */
-input[type="range"].sk_control_radius::-moz-range-track {
-  background-color: transparent;
-  border-radius: 0px;
-  height: 100%;
-  border: 0;
-}
-
-/* slider thumb */
-input[type="range"].sk_control_radius::-moz-range-thumb {
-  background-color: var(--inputsOverlay);
-  border: none; /*Removes extra border that FF applies*/
-  border-radius: 50%;
-  height: 100%;
-  width: 4px;
-}
-
-input[type="range"].sk_control_radius:focus::-moz-range-thumb{
-  outline: 1px solid var(--inputsCta);
-  outline-offset: 1px;
-}
-
-  
     
     `;
     const root = document.createElement("div");
@@ -746,9 +425,9 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
-      this.handlePicker(e, null, null, (color) => {
-        this.modifyKey("background", "main", color);
-        this.updateControl("background", "main", color);
+      this.handleGradientPicker(e, null, (data) => {
+        this.modifyKey("background", "main", data.color);
+        this.updateControl("background", "main", data.color);
       });
     };
 
@@ -757,7 +436,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     buttonWrapper.className = "sk_widget_footer_row";
 
     this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "sk_btn variant_primary";
+    this.hideUITrigger.className = "sk_btn variant_primary variant_styler";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
 
@@ -772,34 +451,59 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
       handlePickerCallBack
     );
 
-    rootControls.appendChild(this.BgPicker);
 
+
+
+    this.pickersWrapper = document.createElement("div");
+    this.pickersWrapper.className = "sk_ui_custom_change_controls_pickers_wrapper";
+    rootControls.appendChild(this.pickersWrapper);
+    this.pickersWrapper.appendChild(this.BgPicker);
+
+    const paddingRangeStartWrapper = document.createElement("div");
+    paddingRangeStartWrapper.className = "sk_control_padding_wrapper variant_start";
     this.paddingRangeStart = document.createElement("input");
     this.paddingRangeStart.type = "range";
-    this.paddingRangeStart.className = "sk_control_padding variant_start";
+    this.paddingRangeStart.className = "sk_control_padding ";
 
     this.paddingRangeStart.min = 0;
     this.paddingRangeStart.max = 100;
 
     this.paddingRangeStart.addEventListener("change", (e) => {
-      this.modifyKey("padding", "start", e.target.value);
+      const value = e.target.value;
+
+      this.modifyKey("padding", "start", value);
+
+      const percentage = (value - e.target.min) / (e.target.max - e.target.min) * 100;
+
+      paddingRangeStartWrapper.style.setProperty("--percent", `${percentage}%`);
+
     });
 
-    root.appendChild(this.paddingRangeStart);
+    paddingRangeStartWrapper.appendChild(this.paddingRangeStart);
+    rootControls.appendChild(paddingRangeStartWrapper);
 
+    const paddingRangeEndWrapper = document.createElement("div");
+    paddingRangeEndWrapper.className = "sk_control_padding_wrapper variant_end";
     this.paddingRangeEnd = document.createElement("input");
     this.paddingRangeEnd.type = "range";
-    this.paddingRangeEnd.className = "sk_control_padding variant_end sk_flip";
+    this.paddingRangeEnd.className = "sk_control_padding  sk_flip";
 
     this.paddingRangeEnd.min = 0;
-    this.paddingRangeEnd.max = 100;
+    this.paddingRangeEnd.max = 32;
 
     this.paddingRangeEnd.addEventListener("change", (e) => {
-      this.modifyKey("padding", "end", e.target.value);
+      const value = e.target.value;
+
+      this.modifyKey("padding", "end", value);
+
+      const percentage = (value - e.target.min) / (e.target.max - e.target.min) * 100;
+
+      paddingRangeEndWrapper.style.setProperty("--percent", `${percentage}%`);
     });
 
     root.appendChild(rootControls);
-    root.appendChild(this.paddingRangeEnd);
+    paddingRangeEndWrapper.appendChild(this.paddingRangeEnd);
+    rootControls.appendChild(paddingRangeEndWrapper);
     rootControls.appendChild(this.hideUITrigger);
 
     const rootBounds = root.getBoundingClientRect();
@@ -827,6 +531,8 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     this.stylerControls.radius.bl = borderRadiusBL.input;
     this.stylerControls.background.main = this.BgPicker;
     this.stylerControls.colors = {};
+    this.createTextColorPickers();
+
 
     this.UIRoot = root;
     this.UIRootControls = rootControls;
@@ -858,12 +564,14 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
     const radius = document.createElement("input");
     radius.type = "range";
     radius.className = "sk_control_radius";
+    radius.min = 0;
 
     radius.addEventListener("input", (e) => {
       const radiusVal = e.target.value;
       radiusRoot.style.setProperty("--radius", `${radiusVal}px`);
       radiusRoot.style.setProperty("--width", `${radiusVal * 2}px`);
       this.modifyKey("radius", `${variant}`, `${radiusVal}px`);
+      radiusRoot.style.setProperty("--max", `${e.target.getAttribute('max')}px`);
     });
 
     const radiusIndicator = document.createElement("div");
@@ -1075,50 +783,85 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     return styles;
   }
 
+  getSelectorEssenceStyles(selector) {
+    let computedStyles = getComputedStyle(selector)
+    if (!selector) return;
+    let styles = {
+      bg: computedStyles.getPropertyValue("--eventBg"),
+      txt: computedStyles.getPropertyValue("--eventTxt"),
+      txt2: computedStyles.getPropertyValue("--eventTxt2"),
+      txt3: computedStyles.getPropertyValue("--eventTxt3"),
+      padding: computedStyles.padding,
+      borderRadiusTL: computedStyles.borderTopLeftRadius,
+      borderRadiusTR: computedStyles.borderTopRightRadius,
+      borderRadiusBR: computedStyles.borderBottomRightRadius,
+      borderRadiusBL: computedStyles.borderBottomLeftRadius,
+    };
+
+    return styles;
+  }
+
+  getElementsWithColorAttr(rootEl) {
+    const grouped = {};
+    const stack = [rootEl];
+
+    while (stack.length > 0) {
+      const current = stack.pop();
+      for (const child of current.children) {
+        if (child.hasAttribute("data-sk")) continue;
+        if (child.hasAttribute("data-sk-color")) {
+          const color = child.getAttribute("data-sk-color");
+          if (!grouped[color]) grouped[color] = [];
+          grouped[color].push(child);
+        }
+        stack.push(child);
+      }
+    }
+    return grouped;
+  }
+
+
   showUI(x, y, currentElement) {
     const _t = this;
     if (!this.UIRoot) return;
 
     const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
+    const css = this.getSelectorEssenceStyles(currentElement);
+
     const bounds = currentElement.getBoundingClientRect();
-    const bg = elementStyles.background;
-    const txt = elementStyles.text;
+    const bg = css.bg;
     const padding = this.parseProp(elementStyles.padding);
 
     this.stylerControls.background.main.style.background = bg;
-    // this.stylerControls.color.style.background = txt;
-    this.stylerControls.padding.top.value = padding.top.value;
+
+
+    this.stylerControls.colors.Txt.style.background = css.txt;
+    this.stylerControls.colors.Txt.style.background = css.txt2;
+    this.stylerControls.colors.Txt.style.background = css.txt3;
+
     this.stylerControls.padding.end.value = padding.right.value;
-    this.stylerControls.padding.bottom.value = padding.bottom.value;
     this.stylerControls.padding.start.value = padding.left.value;
     this.stylerControls.radius.tl.value = elementStyles.borderTopLeftRadius;
     this.stylerControls.radius.tr.value = elementStyles.borderTopRightRadius;
     this.stylerControls.radius.br.value = elementStyles.borderBottomRightRadius;
     this.stylerControls.radius.bl.value = elementStyles.borderBottomLeftRadius;
+    const radiusMax = Math.ceil(bounds.height / 2);
+    this.stylerControls.radius.tl.setAttribute("max", radiusMax)
+    this.stylerControls.radius.tr.setAttribute("max", radiusMax)
+    this.stylerControls.radius.br.setAttribute("max", radiusMax)
+    this.stylerControls.radius.bl.setAttribute("max", radiusMax)
 
-    // Get the window dimensions
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    const uiWidth = this.UIRoot.offsetWidth || 300;
+    const uiHeight = this.UIRoot.offsetHeight || 150;
 
-    // Get the UIRoot dimensions
-    const uiWidth = this.UIRoot.offsetWidth || 300; // Default to a sensible width if not rendered yet
-    const uiHeight = this.UIRoot.offsetHeight || 150; // Default to a sensible height if not rendered yet
-
-    // Adjust x and y to ensure the UI fits within the window
-    if (x + uiWidth > windowWidth) {
-      x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
-    }
-    if (y + uiHeight > windowHeight) {
-      y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
-    }
-
-    // Prevent negative positions
-    x = Math.max(x, 10); // Minimum padding of 10px
+    if (x + uiWidth > windowWidth) x = windowWidth - uiWidth - 10;
+    if (y + uiHeight > windowHeight) y = windowHeight - uiHeight - 10;
+    x = Math.max(x, 10);
     y = Math.max(y, 10);
 
-    // Set the adjusted position
     const gap = 12;
-
     this.UIRoot.style.left = `${x - gap}px`;
     this.UIRoot.style.top = `${y - gap}px`;
     this.UIRoot.style.width = `${bounds.width + gap * 2}px`;
@@ -1131,42 +874,16 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     let selector = `${specificCn}[data-sk="${uniqueClass}"]`;
 
     this.activeSelectorId = selector;
-
     this.UIRoot.classList.add("state-reveal");
+
     let timeoutId = setTimeout(() => {
       this.UIRoot.classList.remove("state-reveal");
       timeoutId = null;
     }, 3000);
 
+    // 🔥 Attach dynamic color pickers
 
-    const rootBounds = _t.UIRoot.getBoundingClientRect();
-
-
-    colorElements.forEach((ce) => {
-      let uniqueClass = ce.getAttribute("data-sk-color");
-      const handlePickerCallBack = (e) => {
-        _t.handlePicker(e, null, null, (color) => {
-          _t.modifyKey("colors", uniqueClass, color);
-          _t.updateControl("colors", uniqueClass, color);
-        });
-      };
-
-      const picker = _t.createColorBox(
-        "sk_picker_trigger",
-        handlePickerCallBack
-      );
-      _t.stylerControls.colors[uniqueClass] = picker;
-
-      const bounds = ce.getBoundingClientRect();
-
-      picker.style.top = bounds.top - rootBounds.top + rootBounds.height + "px";
-      picker.style.left = bounds.left - rootBounds.left + "px";
-      picker.style.position = "absolute";
-
-      _t.UIRoot.appendChild(picker);
-    });
-
-    this.createKey(selector, currentElement, colorElements);
+    this.createKey(selector, currentElement); // saves txt1/2/3
   }
 
   hideUI() {
@@ -1327,7 +1044,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       return;
     }
 
-    // Extract the current color from your state
+    // Use the provided color or default to the one passed
     const currentColor = color;
 
     const x = event.clientX;
@@ -1349,8 +1066,8 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     });
   }
 
-  handleGradientPicker(event, essence, onChangeCallback) {
-    const _vd = this.verbalData(essence);
+  handleGradientPicker(event, color, onChangeCallback) {
+    // const _vd = this.verbalData(essence);
     const _t = this;
     if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
@@ -1359,16 +1076,19 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 
     let x = event.clientX;
     let y = event.clientY;
-    const gtadientState = _t.state[essence].Gradient;
+    const gradientState = {
+      mode: "gradient",
+      stops: [[color, 0], [color, 1],],
+      angle: 0,
+      type: "linear",
+    };
 
     const SKPickerInstance = new SKPicker(
-      null,
-      gtadientState.stops[0],
-      "gradient",
       {
-        stops: gtadientState.stops,
-        angle: gtadientState.angle,
-        type: gtadientState.type,
+        mode: "gradient",
+        stops: gradientState.stops,
+        angle: gradientState.angle,
+        type: gradientState.type,
       }
     );
     SKPickerInstance.init();

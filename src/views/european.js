@@ -58,7 +58,7 @@ export default class ViewDemoEuropean {
 
     this.sidebarDataDoomy = [
       {
-        group: "sport",
+        group: "menu_1",
         items: [
           { name: "Football", count: 24 },
           { name: "Basketball", count: 15 },
@@ -73,7 +73,7 @@ export default class ViewDemoEuropean {
         ],
       },
       {
-        group: "country",
+        group: "menu_2",
         items: [
           { name: "England", count: 12 },
           { name: "Spain", count: 9 },
@@ -86,7 +86,7 @@ export default class ViewDemoEuropean {
         ],
       },
       {
-        group: "champ",
+        group: "menu_3",
         items: [
           { name: "Premier League" },
           { name: "La Liga" },
@@ -99,7 +99,7 @@ export default class ViewDemoEuropean {
   createSidebarRow(variant) {
     const el = document.createElement("div");
     el.className = "demo_sidebar_row";
-    el.setAttribute("data-sk", `sidebar_${variant ? variant : "base"}`);
+    el.setAttribute("data-sk", `${variant}`);
     return el;
   }
 
@@ -168,7 +168,7 @@ export default class ViewDemoEuropean {
   createEventTeam(text) {
     const el = document.createElement("span");
     el.className = "demo_event_team";
-    el.setAttribute("data-sk-color", "team");
+    el.setAttribute("data-sk-color", "1");
     el.innerText = text || "team_name";
     return el;
   }
@@ -176,7 +176,7 @@ export default class ViewDemoEuropean {
   createEventScore(text) {
     const el = document.createElement("span");
     el.className = "demo_event_score";
-    el.setAttribute("data-sk-color", "score");
+    el.setAttribute("data-sk-color", "2");
     el.innerText = text || "0";
     return el;
   }
@@ -292,7 +292,7 @@ export default class ViewDemoEuropean {
     eventHeader.appendChild(ehi2);
     const eventSubHeader = this.createEventSubHeader();
     const eventListWrapper = this.createListWrapper("variant_event");
-    eventListWrapper.setAttribute("data-sk", "event_list");
+    // eventListWrapper.setAttribute("data-sk", "event_list");
     events.map((i) => {
       const er = this.createEventRow();
       const ht = this.createEventTeam(i.homeTeam);
@@ -330,7 +330,7 @@ export default class ViewDemoEuropean {
     eventRoot.appendChild(eventTabs);
     const wrapper = document.createElement("div");
     wrapper.className = "demo_widget_wrapper";
-    wrapper.setAttribute("data-sk", "widget_wrapper");
+    wrapper.setAttribute("data-sk", "event");
     wrapper.appendChild(eventHeader);
     wrapper.appendChild(eventSubHeader);
     wrapper.appendChild(eventListWrapper);
@@ -360,14 +360,14 @@ export default class ViewDemoEuropean {
 
     const header = document.createElement("div");
     header.className = "demo_widget_header";
-    header.setAttribute("data-sk", "widget_header");
+    header.setAttribute("data-sk", "header");
 
     const headerText = document.createElement("span");
     headerText.className = "demo_widget_header_title";
     headerText.innerText = "widget title";
     const content = document.createElement("div");
     content.className = "demo_widget_content";
-    content.setAttribute("data-sk", "dominant");
+    content.setAttribute("data-sk", "event");
 
     content.appendChild(this.createInput());
     content.appendChild(this.createInput());
@@ -387,14 +387,14 @@ export default class ViewDemoEuropean {
 
     const header = document.createElement("div");
     header.className = "demo_widget_header";
-    header.setAttribute("data-sk", "widget_header");
+    header.setAttribute("data-sk", "header");
 
     const headerText = document.createElement("span");
     headerText.className = "demo_widget_header_title";
     headerText.innerText = "widget title";
     const content = document.createElement("div");
     content.className = "demo_widget_content";
-    content.setAttribute("data-sk", "widget_content");
+    content.setAttribute("data-sk", "event");
 
     content.appendChild(this.createInput());
     content.appendChild(this.createInput());
@@ -507,7 +507,7 @@ export default class ViewDemoEuropean {
     this.sidebarDataDoomy.forEach((element, index) => {
       const group = document.createElement("div");
       group.className = `demo_sidebar_items_list_group variant_${element.group}`;
-      group.setAttribute("data-sk", "sidebar_list");
+      // group.setAttribute("data-sk", "sidebar_list");
       element.items.forEach((it, index) => {
         const si = this.createSidebarRow(element.group);
 

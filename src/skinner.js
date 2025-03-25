@@ -2726,6 +2726,7 @@ body {
         flex-direction: column;
     align-items: stretch;
     padding: 6px;
+    padding-bottom: 16px;
     background: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt);
     font-size: 10px;
@@ -3736,6 +3737,352 @@ display: none;
     left: 8px;
     top: 50%;
     transform: translate(0, -50%);
+}
+
+.sk_ui_custom_change_controls_wrapper{
+        position: absolute;
+    top: calc(100% + 16px);
+    right: 0;
+    background: var(--sk_dominantBg);
+    width: 100px;
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 8px;
+        width: 100%;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    }
+
+      .sk_ui_custom_change_root.state-reveal {
+        animation: appear 0.3s;
+      }
+        @keyframes appear {
+          0%   { opacity: 0; }
+          100% { opacity: 1; }
+        }
+          .sk_styler_control_row {
+    display: flex;
+    align-items: center;
+    column-gap: var(--controls-ui-gap);
+    
+}
+    .sk_styler_control_row_label {
+    flex-grow: 1;
+    min-width: 1px;
+    font-size: 10px;
+    text-align: right;
+}
+    .sk_styler_control_row.variant_color{
+        width: calc(50% - 5px);
+    }
+
+    .sk_styler_control_holder > .pickr {
+    position: absolute;
+}
+
+.row{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    column-gap: 4px;
+}
+
+.sk_block_separator_y{
+    width: 1px;
+    flex-shrink:0;
+    height: 24px;
+    background: var(--sk_dominantBg);
+    flex-shrink: 0;
+
+}
+
+.sk_input {
+    appearance: none;
+    width: 50px;
+    font-size: 11px;
+    height: var(--input_size);
+    font-weight: 500;
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt2);
+    border-radius: 4px;
+    text-align: right;
+    border: 0;
+    border: 1px solid var(--sk_dominantShadow);
+    outline: 0;
+    padding: 0 6px;
+}
+
+.sk_btn {
+    appearance: none;
+    border: 0;
+    border: 1px solid var(--sk_dominantBg3Hover);
+    text-align: center;
+    height: var(--input_size);
+    text-decoration: none;
+    background-color: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 4px;
+    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
+}
+    .sk_btn.variant_primary{
+        width: 100%;
+    background-color: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
+    }
+
+    .sk_btn.variant_styler{
+    width: 60px;
+    }
+
+
+
+    /*********** Baseline, reset styles ***********/
+input[type="range"].sk_control_padding {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100px;
+  margin: 0;
+  width: 100px;
+  height: calc(100% + 24px);
+  height: 100%;
+  display: block;
+}
+
+/* Removes default focus */
+input[type="range"].sk_control_padding:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_padding::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: -6px; 
+  margin-top: 0; 
+  background-color: var(--inputsCta);
+  border-radius: 0px;
+  height: calc(100% + 12px);
+  height: 100%;
+  width: 2px;
+}
+
+input[type="range"].sk_control_padding:focus::-webkit-slider-thumb {
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"].sk_control_padding::-moz-range-track {
+  background-color: var(--inputsOverlay);
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_padding::-moz-range-thumb {
+  background-color: var(--inputsOverlay);
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 0px;
+  height: 100%;
+  width: 2px;
+}
+
+input[type="range"].sk_control_padding:focus::-moz-range-thumb{
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+.sk_control_padding_wrapper.variant_start{
+position: absolute;
+    left: 0;
+}
+
+.sk_control_padding_wrapper:before{
+content: "";
+display: block;
+position: absolute;
+left: 0;
+height: 100%;
+background: repeating-linear-gradient(45deg, var(--sk_dominantTxt2) 0 1px, transparent 0 6px, var(--sk_dominantTxt2) 0 7px);
+width: var(--percent);
+pointer-events: none;
+
+}
+
+.sk_control_padding_wrapper{
+position: absolute;
+height: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+
+}
+
+.sk_control_padding_wrapper.variant_end{
+right: 0;
+}
+
+.sk_control_padding_wrapper.variant_end:before{
+left: auto;
+right: 0;
+}
+
+
+  .sk_flip{
+  direction: rtl;}
+   
+  .sk_control_radius_root{
+  --size: 40px;
+  width: var(--size);
+  height: var(--size);
+    z-index: 10;
+    position: absolute;
+  }
+
+  .sk_control_radius_root > .sk_control_radius{
+      transform: translate(-50%, -50%) rotate(45deg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  .sk_control_radius_root.variant_tl{
+    top: 0;
+    left: 0;
+    transform: rotate(0deg);
+  }
+
+
+  .sk_control_radius_root.variant_tr{
+    top: 0;
+    right: 0;
+    transform: rotate(90deg);
+  }
+
+    
+
+  .sk_control_radius_root.variant_br{
+    bottom: 0;
+    right: 0;
+    transform: rotate(180deg);
+
+  }
+
+
+  .sk_control_radius_root.variant_bl{
+    bottom: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+  
+    
+  .sk_control_radius_indicator{
+  background-color: var(--inputsOverlay);
+  width: var(--radius);
+  height: var(--radius);
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+  
+
+
+      /*********** Baseline, reset styles ***********/
+input[type="range"].sk_control_radius {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: var(--max);
+  height: 4px;
+  margin: 0;
+}
+
+/* Removes default focus */
+input[type="range"].sk_control_radius:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"].sk_control_radius::-webkit-slider-runnable-track {
+  background-color: transparent;
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_radius::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: 0px; /* Centers thumb on the track */
+  background-color: var(--inputsCta);
+  border-radius: 50%;
+  height: 100%;
+  width: 4px;
+}
+
+input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"].sk_control_radius::-moz-range-track {
+  background-color: transparent;
+  border-radius: 0px;
+  height: 100%;
+  border: 0;
+}
+
+/* slider thumb */
+input[type="range"].sk_control_radius::-moz-range-thumb {
+  background-color: var(--inputsOverlay);
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 50%;
+  height: 100%;
+  width: 4px;
+}
+
+input[type="range"].sk_control_radius:focus::-moz-range-thumb{
+  outline: 1px solid var(--inputsCta);
+  outline-offset: 1px;
+}
+
+.sk_ui_custom_change_controls_pickers_wrapper{
+    display: flex
+;
+    align-items: center;
+    column-gap: 6px;
+        flex-grow: 1;
+    min-width: 1px;
 }
 
 `;
