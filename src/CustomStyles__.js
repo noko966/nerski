@@ -243,10 +243,10 @@ ${cn} > * {
       // Define CSS variables for border radius
 
       CSSVariableRuleStart += `
-        --${_skin.varPrefix}RTL: ${_skin.radius.tl}px;
-        --${_skin.varPrefix}RTR: ${_skin.radius.tr}px;
-        --${_skin.varPrefix}RBR: ${_skin.radius.br}px;
-        --${_skin.varPrefix}RBL: ${_skin.radius.bl}px;
+        --${_skin.varPrefix}RTL: ${_skin.radius.tl};
+        --${_skin.varPrefix}RTR: ${_skin.radius.tr};
+        --${_skin.varPrefix}RBR: ${_skin.radius.br};
+        --${_skin.varPrefix}RBL: ${_skin.radius.bl};
         `;
 
       // Define CSS variables for colors
@@ -258,7 +258,7 @@ ${cn} > * {
       }
 
       CSSVariableRuleStart += `
-        padding-inline-start: var(--${_skin.varPrefix}Ps);
+      padding-inline-start: var(--${_skin.varPrefix}Ps);
         padding-inline-end: var(--${_skin.varPrefix}Pe);
         border-top-left-radius: var(--${_skin.varPrefix}RTL);
         border-top-right-radius: var(--${_skin.varPrefix}RTR);
@@ -312,7 +312,7 @@ ${cn} > * {
 
     // Extract up to 3 unique color keys
   }
-  createTextColorPickers(root) {
+  createTextColorPickers() {
     const colors = ["Txt", "Txt2", "Txt3"];
     colors.forEach((clr, i) => {
       const handlePickerCallBack = (e) => {
@@ -328,7 +328,7 @@ ${cn} > * {
       );
       this.stylerControls.colors[clr] = picker;
 
-      root.appendChild(picker);
+      this.pickersWrapper.appendChild(picker);
     });
   }
 
@@ -413,6 +413,9 @@ ${cn} > * {
     root.style.opacity = 0;
     root.style.pointerEvents = "none";
 
+    const rootControls = document.createElement("div");
+    rootControls.className = "sk_ui_custom_change_controls_wrapper";
+
     // Callback for color picker
     const handlePickerCallBack = (e) => {
       this.handleGradientPicker(e, null, (data) => {
@@ -430,73 +433,29 @@ ${cn} > * {
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
 
+    // Control wrappers for various properties
+    let controlWrapperBg = this.createControl("background", "variant_color");
+
+    // Padding input
+
+    // Background picker
     this.BgPicker = this.createColorBox(
       "sk_picker_trigger",
       handlePickerCallBack
     );
 
-    const rootBounds = root.getBoundingClientRect();
-
-    this.ui = {};
-
-    const bglbl = this.createControlHeader("backgrouns");
-    const bgContent = this.createControlContent();
-    this.ui.backgroundRoot = this.createControlRoot();
-    this.ui.backgroundRoot.appendChild(bglbl);
-    this.ui.backgroundRoot.appendChild(bgContent);
-    document.body.appendChild(style);
-    document.body.appendChild(root);
-    this.ui.modalsContainer = document.createElement("div");
-
-    this.ui.modalsContainer.appendChild(this.ui.backgroundRoot);
-    this.ui.backgroundRoot.appendChild(this.BgPicker);
-
-    this.stylerControls = {};
-    this.ui.modalsContainer.className = "sk_ui_custom_change_modals_container";
-
-    this.ui.paddingRoot = this.createControlRoot();
-    const plbl = this.createControlHeader("padding");
-    const pContent = this.createControlContent();
-    this.ui.paddingRoot.appendChild(plbl);
-    this.ui.paddingRoot.appendChild(pContent);
-    pContent.appendChild(this.createPaddingGroupControls());
-    this.ui.modalsContainer.appendChild(this.ui.paddingRoot);
-    this.ui.radiusRoot = this.createControlRoot();
-    const rlbl = this.createControlHeader("radius");
-    const rContent = this.createControlContent();
-    this.ui.radiusRoot.appendChild(rlbl);
-    this.ui.radiusRoot.appendChild(rContent);
-    rContent.appendChild(this.createRadiusGroupControls());
-    this.ui.modalsContainer.appendChild(this.ui.radiusRoot);
-    root.appendChild(this.ui.modalsContainer);
-
-    this.stylerControls.background = {};
-
-    this.stylerControls.background.main = this.BgPicker;
-    this.stylerControls.colors = {};
-    this.createTextColorPickers(bgContent);
-    this.ui.modalsContainer.appendChild(this.hideUITrigger);
-
-    this.UIRoot = root;
-  }
-
-  createFansyPaddingControls(root) {
-    this.radiusesWrapper = document.createElement("div");
-    this.radiusesWrapper.className =
-      "sk_ui_custom_change_controls_radiuses_wrapper";
-    const borderRadiusTL = this.createRadiusControl(this.radiusesWrapper, "tl");
-    const borderRadiusTR = this.createRadiusControl(this.radiusesWrapper, "tr");
-    const borderRadiusBR = this.createRadiusControl(this.radiusesWrapper, "br");
-    const borderRadiusBL = this.createRadiusControl(this.radiusesWrapper, "bl");
-    this.stylerControls.radius = {};
-    this.stylerControls.radius.tl = borderRadiusTL.input;
-    this.stylerControls.radius.tr = borderRadiusTR.input;
-    this.stylerControls.radius.br = borderRadiusBR.input;
-    this.stylerControls.radius.bl = borderRadiusBL.input;
-
     this.paddingsWrapper = document.createElement("div");
     this.paddingsWrapper.className =
       "sk_ui_custom_change_controls_paddings_wrapper";
+    this.pickersWrapper = document.createElement("div");
+    this.pickersWrapper.className =
+      "sk_ui_custom_change_controls_pickers_wrapper";
+    this.radiusesWrapper = document.createElement("div");
+    this.radiusesWrapper.className =
+      "sk_ui_custom_change_controls_radiuses_wrapper";
+    rootControls.appendChild(this.pickersWrapper);
+    this.pickersWrapper.appendChild(this.BgPicker);
+
     const paddingRangeStartWrapper = document.createElement("div");
     paddingRangeStartWrapper.className =
       "sk_control_padding_wrapper variant_start";
@@ -519,7 +478,6 @@ ${cn} > * {
     });
 
     paddingRangeStartWrapper.appendChild(this.paddingRangeStart);
-
     this.paddingsWrapper.appendChild(paddingRangeStartWrapper);
 
     const paddingRangeEndWrapper = document.createElement("div");
@@ -542,11 +500,42 @@ ${cn} > * {
       paddingRangeEndWrapper.style.setProperty("--percent", `${percentage}%`);
     });
 
+    root.appendChild(rootControls);
     root.appendChild(this.paddingsWrapper);
     root.appendChild(this.radiusesWrapper);
-
     paddingRangeEndWrapper.appendChild(this.paddingRangeEnd);
     this.paddingsWrapper.appendChild(paddingRangeEndWrapper);
+    rootControls.appendChild(this.hideUITrigger);
+
+    const rootBounds = root.getBoundingClientRect();
+
+    const borderRadiusTL = this.createRadiusControl(this.radiusesWrapper, "tl");
+    const borderRadiusTR = this.createRadiusControl(this.radiusesWrapper, "tr");
+    const borderRadiusBR = this.createRadiusControl(this.radiusesWrapper, "br");
+    const borderRadiusBL = this.createRadiusControl(this.radiusesWrapper, "bl");
+
+    this.stylerControls = {};
+
+    document.body.appendChild(style);
+    document.body.appendChild(root);
+
+    this.stylerControls.padding = {};
+    this.stylerControls.padding.top = {};
+    this.stylerControls.padding.end = this.paddingRangeEnd;
+    this.stylerControls.padding.bottom = {};
+    this.stylerControls.padding.start = this.paddingRangeStart;
+    this.stylerControls.radius = {};
+    this.stylerControls.background = {};
+    this.stylerControls.radius.tl = borderRadiusTL.input;
+    this.stylerControls.radius.tr = borderRadiusTR.input;
+    this.stylerControls.radius.br = borderRadiusBR.input;
+    this.stylerControls.radius.bl = borderRadiusBL.input;
+    this.stylerControls.background.main = this.BgPicker;
+    this.stylerControls.colors = {};
+    this.createTextColorPickers();
+
+    this.UIRoot = root;
+    this.UIRootControls = rootControls;
   }
 
   createRadiusControl(root, variant) {
@@ -655,28 +644,28 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     };
   }
 
-  createPaddingGroupControls() {
+  createInputsGroupControl() {
     const _t = this;
     const cx = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `start`, e.target.value);
-      _t.modifyKey("padding", `end`, e.target.value);
+      _t.modifyKey(`padding-left`, e.target.value);
+      _t.modifyKey(`padding-right`, e.target.value);
     }, "x");
     const cy = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `top`, e.target.value);
-      _t.modifyKey("padding", `bottom`, e.target.value);
+      _t.modifyKey(`padding-top`, e.target.value);
+      _t.modifyKey(`padding-bottom`, e.target.value);
     }, "y");
 
     const cs = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `start`, e.target.value);
+      _t.modifyKey(`padding-left`, e.target.value);
     }, "s");
     const ct = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `top`, e.target.value);
+      _t.modifyKey(`padding-top`, e.target.value);
     }, "t");
     const ce = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `end`, e.target.value);
+      _t.modifyKey(`padding-right`, e.target.value);
     }, "e");
     const cb = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `bottom`, e.target.value);
+      _t.modifyKey(`padding-bottom`, e.target.value);
     }, "b");
 
     const controlWrapper1 = document.createElement("div");
@@ -698,45 +687,9 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     _t.stylerControls.padding = {};
 
     _t.stylerControls.padding.top = ct.inputEl;
-    _t.stylerControls.padding.end = ce.inputEl;
+    _t.stylerControls.padding.right = ce.inputEl;
     _t.stylerControls.padding.bottom = cb.inputEl;
-    _t.stylerControls.padding.start = cs.inputEl;
-
-    return controlsRoot;
-  }
-
-  createRadiusGroupControls() {
-    const _t = this;
-    const tl = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `tl`, e.target.value);
-    }, "x");
-    const tr = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `tr`, e.target.value);
-    }, "y");
-
-    const bl = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `bl`, e.target.value);
-    }, "s");
-    const br = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `br`, e.target.value);
-    }, "t");
-
-    const controlWrapper2 = document.createElement("div");
-    controlWrapper2.className = "sk_input_control_group_block";
-    controlWrapper2.appendChild(tl.inputWrapperEl);
-    controlWrapper2.appendChild(tr.inputWrapperEl);
-    controlWrapper2.appendChild(bl.inputWrapperEl);
-    controlWrapper2.appendChild(br.inputWrapperEl);
-
-    const controlsRoot = document.createElement("div");
-    controlsRoot.appendChild(controlWrapper2);
-
-    _t.stylerControls.radius = {};
-
-    _t.stylerControls.radius.tl = tl.inputEl;
-    _t.stylerControls.radius.tr = tr.inputEl;
-    _t.stylerControls.radius.bl = bl.inputEl;
-    _t.stylerControls.radius.br = br.inputEl;
+    _t.stylerControls.padding.left = cs.inputEl;
 
     return controlsRoot;
   }
@@ -837,18 +790,11 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       txt: computedStyles.getPropertyValue("--eventTxt"),
       txt2: computedStyles.getPropertyValue("--eventTxt2"),
       txt3: computedStyles.getPropertyValue("--eventTxt3"),
-      padding: {
-        start: computedStyles.paddingInlineStart,
-        end: computedStyles.paddingInlineEnd,
-        top: computedStyles.paddingTop,
-        bottom: computedStyles.paddingBottom,
-      },
-      radius: {
-        tl: computedStyles.borderTopLeftRadius,
-        tr: computedStyles.borderTopRightRadius,
-        br: computedStyles.borderBottomRightRadius,
-        bl: computedStyles.borderBottomLeftRadius,
-      },
+      padding: computedStyles.padding,
+      borderRadiusTL: computedStyles.borderTopLeftRadius,
+      borderRadiusTR: computedStyles.borderTopRightRadius,
+      borderRadiusBR: computedStyles.borderBottomRightRadius,
+      borderRadiusBL: computedStyles.borderBottomLeftRadius,
     };
 
     return styles;
@@ -877,10 +823,12 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const _t = this;
     if (!this.UIRoot) return;
 
+    const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
     const css = this.getSelectorEssenceStyles(currentElement);
 
     const bounds = currentElement.getBoundingClientRect();
     const bg = css.bg;
+    const padding = this.parseProp(elementStyles.padding);
 
     this.stylerControls.background.main.style.background = bg;
 
@@ -888,14 +836,12 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.colors.Txt.style.background = css.txt2;
     this.stylerControls.colors.Txt.style.background = css.txt3;
 
-    this.stylerControls.padding.start.value = css.padding.start;
-    this.stylerControls.padding.end.value = css.padding.end;
-    this.stylerControls.padding.top.value = css.padding.top;
-    this.stylerControls.padding.bottom.value = css.padding.bottom;
-    this.stylerControls.radius.tl.value = css.radius.tl;
-    this.stylerControls.radius.tr.value = css.radius.tr;
-    this.stylerControls.radius.br.value = css.radius.br;
-    this.stylerControls.radius.bl.value = css.radius.bl;
+    this.stylerControls.padding.end.value = padding.right.value;
+    this.stylerControls.padding.start.value = padding.left.value;
+    this.stylerControls.radius.tl.value = css.borderTopLeftRadius;
+    this.stylerControls.radius.tr.value = css.borderTopRightRadius;
+    this.stylerControls.radius.br.value = css.borderBottomRightRadius;
+    this.stylerControls.radius.bl.value = css.borderBottomLeftRadius;
     this.stylerControls.radius.bl.parentElement;
 
     const radiusMax = Math.ceil(bounds.height / 2);
@@ -903,6 +849,26 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.radius.tr.setAttribute("max", radiusMax);
     this.stylerControls.radius.br.setAttribute("max", radiusMax);
     this.stylerControls.radius.bl.setAttribute("max", radiusMax);
+
+    this.stylerControls.radius.tl.parentElement.style.setProperty(
+      "--max",
+      `${radiusMax}px`
+    );
+
+    this.stylerControls.radius.tr.parentElement.style.setProperty(
+      "--max",
+      `${radiusMax}px`
+    );
+
+    this.stylerControls.radius.br.parentElement.style.setProperty(
+      "--max",
+      `${radiusMax}px`
+    );
+
+    this.stylerControls.radius.bl.parentElement.style.setProperty(
+      "--max",
+      `${radiusMax}px`
+    );
 
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;

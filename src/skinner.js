@@ -464,7 +464,9 @@ class Skinner {
     };
 
     const createGlass = (c1, alpha) => {
-      return tinycolor(c1).setAlpha(alpha || 0.5).toRgbString();
+      return tinycolor(c1)
+        .setAlpha(alpha || 0.5)
+        .toRgbString();
     };
 
     UISkin.order.forEach((name, i) => {
@@ -2158,7 +2160,7 @@ body {
   transform: translate(-50%, 0);
   transition: transform 0.5s;
   z-index: var(--sk_zind);
-  height: 320px;
+  height: 200px;
   width: auto;
   color: var(--sk_dominantTxt);
   border: 1px solid var(--sk_dominantBgHover);
@@ -3004,11 +3006,9 @@ input[type="range"]::-webkit-slider-thumb {
     width: var(--chbSize);
     height: var(--chbH);
     background-color: var(--sk_dominantBg3);
-    border: 1px solid var(--sk_dominantShadow);
     border-radius: 50%;
     cursor: pointer;
     -webkit-appearance: none;
-    box-shadow: inset 0 0 0px 6px var(--sk_dominantBgHover);
 }
 
 input[type="range"]::-moz-range-track {
@@ -3854,9 +3854,8 @@ input[type="range"].sk_control_padding {
   appearance: none;
   background: transparent;
   cursor: pointer;
-  width: 100px;
   margin: 0;
-  width: 100px;
+  width: 32px;
   height: calc(100% + 24px);
   height: 100%;
   display: block;
@@ -3880,13 +3879,13 @@ input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
 input[type="range"].sk_control_padding::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  margin-top: -6px; 
+  margin-top: -4px; 
   margin-top: 0; 
   background-color: var(--inputsCta);
   border-radius: 0px;
-  height: calc(100% + 12px);
-  height: 100%;
-  width: 2px;
+  width: 6px;
+  height: calc(100% + 8px);
+
 }
 
 input[type="range"].sk_control_padding:focus::-webkit-slider-thumb {
@@ -3909,7 +3908,7 @@ input[type="range"].sk_control_padding::-moz-range-thumb {
   border: none; /*Removes extra border that FF applies*/
   border-radius: 0px;
   height: 100%;
-  width: 2px;
+  width: 12px;
 }
 
 input[type="range"].sk_control_padding:focus::-moz-range-thumb{
@@ -3931,12 +3930,13 @@ height: 100%;
 background: repeating-linear-gradient(45deg, var(--sk_dominantTxt2) 0 1px, transparent 0 6px, var(--sk_dominantTxt2) 0 7px);
 width: var(--percent);
 pointer-events: none;
+border: 2px solid var(--sk_dominantTxt2);
 
 }
 
 .sk_control_padding_wrapper{
 position: absolute;
-height: calc(100% + 8px);
+height: 100%;
     top: 50%;
     transform: translateY(-50%);
 
@@ -3964,10 +3964,11 @@ right: 0;
   }
 
   .sk_control_radius_root > .sk_control_radius{
-      transform: translate(-50%, -50%) rotate(45deg);
+      transform-origin: left center;
+    transform: rotate(45deg);
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
   }
   .sk_control_radius_root.variant_tl{
     top: 0;
@@ -4001,13 +4002,18 @@ right: 0;
     
   .sk_control_radius_indicator{
   background-color: var(--inputsOverlay);
-  width: var(--radius);
-  height: var(--radius);
+  width: calc(var(--radius) * 2);
+  height: calc(var(--radius) * 2);
     position: absolute;
     top: 0;
     left: 0;
     pointer-events: none;
     border-radius: 50%;
+    position: absolute;
+    left: 0;
+    background: repeating-linear-gradient(45deg, var(--sk_dominantTxt2) 0 1px, transparent 0 6px, var(--sk_dominantTxt2) 0 7px);
+    pointer-events: none;
+    border: 2px solid var(--sk_dominantTxt2);
   }
   
 
@@ -4019,8 +4025,8 @@ input[type="range"].sk_control_radius {
   background: transparent;
   cursor: pointer;
   width: var(--max);
-  height: 4px;
-  margin: 0;
+  height: 12px;
+  margin-top: -6px;
 }
 
 /* Removes default focus */
@@ -4044,8 +4050,8 @@ input[type="range"].sk_control_radius::-webkit-slider-thumb {
   margin-top: 0px; /* Centers thumb on the track */
   background-color: var(--inputsCta);
   border-radius: 50%;
-  height: 100%;
-  width: 4px;
+  height: 12px;
+  width: 12px;
 }
 
 input[type="range"].sk_control_radius:focus::-webkit-slider-thumb {
@@ -4077,12 +4083,62 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb{
 }
 
 .sk_ui_custom_change_controls_pickers_wrapper{
-    display: flex
-;
+    display: flex;
     align-items: center;
     column-gap: 6px;
         flex-grow: 1;
     min-width: 1px;
+}
+
+.sk_ui_custom_change_controls_paddings_wrapper{
+    position: absolute;
+    top: 0;
+    right: calc(100% + 16px);
+    background: var(--sk_dominantBg);
+    width: 100px;
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 8px;
+    width: 120px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.sk_ui_custom_change_controls_radiuses_wrapper{
+position: absolute;
+    top: 0;
+    left: calc(100% + 16px);
+    background: var(--sk_dominantBg);
+    width: 100px;
+    border-radius: 4px;
+    border: 1px solid var(--sk_dominantBg2);
+    padding: 8px;
+    width: 120px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.sk_ui_custom_change_modals_container{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  background: var(--sk_dominantBg);
+      padding: 8px;
+    border-radius: 4px;
+
+}
+
+.sk_ui_custom_change_modals_container .sk_widget_collapse_block {
+  width: 200px;
+  flex-shrink: 0;
+
 }
 
 `;
