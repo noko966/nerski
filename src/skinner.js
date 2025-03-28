@@ -3744,7 +3744,7 @@ display: none;
     border-top: 1px solid var(--sk_dominantBg3Hover);
     bottom: 0;
     right: 0;
-    top: 0;
+    left: 0;
     z-index: 100;
     }
 
@@ -4148,16 +4148,19 @@ position: absolute;
 }
 
 .sk_ui_custom_change_modals_container{
-  position: fixed;
-  bottom: 8px;
-  left: 8px;
-  display: flex;
-  align-items: flex-start;
-  column-gap: 8px;
-  background: var(--sk_dominantBg);
-      padding: 8px;
+ position: fixed;
+    bottom: 8px;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 8px;
+    align-items: stretch;
+    background: var(--sk_dominantBg);
+    padding: 8px;
     border-radius: 4px;
-z-index: var(--sk_zind);
+    z-index: var(--sk_zind);
 }
 
 .sk_ui_custom_change_modals_container .sk_widget_collapse_block {
@@ -4171,9 +4174,11 @@ display: flex;
 }
 
 .sk_ui_custom_change_modals_group{
-display: flex;
-  align-items: center;
-  column-gap: 8px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    column-gap: 8px;
+    row-gap: 8px;
 }
 
 .sk_ui_custom_change_modals_group.variant_colors .sk_widget_collapse_block{
