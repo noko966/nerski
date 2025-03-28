@@ -348,7 +348,7 @@ ${cn} > * {
     let ic = document.createElement("i");
     ic.className = "sk_ico";
     ic.innerHTML = "";
-    el.appendChild(ic);
+    // el.appendChild(ic);
     el.appendChild(txt);
 
     return el;
@@ -377,6 +377,52 @@ ${cn} > * {
     };
   }
 
+  createSVGOverlay(x,y,w,h){
+    const svgNS = "http://www.w3.org/2000/svg";
+
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("id", "overlay");
+  svg.setAttribute("width", "100%");
+  svg.setAttribute("height", "100%");
+  svg.setAttribute("style", "position:fixed;top:0;left:0;z-index:9999;pointer-events:none");
+
+  const defs = document.createElementNS(svgNS, "defs");
+  const mask = document.createElementNS(svgNS, "mask");
+  mask.setAttribute("id", "cutout");
+
+  const fullRect = document.createElementNS(svgNS, "rect");
+  fullRect.setAttribute("x", "0");
+  fullRect.setAttribute("y", "0");
+  fullRect.setAttribute("width", "100%");
+  fullRect.setAttribute("height", "100%");
+  fullRect.setAttribute("fill", "white");
+
+  // Cutout black rect
+  const cutout = document.createElementNS(svgNS, "rect");
+  cutout.setAttribute("x", x);
+  cutout.setAttribute("y", y);
+  cutout.setAttribute("width", w);
+  cutout.setAttribute("height", h);
+  cutout.setAttribute("fill", "black");
+
+  mask.appendChild(fullRect);
+  mask.appendChild(cutout);
+  defs.appendChild(mask);
+  svg.appendChild(defs);
+
+  const overlay = document.createElementNS(svgNS, "rect");
+  overlay.setAttribute("x", "0");
+  overlay.setAttribute("y", "0");
+  overlay.setAttribute("width", "100%");
+  overlay.setAttribute("height", "100%");
+  overlay.setAttribute("fill", "rgba(0,0,0,0.7)");
+  overlay.setAttribute("mask", "url(#cutout)");
+
+  svg.appendChild(overlay);
+
+  return svg;
+  }
+
   createUI() {
     let self = this;
     if (this.UIRoot) return; // Prevent duplicate UI creation
@@ -388,30 +434,27 @@ ${cn} > * {
     --inputsCta: var(--sk_dominantTxt2);
     --solid_size: 24px;
     position: fixed;
-    width: 250px;
-    height: auto;
-    z-index: var(--sk_zind);
-    top: 0px;
-    transform: translate(0, 0);
+    width: 100%;
+    height: 100%;
+    z-index: calc(var(--sk_zind) - 100);
+    top: 0;
+    bottom:0;
+    left:0;
+    right:0;
     border: none;
-    background: var(--sk_dominantGlass2);
-    border: 1px solid var(--sk_dominantBg);
-    flex-direction: column;
-    align-items: stretch;
-    padding: 6px;
-    border-radius: 4px;
-    display: flex;
-    row-gap: 8px;
       }
     
     
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
-    root.style.left = "50%";
-    root.style.top = "50%";
     root.style.opacity = 0;
     root.style.pointerEvents = "none";
+    this.ui = {};
+
+    this.ui.overlay = this.createSVGOverlay(100,100,100,20);
+
+    
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
@@ -436,10 +479,16 @@ ${cn} > * {
     );
 
     const rootBounds = root.getBoundingClientRect();
+    root.appendChild(this.ui.overlay);
 
-    this.ui = {};
 
-    const bglbl = this.createControlHeader("backgrouns");
+    const group1 = document.createElement("div");
+    group1.className = "sk_ui_custom_change_modals_group variant_colors";
+
+    const group2 = document.createElement("div");
+    group2.className = "sk_ui_custom_change_modals_group";
+
+    const bglbl = this.createControlHeader("backgroun's");
     const bgContent = this.createControlContent();
     this.ui.backgroundRoot = this.createControlRoot();
     this.ui.backgroundRoot.appendChild(bglbl);
@@ -448,8 +497,21 @@ ${cn} > * {
     document.body.appendChild(root);
     this.ui.modalsContainer = document.createElement("div");
 
-    this.ui.modalsContainer.appendChild(this.ui.backgroundRoot);
-    this.ui.backgroundRoot.appendChild(this.BgPicker);
+    const txtlbl = this.createControlHeader("text's");
+    const txtContent = this.createControlContent();
+    this.ui.backgroundRoot.appendChild(txtlbl);
+    this.ui.backgroundRoot.appendChild(txtContent);
+    this.ui.modalsContainer.appendChild(group1);
+    this.ui.modalsContainer.appendChild(group2);
+    this.ui.modalsActionsWrapper = document.createElement("div");
+    this.ui.modalsContainer.appendChild(this.ui.modalsActionsWrapper);
+    this.ui.modalsActionsWrapper.className = "sk_actions_wrapper_styler";
+    group1.appendChild(this.ui.backgroundRoot);
+    
+    const bRow = this.createPickersRow();
+    bgContent.appendChild(bRow);
+    bRow.appendChild(this.BgPicker);
+    
 
     this.stylerControls = {};
     this.ui.modalsContainer.className = "sk_ui_custom_change_modals_container";
@@ -460,24 +522,38 @@ ${cn} > * {
     this.ui.paddingRoot.appendChild(plbl);
     this.ui.paddingRoot.appendChild(pContent);
     pContent.appendChild(this.createPaddingGroupControls());
-    this.ui.modalsContainer.appendChild(this.ui.paddingRoot);
+    group2.appendChild(this.ui.paddingRoot);
     this.ui.radiusRoot = this.createControlRoot();
     const rlbl = this.createControlHeader("radius");
     const rContent = this.createControlContent();
     this.ui.radiusRoot.appendChild(rlbl);
     this.ui.radiusRoot.appendChild(rContent);
     rContent.appendChild(this.createRadiusGroupControls());
-    this.ui.modalsContainer.appendChild(this.ui.radiusRoot);
+    group2.appendChild(this.ui.radiusRoot);
     root.appendChild(this.ui.modalsContainer);
 
     this.stylerControls.background = {};
 
     this.stylerControls.background.main = this.BgPicker;
     this.stylerControls.colors = {};
-    this.createTextColorPickers(bgContent);
-    this.ui.modalsContainer.appendChild(this.hideUITrigger);
+    const cRow = this.createPickersRow();
+    txtContent.appendChild(cRow);
+    this.createTextColorPickers(cRow);
+    this.ui.predefinedStylesRoot = document.createElement("div");
+    this.ui.predefinedStylesRoot.className =
+      "sk_ui_prd_styles_root";
+    this.ui.modalsActionsWrapper.appendChild(this.ui.predefinedStylesRoot);
+    this.ui.modalsActionsWrapper.appendChild(this.hideUITrigger);
 
     this.UIRoot = root;
+  }
+
+  createPickersRow(){
+    const root = document.createElement("div");
+    root.className =
+      "sk_ui_pickers_row";
+
+    return root;
   }
 
   createFansyPaddingControls(root) {
@@ -635,6 +711,26 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 <path d="M3.5,16.5h13"/>
 <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
 </svg>
+`,  
+      tl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M16.5,3.5H8.7c-2.9,0-5.2,2.3-5.2,5.2v7.8"/>
+</svg>
+`,
+tr: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M16.5,16.5V8.7c0-2.9-2.3-5.2-5.2-5.2H3.5"/>
+</svg>
+`,
+bl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M3.5,3.5v7.8c0,2.9,2.3,5.2,5.2,5.2h7.8"/>
+</svg>
+`,
+br: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M3.5,16.5h7.8c2.9,0,5.2-2.3,5.2-5.2V3.5"/>
+</svg>
 `,
     };
     const inputWrapper = document.createElement("div");
@@ -680,7 +776,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     }, "b");
 
     const controlWrapper1 = document.createElement("div");
-    controlWrapper1.className = "sk_input_control_group_block";
+    controlWrapper1.className = "sk_input_control_group_block state_hide";
     controlWrapper1.appendChild(cx.inputWrapperEl);
     controlWrapper1.appendChild(cy.inputWrapperEl);
 
@@ -709,17 +805,17 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const _t = this;
     const tl = _t.createInputControl((e) => {
       _t.modifyKey("radius", `tl`, e.target.value);
-    }, "x");
+    }, "tl");
     const tr = _t.createInputControl((e) => {
       _t.modifyKey("radius", `tr`, e.target.value);
-    }, "y");
+    }, "tr");
 
     const bl = _t.createInputControl((e) => {
       _t.modifyKey("radius", `bl`, e.target.value);
-    }, "s");
+    }, "bl");
     const br = _t.createInputControl((e) => {
       _t.modifyKey("radius", `br`, e.target.value);
-    }, "t");
+    }, "br");
 
     const controlWrapper2 = document.createElement("div");
     controlWrapper2.className = "sk_input_control_group_block";
@@ -877,6 +973,20 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const _t = this;
     if (!this.UIRoot) return;
 
+    if (this.ui.overlay) {
+      const overlay = this.ui.overlay;
+      const mask = overlay.querySelector("mask#cutout");
+      const cutout = mask.querySelector("rect[fill='black']");
+      
+      const bounds = currentElement.getBoundingClientRect();
+      const gap = 4;
+    
+      cutout.setAttribute("x", bounds.left - gap);
+      cutout.setAttribute("y", bounds.top - gap);
+      cutout.setAttribute("width", bounds.width + gap * 2);
+      cutout.setAttribute("height", bounds.height + gap * 2);
+    }
+
     const css = this.getSelectorEssenceStyles(currentElement);
 
     const bounds = currentElement.getBoundingClientRect();
@@ -914,11 +1024,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     x = Math.max(x, 10);
     y = Math.max(y, 10);
 
-    const gap = 12;
-    this.UIRoot.style.left = `${x - gap}px`;
-    this.UIRoot.style.top = `${y - gap}px`;
-    this.UIRoot.style.width = `${bounds.width + gap * 2}px`;
-    this.UIRoot.style.height = `${bounds.height + gap * 2}px`;
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
 

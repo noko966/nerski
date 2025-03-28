@@ -1,5 +1,6 @@
 var tinycolor = require("tinycolor2");
 import SKPicker from "./modules/picker.js";
+import Moveable from "./modules/moveable";
 
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
@@ -20,15 +21,12 @@ class MouseIntersectStyler {
     this.state = {};
     this.activeSelectorId = null;
     this.skin = {};
+    this.colors = {};
   }
 
   init() {
     const self = this;
     this.createUI();
-    // this.boundMouseMove = (event) => self.onMouseMove(event, self.selector);
-    // this.boundClick = (event) => self.oonClick(event);
-    // this.root.addEventListener("mousemove", self.boundMouseMove);
-    // this.root.addEventListener("click", self.boundClick, true);
   }
 
   toggleStyler() {
@@ -44,9 +42,6 @@ class MouseIntersectStyler {
       this.isRunning = true;
       this.boundMouseOver = (event) => this.onMouseOver(event);
       this.boundClick = (event) => this.onClick(event);
-
-      // this.root.addEventListener("mousemove", this.boundMouseMove, true);
-      // this.root.addEventListener("click", this.boundClick, true);
 
       this.editableElements = this.root.querySelectorAll("[data-sk]");
 
@@ -103,10 +98,8 @@ class MouseIntersectStyler {
       "#FF637C",
     ];
 
-    // We'll use 10px for each color band
     const bandSize = 20;
 
-    // Build each color stop pair: "color Xpx, color Ypx"
     const stops = colors.map((color, i) => {
       const s1 = i * bandSize;
       const e1 = (i + 1) * bandSize;
@@ -115,10 +108,8 @@ class MouseIntersectStyler {
       }px, ${color} ${e1 + 2}px`;
     });
 
-    // Join all stops into a comma-separated list
     const gradientStops = stops.join(", ");
 
-    // Finally, wrap in a repeating-linear-gradient with a 45deg angle
     const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
 
     let css = `
@@ -161,7 +152,6 @@ ${cn} > * {
       event.preventDefault();
       event.stopPropagation();
 
-      // Use composedPath to find if any element in the path matches the selector
       const path = event.composedPath();
       const hoveredElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
@@ -175,13 +165,11 @@ ${cn} > * {
         let css = this.generateHoverStyle(className);
         this.injectStyle(css);
 
-        // Define handler to clean up on click or mouseout
         const cleanup = () => {
-          this.injectStyle(""); // Implement this method to remove the injected CSS
+          this.injectStyle("");
           target.removeEventListener("mouseleave", handleMouseOut);
         };
 
-        // Handler for mouseout event
         const handleMouseOut = (mouseOutEvt) => {
           cleanup();
         };
@@ -195,11 +183,9 @@ ${cn} > * {
     if (this.isStopped || !this.isRunning) return;
 
     if (this.isRunning) {
-      // Prevent default actions and stop propagation
       event.preventDefault();
       event.stopPropagation();
 
-      // Use composedPath to find if any element in the path matches the selector
       const path = event.composedPath();
       const clickedElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
@@ -217,12 +203,12 @@ ${cn} > * {
     }
   }
 
-  modifyKey(name, value) {
+  modifyKey(group, name, value) {
     const selectedRuleState = this.skin[this.activeSelectorId];
 
     if (selectedRuleState) {
       // Update the rule and state
-      selectedRuleState[name] = value;
+      selectedRuleState[group][name] = value;
 
       let css = this.createCss();
       this.setOrUpdateIframeCustomCss(css, this.root);
@@ -231,35 +217,63 @@ ${cn} > * {
 
   createCss() {
     let css = "";
-    console.log(this.root);
-
-    let CSSVariableRuleStart = `
-   
-    :root{
-    `;
+    let CSSVariableRuleStart = "";
 
     for (const key in this.skin) {
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
---SK_custom${_skin.varPrefix}Bg: ${_skin.backgroundColor};
---SK_custom${_skin.varPrefix}Txt:${_skin.color};`;
+        ${key} {
 
-      css += `${key} * {
-color: unset;
-}`;
-      css += `${key} {
-background: var(--SK_custom${_skin.varPrefix}Bg);
-color: var(--SK_custom${_skin.varPrefix}Txt);
-}
-`;
+        --${_skin.varPrefix}G: ${_skin.background.main};
+        --${_skin.varPrefix}Bg: ${_skin.background.main};
+        
+ `;
+
+      // Define CSS variables for padding
+
+      CSSVariableRuleStart += `
+        --${_skin.varPrefix}Ps: ${_skin.padding.start}px;
+        --${_skin.varPrefix}Pe: ${_skin.padding.end}px;
+        `;
+
+      // --${_skin.varPrefix}PaddingTop: ${_skin.padding.top}px;
+      // --${_skin.varPrefix}PaddingBottom: ${_skin.padding.bottom}px;
+
+      // Define CSS variables for border radius
+
+      CSSVariableRuleStart += `
+        --${_skin.varPrefix}RTL: ${_skin.radius.tl}px;
+        --${_skin.varPrefix}RTR: ${_skin.radius.tr}px;
+        --${_skin.varPrefix}RBR: ${_skin.radius.br}px;
+        --${_skin.varPrefix}RBL: ${_skin.radius.bl}px;
+        `;
+
+      // Define CSS variables for colors
+
+      for (const txt in _skin.colors) {
+        CSSVariableRuleStart += `
+          --${_skin.varPrefix}${txt}: ${_skin.colors[txt]};
+          `;
+      }
+
+      CSSVariableRuleStart += `
+        padding-inline-start: var(--${_skin.varPrefix}Ps);
+        padding-inline-end: var(--${_skin.varPrefix}Pe);
+        border-top-left-radius: var(--${_skin.varPrefix}RTL);
+        border-top-right-radius: var(--${_skin.varPrefix}RTR);
+        border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
+        border-bottom-left-radius: var(--${_skin.varPrefix}RBL);
+      `;
+      CSSVariableRuleStart += `}`;
     }
+
+    // Apply the CSS variables to the element styles
+
+    // Apply the color variables to elements with data-sk-color
 
     const res = `
-    ${CSSVariableRuleStart}
-    }
-    ${css}
-    `;
+    ${CSSVariableRuleStart}`;
 
     return res;
   }
@@ -267,94 +281,55 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
   createKey(name, el) {
     this.skin[name] = {};
     const cs = this.getSelectorAffectedCssStyles(el);
-    const bg = tinycolor(cs.background).toHexString();
-    const txt = tinycolor(cs.text).toHexString();
+    const css = this.getSelectorEssenceStyles(el);
     let uniqueClass = el.getAttribute("data-sk");
     const padding = this.parseProp(cs.padding);
 
-    this.skin[name]["backgroundColor"] = bg;
-    this.skin[name]["color"] = txt;
-    this.skin[name]["padding-top"] = padding.top.value;
-    this.skin[name]["padding-right"] = padding.right.value;
-    this.skin[name]["padding-bottom"] = padding.bottom.value;
-    this.skin[name]["padding-left"] = padding.left.value;
+    // Helper function to group elements by `data-sk-color`
+    this.skin[name].colors = {};
 
-    this.skin[name]["varPrefix"] = uniqueClass;
-
-    this.skin[name]["borderRadius"] = cs.borderRadius;
-  }
-
-  createCSSBasedOnTree(tree) {
-    const rootEl = tree[0];
-    // const repeated = rootEl.cssSelector.repeat(2);
-    const repeated = rootEl.cssSelector;
-    const _skin = {
-      bg: "#1a1a1a",
-      txt: "#fff",
-      acc: "#ffb700",
+    this.skin[name].colors = {
+      Txt: css.txt, // Default text color, can be modified
+      Txt2: css.txt2, // Default secondary text color
+      Txt3: css.txt3, // Default tertiary text color
     };
 
-    let CSSVariableRuleStart = `
-    ${repeated} *{
-      color: unset;
-      background: unset;
-      border: unset;
-    }
-    ${repeated} {
-      background: ${tinycolor(_skin.bg).toHexString()};
-      color: ${tinycolor(_skin.txt).toHexString()};
-    `;
+    // Set up your skin structure
+    this.skin[name].background = { main: css.bg };
+    this.skin[name].padding = {
+      start: padding.top.value,
+      end: padding.right.value,
+      bottom: padding.bottom.value,
+      left: padding.left.value,
+    };
+    this.skin[name].varPrefix = uniqueClass;
+    this.skin[name].radius = {
+      tl: cs.borderRadiusTL,
+      tr: cs.borderRadiusTR,
+      br: cs.borderRadiusBR,
+      bl: cs.borderRadiusBL,
+    };
 
-    let css = ``;
+    // Extract up to 3 unique color keys
+  }
+  createTextColorPickers(root) {
+    const colors = ["Txt", "Txt2", "Txt3"];
+    colors.forEach((clr, i) => {
+      const handlePickerCallBack = (e) => {
+        this.handlePicker(e, null, null, (color) => {
+          this.modifyKey("colors", clr, color);
+          this.updateControl("colors", clr, color);
+        });
+      };
 
-    const usedSelectors = new Set();
+      const picker = this.createColorBox(
+        "sk_picker_trigger",
+        handlePickerCallBack
+      );
+      this.stylerControls.colors[clr] = picker;
 
-    tree.forEach((t) => {
-      const { cssSelector, level, ind, dataSk } = t;
-      const lvl = 4 - level;
-
-      // If we've seen this cssSelector before, skip it
-      if (usedSelectors.has(cssSelector)) {
-        return;
-      }
-      usedSelectors.add(cssSelector);
-
-      // Build a single unique selector
-      const selector = `${cssSelector}`;
-
-      CSSVariableRuleStart += `
-        --${dataSk}Bg: ${tinycolor(_skin.bg)
-        .lighten(level * 2 + ind * 1)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
-        --${dataSk}Txt: ${tinycolor(_skin.txt).toHexString()};
-        --${dataSk}Accent: ${tinycolor(_skin.acc)
-        .setAlpha(0.1 + level * 0.01)
-        .toRgbString()};
-          
-      `;
-
-      // Append CSS rule
-      css += `${repeated} ${selector} {
-      background: var(--${dataSk}Bg);
-      color: var(--${dataSk}Txt);
-      backdrop-filter: blur(10px);
-      border-radius: ${Math.abs(lvl + 2)}px;
-      padding: ${Math.abs(lvl * 4)}px;
-    }\n
-    ${repeated} ${selector} [data-sk-text="accent"] {
-      color: var(--${dataSk}Accent);
-    }
-    `;
+      root.appendChild(picker);
     });
-
-    const res = `
-    ${CSSVariableRuleStart}
-    }
-    ${css}
-    `;
-
-    this.setOrUpdateIframeCustomCss(res);
   }
 
   createControlRoot() {
@@ -373,7 +348,7 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     let ic = document.createElement("i");
     ic.className = "sk_ico";
     ic.innerHTML = "";
-    el.appendChild(ic);
+    // el.appendChild(ic);
     el.appendChild(txt);
 
     return el;
@@ -409,6 +384,8 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     style.innerHTML = `
       .sk_ui_custom_change_root {
     --input_size: 28px;
+    --inputsOverlay: #ffffff20;
+    --inputsCta: var(--sk_dominantTxt2);
     --solid_size: 24px;
     position: fixed;
     width: 250px;
@@ -417,137 +394,17 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     top: 0px;
     transform: translate(0, 0);
     border: none;
-    background: var(--sk_dominantBg);
-    border: 1px solid var(--sk_dominantBgHover);
-    backdrop-filter: blur(5px);
+    background: var(--sk_dominantGlass2);
+    border: 1px solid var(--sk_dominantBg);
     flex-direction: column;
     align-items: stretch;
     padding: 6px;
     border-radius: 4px;
     display: flex;
-    flex-direction: column;
-    row-gap: 4px;
-    box-shadow: 0 0 0 4px var(--sk_dominantShadow);
+    row-gap: 8px;
       }
-    .sk_widget_collapse_block {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    background: var(--sk_dominantBg2);
-    border: 1px solid var(--sk_dominantBg3Hover);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-      .sk_ui_custom_change_root.state-reveal {
-        animation: appear 0.3s;
-      }
-        @keyframes appear {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-          .sk_styler_control_row {
-    display: flex;
-    align-items: center;
-    column-gap: var(--controls-ui-gap);
     
-}
-    .sk_styler_control_row_label {
-    flex-grow: 1;
-    min-width: 1px;
-    font-size: 10px;
-    text-align: right;
-}
-    .sk_styler_control_row.variant_color{
-        width: calc(50% - 5px);
-    }
-
-    .sk_styler_control_holder > .pickr {
-    position: absolute;
-}
-
-.row{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    column-gap: 4px;
-}
-
-.sk_block_separator_y{
-    width: 1px;
-    flex-shrink:0;
-    height: 24px;
-    background: var(--sk_dominantBg);
-    flex-shrink: 0;
-
-}
-
-.sk_input {
-    appearance: none;
-    width: 50px;
-    font-size: 11px;
-    height: var(--input_size);
-    font-weight: 500;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt2);
-    border-radius: 2px;
-    text-align: right;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3);
-    outline: 0;
-    padding: 0 6px;
-}
-
-.sk_btn {
-    appearance: none;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    text-align: center;
-    height: var(--input_size);
-    text-decoration: none;
-    background-color: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt2);
-    text-transform: capitalize;
-    font-size: 12px;
-    position: relative;
-    font-weight: 500;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 4px;
-    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
-}
-    .sk_btn.variant_primary{
-        width: 100%;
-    background-color: var(--sk_accentBg);
-    color: var(--sk_accentTxt);
-    }
-   
-    .sk_widget_block_header{
-    height: 24px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt);
-    font-size: 10px;
-    column-gap: 6px;
-    }
-    .sk_widget_block_content{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 6px;
-    background: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt);
-    font-size: 10px;
     
-    }
     `;
     const root = document.createElement("div");
     root.className = "sk_ui_custom_change_root";
@@ -558,17 +415,9 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     // Callback for color picker
     const handlePickerCallBack = (e) => {
-      this.handleGradientPicker(e, (color) => {
-        this.modifyKey("backgroundColor", color.str);
-        this.updateControl("backgroundColor", color.str);
-      });
-    };
-
-    // **New** callback for Text Color
-    const handleTextColorPickerCallBack = (e) => {
-      this.handlePicker(e, (color) => {
-        this.modifyKey("color", color);
-        this.updateControl("color", color);
+      this.handleGradientPicker(e, null, (data) => {
+        this.modifyKey("background", "main", data.color);
+        this.updateControl("background", "main", data.color);
       });
     };
 
@@ -577,100 +426,372 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     buttonWrapper.className = "sk_widget_footer_row";
 
     this.hideUITrigger = document.createElement("button");
-    this.hideUITrigger.className = "sk_btn variant_primary";
+    this.hideUITrigger.className = "sk_btn variant_primary variant_styler";
     this.hideUITrigger.addEventListener("click", (e) => self.hideUI());
     this.hideUITrigger.innerText = "apply";
 
-    // Control wrappers for various properties
-    let controlWrapperBg = this.createControl("background", "variant_color");
-    let controlWrapperColor = this.createControl("text", "variant_color");
-
-    // Padding input
-    let padInputVariants = ["top", "right", "left", "bottom"];
-    let paddingInputs = {};
-    padInputVariants.forEach((v) => {
-      paddingInputs[v] = document.createElement("input");
-      paddingInputs[v].className = "sk_input";
-      paddingInputs[v].type = "number";
-      paddingInputs[v].addEventListener("change", (e) => {
-        self.modifyKey(`padding-${v}`, e.target.value);
-      });
-    });
-
-    // Background picker
     this.BgPicker = this.createColorBox(
-      "nik_skinner_control_group_picker",
+      "sk_picker_trigger",
       handlePickerCallBack
     );
 
-    // **New** text color picker
-    this.TextColorPicker = this.createColorBox(
-      "nik_skinner_control_group_picker",
-      handleTextColorPickerCallBack
-    );
+    const rootBounds = root.getBoundingClientRect();
 
-    // Border-radius input
-    const borderRadiusInput = document.createElement("input");
-    borderRadiusInput.type = "number";
-    borderRadiusInput.className = "sk_input";
-    borderRadiusInput.placeholder = "Border Radius (px)";
-    borderRadiusInput.addEventListener("change", (e) => {
-      self.modifyKey("borderRadius", e.target.value + "px");
-    });
+    this.ui = {};
 
-    controlWrapperBg.inside.appendChild(this.BgPicker);
-    controlWrapperColor.inside.appendChild(this.TextColorPicker);
+    const group1 = document.createElement("div");
+    group1.className = "sk_ui_custom_change_modals_group variant_colors";
 
-    const colorBlock = this.createControlRoot();
-    const colorBlockHeader = this.createControlHeader("Color");
-    const colorBlockContent = this.createControlContent();
+    const group2 = document.createElement("div");
+    group2.className = "sk_ui_custom_change_modals_group";
 
-    const paddingBlock = this.createControlRoot();
-    const paddingBlockHeader = this.createControlHeader("Padding");
-    const paddingBlockContent = this.createControlContent();
-
-    const radiusBlock = this.createControlRoot();
-    const radiusBlockHeader = this.createControlHeader("Radius");
-    const radiusBlockContent = this.createControlContent();
-
-    colorBlock.appendChild(colorBlockHeader);
-    colorBlock.appendChild(colorBlockContent);
-    const pickersElWrapper = document.createElement("div");
-    pickersElWrapper.className = "row";
-    const separatorEl = document.createElement("div");
-    separatorEl.className = "sk_block_separator_y";
-    colorBlockContent.appendChild(pickersElWrapper);
-    pickersElWrapper.appendChild(controlWrapperBg.element);
-    pickersElWrapper.appendChild(separatorEl);
-    pickersElWrapper.appendChild(controlWrapperColor.element);
-
-    paddingBlock.appendChild(paddingBlockHeader);
-    paddingBlock.appendChild(paddingBlockContent);
-    paddingBlockContent.appendChild(paddingInputs.top);
-    paddingBlockContent.appendChild(paddingInputs.right);
-    paddingBlockContent.appendChild(paddingInputs.bottom);
-    paddingBlockContent.appendChild(paddingInputs.left);
-
-    radiusBlock.appendChild(radiusBlockHeader);
-    radiusBlock.appendChild(radiusBlockContent);
-    radiusBlockContent.appendChild(borderRadiusInput);
-
-    root.appendChild(colorBlock);
-    root.appendChild(paddingBlock);
-    root.appendChild(radiusBlock);
-
-    buttonWrapper.appendChild(this.hideUITrigger);
-    root.appendChild(buttonWrapper);
+    const bglbl = this.createControlHeader("backgroun's");
+    const bgContent = this.createControlContent();
+    this.ui.backgroundRoot = this.createControlRoot();
+    this.ui.backgroundRoot.appendChild(bglbl);
+    this.ui.backgroundRoot.appendChild(bgContent);
     document.body.appendChild(style);
     document.body.appendChild(root);
+    this.ui.modalsContainer = document.createElement("div");
+
+    const txtlbl = this.createControlHeader("text's");
+    const txtContent = this.createControlContent();
+    this.ui.backgroundRoot.appendChild(txtlbl);
+    this.ui.backgroundRoot.appendChild(txtContent);
+    this.ui.modalsContainer.appendChild(group1);
+    this.ui.modalsContainer.appendChild(group2);
+    this.ui.modalsActionsWrapper = document.createElement("div");
+    this.ui.modalsContainer.appendChild(this.ui.modalsActionsWrapper);
+    this.ui.modalsActionsWrapper.className = "sk_actions_wrapper_styler";
+    group1.appendChild(this.ui.backgroundRoot);
+    
+    const bRow = this.createPickersRow();
+    bgContent.appendChild(bRow);
+    bRow.appendChild(this.BgPicker);
+    
 
     this.stylerControls = {};
-    this.stylerControls.backgroundColor = this.BgPicker;
-    this.stylerControls.color = this.TextColorPicker;
-    this.stylerControls.padding = paddingInputs;
-    this.stylerControls.borderRadius = borderRadiusInput;
+    this.ui.modalsContainer.className = "sk_ui_custom_change_modals_container";
+
+    this.ui.paddingRoot = this.createControlRoot();
+    const plbl = this.createControlHeader("padding");
+    const pContent = this.createControlContent();
+    this.ui.paddingRoot.appendChild(plbl);
+    this.ui.paddingRoot.appendChild(pContent);
+    pContent.appendChild(this.createPaddingGroupControls());
+    group2.appendChild(this.ui.paddingRoot);
+    this.ui.radiusRoot = this.createControlRoot();
+    const rlbl = this.createControlHeader("radius");
+    const rContent = this.createControlContent();
+    this.ui.radiusRoot.appendChild(rlbl);
+    this.ui.radiusRoot.appendChild(rContent);
+    rContent.appendChild(this.createRadiusGroupControls());
+    group2.appendChild(this.ui.radiusRoot);
+    root.appendChild(this.ui.modalsContainer);
+
+    this.stylerControls.background = {};
+
+    this.stylerControls.background.main = this.BgPicker;
+    this.stylerControls.colors = {};
+    const cRow = this.createPickersRow();
+    txtContent.appendChild(cRow);
+    this.createTextColorPickers(cRow);
+    this.ui.predefinedStylesRoot = document.createElement("div");
+    this.ui.predefinedStylesRoot.className =
+      "sk_ui_prd_styles_root";
+    this.ui.modalsActionsWrapper.appendChild(this.ui.predefinedStylesRoot);
+    this.ui.modalsActionsWrapper.appendChild(this.hideUITrigger);
 
     this.UIRoot = root;
+  }
+
+  createPickersRow(){
+    const root = document.createElement("div");
+    root.className =
+      "sk_ui_pickers_row";
+
+    return root;
+  }
+
+  createFansyPaddingControls(root) {
+    this.radiusesWrapper = document.createElement("div");
+    this.radiusesWrapper.className =
+      "sk_ui_custom_change_controls_radiuses_wrapper";
+    const borderRadiusTL = this.createRadiusControl(this.radiusesWrapper, "tl");
+    const borderRadiusTR = this.createRadiusControl(this.radiusesWrapper, "tr");
+    const borderRadiusBR = this.createRadiusControl(this.radiusesWrapper, "br");
+    const borderRadiusBL = this.createRadiusControl(this.radiusesWrapper, "bl");
+    this.stylerControls.radius = {};
+    this.stylerControls.radius.tl = borderRadiusTL.input;
+    this.stylerControls.radius.tr = borderRadiusTR.input;
+    this.stylerControls.radius.br = borderRadiusBR.input;
+    this.stylerControls.radius.bl = borderRadiusBL.input;
+
+    this.paddingsWrapper = document.createElement("div");
+    this.paddingsWrapper.className =
+      "sk_ui_custom_change_controls_paddings_wrapper";
+    const paddingRangeStartWrapper = document.createElement("div");
+    paddingRangeStartWrapper.className =
+      "sk_control_padding_wrapper variant_start";
+    this.paddingRangeStart = document.createElement("input");
+    this.paddingRangeStart.type = "range";
+    this.paddingRangeStart.className = "sk_control_padding ";
+
+    this.paddingRangeStart.min = 0;
+    this.paddingRangeStart.max = 100;
+
+    this.paddingRangeStart.addEventListener("change", (e) => {
+      const value = e.target.value;
+
+      this.modifyKey("padding", "start", value);
+
+      const percentage =
+        ((value - e.target.min) / (e.target.max - e.target.min)) * 100;
+
+      paddingRangeStartWrapper.style.setProperty("--percent", `${percentage}%`);
+    });
+
+    paddingRangeStartWrapper.appendChild(this.paddingRangeStart);
+
+    this.paddingsWrapper.appendChild(paddingRangeStartWrapper);
+
+    const paddingRangeEndWrapper = document.createElement("div");
+    paddingRangeEndWrapper.className = "sk_control_padding_wrapper variant_end";
+    this.paddingRangeEnd = document.createElement("input");
+    this.paddingRangeEnd.type = "range";
+    this.paddingRangeEnd.className = "sk_control_padding  sk_flip";
+
+    this.paddingRangeEnd.min = 0;
+    this.paddingRangeEnd.max = 32;
+
+    this.paddingRangeEnd.addEventListener("change", (e) => {
+      const value = e.target.value;
+
+      this.modifyKey("padding", "end", value);
+
+      const percentage =
+        ((value - e.target.min) / (e.target.max - e.target.min)) * 100;
+
+      paddingRangeEndWrapper.style.setProperty("--percent", `${percentage}%`);
+    });
+
+    root.appendChild(this.paddingsWrapper);
+    root.appendChild(this.radiusesWrapper);
+
+    paddingRangeEndWrapper.appendChild(this.paddingRangeEnd);
+    this.paddingsWrapper.appendChild(paddingRangeEndWrapper);
+  }
+
+  createRadiusControl(root, variant) {
+    const radiusRoot = document.createElement("div");
+    let variantCN = "tl";
+    switch (variant) {
+      case "tl":
+        variantCN = "tl";
+        break;
+      case "tr":
+        variantCN = "tr";
+        break;
+      case "br":
+        variantCN = "br";
+        break;
+      case "bl":
+        variantCN = "bl";
+        break;
+
+      default:
+        break;
+    }
+
+    radiusRoot.className = `sk_control_radius_root variant_${variantCN}`;
+
+    const radius = document.createElement("input");
+    radius.type = "range";
+    radius.className = "sk_control_radius";
+    radius.min = 0;
+
+    radius.addEventListener("input", (e) => {
+      const radiusVal = e.target.value;
+      radiusRoot.style.setProperty("--radius", `${radiusVal}px`);
+      radiusRoot.style.setProperty("--width", `${radiusVal * 2}px`);
+      this.modifyKey("radius", `${variant}`, `${radiusVal}px`);
+    });
+
+    const radiusIndicator = document.createElement("div");
+    radiusIndicator.className = "sk_control_radius_indicator";
+
+    radiusRoot.appendChild(radius);
+    radiusRoot.appendChild(radiusIndicator);
+    root.appendChild(radiusRoot);
+
+    return {
+      input: radius,
+    };
+  }
+
+  createInputControl(callback, indicator) {
+    const icons = {
+      x: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,16.5v-13"/>
+<path d="M3.5,3.5v13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      y: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,16.5h13"/>
+<path d="M16.5,3.5h-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      s: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,3.5v13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      t: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,3.5h-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      e: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M16.5,16.5v-13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,
+      b: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path d="M3.5,16.5h13"/>
+<path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+</svg>
+`,  
+      tl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M16.5,3.5H8.7c-2.9,0-5.2,2.3-5.2,5.2v7.8"/>
+</svg>
+`,
+tr: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M16.5,16.5V8.7c0-2.9-2.3-5.2-5.2-5.2H3.5"/>
+</svg>
+`,
+bl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M3.5,3.5v7.8c0,2.9,2.3,5.2,5.2,5.2h7.8"/>
+</svg>
+`,
+br: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<path class="st0" d="M3.5,16.5h7.8c2.9,0,5.2-2.3,5.2-5.2V3.5"/>
+</svg>
+`,
+    };
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "sk_input_control_group";
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "sk_input variant_quatro";
+    input.addEventListener("change", (e) => callback(e));
+
+    const i = document.createElement("i");
+    i.className = "sk_input_control_icon";
+    i.innerHTML = icons[indicator] || icons["x"];
+    inputWrapper.appendChild(i);
+    inputWrapper.appendChild(input);
+    return {
+      inputWrapperEl: inputWrapper,
+      inputEl: input,
+    };
+  }
+
+  createPaddingGroupControls() {
+    const _t = this;
+    const cx = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `start`, e.target.value);
+      _t.modifyKey("padding", `end`, e.target.value);
+    }, "x");
+    const cy = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `top`, e.target.value);
+      _t.modifyKey("padding", `bottom`, e.target.value);
+    }, "y");
+
+    const cs = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `start`, e.target.value);
+    }, "s");
+    const ct = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `top`, e.target.value);
+    }, "t");
+    const ce = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `end`, e.target.value);
+    }, "e");
+    const cb = _t.createInputControl((e) => {
+      _t.modifyKey("padding", `bottom`, e.target.value);
+    }, "b");
+
+    const controlWrapper1 = document.createElement("div");
+    controlWrapper1.className = "sk_input_control_group_block state_hide";
+    controlWrapper1.appendChild(cx.inputWrapperEl);
+    controlWrapper1.appendChild(cy.inputWrapperEl);
+
+    const controlWrapper2 = document.createElement("div");
+    controlWrapper2.className = "sk_input_control_group_block";
+    controlWrapper2.appendChild(cs.inputWrapperEl);
+    controlWrapper2.appendChild(ct.inputWrapperEl);
+    controlWrapper2.appendChild(ce.inputWrapperEl);
+    controlWrapper2.appendChild(cb.inputWrapperEl);
+
+    const controlsRoot = document.createElement("div");
+    controlsRoot.appendChild(controlWrapper1);
+    controlsRoot.appendChild(controlWrapper2);
+
+    _t.stylerControls.padding = {};
+
+    _t.stylerControls.padding.top = ct.inputEl;
+    _t.stylerControls.padding.end = ce.inputEl;
+    _t.stylerControls.padding.bottom = cb.inputEl;
+    _t.stylerControls.padding.start = cs.inputEl;
+
+    return controlsRoot;
+  }
+
+  createRadiusGroupControls() {
+    const _t = this;
+    const tl = _t.createInputControl((e) => {
+      _t.modifyKey("radius", `tl`, e.target.value);
+    }, "tl");
+    const tr = _t.createInputControl((e) => {
+      _t.modifyKey("radius", `tr`, e.target.value);
+    }, "tr");
+
+    const bl = _t.createInputControl((e) => {
+      _t.modifyKey("radius", `bl`, e.target.value);
+    }, "bl");
+    const br = _t.createInputControl((e) => {
+      _t.modifyKey("radius", `br`, e.target.value);
+    }, "br");
+
+    const controlWrapper2 = document.createElement("div");
+    controlWrapper2.className = "sk_input_control_group_block";
+    controlWrapper2.appendChild(tl.inputWrapperEl);
+    controlWrapper2.appendChild(tr.inputWrapperEl);
+    controlWrapper2.appendChild(bl.inputWrapperEl);
+    controlWrapper2.appendChild(br.inputWrapperEl);
+
+    const controlsRoot = document.createElement("div");
+    controlsRoot.appendChild(controlWrapper2);
+
+    _t.stylerControls.radius = {};
+
+    _t.stylerControls.radius.tl = tl.inputEl;
+    _t.stylerControls.radius.tr = tr.inputEl;
+    _t.stylerControls.radius.bl = bl.inputEl;
+    _t.stylerControls.radius.br = br.inputEl;
+
+    return controlsRoot;
   }
 
   createColorBox(className, callBack) {
@@ -752,52 +873,105 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
       background: computedStyles.background,
       text: computedStyles.color,
       padding: computedStyles.padding,
-      borderRadius: computedStyles.borderRadius,
+      borderRadiusTL: computedStyles.borderTopLeftRadius,
+      borderRadiusTR: computedStyles.borderTopRightRadius,
+      borderRadiusBR: computedStyles.borderBottomRightRadius,
+      borderRadiusBL: computedStyles.borderBottomLeftRadius,
     };
 
     return styles;
   }
 
+  getSelectorEssenceStyles(selector) {
+    let computedStyles = getComputedStyle(selector);
+    if (!selector) return;
+    let styles = {
+      bg: computedStyles.getPropertyValue("--eventBg"),
+      txt: computedStyles.getPropertyValue("--eventTxt"),
+      txt2: computedStyles.getPropertyValue("--eventTxt2"),
+      txt3: computedStyles.getPropertyValue("--eventTxt3"),
+      padding: {
+        start: computedStyles.paddingInlineStart,
+        end: computedStyles.paddingInlineEnd,
+        top: computedStyles.paddingTop,
+        bottom: computedStyles.paddingBottom,
+      },
+      radius: {
+        tl: computedStyles.borderTopLeftRadius,
+        tr: computedStyles.borderTopRightRadius,
+        br: computedStyles.borderBottomRightRadius,
+        bl: computedStyles.borderBottomLeftRadius,
+      },
+    };
+
+    return styles;
+  }
+
+  getElementsWithColorAttr(rootEl) {
+    const grouped = {};
+    const stack = [rootEl];
+
+    while (stack.length > 0) {
+      const current = stack.pop();
+      for (const child of current.children) {
+        if (child.hasAttribute("data-sk")) continue;
+        if (child.hasAttribute("data-sk-color")) {
+          const color = child.getAttribute("data-sk-color");
+          if (!grouped[color]) grouped[color] = [];
+          grouped[color].push(child);
+        }
+        stack.push(child);
+      }
+    }
+    return grouped;
+  }
+
   showUI(x, y, currentElement) {
+    const _t = this;
     if (!this.UIRoot) return;
 
-    const elementStyles = this.getSelectorAffectedCssStyles(currentElement);
-    const bg = elementStyles.background;
-    const txt = elementStyles.text;
-    const padding = this.parseProp(elementStyles.padding);
-    const bordeRadius = this.parseProp(elementStyles.borderRadius);
+    const css = this.getSelectorEssenceStyles(currentElement);
 
-    this.stylerControls.backgroundColor.style.background = bg;
-    this.stylerControls.color.style.background = txt;
-    this.stylerControls.padding.top.value = padding.top.value;
-    this.stylerControls.padding.right.value = padding.right.value;
-    this.stylerControls.padding.bottom.value = padding.bottom.value;
-    this.stylerControls.padding.left.value = padding.left.value;
-    this.stylerControls.borderRadius.value = bordeRadius.top.value;
+    const bounds = currentElement.getBoundingClientRect();
+    const bg = css.bg;
 
-    // Get the window dimensions
+    this.stylerControls.background.main.style.background = bg;
+
+    this.stylerControls.colors.Txt.style.background = css.txt;
+    this.stylerControls.colors.Txt.style.background = css.txt2;
+    this.stylerControls.colors.Txt.style.background = css.txt3;
+
+    this.stylerControls.padding.start.value = css.padding.start;
+    this.stylerControls.padding.end.value = css.padding.end;
+    this.stylerControls.padding.top.value = css.padding.top;
+    this.stylerControls.padding.bottom.value = css.padding.bottom;
+    this.stylerControls.radius.tl.value = css.radius.tl;
+    this.stylerControls.radius.tr.value = css.radius.tr;
+    this.stylerControls.radius.br.value = css.radius.br;
+    this.stylerControls.radius.bl.value = css.radius.bl;
+    this.stylerControls.radius.bl.parentElement;
+
+    const radiusMax = Math.ceil(bounds.height / 2);
+    this.stylerControls.radius.tl.setAttribute("max", radiusMax);
+    this.stylerControls.radius.tr.setAttribute("max", radiusMax);
+    this.stylerControls.radius.br.setAttribute("max", radiusMax);
+    this.stylerControls.radius.bl.setAttribute("max", radiusMax);
+
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    const uiWidth = this.UIRoot.offsetWidth || 300;
+    const uiHeight = this.UIRoot.offsetHeight || 150;
 
-    // Get the UIRoot dimensions
-    const uiWidth = this.UIRoot.offsetWidth || 300; // Default to a sensible width if not rendered yet
-    const uiHeight = this.UIRoot.offsetHeight || 150; // Default to a sensible height if not rendered yet
-
-    // Adjust x and y to ensure the UI fits within the window
-    if (x + uiWidth > windowWidth) {
-      x = windowWidth - uiWidth - 10; // Add some padding (e.g., 10px)
-    }
-    if (y + uiHeight > windowHeight) {
-      y = windowHeight - uiHeight - 10; // Add some padding (e.g., 10px)
-    }
-
-    // Prevent negative positions
-    x = Math.max(x, 10); // Minimum padding of 10px
+    if (x + uiWidth > windowWidth) x = windowWidth - uiWidth - 10;
+    if (y + uiHeight > windowHeight) y = windowHeight - uiHeight - 10;
+    x = Math.max(x, 10);
     y = Math.max(y, 10);
 
-    // Set the adjusted position
-    this.UIRoot.style.left = `${x}px`;
-    this.UIRoot.style.top = `${y}px`;
+    const gap = 12;
+    this.UIRoot.style.left = `${x - gap}px`;
+    this.UIRoot.style.top = `${y - gap}px`;
+    this.UIRoot.style.width = `${bounds.width + gap * 2}px`;
+    this.UIRoot.style.height = `${bounds.height + gap * 2}px`;
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
 
@@ -806,15 +980,16 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     let selector = `${specificCn}[data-sk="${uniqueClass}"]`;
 
     this.activeSelectorId = selector;
-
-    // Add reveal animation
     this.UIRoot.classList.add("state-reveal");
+
     let timeoutId = setTimeout(() => {
       this.UIRoot.classList.remove("state-reveal");
       timeoutId = null;
     }, 3000);
 
-    this.createKey(selector, currentElement);
+    // 🔥 Attach dynamic color pickers
+
+    this.createKey(selector, currentElement); // saves txt1/2/3
   }
 
   hideUI() {
@@ -825,8 +1000,8 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     }
   }
 
-  updateControl(control, value) {
-    this.stylerControls[control].style.background = value;
+  updateControl(group, control, value) {
+    this.stylerControls[group][control].style.background = value;
   }
 
   setOrUpdateIframeCustomCss(css, target) {
@@ -881,20 +1056,6 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
       rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
     );
   }
-
-  // generateCssPath(element) {
-  //   console.log({ element });
-
-  //   const path = [];
-  //   while (this.root) {
-  //     const selector = element.className
-  //       ? `.${element.className.trim().split(/\s+/).join(".")}`
-  //       : element.tagName.toLowerCase();
-  //     path.unshift(selector);
-  //     element = element.parentElement;
-  //   }
-  //   return path.join(" > ");
-  // }
 
   generateCssPath(element, options = {}) {
     const {
@@ -983,23 +1144,23 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
     return path.join(" > ");
   }
 
-  handlePicker(event, onChangeCallback) {
-    let self = this;
-    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
-    if (self.pickerInstance) {
+  handlePicker(event, color, type, onChangeCallback) {
+    if (this.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
     }
 
-    let x = event.clientX;
-    let y = event.clientY;
+    // Use the provided color or default to the one passed
+    const currentColor = color;
 
-    const SKPickerInstance = new SKPicker(null, currentColor);
+    const x = event.clientX;
+    const y = event.clientY;
+
+    const SKPickerInstance = new SKPicker(null, currentColor, type);
     SKPickerInstance.init();
-
     SKPickerInstance.show(x, y);
 
-    self.pickerInstance = SKPickerInstance;
+    this.pickerInstance = SKPickerInstance;
 
     SKPickerInstance.on("change", (color, source, instance) => {
       onChangeCallback(color);
@@ -1007,13 +1168,13 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     SKPickerInstance.on("hide", (source, instance) => {
       instance.destroy();
-      self.pickerInstance = null;
+      this.pickerInstance = null;
     });
   }
 
-  handleGradientPicker(event, onChangeCallback) {
-    let self = this;
-    const currentColor = this.skin[this.activeSelectorId].backgroundColor;
+  handleGradientPicker(event, color, onChangeCallback) {
+    // const _vd = this.verbalData(essence);
+    const _t = this;
     if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
@@ -1021,9 +1182,21 @@ color: var(--SK_custom${_skin.varPrefix}Txt);
 
     let x = event.clientX;
     let y = event.clientY;
+    const gradientState = {
+      mode: "gradient",
+      stops: [
+        [color, 0],
+        [color, 1],
+      ],
+      angle: 0,
+      type: "linear",
+    };
 
-    const SKPickerInstance = new SKPicker(null, currentColor, "gradient", {
-      stops: [currentColor],
+    const SKPickerInstance = new SKPicker({
+      mode: "gradient",
+      stops: gradientState.stops,
+      angle: gradientState.angle,
+      type: gradientState.type,
     });
     SKPickerInstance.init();
 

@@ -491,8 +491,8 @@ export default class ViewDemoEuropean {
     el1.className = "demo_mid_content_list";
     const el2 = document.createElement("div");
     el2.className = "demo_mid_content_list";
-    const mainListWrapper1 = this.createListWrapper();
-    const mainListWrapper2 = this.createListWrapper();
+    const mainListWrapper1 = this.createListWrapper("variant_events_list");
+    const mainListWrapper2 = this.createListWrapper("variant_events_list");
     this.demo.aside = this.createAside();
     el1.appendChild(mainListWrapper1);
     el2.appendChild(mainListWrapper2);

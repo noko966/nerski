@@ -2705,9 +2705,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    background: var(--sk_dominantBg2);
     border: 1px solid var(--sk_dominantBg3Hover);
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
 }
 
@@ -2717,9 +2716,10 @@ body {
     display: flex;
     align-items: center;
     padding: 0 8px;
-    background: var(--sk_dominantBg2);
+    background: var(--sk_dominantBgHover);
     color: var(--sk_dominantTxt2);
-    font-size: 9px;
+    font-size: 11px;
+    text-transform: capitalize;
     column-gap: 6px;
     }
     .sk_widget_block_content{
@@ -2728,7 +2728,7 @@ body {
         flex-direction: column;
     align-items: stretch;
     padding: 6px;
-    padding-bottom: 16px;
+    padding-bottom: 6px;
     background: var(--sk_dominantBg2);
     color: var(--sk_dominantTxt);
     font-size: 10px;
@@ -3687,7 +3687,7 @@ border-radius: 50%;*/
     align-items: stretch;
     row-gap: 8px;
 }
-}
+
 .sk_g_picker_root{
 display: none;
     --input_size: 28px;
@@ -3724,7 +3724,32 @@ display: none;
     display: flex;
     flex-wrap: wrap;
     color: var(--sk_dominantTxt2);
+}
 
+.sk_ui_prd_styles_root{
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 1px;
+}
+
+.sk_actions_wrapper_styler{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 6px;
+    padding: 8px;
+    background: var(--sk_dominantBg2);
+    position: absolute;
+    border-top: 1px solid var(--sk_dominantBg3Hover);
+    bottom: 0;
+    right: 0;
+    top: 0;
+    z-index: 100;
+    }
+
+.sk_input_control_group_block.state_hide{
+    display: none;
 }
 .sk_input_control_icon{
     fill: none;
@@ -4123,22 +4148,36 @@ position: absolute;
 }
 
 .sk_ui_custom_change_modals_container{
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  position: fixed;
+  bottom: 8px;
+  left: 8px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   column-gap: 8px;
   background: var(--sk_dominantBg);
       padding: 8px;
     border-radius: 4px;
-
+z-index: var(--sk_zind);
 }
 
 .sk_ui_custom_change_modals_container .sk_widget_collapse_block {
-  width: 200px;
+  width: 160px;
   flex-shrink: 0;
+}
+.sk_ui_pickers_row{
+display: flex;
+  align-items: center;
+  column-gap: 4px;
+}
 
+.sk_ui_custom_change_modals_group{
+display: flex;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.sk_ui_custom_change_modals_group.variant_colors .sk_widget_collapse_block{
+  width: 120px;
 }
 
 `;

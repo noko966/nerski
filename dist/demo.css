@@ -52,7 +52,12 @@ html {
   flex: 1;
 }
 
-.variant_event {
+.demo_list_wrapper.variant_events_list{
+  row-gap: 16px;
+
+}
+
+.demo_list_wrapper.variant_event {
   background-color: var(--eventBorder);
 }
 
