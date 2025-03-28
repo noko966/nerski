@@ -235,6 +235,8 @@ ${cn} > * {
       CSSVariableRuleStart += `
         --${_skin.varPrefix}Ps: ${_skin.padding.start}px;
         --${_skin.varPrefix}Pe: ${_skin.padding.end}px;
+        --${_skin.varPrefix}Pt: ${_skin.padding.top}px;
+        --${_skin.varPrefix}Pb: ${_skin.padding.bottom}px;
         `;
 
       // --${_skin.varPrefix}PaddingTop: ${_skin.padding.top}px;
@@ -257,9 +259,17 @@ ${cn} > * {
           `;
       }
 
+      for (const accent in _skin.accentColors) {
+        CSSVariableRuleStart += `
+          --${_skin.varPrefix}${accent}: ${_skin.accentColors[accent]};
+          `;
+      }
+
       CSSVariableRuleStart += `
         padding-inline-start: var(--${_skin.varPrefix}Ps);
         padding-inline-end: var(--${_skin.varPrefix}Pe);
+        padding-top: var(--${_skin.varPrefix}Pt);
+        padding-bottom: var(--${_skin.varPrefix}Pb);
         border-top-left-radius: var(--${_skin.varPrefix}RTL);
         border-top-right-radius: var(--${_skin.varPrefix}RTR);
         border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
@@ -289,9 +299,16 @@ ${cn} > * {
     this.skin[name].colors = {};
 
     this.skin[name].colors = {
-      Txt: css.txt, // Default text color, can be modified
-      Txt2: css.txt2, // Default secondary text color
-      Txt3: css.txt3, // Default tertiary text color
+      Txt: css.txt, 
+      Txt2: css.txt2,
+      Txt3: css.txt3,
+    };
+
+    this.skin[name].accentColors = {};
+
+    this.skin[name].accentColors = {
+      Accent: css.accent,
+      AccentTxt: css.accentTxt,
     };
 
     // Set up your skin structure
@@ -327,6 +344,26 @@ ${cn} > * {
         handlePickerCallBack
       );
       this.stylerControls.colors[clr] = picker;
+
+      root.appendChild(picker);
+    });
+  }
+
+  createAccentColorPickers(root) {
+    const colors = ["Accent", "AccentTxt"];
+    colors.forEach((clr, i) => {
+      const handlePickerCallBack = (e) => {
+        this.handlePicker(e, null, null, (color) => {
+          this.modifyKey("accentColors", clr, color);
+          this.updateControl("accentColors", clr, color);
+        });
+      };
+
+      const picker = this.createColorBox(
+        "sk_picker_trigger",
+        handlePickerCallBack
+      );
+      this.stylerControls.accentColors[clr] = picker;
 
       root.appendChild(picker);
     });
@@ -499,8 +536,13 @@ ${cn} > * {
 
     const txtlbl = this.createControlHeader("text's");
     const txtContent = this.createControlContent();
+
+    const accentlbl = this.createControlHeader("accent's");
+    const accentContent = this.createControlContent();
     this.ui.backgroundRoot.appendChild(txtlbl);
     this.ui.backgroundRoot.appendChild(txtContent);
+    this.ui.backgroundRoot.appendChild(accentlbl);
+    this.ui.backgroundRoot.appendChild(accentContent);
     this.ui.modalsContainer.appendChild(group1);
     this.ui.modalsContainer.appendChild(group2);
     this.ui.modalsActionsWrapper = document.createElement("div");
@@ -536,9 +578,14 @@ ${cn} > * {
 
     this.stylerControls.background.main = this.BgPicker;
     this.stylerControls.colors = {};
+    this.stylerControls.accentColors = {};
+
     const cRow = this.createPickersRow();
+    const aRow = this.createPickersRow();
     txtContent.appendChild(cRow);
+    accentContent.appendChild(aRow);
     this.createTextColorPickers(cRow);
+    this.createAccentColorPickers(aRow);
     this.ui.predefinedStylesRoot = document.createElement("div");
     this.ui.predefinedStylesRoot.className =
       "sk_ui_prd_styles_root";
@@ -926,13 +973,16 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
   }
 
   getSelectorEssenceStyles(selector) {
+    const essence = selector.getAttribute("data-sk");
     let computedStyles = getComputedStyle(selector);
     if (!selector) return;
     let styles = {
-      bg: computedStyles.getPropertyValue("--eventBg"),
-      txt: computedStyles.getPropertyValue("--eventTxt"),
-      txt2: computedStyles.getPropertyValue("--eventTxt2"),
-      txt3: computedStyles.getPropertyValue("--eventTxt3"),
+      bg: computedStyles.getPropertyValue(`--${essence}Bg`),
+      txt: computedStyles.getPropertyValue(`--${essence}Txt`),
+      txt2: computedStyles.getPropertyValue(`--${essence}Txt2`),
+      txt3: computedStyles.getPropertyValue(`--${essence}Txt3`),
+      accent: computedStyles.getPropertyValue(`--${essence}Accent`),
+      accentTxt: computedStyles.getPropertyValue(`--${essence}AccentTxt`),
       padding: {
         start: computedStyles.paddingInlineStart,
         end: computedStyles.paddingInlineEnd,
@@ -997,6 +1047,9 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.colors.Txt.style.background = css.txt;
     this.stylerControls.colors.Txt.style.background = css.txt2;
     this.stylerControls.colors.Txt.style.background = css.txt3;
+
+    this.stylerControls.accentColors.Accent.style.background = css.accent;
+    this.stylerControls.accentColors.AccentTxt.style.background = css.accentTxt;
 
     this.stylerControls.padding.start.value = css.padding.start;
     this.stylerControls.padding.end.value = css.padding.end;

@@ -4181,9 +4181,6 @@ display: flex;
     row-gap: 8px;
 }
 
-.sk_ui_custom_change_modals_group.variant_colors .sk_widget_collapse_block{
-  width: 120px;
-}
 
 `;
     this.styles = document.createElement("style");
