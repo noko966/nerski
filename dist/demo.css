@@ -52,9 +52,8 @@ html {
   flex: 1;
 }
 
-.demo_list_wrapper.variant_events_list{
+.demo_list_wrapper.variant_events_list {
   row-gap: 16px;
-
 }
 
 .demo_list_wrapper.variant_event {
@@ -414,11 +413,11 @@ html {
 }
 
 .demo_widget_content {
-  background-color: var(--dominantBg);
-  color: var(--dominantTxt);
+  background: var(--eventBg);
+  color: var(--eventTxt);
   min-height: 150px;
-  border-bottom-left-radius: var(--dominantRadius);
-  border-bottom-right-radius: var(--dominantRadius);
+  border-bottom-left-radius: var(--eventRadius);
+  border-bottom-right-radius: var(--eventRadius);
 }
 
 input.demo_widget_input {
@@ -447,7 +446,7 @@ input.demo_widget_input {
   color: inherit;
 }
 
-.demo_mid_content_list{
+.demo_mid_content_list {
   flex-grow: 1;
   min-width: 0;
   display: flex;

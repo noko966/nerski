@@ -1808,6 +1808,37 @@ class Skinner {
     });
   }
 
+  saveColorsForPicker() {
+    const _t = this;
+    const localSolids = [];
+    const nodeNames = this.rootNodes.map((rn) => {
+      return rn;
+    });
+    const keyEssences = [...nodeNames];
+    keyEssences.push("event");
+    keyEssences.push("modal");
+    const keys = [
+      "nameBg",
+      "nameBgHov",
+      "nameBg2",
+      "nameBg2Hov",
+      "nameBg3",
+      "nameBg3Hov",
+      "nameTxt",
+      "nameTxt2",
+      "nameTxt3",
+    ];
+    keyEssences.forEach((e) => {
+      const _vd = _t.verbalData(e);
+      keys.forEach((k) => {
+        const solid = _t.skin[_vd[k]];
+        localSolids.push(solid);
+      });
+    });
+
+    return localSolids;
+  }
+
   handlePicker(event, color, mode, onChangeCallback) {
     const _t = this;
     if (_t.pickerInstance) {
@@ -1821,9 +1852,12 @@ class Skinner {
     const x = event.clientX;
     const y = event.clientY;
 
+    const localSolids = _t.saveColorsForPicker();
+
     const SKPickerInstance = new SKPicker({
       default: currentColor,
       mode: mode,
+      localSolids,
     });
     SKPickerInstance.init();
     SKPickerInstance.show(x, y);
@@ -4181,6 +4215,41 @@ display: flex;
     row-gap: 8px;
 }
 
+.sk_ui_custom_change_root.variant_start .sk_ui_custom_change_modals_container{
+    right: auto;
+    left: 0;
+}
+.sk_iconic_checkbox{
+--size: 24px;
+width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+    display: block;
+}
+
+.sk_iconic_checkbox > input {
+    display: none;
+}
+
+.sk_iconic_checkbox > i {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    cursor: pointer;
+    background: var(--sk_dominantBg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sk_iconic_checkbox > i >.sk_svg {
+    --size: 16px;
+  width: var(--size);
+    height: var(--size);
+}
+.sk_iconic_checkbox > input:checked + i {
+    background: var(--sk_dominantBg3);
+}
 
 `;
     this.styles = document.createElement("style");

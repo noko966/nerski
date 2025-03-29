@@ -218,63 +218,67 @@ ${cn} > * {
   createCss() {
     let css = "";
     let CSSVariableRuleStart = "";
-
     for (const key in this.skin) {
       const _skin = this.skin[key];
 
       CSSVariableRuleStart += `
-        ${key} {
-
-        --${_skin.varPrefix}G: ${_skin.background.main};
-        --${_skin.varPrefix}Bg: ${_skin.background.main};
-        
+${key} {
+  --${_skin.varPrefix}G: ${_skin.background.main};
+  --${_skin.varPrefix}Bg: ${_skin.background.main};
  `;
-
-      // Define CSS variables for padding
-
-      CSSVariableRuleStart += `
-        --${_skin.varPrefix}Ps: ${_skin.padding.start}px;
-        --${_skin.varPrefix}Pe: ${_skin.padding.end}px;
-        --${_skin.varPrefix}Pt: ${_skin.padding.top}px;
-        --${_skin.varPrefix}Pb: ${_skin.padding.bottom}px;
-        `;
-
-      // --${_skin.varPrefix}PaddingTop: ${_skin.padding.top}px;
-      // --${_skin.varPrefix}PaddingBottom: ${_skin.padding.bottom}px;
-
-      // Define CSS variables for border radius
-
-      CSSVariableRuleStart += `
-        --${_skin.varPrefix}RTL: ${_skin.radius.tl}px;
-        --${_skin.varPrefix}RTR: ${_skin.radius.tr}px;
-        --${_skin.varPrefix}RBR: ${_skin.radius.br}px;
-        --${_skin.varPrefix}RBL: ${_skin.radius.bl}px;
-        `;
-
-      // Define CSS variables for colors
 
       for (const txt in _skin.colors) {
         CSSVariableRuleStart += `
-          --${_skin.varPrefix}${txt}: ${_skin.colors[txt]};
-          `;
+  --${_skin.varPrefix}${txt}: ${_skin.colors[txt]};
+`;
       }
 
       for (const accent in _skin.accentColors) {
         CSSVariableRuleStart += `
-          --${_skin.varPrefix}${accent}: ${_skin.accentColors[accent]};
-          `;
+  --${_skin.varPrefix}${accent}: ${_skin.accentColors[accent]};
+`;
       }
 
       CSSVariableRuleStart += `
-        padding-inline-start: var(--${_skin.varPrefix}Ps);
-        padding-inline-end: var(--${_skin.varPrefix}Pe);
-        padding-top: var(--${_skin.varPrefix}Pt);
-        padding-bottom: var(--${_skin.varPrefix}Pb);
-        border-top-left-radius: var(--${_skin.varPrefix}RTL);
-        border-top-right-radius: var(--${_skin.varPrefix}RTR);
-        border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
-        border-bottom-left-radius: var(--${_skin.varPrefix}RBL);
-      `;
+  --${_skin.varPrefix}Ps: ${_skin.padding.start};
+  --${_skin.varPrefix}Pe: ${_skin.padding.end};
+  --${_skin.varPrefix}Pt: ${_skin.padding.top};
+  --${_skin.varPrefix}Pb: ${_skin.padding.bottom};
+`;
+
+      CSSVariableRuleStart += `
+--${_skin.varPrefix}BorderStartWidth: ${_skin.border.start};
+--${_skin.varPrefix}BorderEndWidth: ${_skin.border.end};
+--${_skin.varPrefix}BorderTopWidth: ${_skin.border.top};
+--${_skin.varPrefix}BorderBottomWidth: ${_skin.border.bottom};
+--${_skin.varPrefix}Border: ${_skin.border.color};
+`;
+
+      CSSVariableRuleStart += `
+  --${_skin.varPrefix}RTL: ${_skin.radius.tl};
+  --${_skin.varPrefix}RTR: ${_skin.radius.tr};
+  --${_skin.varPrefix}RBR: ${_skin.radius.br};
+  --${_skin.varPrefix}RBL: ${_skin.radius.bl};
+`;
+
+      // Define CSS variables for colors
+
+      CSSVariableRuleStart += `
+  padding-inline-start: var(--${_skin.varPrefix}Ps);
+  padding-inline-end: var(--${_skin.varPrefix}Pe);
+  padding-top: var(--${_skin.varPrefix}Pt);
+  padding-bottom: var(--${_skin.varPrefix}Pb);
+
+  border-inline-start: var(--${_skin.varPrefix}BorderStartWidth) solid var(--${_skin.varPrefix}Border);
+  border-inline-end: var(--${_skin.varPrefix}BorderEndWidth) solid var(--${_skin.varPrefix}Border);
+  border-top: var(--${_skin.varPrefix}BorderTopWidth) solid var(--${_skin.varPrefix}Border);
+  border-bottom: var(--${_skin.varPrefix}BorderBottomWidth) solid var(--${_skin.varPrefix}Border);
+
+  border-top-left-radius: var(--${_skin.varPrefix}RTL);
+  border-top-right-radius: var(--${_skin.varPrefix}RTR);
+  border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
+  border-bottom-left-radius: var(--${_skin.varPrefix}RBL);
+  `;
       CSSVariableRuleStart += `}`;
     }
 
@@ -289,17 +293,16 @@ ${cn} > * {
   }
 
   createKey(name, el) {
+    const _t = this;
     this.skin[name] = {};
-    const cs = this.getSelectorAffectedCssStyles(el);
     const css = this.getSelectorEssenceStyles(el);
     let uniqueClass = el.getAttribute("data-sk");
-    const padding = this.parseProp(cs.padding);
 
     // Helper function to group elements by `data-sk-color`
     this.skin[name].colors = {};
 
     this.skin[name].colors = {
-      Txt: css.txt, 
+      Txt: css.txt,
       Txt2: css.txt2,
       Txt3: css.txt3,
     };
@@ -313,18 +316,43 @@ ${cn} > * {
 
     // Set up your skin structure
     this.skin[name].background = { main: css.bg };
+    this.skin[name].gradient = {
+      isActive: false,
+      stops: [
+        [this.skin[css.bg], 0],
+        [this.skin[css.bg], 1],
+      ],
+      angle: 0,
+      type: "linear",
+      color: _t.createGradientString({
+        stops: [
+          [this.skin[css.bg], 0],
+          [this.skin[css.bg], 1],
+        ],
+        angle: 0,
+        type: "linear",
+      }),
+    };
+
     this.skin[name].padding = {
-      start: padding.top.value,
-      end: padding.right.value,
-      bottom: padding.bottom.value,
-      left: padding.left.value,
+      start: css.padding.start,
+      end: css.padding.end,
+      bottom: css.padding.bottom,
+      top: css.padding.top,
+    };
+    this.skin[name].border = {
+      start: css.border.start,
+      end: css.border.end,
+      bottom: css.border.bottom,
+      top: css.border.top,
+      color: css.border.color,
     };
     this.skin[name].varPrefix = uniqueClass;
     this.skin[name].radius = {
-      tl: cs.borderRadiusTL,
-      tr: cs.borderRadiusTR,
-      br: cs.borderRadiusBR,
-      bl: cs.borderRadiusBL,
+      tl: css.radius.tl,
+      tr: css.radius.tr,
+      br: css.radius.br,
+      bl: css.radius.bl,
     };
 
     // Extract up to 3 unique color keys
@@ -414,50 +442,53 @@ ${cn} > * {
     };
   }
 
-  createSVGOverlay(x,y,w,h){
+  createSVGOverlay(x, y, w, h) {
     const svgNS = "http://www.w3.org/2000/svg";
 
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("id", "overlay");
-  svg.setAttribute("width", "100%");
-  svg.setAttribute("height", "100%");
-  svg.setAttribute("style", "position:fixed;top:0;left:0;z-index:9999;pointer-events:none");
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("id", "overlay");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    svg.setAttribute(
+      "style",
+      "position:fixed;top:0;left:0;z-index:9999;pointer-events:none"
+    );
 
-  const defs = document.createElementNS(svgNS, "defs");
-  const mask = document.createElementNS(svgNS, "mask");
-  mask.setAttribute("id", "cutout");
+    const defs = document.createElementNS(svgNS, "defs");
+    const mask = document.createElementNS(svgNS, "mask");
+    mask.setAttribute("id", "cutout");
 
-  const fullRect = document.createElementNS(svgNS, "rect");
-  fullRect.setAttribute("x", "0");
-  fullRect.setAttribute("y", "0");
-  fullRect.setAttribute("width", "100%");
-  fullRect.setAttribute("height", "100%");
-  fullRect.setAttribute("fill", "white");
+    const fullRect = document.createElementNS(svgNS, "rect");
+    fullRect.setAttribute("x", "0");
+    fullRect.setAttribute("y", "0");
+    fullRect.setAttribute("width", "100%");
+    fullRect.setAttribute("height", "100%");
+    fullRect.setAttribute("fill", "white");
 
-  // Cutout black rect
-  const cutout = document.createElementNS(svgNS, "rect");
-  cutout.setAttribute("x", x);
-  cutout.setAttribute("y", y);
-  cutout.setAttribute("width", w);
-  cutout.setAttribute("height", h);
-  cutout.setAttribute("fill", "black");
+    // Cutout black rect
+    const cutout = document.createElementNS(svgNS, "rect");
+    cutout.setAttribute("x", x);
+    cutout.setAttribute("y", y);
+    cutout.setAttribute("width", w);
+    cutout.setAttribute("height", h);
+    cutout.setAttribute("fill", "black");
 
-  mask.appendChild(fullRect);
-  mask.appendChild(cutout);
-  defs.appendChild(mask);
-  svg.appendChild(defs);
+    mask.appendChild(fullRect);
+    mask.appendChild(cutout);
+    defs.appendChild(mask);
+    svg.appendChild(defs);
 
-  const overlay = document.createElementNS(svgNS, "rect");
-  overlay.setAttribute("x", "0");
-  overlay.setAttribute("y", "0");
-  overlay.setAttribute("width", "100%");
-  overlay.setAttribute("height", "100%");
-  overlay.setAttribute("fill", "rgba(0,0,0,0.7)");
-  overlay.setAttribute("mask", "url(#cutout)");
+    const overlay = document.createElementNS(svgNS, "rect");
+    overlay.setAttribute("x", "0");
+    overlay.setAttribute("y", "0");
+    overlay.setAttribute("width", "100%");
+    overlay.setAttribute("height", "100%");
+    overlay.setAttribute("fill", "rgba(0,0,0,0.7)");
+    overlay.setAttribute("mask", "url(#cutout)");
 
-  svg.appendChild(overlay);
+    svg.appendChild(overlay);
 
-  return svg;
+    return svg;
   }
 
   createUI() {
@@ -489,15 +520,21 @@ ${cn} > * {
     root.style.pointerEvents = "none";
     this.ui = {};
 
-    this.ui.overlay = this.createSVGOverlay(100,100,100,20);
-
-    
+    this.ui.overlay = this.createSVGOverlay(100, 100, 100, 20);
 
     // Callback for color picker
-    const handlePickerCallBack = (e) => {
+    const handleBackgroundPickerCallBack = (e) => {
       this.handleGradientPicker(e, null, (data) => {
         this.modifyKey("background", "main", data.color);
+
         this.updateControl("background", "main", data.color);
+      });
+    };
+
+    const handleBorderPickerCallBack = (e) => {
+      this.handlePicker(e, null, null, (color) => {
+        this.modifyKey("border", "color", color);
+        this.updateControl("border", "color", color);
       });
     };
 
@@ -512,12 +549,16 @@ ${cn} > * {
 
     this.BgPicker = this.createColorBox(
       "sk_picker_trigger",
-      handlePickerCallBack
+      handleBackgroundPickerCallBack
+    );
+
+    this.BorderPicker = this.createColorBox(
+      "sk_picker_trigger",
+      handleBorderPickerCallBack
     );
 
     const rootBounds = root.getBoundingClientRect();
     root.appendChild(this.ui.overlay);
-
 
     const group1 = document.createElement("div");
     group1.className = "sk_ui_custom_change_modals_group variant_colors";
@@ -549,11 +590,10 @@ ${cn} > * {
     this.ui.modalsContainer.appendChild(this.ui.modalsActionsWrapper);
     this.ui.modalsActionsWrapper.className = "sk_actions_wrapper_styler";
     group1.appendChild(this.ui.backgroundRoot);
-    
+
     const bRow = this.createPickersRow();
     bgContent.appendChild(bRow);
     bRow.appendChild(this.BgPicker);
-    
 
     this.stylerControls = {};
     this.ui.modalsContainer.className = "sk_ui_custom_change_modals_container";
@@ -565,6 +605,16 @@ ${cn} > * {
     this.ui.paddingRoot.appendChild(pContent);
     pContent.appendChild(this.createPaddingGroupControls());
     group2.appendChild(this.ui.paddingRoot);
+
+    this.ui.borderRoot = this.createControlRoot();
+    const blbl = this.createControlHeader("border");
+    const bContent = this.createControlContent();
+    this.ui.borderRoot.appendChild(blbl);
+    this.ui.borderRoot.appendChild(bContent);
+    bContent.appendChild(this.createBorderGroupControls());
+    bContent.appendChild(this.BorderPicker);
+    group2.appendChild(this.ui.borderRoot);
+
     this.ui.radiusRoot = this.createControlRoot();
     const rlbl = this.createControlHeader("radius");
     const rContent = this.createControlContent();
@@ -576,6 +626,7 @@ ${cn} > * {
 
     this.stylerControls.background = {};
 
+    this.stylerControls.border.color = this.BorderPicker;
     this.stylerControls.background.main = this.BgPicker;
     this.stylerControls.colors = {};
     this.stylerControls.accentColors = {};
@@ -587,89 +638,18 @@ ${cn} > * {
     this.createTextColorPickers(cRow);
     this.createAccentColorPickers(aRow);
     this.ui.predefinedStylesRoot = document.createElement("div");
-    this.ui.predefinedStylesRoot.className =
-      "sk_ui_prd_styles_root";
+    this.ui.predefinedStylesRoot.className = "sk_ui_prd_styles_root";
     this.ui.modalsActionsWrapper.appendChild(this.ui.predefinedStylesRoot);
     this.ui.modalsActionsWrapper.appendChild(this.hideUITrigger);
 
     this.UIRoot = root;
   }
 
-  createPickersRow(){
+  createPickersRow() {
     const root = document.createElement("div");
-    root.className =
-      "sk_ui_pickers_row";
+    root.className = "sk_ui_pickers_row";
 
     return root;
-  }
-
-  createFansyPaddingControls(root) {
-    this.radiusesWrapper = document.createElement("div");
-    this.radiusesWrapper.className =
-      "sk_ui_custom_change_controls_radiuses_wrapper";
-    const borderRadiusTL = this.createRadiusControl(this.radiusesWrapper, "tl");
-    const borderRadiusTR = this.createRadiusControl(this.radiusesWrapper, "tr");
-    const borderRadiusBR = this.createRadiusControl(this.radiusesWrapper, "br");
-    const borderRadiusBL = this.createRadiusControl(this.radiusesWrapper, "bl");
-    this.stylerControls.radius = {};
-    this.stylerControls.radius.tl = borderRadiusTL.input;
-    this.stylerControls.radius.tr = borderRadiusTR.input;
-    this.stylerControls.radius.br = borderRadiusBR.input;
-    this.stylerControls.radius.bl = borderRadiusBL.input;
-
-    this.paddingsWrapper = document.createElement("div");
-    this.paddingsWrapper.className =
-      "sk_ui_custom_change_controls_paddings_wrapper";
-    const paddingRangeStartWrapper = document.createElement("div");
-    paddingRangeStartWrapper.className =
-      "sk_control_padding_wrapper variant_start";
-    this.paddingRangeStart = document.createElement("input");
-    this.paddingRangeStart.type = "range";
-    this.paddingRangeStart.className = "sk_control_padding ";
-
-    this.paddingRangeStart.min = 0;
-    this.paddingRangeStart.max = 100;
-
-    this.paddingRangeStart.addEventListener("change", (e) => {
-      const value = e.target.value;
-
-      this.modifyKey("padding", "start", value);
-
-      const percentage =
-        ((value - e.target.min) / (e.target.max - e.target.min)) * 100;
-
-      paddingRangeStartWrapper.style.setProperty("--percent", `${percentage}%`);
-    });
-
-    paddingRangeStartWrapper.appendChild(this.paddingRangeStart);
-
-    this.paddingsWrapper.appendChild(paddingRangeStartWrapper);
-
-    const paddingRangeEndWrapper = document.createElement("div");
-    paddingRangeEndWrapper.className = "sk_control_padding_wrapper variant_end";
-    this.paddingRangeEnd = document.createElement("input");
-    this.paddingRangeEnd.type = "range";
-    this.paddingRangeEnd.className = "sk_control_padding  sk_flip";
-
-    this.paddingRangeEnd.min = 0;
-    this.paddingRangeEnd.max = 32;
-
-    this.paddingRangeEnd.addEventListener("change", (e) => {
-      const value = e.target.value;
-
-      this.modifyKey("padding", "end", value);
-
-      const percentage =
-        ((value - e.target.min) / (e.target.max - e.target.min)) * 100;
-
-      paddingRangeEndWrapper.style.setProperty("--percent", `${percentage}%`);
-    });
-
-    root.appendChild(this.paddingsWrapper);
-    root.appendChild(this.radiusesWrapper);
-
-    paddingRangeEndWrapper.appendChild(this.paddingRangeEnd);
-    this.paddingsWrapper.appendChild(paddingRangeEndWrapper);
   }
 
   createRadiusControl(root, variant) {
@@ -758,23 +738,23 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 <path d="M3.5,16.5h13"/>
 <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
 </svg>
-`,  
+`,
       tl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path class="st0" d="M16.5,3.5H8.7c-2.9,0-5.2,2.3-5.2,5.2v7.8"/>
 </svg>
 `,
-tr: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+      tr: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path class="st0" d="M16.5,16.5V8.7c0-2.9-2.3-5.2-5.2-5.2H3.5"/>
 </svg>
 `,
-bl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+      bl: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path class="st0" d="M3.5,3.5v7.8c0,2.9,2.3,5.2,5.2,5.2h7.8"/>
 </svg>
 `,
-br: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+      br: `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <path class="st0" d="M3.5,16.5h7.8c2.9,0,5.2-2.3,5.2-5.2V3.5"/>
 </svg>
@@ -798,83 +778,282 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     };
   }
 
-  createPaddingGroupControls() {
+  addSVGIcon() {
+    const icon = document.createElement("i");
+    icon.innerHTML = `<svg version="1.1" class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+    <path d="M16.5,16.5v-13"/>
+    <path d="M3.5,3.5v13"/>
+    <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+    </svg>
+    `;
+
+    return icon;
+  }
+
+  createBorderGroupControls() {
+    const unit = "px";
     const _t = this;
-    const cx = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `start`, e.target.value);
-      _t.modifyKey("padding", `end`, e.target.value);
-    }, "x");
-    const cy = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `top`, e.target.value);
-      _t.modifyKey("padding", `bottom`, e.target.value);
-    }, "y");
+
+    const linkToggle = document.createElement("input");
+    linkToggle.type = "checkbox";
+    linkToggle.id = "sk-border-link-toggle";
+    linkToggle.checked = _t.stylerControls.linkPaddingAll;
+    const linkToggleLabel = document.createElement("label");
+    const icon = _t.addSVGIcon();
+    linkToggleLabel.htmlFor = "sk-border-link-toggle";
+    linkToggleLabel.className = "sk_iconic_checkbox";
+
+    linkToggleLabel.appendChild(linkToggle);
+    linkToggleLabel.appendChild(icon);
+
+    _t.stylerControls.border = {};
+    _t.stylerControls.border.linkAll = false;
+
+    linkToggle.addEventListener("change", (e) => {
+      _t.stylerControls.border.linkAll = e.target.checked;
+      if (_t.stylerControls.border.linkAll) {
+        const startVal = _t.stylerControls.border.start.value;
+        setAllSides(startVal);
+      }
+    });
+
+    _t.stylerControls.padding.linkToggle = linkToggle;
+
+    function setAllSides(value) {
+      _t.stylerControls.border.start.value = value;
+      _t.stylerControls.border.top.value = value;
+      _t.stylerControls.border.end.value = value;
+      _t.stylerControls.border.bottom.value = value;
+
+      _t.modifyKey("border", "start", value + unit);
+      _t.modifyKey("border", "top", value + unit);
+      _t.modifyKey("border", "end", value + unit);
+      _t.modifyKey("border", "bottom", value + unit);
+    }
 
     const cs = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `start`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("border", `start`, e.target.value + unit);
+      }
     }, "s");
     const ct = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `top`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("border", `top`, e.target.value + unit);
+      }
     }, "t");
     const ce = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `end`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("border", `end`, e.target.value + unit);
+      }
     }, "e");
     const cb = _t.createInputControl((e) => {
-      _t.modifyKey("padding", `bottom`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("border", `bottom`, e.target.value + unit);
+      }
     }, "b");
 
-    const controlWrapper1 = document.createElement("div");
-    controlWrapper1.className = "sk_input_control_group_block state_hide";
-    controlWrapper1.appendChild(cx.inputWrapperEl);
-    controlWrapper1.appendChild(cy.inputWrapperEl);
-
-    const controlWrapper2 = document.createElement("div");
-    controlWrapper2.className = "sk_input_control_group_block";
-    controlWrapper2.appendChild(cs.inputWrapperEl);
-    controlWrapper2.appendChild(ct.inputWrapperEl);
-    controlWrapper2.appendChild(ce.inputWrapperEl);
-    controlWrapper2.appendChild(cb.inputWrapperEl);
+    const controlWrapper = document.createElement("div");
+    controlWrapper.className = "sk_input_control_group_block";
+    controlWrapper.appendChild(cs.inputWrapperEl);
+    controlWrapper.appendChild(ct.inputWrapperEl);
+    controlWrapper.appendChild(ce.inputWrapperEl);
+    controlWrapper.appendChild(cb.inputWrapperEl);
 
     const controlsRoot = document.createElement("div");
-    controlsRoot.appendChild(controlWrapper1);
-    controlsRoot.appendChild(controlWrapper2);
+
+    controlsRoot.appendChild(controlWrapper);
+    controlsRoot.appendChild(linkToggleLabel);
+
+    _t.stylerControls.border.start = cs.inputEl;
+    _t.stylerControls.border.end = ce.inputEl;
+    _t.stylerControls.border.top = ct.inputEl;
+    _t.stylerControls.border.bottom = cb.inputEl;
+
+    return controlsRoot;
+  }
+
+  createPaddingGroupControls() {
+    const unit = "px";
+    const _t = this;
+
+    const linkToggle = document.createElement("input");
+    linkToggle.type = "checkbox";
+    linkToggle.id = "sk-padding-link-toggle";
+    linkToggle.checked = _t.stylerControls.linkPaddingAll;
+    const linkToggleLabel = document.createElement("label");
+    const icon = _t.addSVGIcon();
+    linkToggleLabel.htmlFor = "sk-padding-link-toggle";
+    linkToggleLabel.className = "sk_iconic_checkbox";
+
+    linkToggleLabel.appendChild(linkToggle);
+    linkToggleLabel.appendChild(icon);
 
     _t.stylerControls.padding = {};
+    _t.stylerControls.padding.linkAll = false;
 
-    _t.stylerControls.padding.top = ct.inputEl;
-    _t.stylerControls.padding.end = ce.inputEl;
-    _t.stylerControls.padding.bottom = cb.inputEl;
+    linkToggle.addEventListener("change", (e) => {
+      _t.stylerControls.padding.linkAll = e.target.checked;
+      if (_t.stylerControls.padding.linkAll) {
+        const startVal = _t.stylerControls.padding.start.value;
+        setAllSides(startVal);
+      }
+    });
+
+    _t.stylerControls.padding.linkToggle = linkToggle;
+
+    function setAllSides(value) {
+      _t.stylerControls.padding.start.value = value;
+      _t.stylerControls.padding.top.value = value;
+      _t.stylerControls.padding.end.value = value;
+      _t.stylerControls.padding.bottom.value = value;
+
+      _t.modifyKey("padding", "start", value + unit);
+      _t.modifyKey("padding", "top", value + unit);
+      _t.modifyKey("padding", "end", value + unit);
+      _t.modifyKey("padding", "bottom", value + unit);
+    }
+
+    const cs = _t.createInputControl((e) => {
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("padding", `start`, e.target.value + unit);
+      }
+    }, "s");
+    const ct = _t.createInputControl((e) => {
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("padding", `top`, e.target.value + unit);
+      }
+    }, "t");
+    const ce = _t.createInputControl((e) => {
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("padding", `end`, e.target.value + unit);
+      }
+    }, "e");
+    const cb = _t.createInputControl((e) => {
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("padding", `bottom`, e.target.value + unit);
+      }
+    }, "b");
+
+    const controlWrapper = document.createElement("div");
+    controlWrapper.className = "sk_input_control_group_block";
+    controlWrapper.appendChild(cs.inputWrapperEl);
+    controlWrapper.appendChild(ct.inputWrapperEl);
+    controlWrapper.appendChild(ce.inputWrapperEl);
+    controlWrapper.appendChild(cb.inputWrapperEl);
+
+    const controlsRoot = document.createElement("div");
+
+    controlsRoot.appendChild(controlWrapper);
+    controlsRoot.appendChild(linkToggleLabel);
+
     _t.stylerControls.padding.start = cs.inputEl;
+    _t.stylerControls.padding.end = ce.inputEl;
+    _t.stylerControls.padding.top = ct.inputEl;
+    _t.stylerControls.padding.bottom = cb.inputEl;
 
     return controlsRoot;
   }
 
   createRadiusGroupControls() {
+    const unit = "px";
+
     const _t = this;
+
+    const linkToggle = document.createElement("input");
+    linkToggle.type = "checkbox";
+    linkToggle.id = "sk-radius-link-toggle";
+    linkToggle.checked = _t.stylerControls.linkPaddingAll;
+
+    const linkToggleLabel = document.createElement("label");
+    const icon = _t.addSVGIcon();
+    linkToggleLabel.htmlFor = "sk-radius-link-toggle";
+    linkToggleLabel.className = "sk_iconic_checkbox";
+
+    linkToggleLabel.appendChild(linkToggle);
+    linkToggleLabel.appendChild(icon);
+
+    _t.stylerControls.radius = {};
+    _t.stylerControls.radius.linkAll = false;
+
+    linkToggle.addEventListener("change", (e) => {
+      _t.stylerControls.radius.linkAll = e.target.checked;
+      if (_t.stylerControls.radius.linkAll) {
+        const startVal = _t.stylerControls.radius.tl.value;
+        setAllSides(startVal);
+      }
+    });
+
+    _t.stylerControls.radius.linkToggle = linkToggle;
+
+    function setAllSides(value) {
+      _t.stylerControls.radius.tl.value = value;
+      _t.stylerControls.radius.tr.value = value;
+      _t.stylerControls.radius.bl.value = value;
+      _t.stylerControls.radius.br.value = value;
+
+      _t.modifyKey("radius", "tl", value + unit);
+      _t.modifyKey("radius", "tr", value + unit);
+      _t.modifyKey("radius", "bl", value + unit);
+      _t.modifyKey("radius", "br", value + unit);
+    }
+
     const tl = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `tl`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("radius", `tl`, e.target.value + unit);
+      }
     }, "tl");
     const tr = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `tr`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("radius", `tr`, e.target.value + unit);
+      }
     }, "tr");
 
     const bl = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `bl`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("radius", `bl`, e.target.value + unit);
+      }
     }, "bl");
     const br = _t.createInputControl((e) => {
-      _t.modifyKey("radius", `br`, e.target.value);
+      if (linkToggle.checked) {
+        setAllSides(e.target.value);
+      } else {
+        _t.modifyKey("radius", `br`, e.target.value + unit);
+      }
     }, "br");
 
-    const controlWrapper2 = document.createElement("div");
-    controlWrapper2.className = "sk_input_control_group_block";
-    controlWrapper2.appendChild(tl.inputWrapperEl);
-    controlWrapper2.appendChild(tr.inputWrapperEl);
-    controlWrapper2.appendChild(bl.inputWrapperEl);
-    controlWrapper2.appendChild(br.inputWrapperEl);
+    const controlWrapper = document.createElement("div");
+    controlWrapper.className = "sk_input_control_group_block";
+    controlWrapper.appendChild(tl.inputWrapperEl);
+    controlWrapper.appendChild(tr.inputWrapperEl);
+    controlWrapper.appendChild(bl.inputWrapperEl);
+    controlWrapper.appendChild(br.inputWrapperEl);
 
     const controlsRoot = document.createElement("div");
-    controlsRoot.appendChild(controlWrapper2);
-
-    _t.stylerControls.radius = {};
+    controlsRoot.appendChild(controlWrapper);
+    controlsRoot.appendChild(linkToggleLabel);
 
     _t.stylerControls.radius.tl = tl.inputEl;
     _t.stylerControls.radius.tr = tr.inputEl;
@@ -956,28 +1135,15 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     return values;
   }
 
-  getSelectorAffectedCssStyles(selector) {
-    if (!selector) return;
-    let computedStyles = getComputedStyle(selector);
-    let styles = {
-      background: computedStyles.background,
-      text: computedStyles.color,
-      padding: computedStyles.padding,
-      borderRadiusTL: computedStyles.borderTopLeftRadius,
-      borderRadiusTR: computedStyles.borderTopRightRadius,
-      borderRadiusBR: computedStyles.borderBottomRightRadius,
-      borderRadiusBL: computedStyles.borderBottomLeftRadius,
-    };
-
-    return styles;
-  }
-
   getSelectorEssenceStyles(selector) {
     const essence = selector.getAttribute("data-sk");
     let computedStyles = getComputedStyle(selector);
     if (!selector) return;
+    const background =
+      computedStyles.getPropertyValue(`--${essence}Bg`) ||
+      computedStyles.getPropertyValue(`--${essence}G`);
     let styles = {
-      bg: computedStyles.getPropertyValue(`--${essence}Bg`),
+      bg: background,
       txt: computedStyles.getPropertyValue(`--${essence}Txt`),
       txt2: computedStyles.getPropertyValue(`--${essence}Txt2`),
       txt3: computedStyles.getPropertyValue(`--${essence}Txt3`),
@@ -988,6 +1154,13 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
         end: computedStyles.paddingInlineEnd,
         top: computedStyles.paddingTop,
         bottom: computedStyles.paddingBottom,
+      },
+      border: {
+        start: computedStyles.borderBlockStartWidth,
+        end: computedStyles.borderBlockEndWidth,
+        top: computedStyles.borderTopWidth,
+        bottom: computedStyles.borderBottomWidth,
+        color: computedStyles.getPropertyValue(`--${essence}Border`),
       },
       radius: {
         tl: computedStyles.borderTopLeftRadius,
@@ -1019,6 +1192,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     return grouped;
   }
 
+  parseValueForInput(rawValue) {
+    return parseInt(rawValue, 10);
+  }
+
   showUI(x, y, currentElement) {
     const _t = this;
     if (!this.UIRoot) return;
@@ -1027,10 +1204,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       const overlay = this.ui.overlay;
       const mask = overlay.querySelector("mask#cutout");
       const cutout = mask.querySelector("rect[fill='black']");
-      
+
       const bounds = currentElement.getBoundingClientRect();
       const gap = 4;
-    
+
       cutout.setAttribute("x", bounds.left - gap);
       cutout.setAttribute("y", bounds.top - gap);
       cutout.setAttribute("width", bounds.width + gap * 2);
@@ -1051,14 +1228,45 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.accentColors.Accent.style.background = css.accent;
     this.stylerControls.accentColors.AccentTxt.style.background = css.accentTxt;
 
-    this.stylerControls.padding.start.value = css.padding.start;
-    this.stylerControls.padding.end.value = css.padding.end;
-    this.stylerControls.padding.top.value = css.padding.top;
-    this.stylerControls.padding.bottom.value = css.padding.bottom;
-    this.stylerControls.radius.tl.value = css.radius.tl;
-    this.stylerControls.radius.tr.value = css.radius.tr;
-    this.stylerControls.radius.br.value = css.radius.br;
-    this.stylerControls.radius.bl.value = css.radius.bl;
+    this.stylerControls.padding.start.value = this.parseValueForInput(
+      css.padding.start
+    );
+    this.stylerControls.padding.end.value = this.parseValueForInput(
+      css.padding.end
+    );
+    this.stylerControls.padding.top.value = this.parseValueForInput(
+      css.padding.top
+    );
+    this.stylerControls.padding.bottom.value = this.parseValueForInput(
+      css.padding.bottom
+    );
+
+    this.stylerControls.border.color.style.background = css.border.color;
+    this.stylerControls.border.start.value = this.parseValueForInput(
+      css.border.start
+    );
+    this.stylerControls.border.end.value = this.parseValueForInput(
+      css.border.end
+    );
+    this.stylerControls.border.top.value = this.parseValueForInput(
+      css.border.top
+    );
+    this.stylerControls.border.bottom.value = this.parseValueForInput(
+      css.border.bottom
+    );
+
+    this.stylerControls.radius.tl.value = this.parseValueForInput(
+      css.radius.tl
+    );
+    this.stylerControls.radius.tr.value = this.parseValueForInput(
+      css.radius.tr
+    );
+    this.stylerControls.radius.br.value = this.parseValueForInput(
+      css.radius.br
+    );
+    this.stylerControls.radius.bl.value = this.parseValueForInput(
+      css.radius.bl
+    );
     this.stylerControls.radius.bl.parentElement;
 
     const radiusMax = Math.ceil(bounds.height / 2);
@@ -1079,12 +1287,17 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
+    this.UIRoot.classList.remove("variant_start");
+    if (bounds.x + bounds.width >= windowWidth - 160) {
+      this.UIRoot.classList.add("variant_start");
+    }
 
     let uniqueClass = currentElement.getAttribute("data-sk");
     let specificCn = this.generateCssPath(currentElement);
     let selector = `${specificCn}[data-sk="${uniqueClass}"]`;
 
     this.activeSelectorId = selector;
+
     this.UIRoot.classList.add("state-reveal");
 
     let timeoutId = setTimeout(() => {
@@ -1095,6 +1308,36 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     // 🔥 Attach dynamic color pickers
 
     this.createKey(selector, currentElement); // saves txt1/2/3
+  }
+
+  createGradientString(gradientConfig) {
+    const _gc = gradientConfig;
+    let str = "";
+    function createStopsString(gradientConfig) {
+      const _gc = gradientConfig;
+      let res = "";
+      switch (_gc.type) {
+        case "linear":
+        case "radial":
+          return _gc.stops.map((s) => `${s[0]} ${s[1] * 100}%`).join(",");
+        case "conic":
+          return _gc.stops.map((s) => `${s[0]} ${s[1] * 360}deg`).join(",");
+      }
+      return res;
+    }
+
+    const stopsString = createStopsString(_gc);
+
+    switch (_gc.type) {
+      case "linear":
+        return (str = `linear-gradient(${_gc.angle}deg, ${stopsString})`);
+      case "radial":
+        return (str = `radial-gradient(${_gc.angle}, ${stopsString})`);
+      case "conic":
+        return (str = `conic-gradient(${stopsString})`);
+    }
+
+    return str;
   }
 
   hideUI() {
@@ -1279,10 +1522,14 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
 
   handleGradientPicker(event, color, onChangeCallback) {
     // const _vd = this.verbalData(essence);
+
     const _t = this;
     if (self.pickerInstance) {
       console.log("A picker is already open. Please close it first.");
       return;
+    }
+    if (!color) {
+      color = _t.skin[_t.activeSelectorId].background.main;
     }
 
     let x = event.clientX;
@@ -1297,12 +1544,7 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
       type: "linear",
     };
 
-    const SKPickerInstance = new SKPicker({
-      mode: "gradient",
-      stops: gradientState.stops,
-      angle: gradientState.angle,
-      type: gradientState.type,
-    });
+    const SKPickerInstance = new SKPicker(gradientState);
     SKPickerInstance.init();
 
     SKPickerInstance.show(x, y);

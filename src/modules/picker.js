@@ -17,6 +17,7 @@ export default class SKPicker {
     type: "linear",
     default: "#42445a",
     closeWithKey: "Escape",
+    localSolids: [],
   };
   constructor(opt) {
     this.options = opt = Object.assign({ ...SKPicker.DEFAULT_OPTIONS }, opt);
@@ -88,6 +89,7 @@ export default class SKPicker {
     this._recalc = true;
 
     this.solids = [
+      ...this.options.localSolids,
       "#1ABC9C",
       "#3498DB",
       "#FEE75C",
@@ -498,6 +500,9 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     display: flex;
     align-items: center;
 }
+    .sk_widget_block_content.variant_gradient_preview{
+    padding-bottom: 16px;
+    }
     `;
     styleEl.innerHTML = style;
     styleEl.id = "sk_picker_style_element";
@@ -823,7 +828,8 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       gradModeEl.className = "sk_g_picker_mode";
 
       const previewElWrapper = document.createElement("div");
-      previewElWrapper.className = "sk_widget_block_content sk_layout_col";
+      previewElWrapper.className =
+        "sk_widget_block_content sk_layout_col variant_gradient_preview";
       const previewEl = document.createElement("div");
       previewEl.className = "sk_g_picker_preview";
       const resultEl = document.createElement("div");
