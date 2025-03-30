@@ -38,6 +38,12 @@ class Skinner {
         sun: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 		<path  d="M9,12.2c1.8,0,3.2-1.5,3.2-3.2S10.8,5.8,9,5.8S5.8,7.2,5.8,9S7.2,12.2,9,12.2z M9,2.5v1 M9,14.5v1 M15.5,9h-1
 	 M3.5,9h-1 M13.6,4.4l-0.7,0.7 M5.1,12.9l-0.7,0.7 M13.6,13.6l-0.7-0.7 M5.1,5.1L4.4,4.4"/></svg>`,
+        info: `<svg class="sk_svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 18.3333C14.5834 18.3333 18.3334 14.5833 18.3334 9.99996C18.3334 5.41663 14.5834 1.66663 10 1.66663C5.41669 1.66663 1.66669 5.41663 1.66669 9.99996C1.66669 14.5833 5.41669 18.3333 10 18.3333Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 6.66663V10.8333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.99542 13.3334H10.0029"  stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
         moon: `<svg class="sk_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 		<path  d="M9,2.5v1 M9,14.5v1 M3.5,9h-1 M5.1,12.9l-0.7,0.7 M5.1,5.1L4.4,4.4 M9,5.5c-0.9,0-1.8,0.4-2.5,1
 	c-0.7,0.7-1,1.5-1,2.5s0.4,1.8,1,2.5c0.7,0.7,1.5,1,2.5,1V5.5z M14.5,9h1 M12.9,12.9l0.7,0.7 M12.9,5.1l0.7-0.7"/></svg>`,
@@ -483,8 +489,8 @@ class Skinner {
 
       txtKeyNames.forEach((txtName, i) => {
         UISkin[name][_vd[txtName]] = tinycolor(txt)
-          .setAlpha(1 - (i + 1) * 0.2)
-          .toHexString();
+          .setAlpha(1 - (i + 1) * 0.1)
+          .toRgbString();
       });
 
       UISkin[name][`${_vd.name}Shadow`] = createShadow(bg);
@@ -1663,6 +1669,13 @@ class Skinner {
       group.appendChild(borderGroupWrapper);
       group.appendChild(radiusGroupWrapper.el);
       group.appendChild(blurGroupWrapper.el);
+      const label = `${name}Issue`;
+
+      const cb = (e) => {
+        label;
+      };
+      const issueAction = this.createGroupAaction(label, cb);
+      group.appendChild(issueAction);
 
       this.ui.content.appendChild(group);
 
@@ -1708,6 +1721,19 @@ class Skinner {
     this.ui.footer.appendChild(configInput.el);
 
     this.addStringAnim();
+  }
+
+  createGroupAaction(label, cb) {
+    const root = document.createElement("button");
+    root.className = "sk_control_group_action";
+    root.innerHTML = this.ui.icons.info;
+    root.addEventListener("click", (e) => {
+      console.log(`action ${label} starting`);
+      cb(e);
+    });
+    this.ui.essenceGroups[label] = root;
+
+    return root;
   }
 
   async makeDownloadRequest(name, number) {
@@ -4251,6 +4277,21 @@ width: var(--size);
     background: var(--sk_dominantBg3);
 }
 
+.sk_control_group_action{
+      appearance: none;
+    --size: 24px;
+    border: 0;
+    outline: 0;
+    color: var(--sk_dominantTxt3);
+    width: var(--size);
+    height: var(--size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    }
+
+   
 `;
     this.styles = document.createElement("style");
     this.styles.id = this.cn.styleId;

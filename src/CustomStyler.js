@@ -95,17 +95,22 @@ class MouseIntersectStyler {
       "#56A9E2",
       "#D2F58D",
       "#FFD76B",
-      "#FF637C",
     ];
 
-    const bandSize = 20;
+    const bandSize = 16;
+    const stops = [];
 
-    const stops = colors.map((color, i) => {
-      const s1 = i * bandSize;
-      const e1 = (i + 1) * bandSize;
-      return `var(--dominantBg) ${s1}px, var(--dominantBg) ${e1}px, ${color} ${
-        e1 + 1
-      }px, ${color} ${e1 + 2}px`;
+    colors.forEach((color, i) => {
+      const start = i * 2 * bandSize;
+      const mid = start + bandSize;
+      const end = mid + bandSize;
+
+      stops.push(
+        `var(--sk_dominantBg) ${start}px`,
+        `var(--sk_dominantBg) ${mid}px`,
+        `${color} ${mid}px`,
+        `${color} ${end}px`
+      );
     });
 
     const gradientStops = stops.join(", ");
@@ -782,9 +787,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     const icon = document.createElement("i");
     icon.innerHTML = `<svg version="1.1" class="sk_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
     viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
-    <path d="M16.5,16.5v-13"/>
-    <path d="M3.5,3.5v13"/>
-    <path d="M12,7H8C7.5,7,7,7.5,7,8v4c0,0.6,0.5,1,1,1h4c0.6,0,1-0.5,1-1V8C13,7.5,12.5,7,12,7z"/>
+<path d="M5 8.33329V6.66663C5 3.90829 5.83333 1.66663 10 1.66663C14.1667 1.66663 15 3.90829 15 6.66663V8.33329" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.99996 15.4167C11.1506 15.4167 12.0833 14.4839 12.0833 13.3333C12.0833 12.1827 11.1506 11.25 9.99996 11.25C8.84937 11.25 7.91663 12.1827 7.91663 13.3333C7.91663 14.4839 8.84937 15.4167 9.99996 15.4167Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.1666 18.3334H5.83329C2.49996 18.3334 1.66663 17.5 1.66663 14.1667V12.5C1.66663 9.16671 2.49996 8.33337 5.83329 8.33337H14.1666C17.5 8.33337 18.3333 9.16671 18.3333 12.5V14.1667C18.3333 17.5 17.5 18.3334 14.1666 18.3334Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
     </svg>
     `;
 
