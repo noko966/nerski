@@ -4,7 +4,7 @@ import Moveable from "./modules/moveable";
 
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
-  constructor(selector, styleCallback, resetCallback, clickCallback, root) {
+  constructor(selector, styleCallback, resetCallback, clickCallback, root, patientRoot) {
     this.styleCallback = styleCallback;
     this.resetCallback = resetCallback;
     this.clickCallback = clickCallback;
@@ -22,6 +22,7 @@ class MouseIntersectStyler {
     this.activeSelectorId = null;
     this.skin = {};
     this.colors = {};
+    this.patientRoot = patientRoot || document.body;
   }
 
   init() {
@@ -43,7 +44,7 @@ class MouseIntersectStyler {
       this.boundMouseOver = (event) => this.onMouseOver(event);
       this.boundClick = (event) => this.onClick(event);
 
-      this.editableElements = this.root.querySelectorAll("[data-sk]");
+      this.editableElements = this.patientRoot.querySelectorAll("[data-sk]");
 
       this.editableElements.forEach((el) => {
         el.addEventListener("mouseenter", this.boundMouseOver, true);
@@ -60,7 +61,7 @@ class MouseIntersectStyler {
   stop() {
     if (this.isRunning) {
       this.isRunning = false;
-      this.editableElements = this.root.querySelectorAll("[data-sk]");
+      this.editableElements = this.patientRoot.querySelectorAll("[data-sk]");
       this.editableElements.forEach((el) => {
         el.removeEventListener("mouseenter", this.boundMouseOver);
       });
@@ -71,17 +72,13 @@ class MouseIntersectStyler {
   injectStyle(css) {
     const styleId = "sk_custom_styler_injected";
 
-    let styleElement = document.getElementById(styleId);
+    let styleElement = this.patientRoot.getElementById(styleId);
 
     if (!styleElement) {
       this.injectedStyle = document.createElement("style");
 
       this.injectedStyle.id = styleId;
-      if (this.root === document) {
-        this.root.body.appendChild(this.injectedStyle);
-      } else {
-        this.root.appendChild(this.injectedStyle);
-      }
+      this.patientRoot.appendChild(this.injectedStyle);
     }
 
     this.injectedStyle.innerHTML = css;
@@ -216,7 +213,7 @@ ${cn} > * {
       selectedRuleState[group][name] = value;
 
       let css = this.createCss();
-      this.setOrUpdateIframeCustomCss(css, this.root);
+      this.setOrUpdateIframeCustomCss(css, this.patientRoot);
     }
   }
 
@@ -1358,25 +1355,15 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls[group][control].style.background = value;
   }
 
-  setOrUpdateIframeCustomCss(css, target) {
-    var styleId = "css-as-custom-stylesheet";
-    var styleElement = document.getElementById(styleId);
+  setOrUpdateIframeCustomCss(css) {
+    let styleId = "css-as-custom-stylesheet";
+    let styleElement = this.patientRoot.getElementById(styleId);
 
-    if (target instanceof ShadowRoot) {
-      styleElement = target.querySelector(`#${styleId}`);
-      if (!styleElement) {
-        styleElement = document.createElement("style");
-        styleElement.setAttribute("id", styleId);
-        target.appendChild(styleElement);
-      }
-    } else {
-      // Otherwise, assume the target is `document`
-      styleElement = document.getElementById(styleId);
-      if (!styleElement) {
-        styleElement = document.createElement("style");
-        styleElement.setAttribute("id", styleId);
-        document.head.appendChild(styleElement);
-      }
+    styleElement = this.patientRoot.querySelector(`#${styleId}`);
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.setAttribute("id", styleId);
+      this.patientRoot.appendChild(styleElement);
     }
 
     // Update the inner HTML of the style element with the new CSS

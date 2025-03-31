@@ -6,7 +6,7 @@ import SKStylePicker from "./modules/stylePicker.js";
 import { MouseIntersectStyler } from "./CustomStyler.js";
 
 class Skinner {
-  constructor(starterConfig, root, variant, patientRoot) {
+  constructor(starterConfig, root, patientRoot) {
     this.eventListener = {
       init: [],
       save: [],
@@ -395,6 +395,16 @@ class Skinner {
 
     groupObj.blurRangeEl.disabled = !isActive;
     groupObj.blurInputEl.disabled = !isActive;
+
+  
+  }
+
+  isColorReadable(c1, c2) {
+    return tinycolor.isReadable(
+      c1,
+      c2
+    );
+
   }
 
   buildEssenceState(name, parentName) {
@@ -748,10 +758,11 @@ class Skinner {
 
     this.customStyler = new MouseIntersectStyler(
       "*",
-      () => {},
-      () => {},
-      () => {},
-      this.patientRoot
+      () => { },
+      () => { },
+      () => { },
+      this.root,
+      this.patientRoot,
     );
 
     if (this.toolBox) {
@@ -891,9 +902,9 @@ class Skinner {
         GradientState.stops && GradientState.stops.length > 0
           ? GradientState.stops
           : [
-              [_t.skin[_vd.nameBg], 0],
-              [_t.skin[_vd.nameBg3], 1],
-            ];
+            [_t.skin[_vd.nameBg], 0],
+            [_t.skin[_vd.nameBg3], 1],
+          ];
       GradientState.stops = stops;
 
       const gradient = this.createGradientString(GradientState);
@@ -985,6 +996,24 @@ class Skinner {
     _t.createBorders(name);
     _t.createRadius(name);
     _t.createBlur(name);
+
+    const c1 = _t.skin[`${name}Bg`];
+    const c2 = _t.skin[`${name}Accent`];
+    const isReadable = this.isColorReadable(c1, c2);
+    const issueIndicator = _t.ui.essenceGroups[`${name}Issue`];
+    const group = _t.ui.essenceGroups[name].groupEl;
+
+    if(!isReadable) {
+      issueIndicator.title = `accent color will not be readable on background`;
+      issueIndicator.classList.add("state_issue");
+      group.classList.add("state_issue");
+        }
+    else{
+      issueIndicator.title = ``;
+      issueIndicator.classList.remove("state_issue");
+      group.classList.remove("state_issue");
+    }
+    
   }
 
   buildSkin(node) {
@@ -1002,11 +1031,11 @@ class Skinner {
 
     const _vd = _t.verbalData(name);
     const _id = `sk_style_elem_${name}`;
-    let style = document.getElementById(_id);
+    let style = _t.patientRoot.getElementById(_id);
     if (!style) {
       style = document.createElement("style");
       style.id = _id;
-      _t.root.appendChild(style);
+      _t.patientRoot.appendChild(style);
     }
 
     const backgrounds = ["nameBg", "nameBgHov"];
@@ -1026,7 +1055,7 @@ class Skinner {
 
     css += `--${_vd.nameBlur}: ${_t.skin[_vd.nameBlur]}px;\n`;
 
-    style.innerHTML = _t.wrapInRootTag(":root", css);
+    style.innerHTML = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
 
     this.state[name].css = css;
   }
@@ -1036,11 +1065,11 @@ class Skinner {
 
     const _vd = _t.verbalData(name);
     const _id = `sk_style_elem_${name}`;
-    let style = document.getElementById(_id);
+    let style = _t.patientRoot.getElementById(_id);
     if (!style) {
       style = document.createElement("style");
       style.id = _id;
-      _t.root.appendChild(style);
+      _t.patientRoot.appendChild(style);
     }
 
     const backgrounds = [
@@ -1070,7 +1099,7 @@ class Skinner {
     css += `--${_vd.nameBorder}: ${_t.skin[_vd.nameBorder]};\n`;
     css += `--${_vd.nameRadius}: ${_t.skin[_vd.nameRadius]}px;\n`;
 
-    style.innerHTML = _t.wrapInRootTag(":root", css);
+    style.innerHTML = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
 
     this.state[name].css = css;
   }
@@ -1088,11 +1117,15 @@ class Skinner {
     _t.buildEssenceState(name, node.parent);
     _t.updateControl(name);
     _t.updateSkin(name);
+
+
     if (name === "overlay") {
       _t.updateOverlayCSS(name);
     } else {
       _t.updateCSS(name);
     }
+
+    
 
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
@@ -1340,9 +1373,9 @@ class Skinner {
   }
 
   createSwitch(lbl, i) {
-    const txt = document.createElement("span");
-    txt.innerText = lbl || "default";
-    txt.className = "sk_switch_lbl";
+    // const txt = document.createElement("span");
+    // txt.innerText = lbl || "default";
+    // txt.className = "sk_switch_lbl";
 
     const _lbl = document.createElement("label");
     _lbl.className = "sk_switch_root";
@@ -1356,9 +1389,9 @@ class Skinner {
     icon.className = "sk_switch_icon";
     icon.innerHTML = this.ui.icons[i] || this.ui.icons["brush"];
 
-    _lbl.appendChild(txt);
+    // _lbl.appendChild(txt);
     _lbl.appendChild(input);
-    _lbl.appendChild(ic);
+    // _lbl.appendChild(ic);
     _lbl.appendChild(icon);
 
     return { el: _lbl, chb: input };
@@ -1645,6 +1678,14 @@ class Skinner {
         "isActive"
       );
 
+
+      const label = `${name}Issue`;
+      const cb = (e) => {
+        label;
+      };
+      const issueAction = this.createGroupAaction(label, cb);
+
+      groupChild1.appendChild(issueAction);
       groupChild1.appendChild(chbRef.el);
       groupChild1.appendChild(groupLabel);
       groupChild2.appendChild(backgroundPickerEl);
@@ -1661,6 +1702,8 @@ class Skinner {
       borderGroupWrapper.appendChild(chbBorderRef.el);
       borderGroupWrapper.appendChild(borderPickerEl);
 
+      
+
       group.appendChild(groupChild1);
       group.appendChild(groupChild2);
       group.appendChild(gradientGroupWrapper);
@@ -1669,13 +1712,9 @@ class Skinner {
       group.appendChild(borderGroupWrapper);
       group.appendChild(radiusGroupWrapper.el);
       group.appendChild(blurGroupWrapper.el);
-      const label = `${name}Issue`;
 
-      const cb = (e) => {
-        label;
-      };
-      const issueAction = this.createGroupAaction(label, cb);
-      group.appendChild(issueAction);
+      
+      
 
       this.ui.content.appendChild(group);
 
@@ -1744,7 +1783,7 @@ class Skinner {
       css += _t.state[essenceObj.name].css;
     });
 
-    const wrappedInRoot = _t.wrapInRootTag(":root", css);
+    const wrappedInRoot = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
 
     var element = document.createElement("a");
     var date = new Date();
@@ -2231,19 +2270,18 @@ body {
 }
 
 .sk_tools_root{
-  background: var(--sk_dominantBgHover);
+      background: var(--sk_dominantBgHover);
     color: var(--sk_dominantTxt);
     position: absolute;
     right: 0;
     top: 0;
-    transform: translateX(calc(100% + 12px));
+    transform: translateY(calc(-100% - 8px));
     border-radius: 4px;
     border: 1px solid var(--sk_dominantBg2);
-    padding: 8px;
+    padding: 2px;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    row-gap: 6px;
+    align-items: center;
+    column-gap: 6px;
 }
 
 .pcr-app {
@@ -2334,6 +2372,9 @@ body {
 }
 
 .sk_control_group {
+--sk_errorT1: rgba(206, 53, 61, 1.0);
+--sk_errorT0: rgba(206, 53, 61, 0.0);
+--sk_errorT2: rgba(206, 53, 61, 0.2);
 --blur: none;
 --radius: flex;
 --border: flex;
@@ -3095,7 +3136,7 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
     column-gap: 6px;
     background: var(--sk_dominantBg2);
-    padding: 4px 6px;
+    padding: 4px;
     border-radius: 4px;
 }
   .sk_switch_lbl{
@@ -4278,19 +4319,45 @@ width: var(--size);
 }
 
 .sk_control_group_action{
+--iconColor: var(--sk_dominantTxt3);
+--iconOpacity: 0.2;
       appearance: none;
-    --size: 24px;
+    --size: 20px;
     border: 0;
     outline: 0;
-    color: var(--sk_dominantTxt3);
+    color: var(--iconColor);
+    opacity: var(--iconOpacity);
     width: var(--size);
     height: var(--size);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+    background: transparent;
+    
+    }
+    .sk_control_group_action > .sk_svg{
+    --size: 16px;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+    }
+.sk_control_group.state_active.state_issue:before{
+    content: "";
+    background: linear-gradient(90deg, var(--sk_errorT2),  var(--sk_errorT0));
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 100px;
+    z-index: 10;
+    pointer-events: none;
     }
 
+    .sk_control_group_action.state_issue {
+--iconColor: var(--sk_errorT1);
+--iconOpacity: 1;
+    }
    
 `;
     this.styles = document.createElement("style");

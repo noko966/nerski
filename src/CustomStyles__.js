@@ -383,6 +383,7 @@ ${cn} > * {
     const style = document.createElement("style");
     style.innerHTML = `
       .sk_ui_custom_change_root {
+      
     --input_size: 28px;
     --inputsOverlay: #ffffff20;
     --inputsCta: var(--sk_dominantTxt2);
