@@ -1,5 +1,6 @@
-.lv_main_container.lv_main_container.lv_main_container,:host:host:host{
-  font-family: 'Roboto', sans-serif;
+.lv_main_container.lv_main_container.lv_main_container,
+:host:host:host {
+  font-family: "Roboto", sans-serif;
 }
 #sport-latino-view {
   --custom_bg: #f9f9f9;
@@ -33,40 +34,39 @@
   --custom_space_3: 16px;
 
   --eventG: var(--background_4);
-    --eventBg: var(--background_4);
-    --eventBg2: #eaeaea;
-    --eventBg3: #dadada;
-    --eventBgHover: #f1f1f1;
-    --eventBg2Hover: #e2e2e2;
-    --eventBg3Hover: #d2d2d2;
-    --eventBorder: var(--background_1);
+  --eventBg: var(--background_4);
+  --eventBg2: #eaeaea;
+  --eventBg3: #dadada;
+  --eventBgHover: #f1f1f1;
+  --eventBg2Hover: #e2e2e2;
+  --eventBg3Hover: #d2d2d2;
+  --eventBorder: var(--background_1);
 
-    --headerG: #DEE5ED;
-    --headerBg: #DEE5ED;
-    --headerBg2: #bac8d4;
-    --headerBg3: #a7b9c9;
-    --headerBgHover: #c4cfda;
-    --headerBg2Hover: #b1c0ce;
-    --headerBg3Hover: #9db1c3;
+  --headerG: #dee5ed;
+  --headerBg: #dee5ed;
+  --headerBg2: #bac8d4;
+  --headerBg3: #a7b9c9;
+  --headerBgHover: #c4cfda;
+  --headerBg2Hover: #b1c0ce;
+  --headerBg3Hover: #9db1c3;
 
-    --inputG: #EBEFF2;
-    --inputBg: #EBEFF2;
-    --inputBg2: #d8e0e6;
-    --inputBg3: #c6d1da;
-    --inputBgHover: #e2e8ec;
-    --inputBg2Hover: #cfd9e0;
-    --inputBg3Hover: #bdc9d4;
+  --inputG: #ebeff2;
+  --inputBg: #ebeff2;
+  --inputBg2: #d8e0e6;
+  --inputBg3: #c6d1da;
+  --inputBgHover: #e2e8ec;
+  --inputBg2Hover: #cfd9e0;
+  --inputBg3Hover: #bdc9d4;
 
-
-  --background_1: #EEF1F4;
+  --background_1: #eef1f4;
   --background_2: #f9f9f9;
   --background_3: #dee5ed;
   --background_4: #ffffff;
-  --accent_1: #3A8EAB;
+  --accent_1: #3a8eab;
   --accent_1_txt: #fff;
 
   --oddG: var(--background_1);
-    --oddBg: var(--background_1);
+  --oddBg: var(--background_1);
 }
 /*sidebar*/
 .lv_menu_item {
@@ -74,7 +74,7 @@
   color: var(--custom_txt2);
   padding: 0 var(--custom_pad_x);
   border-bottom-color: var(--background_1);
-  --menu_1BgHover:  var(--background_2);
+  --menu_1BgHover: var(--background_2);
 }
 
 .lv_menu_item.lv_menu_item:hover {
@@ -89,7 +89,8 @@
   border-left-color: #cb0001;
 }
 
-.lv_menu_item.lv_menu_item-country.lv_menu_item.lv_menu_item-country .sport_front_icon-arrow-down {
+.lv_menu_item.lv_menu_item-country.lv_menu_item.lv_menu_item-country
+  .sport_front_icon-arrow-down {
   color: #474848;
 }
 
@@ -111,25 +112,25 @@
   column-gap: var(--custom_space_2);
 }
 
-.lv_menu_subItem_end.lv_menu_subItem_end{
+.lv_menu_subItem_end.lv_menu_subItem_end {
   color: #4d4d4d;
 }
 
 .jackpot_min_amount_txt,
-.jackpot_min_amount_currency{
+.jackpot_min_amount_currency {
   opacity: 1 !important;
   color: #474848 !important;
 }
 
-.jackpot_name_txt{
+.jackpot_name_txt {
   color: #474848 !important;
 }
 
-.lv_main_container .lv_main_panel>div:not(:last-child) {
+.lv_main_container .lv_main_panel > div:not(:last-child) {
   border-bottom-color: var(--background_1);
 }
 
-.jackpot_item{
+.jackpot_item {
   box-shadow: none !important;
 }
 
@@ -189,10 +190,9 @@
   border-bottom-color: var(--background_1) !important;
 }
 
-.lv_prematch_filter .lv_filter_tab.lv_filter_tab-selected{
+.lv_prematch_filter .lv_filter_tab.lv_filter_tab-selected {
   --tabBg: var(--accent_1);
   --tabTxt: var(--accent_1_txt);
-
 }
 .lv_filter_tab.lv_filter_tab-selected {
   --tabBg: var(--background_4);
@@ -214,7 +214,12 @@
   background-color: #eef1f4;
 }
 
-.dg_multibet_widget_main_wrapper .ai_widget_wrapper .ai_widget_slide .dg_multibet_widget_events .dg_multibet_widget_event_item .dg_multibet_widget_event_icon:before{
+.dg_multibet_widget_main_wrapper
+  .ai_widget_wrapper
+  .ai_widget_slide
+  .dg_multibet_widget_events
+  .dg_multibet_widget_event_item
+  .dg_multibet_widget_event_icon:before {
   background-color: #7d7d7d !important;
 }
 
@@ -225,7 +230,7 @@
 
 .lv_sportTab.lv_sportTab-selected,
 .lv_sportTab:hover {
-  background-color: var(--background_4);;
+  background-color: var(--background_4);
 }
 
 /*subheader*/
@@ -251,9 +256,9 @@
   --headerBg: var(--background_3);
 }
 
-.lv_sliderBar_wrapper.lv_sliderBar_wrapper .lv_sliderBar_btn{
+.lv_sliderBar_wrapper.lv_sliderBar_wrapper .lv_sliderBar_btn {
   background-color: var(--background_3);
-  color:#333;
+  color: #333;
 }
 
 .lv_markets_wrapper .lv_market {
@@ -262,7 +267,7 @@
 }
 
 .lv_markets_wrapper .lv_market.lv_market-closed {
-  --headerBg: var(--background_3);
+  --headerBg: var(--background_4);
   --headerTxt: #000;
 }
 
@@ -275,12 +280,12 @@
 }
 
 .lv_markets_wrapper .lv_market.lv_market-closed:hover {
-  --headerBgHover: #f9f9f9;
+  --headerBgHover: var(--background_4);
   --headerTxt: #000;
 }
 
 .lv_sideBar .lv_treeWrapper .lv_subItem_group {
-  --menu_2Bg: #ECEFF1;
+  --menu_2Bg: #eceff1;
   --bodyBg2: #eceff1;
   background-color: var(--background_4);
 }
@@ -312,12 +317,14 @@
   border-radius: 8px;
 }
 
-.dg_bet_checker_input{
-    border-radius: 8px;
+.dg_bet_checker_input {
+  border-radius: 8px;
 }
 
-.dg_bet_checker_btn:disabled, .dg_bet_checker_btn[disabled=disabled], .dg_bet_checker_btn[disabled] {
-    opacity: .5 !important;
+.dg_bet_checker_btn:disabled,
+.dg_bet_checker_btn[disabled="disabled"],
+.dg_bet_checker_btn[disabled] {
+  opacity: 0.5 !important;
 }
 
 .lv_event_row .lv_event_details_wrapper .lv_event_details .lv_event_score {
@@ -337,9 +344,8 @@
   color: #b8b8b8 !important;
 }
 
-
 /*betslip*/
-.dg_bs_wrapper.dg_bs_wrapper{
+.dg_bs_wrapper.dg_bs_wrapper {
   border: 1px solid var(--accentBg);
   border-bottom: 0;
 }
@@ -421,8 +427,8 @@
   --headerTxt2: #333;
 }
 
-.lv_topNav.lv_topNav>.lv_input_wrapper input {
-  background-color: var(--background_4)
+.lv_topNav.lv_topNav > .lv_input_wrapper input {
+  background-color: var(--background_4);
 }
 
 .lv_topNav_inner > .lv_topNav_item {
@@ -447,7 +453,7 @@
   text-transform: uppercase;
 }
 .lv_sideBar {
-  --dominantBg: #ECEFF1;
+  --dominantBg: #eceff1;
 }
 
 /*Jackpot*/
@@ -524,8 +530,8 @@
 }
 
 .lv_horizontal_scroll {
-    overflow: hidden;
-    overflow-x: auto;
+  overflow: hidden;
+  overflow-x: auto;
 }
 
 .ai_header_wrapper {
@@ -567,7 +573,6 @@
 .lv_aside .dg_widget_root .ai_header_wrapper,
 .lv_aside .dg_widget_root .ai_header_wrapper:hover {
   background-color: var(--background_3) !important;
-
 }
 .lv_collapse_header > span,
 .dg_bet_generator_header_title,
@@ -578,7 +583,7 @@
   font-size: 14px;
 }
 
-.dg_live_stream_header.dg_live_stream_header:hover{
+.dg_live_stream_header.dg_live_stream_header:hover {
   opacity: initial;
 }
 .lv_main_container
@@ -588,47 +593,45 @@
   padding: 0 !important;
 }
 
-.lv_event_row .lv_event_actions{
-    row-gap: 0 !important;
+.lv_event_row .lv_event_actions {
+  row-gap: 0 !important;
 }
 
-.lv_event_row .lv_event_actions > .lv_event_action{
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.lv_event_row .lv_event_actions > .lv_event_action {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lv_menu_item .lv_count {
-    font-size: 14px;
+  font-size: 14px;
 }
 
-.ai_switcher{
-    --aiSwitcherPos: 2px;
-    --aiSwitcherW: 40px;
-    --aiSwitcherH: 24px;
-    background-color: #fff;
+.ai_switcher {
+  --aiSwitcherPos: 2px;
+  --aiSwitcherW: 40px;
+  --aiSwitcherH: 24px;
+  background-color: #fff;
 }
-.ai_switcher.ai_switcher--active{
-    background-color: #e7ebee;
-    --aiSwitcherPos: 16px;
+.ai_switcher.ai_switcher--active {
+  background-color: #e7ebee;
+  --aiSwitcherPos: 16px;
+}
+.ai_switcher > .ai_switcher_checkmark {
+  background-color: #dee5ed;
+  width: 20px;
+  height: 20px;
+  color: #3d3f41;
+}
 
+.ai_switcher.ai_switcher--active > .ai_switcher_checkmark {
+  background-color: #3a859f;
+  color: #fff;
 }
-.ai_switcher > .ai_switcher_checkmark{
-    background-color: #dee5ed;
-    width: 20px;
-    height: 20px;
-    color: #3d3f41;
-}
-
-.ai_switcher.ai_switcher--active > .ai_switcher_checkmark{
-    background-color: #3a859f;
-    color: #fff;
-
-}
-.lv_sportTab{
-    --tabBg: var(--headerBg);
+.lv_sportTab {
+  --tabBg: var(--headerBg);
 }
 
 .sport_front_icon-ai::before {
@@ -637,96 +640,111 @@
 }
 
 .lv_events_widget .lv_showMore {
-    --bodyBg2: var(--background_4);
-    --bodyBg3: var(--background_4);
+  --bodyBg2: var(--background_4);
+  --bodyBg3: var(--background_4);
 }
 
-.lv_main_container .lv_aside{
+.lv_main_container .lv_aside {
   --bodyBg: var(--background_1);
 }
 
-.lv_main_container .lv_aside .dg_widget_root .dg_filter_tabs_group .dg_filter_tab{
+.lv_main_container
+  .lv_aside
+  .dg_widget_root
+  .dg_filter_tabs_group
+  .dg_filter_tab {
   --tabActiveG: var(--background_3);
 }
 
-.lv_main_container .lv_aside .dg_widget_root .dg_filter_tabs_group .dg_filter_tab.dg_filter_tab-active{
-    --tabActiveG: var(--background_4);
+.lv_main_container
+  .lv_aside
+  .dg_widget_root
+  .dg_filter_tabs_group
+  .dg_filter_tab.dg_filter_tab-active {
+  --tabActiveG: var(--background_4);
 }
 
-.ai_subHeader{
-    --subHeaderG: var(--eventBg);
-    --subHeaderBgHover: var(--eventBg);
-    --subHeaderBg: var(--eventBg);
-    --subHeaderTxt: var(--eventTxt);
+.ai_subHeader {
+  --subHeaderG: var(--eventBg);
+  --subHeaderBgHover: var(--eventBg);
+  --subHeaderBg: var(--eventBg);
+  --subHeaderTxt: var(--eventTxt);
 }
 
 .ai_event_game_info_wrapper .ai_event_game_separator,
-.ai_event_game_info_wrapper .ai_vent_game_type{
-    display: none !important;
+.ai_event_game_info_wrapper .ai_vent_game_type {
+  display: none !important;
 }
 .dg_widget_root .dg_widget_group {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
-.dg_bet_generator_content_wrapper:not(.mobile_content){
-    --bodyBgHover: var(--eventBg);
+.dg_bet_generator_content_wrapper:not(.mobile_content) {
+  --bodyBgHover: var(--eventBg);
 }
 
-.lv_back_btn{
+.lv_back_btn {
   --headerBg: var(--background_3);
-    --headerTxt2: #181818;
-    --bodyBg2: var(--background_3);
+  --headerTxt2: #181818;
+  --bodyBg2: var(--background_3);
 }
 
-.lv_back_btn:hover{
-    --headerBgHover: var(--background_3);
-    --headerTxt: #181818;
+.lv_back_btn:hover {
+  --headerBgHover: var(--background_3);
+  --headerTxt: #181818;
 }
 
-.lv_filter_tab.lv_tab_new_badge_wrapper .lv_tab_new_badge{
-    color: #fff !important;
+.lv_filter_tab.lv_tab_new_badge_wrapper .lv_tab_new_badge {
+  color: #fff !important;
 }
 
-.search_market{
+.search_market {
   --inputBg: var(--background_4);
 }
-.dg_widget_root .dg_event_widget .dg_event_stakes_wrapper .dg_markets_wrapper .dg_market .dg_stakes_wrapper .dg_marketStake .dg_stake_factor{
-    --oddAccent: #000;
+.dg_widget_root
+  .dg_event_widget
+  .dg_event_stakes_wrapper
+  .dg_markets_wrapper
+  .dg_market
+  .dg_stakes_wrapper
+  .dg_marketStake
+  .dg_stake_factor {
+  --oddAccent: #000;
 }
 
-.dg_bet_checker_container{
-    background-color: var(--background_1) !important;
+.dg_bet_checker_container {
+  background-color: var(--background_1) !important;
 }
 
-.dg_bet_checker_input{
-    --inputBg: var(--eventBg);
-    --inputTxt: var(--eventTxt);
+.dg_bet_checker_input {
+  --inputBg: var(--eventBg);
+  --inputTxt: var(--eventTxt);
 }
 
-.lv_liveInfo .lv_event_data .lv_live_scores .lv_live_scores_column .lv_score{
-    --accentBg: var(--custom_accent_bg);
+.lv_liveInfo .lv_event_data .lv_live_scores .lv_live_scores_column .lv_score {
+  --accentBg: var(--custom_accent_bg);
 }
 
-
-.bh_root.middle .bh_card.active, .bh_root.middle .bh_card:hover, .bh_root.middle .bh_list_view_item.active{
+.bh_root.middle .bh_card.active,
+.bh_root.middle .bh_card:hover,
+.bh_root.middle .bh_list_view_item.active {
   --eventBg2: #fff;
 }
 
 .dg_bet_builder_button_yes,
-.bh_calendar_button>button,
-.dg_mega_bet_content_popup_btn{
+.bh_calendar_button > button,
+.dg_mega_bet_content_popup_btn {
   --buttonG: #f91c24;
   --buttonBg: #f91c24;
   --buttonBgHover: #f91c24;
 }
 
-.lv_main_container .lv_main_panel{
+.lv_main_container .lv_main_panel {
   --dominantBg2: #eceff1;
 }
 
-
 .sport_front_icon-cashout_lt,
-.dg_icon_link{
+.dg_icon_link {
   display: none !important;
 }
 
@@ -734,19 +752,35 @@
   display: none;
 }
 
-.lv_event_hero_background{
+.lv_event_hero_background {
   display: none;
 }
 
-.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .selected_row {
+.lv_event_row
+  .lv_event_stakes
+  .lv_event_market.lv_market-overUnder
+  .lv_argument_popup
+  .lv_argument_popup_content
+  .selected_row {
   background: var(--modalBgHover);
 }
 
-.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .selected_row {
+.lv_event_row
+  .lv_event_stakes
+  .lv_event_market.lv_market-overUnder
+  .lv_argument_popup
+  .lv_argument_popup_content
+  .selected_row {
   background: var(--modalBgHover);
 }
 
-.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .selected_row .lv_stake:not(.lv_stake-selected){
+.lv_event_row
+  .lv_event_stakes
+  .lv_event_market.lv_market-overUnder
+  .lv_argument_popup
+  .lv_argument_popup_content
+  .selected_row
+  .lv_stake:not(.lv_stake-selected) {
   background: var(--oddBg);
   color: var(--oddTxt);
 }
@@ -758,27 +792,26 @@
   font-size: 44px;
 }
 
-#sport-latino-view .sport_front_icon-badge-00:before{
+#sport-latino-view .sport_front_icon-badge-00:before {
   content: "\E1B9";
   height: 24px;
   line-height: 23px;
   font-size: 44px;
 }
 
-#sport-latino-view .dg_market_offers_head > i{
+#sport-latino-view .dg_market_offers_head > i {
   width: 24px;
   height: 24px;
   color: var(--marketHeaderTxt);
 }
 
-#sport-latino-view .dg_market_offer_icon>span{
+#sport-latino-view .dg_market_offer_icon > span {
   display: none;
 }
 
 #sport-latino-view .sport_front_icon-statistics-modern::before {
   content: "\E110";
 }
-
 
 /*bet history*/
 .bh_card.OR,
@@ -809,7 +842,6 @@
   --status_text: #fff;
 }
 
-
 .bh_card.bh_card .bh_card_header_info_status {
   /* color: var(--status_text);
   background: var(--status_color);
@@ -817,20 +849,19 @@
   border-radius: 3px; */
 }
 
-.bh_card.bh_card .bh_card_winning_new_wrap_amount{
+.bh_card.bh_card .bh_card_winning_new_wrap_amount {
   font-size: 14px;
 }
 
 #sport-latino-view .lv_markets_wrapper .dg_boosted_odds_popup,
-#sport-latino-view .lv_markets_wrapper .dg_market_popup{
+#sport-latino-view .lv_markets_wrapper .dg_market_popup {
   background-color: #fff;
   border: 1px solid var(--modalBgHover);
   color: var(--modalTxt);
   padding: 8px 16px;
-  
 }
 .lv_events_list_header,
-.lv_events_list_subHeader{
+.lv_events_list_subHeader {
   --headerBg: var(--background_3);
   --bodyBg2: var(--background_1);
 }
@@ -846,8 +877,8 @@
 }
 
 /*tournament*/
-.tr-card-header{
-  --digiTournamentItemHeaderBg: #DEE5ED;
+.tr-card-header {
+  --digiTournamentItemHeaderBg: #dee5ed;
 }
 
 .tr-main-content {
@@ -864,25 +895,23 @@
 }
 
 .tr-title.tr-title {
-  --digiTournamentTitleBg: #EEF1F4;
-  --digiTournamentTitleBorder: #CBD3D8;
+  --digiTournamentTitleBg: #eef1f4;
+  --digiTournamentTitleBorder: #cbd3d8;
   --digiTournamentTitleTxt: #000;
   border: 1px solid var(--digiTournamentTitleBorder);
 }
 
-.dg_bet_race_leader_board_wrapper header{
---eventBg2: #DEE5ED;
+.dg_bet_race_leader_board_wrapper header {
+  --eventBg2: #dee5ed;
 }
 
-.dg_bet_race_leader_board_content{
+.dg_bet_race_leader_board_content {
   --eventBg: #fff;
-
 }
 
 .dg_bet_race_leader_board_prize_item_separator {
   --eventBg: #fff;
-  --eventTxt2: #DEE5ED;
-
+  --eventTxt2: #dee5ed;
 }
 
 .lv_main_panel .dg_favorites_content {
@@ -890,20 +919,20 @@
   --bodyBgHover: var(--background_1);
 }
 
-.lv_main_panel .dg_favorites_content_events_item_accordion{
+.lv_main_panel .dg_favorites_content_events_item_accordion {
   --eventBg: var(--background_4);
 }
 
-.lv_main_panel .dg_favorites_wrapper .lv_events_widget_subHeader{
+.lv_main_panel .dg_favorites_wrapper .lv_events_widget_subHeader {
   --eventBg: var(--background_4);
 }
 
-.dg_market_popup_item .dg_market_popup_item_head > span{
+.dg_market_popup_item .dg_market_popup_item_head > span {
   font-size: 16px !important;
   font-weight: 500 !important;
 }
 
-.dg_market_popup_item .dg_market_popup_item_body{
+.dg_market_popup_item .dg_market_popup_item_body {
   font-size: 12px !important;
   font-weight: 400 !important;
   --tooltipTxt2: #000;
@@ -917,7 +946,8 @@
   --tabBg: var(--background_3);
 }
 
-.lv_main_panel .dg_favorites_tabs_item.tab_active, .lv_main_panel .dg_favorites_tabs_item:hover {
+.lv_main_panel .dg_favorites_tabs_item.tab_active,
+.lv_main_panel .dg_favorites_tabs_item:hover {
   --tabBg: var(--background_4);
 }
 
@@ -925,8 +955,13 @@
   --subHeaderG: var(--background_1);
 }
 
-.lv_results_widget .lv_results_comments_items{
+.lv_results_widget .lv_results_comments_items {
   --eventBg2: var(--background_2);
+}
+
+.sr_tab_wrapper_modernized {
+  --bodyBg: var(--background_1);
+  --tabBorder: var(--background_2);
 }
 
 .sr_tab_wrapper_modernized .sr-tab.sr-tab {
@@ -936,32 +971,36 @@
   --tabActiveBg: var(--background_4);
 }
 
-.sr-content.sr-content.sr-content_new{
+.sr-content.sr-content.sr-content_new {
   /* background-color: #dfe1e2; */
 }
 
-.lv_search_page .sr-container .lv_events_list_groupedHeader, .lv_search_page .sr-container .sr-dropdown-toggle{
+.lv_search_page .sr-container .lv_events_list_groupedHeader,
+.lv_search_page .sr-container .sr-dropdown-toggle {
   --subHeaderBg: var(--background_4);
 }
 
-.sr-tab-wrapper{
+.sr-tab-wrapper {
   column-gap: 12px;
 }
 
-.sr-content_new.sr-content_new .sr-matches-wrapper .sr-match-item>div:last-child{
+.sr-content_new.sr-content_new
+  .sr-matches-wrapper
+  .sr-match-item
+  > div:last-child {
   background: unset;
 }
 
-.sr-content_new .sr_match_subheader{
+.sr-content_new .sr_match_subheader {
   background: var(--background_4);
 }
-.bh_wrapper .bh_tab.active{
+.bh_wrapper .bh_tab.active {
   --tabBg: var(--background_4);
 }
 
 .bh_tab_wrapper.bh_tab_wrapper .tg_btn_filters,
 .bh_view_switch_wrapper.bh_view_switch_wrapper .bh_tab:first-child,
-.bh_view_switch_wrapper.bh_view_switch_wrapper .bh_tab:last-child{
+.bh_view_switch_wrapper.bh_view_switch_wrapper .bh_tab:last-child {
   border-color: #fff;
 }
 
@@ -976,7 +1015,7 @@
   --bodyTxt: #000;
   --bodyTxt2: #474848;
   --bodyTxt3: #767879;
-  --bodyAccent: #3A8EAB;
+  --bodyAccent: #3a8eab;
   --bodyAccentTxt: rgba(255, 255, 255, 0.9);
   --bodyRGBA: rgba(236, 239, 241, 0.7);
   --bodyRGBA2: rgba(236, 239, 241, 0.5);
@@ -985,8 +1024,8 @@
   --bodyShadowFade: undefined;
   --bodyRadius: 8px;
   --bodyBorder: #e3e8ea;
-  --accentG: #3A8EAB;
-  --accentBg: #3A8EAB;
+  --accentG: #3a8eab;
+  --accentBg: #3a8eab;
   --accentBg2: #53a8c5;
   --accentBg3: #66b1cb;
   --accentBgHover: #3e97b6;
@@ -995,7 +1034,7 @@
   --accentTxt: #fff;
   --accentTxt2: #c4dde6;
   --accentTxt3: #9dc7d5;
-  --accentAccent: #3A8EAB;
+  --accentAccent: #3a8eab;
   --accentAccentTxt: rgba(255, 255, 255, 0.9);
   --accentRGBA: rgba(58, 142, 171, 0.7);
   --accentRGBA2: rgba(58, 142, 171, 0.5);
@@ -1004,8 +1043,8 @@
   --accentShadowFade: undefined;
   --accentRadius: 2px;
   --accentBorder: #3e97b6;
-  --dominantG: #ECEFF1;
-  --dominantBg: #ECEFF1;
+  --dominantG: #eceff1;
+  --dominantBg: #eceff1;
   --dominantBg2: #dae0e4;
   --dominantBg3: #c9d1d7;
   --dominantBgHover: #e3e8ea;
@@ -1014,7 +1053,7 @@
   --dominantTxt: #000;
   --dominantTxt2: #474848;
   --dominantTxt3: #767879;
-  --dominantAccent: #3A8EAB;
+  --dominantAccent: #3a8eab;
   --dominantAccentTxt: rgba(255, 255, 255, 0.9);
   --dominantRGBA: rgba(236, 239, 241, 0.7);
   --dominantRGBA2: rgba(236, 239, 241, 0.5);
@@ -1033,7 +1072,7 @@
   --buttonTxt: #fff;
   --buttonTxt2: #c5e0e9;
   --buttonTxt3: #9fcbdb;
-  --buttonAccent: #3A8EAB;
+  --buttonAccent: #3a8eab;
   --buttonAccentTxt: rgba(255, 255, 255, 0.9);
   --buttonRGBA: rgba(62, 151, 182, 0.7);
   --buttonRGBA2: rgba(62, 151, 182, 0.5);
@@ -1052,7 +1091,7 @@
   --buttonSecondaryTxt: #000;
   --buttonSecondaryTxt2: #3a3c3e;
   --buttonSecondaryTxt3: #606568;
-  --buttonSecondaryAccent: #3A8EAB;
+  --buttonSecondaryAccent: #3a8eab;
   --buttonSecondaryAccentTxt: rgba(255, 255, 255, 0.9);
   --buttonSecondaryRGBA: rgba(192, 201, 208, 0.7);
   --buttonSecondaryRGBA2: rgba(192, 201, 208, 0.5);
@@ -1071,7 +1110,7 @@
   --navbarTxt: #000;
   --navbarTxt2: #414344;
   --navbarTxt3: #6d7072;
-  --navbarAccent: #3A8EAB;
+  --navbarAccent: #3a8eab;
   --navbarAccentTxt: rgba(255, 255, 255, 0.9);
   --navbarRGBA: rgba(218, 224, 228, 0.7);
   --navbarRGBA2: rgba(218, 224, 228, 0.5);
@@ -1090,7 +1129,7 @@
   --sliderTxt: #000;
   --sliderTxt2: #444646;
   --sliderTxt3: #727475;
-  --sliderAccent: #3A8EAB;
+  --sliderAccent: #3a8eab;
   --sliderAccentTxt: rgba(255, 255, 255, 0.9);
   --sliderRGBA: rgba(227, 232, 234, 0.7);
   --sliderRGBA2: rgba(227, 232, 234, 0.5);
@@ -1099,8 +1138,8 @@
   --sliderShadowFade: undefined;
   --sliderRadius: 8px;
   --sliderBorder: #dae1e3;
-  --headerG: #CDD7E0;
-  --headerBg: #CDD7E0;
+  --headerG: #cdd7e0;
+  --headerBg: #cdd7e0;
   --headerBg2: #bac8d4;
   --headerBg3: #a7b9c9;
   --headerBgHover: #c4cfda;
@@ -1109,7 +1148,7 @@
   --headerTxt: #000;
   --headerTxt2: #3e4143;
   --headerTxt3: #676c70;
-  --headerAccent: #3A8EAB;
+  --headerAccent: #3a8eab;
   --headerAccentTxt: rgba(255, 255, 255, 0.9);
   --headerRGBA: rgba(205, 215, 224, 0.7);
   --headerRGBA2: rgba(205, 215, 224, 0.5);
@@ -1128,7 +1167,7 @@
   --subHeaderTxt: #000;
   --subHeaderTxt2: #353a3e;
   --subHeaderTxt3: #596067;
-  --subHeaderAccent: #3A8EAB;
+  --subHeaderAccent: #3a8eab;
   --subHeaderAccentTxt: rgba(255, 255, 255, 0.9);
   --subHeaderRGBA: rgba(177, 192, 206, 0.7);
   --subHeaderRGBA2: rgba(177, 192, 206, 0.5);
@@ -1147,7 +1186,7 @@
   --eventTxt: #000;
   --eventTxt2: #4b4b4b;
   --eventTxt3: #7d7d7d;
-  --eventAccent: #3A8EAB;
+  --eventAccent: #3a8eab;
   --eventAccentTxt: rgba(255, 255, 255, 0.9);
   --eventRGBA: rgba(249, 249, 249, 0.7);
   --eventRGBA2: rgba(249, 249, 249, 0.5);
@@ -1166,7 +1205,7 @@
   --eventLiveTxt: #000;
   --eventLiveTxt2: #3f3f3f;
   --eventLiveTxt3: #696969;
-  --eventLiveAccent: #3A8EAB;
+  --eventLiveAccent: #3a8eab;
   --eventLiveAccentTxt: rgba(255, 255, 255, 0.9);
   --eventLiveRGBA: rgba(210, 210, 210, 0.7);
   --eventLiveRGBA2: rgba(210, 210, 210, 0.5);
@@ -1185,7 +1224,7 @@
   --oddTxt: #000;
   --oddTxt2: #444646;
   --oddTxt3: #727475;
-  --oddAccent: #3A8EAB;
+  --oddAccent: #3a8eab;
   --oddAccentTxt: rgba(255, 255, 255, 0.9);
   --oddRGBA: rgba(227, 232, 234, 0.7);
   --oddRGBA2: rgba(227, 232, 234, 0.5);
@@ -1204,7 +1243,7 @@
   --oddActiveTxt: #fff;
   --oddActiveTxt2: #c5e0e9;
   --oddActiveTxt3: #9fcbdb;
-  --oddActiveAccent: #3A8EAB;
+  --oddActiveAccent: #3a8eab;
   --oddActiveAccentTxt: rgba(255, 255, 255, 0.9);
   --oddActiveRGBA: rgba(62, 151, 182, 0.7);
   --oddActiveRGBA2: rgba(62, 151, 182, 0.5);
@@ -1223,7 +1262,7 @@
   --showMoreTxt: #000;
   --showMoreTxt2: #444646;
   --showMoreTxt3: #727475;
-  --showMoreAccent: #3A8EAB;
+  --showMoreAccent: #3a8eab;
   --showMoreAccentTxt: rgba(255, 255, 255, 0.9);
   --showMoreRGBA: rgba(227, 232, 234, 0.7);
   --showMoreRGBA2: rgba(227, 232, 234, 0.5);
@@ -1242,7 +1281,7 @@
   --marketHeaderTxt: #000;
   --marketHeaderTxt2: #414344;
   --marketHeaderTxt3: #6d7072;
-  --marketHeaderAccent: #3A8EAB;
+  --marketHeaderAccent: #3a8eab;
   --marketHeaderAccentTxt: rgba(255, 255, 255, 0.9);
   --marketHeaderRGBA: rgba(218, 224, 228, 0.7);
   --marketHeaderRGBA2: rgba(218, 224, 228, 0.5);
@@ -1261,7 +1300,7 @@
   --collapseTxt: #000;
   --collapseTxt2: #353a3e;
   --collapseTxt3: #596067;
-  --collapseAccent: #3A8EAB;
+  --collapseAccent: #3a8eab;
   --collapseAccentTxt: rgba(255, 255, 255, 0.9);
   --collapseRGBA: rgba(177, 192, 206, 0.7);
   --collapseRGBA2: rgba(177, 192, 206, 0.5);
@@ -1270,8 +1309,8 @@
   --collapseShadowFade: undefined;
   --collapseRadius: 8px;
   --collapseBorder: #a8b8c8;
-  --tabG: #F9F9F9;
-  --tabBg: #F9F9F9;
+  --tabG: #f9f9f9;
+  --tabBg: #f9f9f9;
   --tabBg2: #eaeaea;
   --tabBg3: #dadada;
   --tabBgHover: #f1f1f1;
@@ -1280,7 +1319,7 @@
   --tabTxt: #000;
   --tabTxt2: #4b4b4b;
   --tabTxt3: #7d7d7d;
-  --tabAccent: #3A8EAB;
+  --tabAccent: #3a8eab;
   --tabAccentTxt: rgba(255, 255, 255, 0.9);
   --tabRGBA: rgba(249, 249, 249, 0.7);
   --tabRGBA2: rgba(249, 249, 249, 0.5);
@@ -1299,7 +1338,7 @@
   --tabActiveTxt: #000;
   --tabActiveTxt2: #444444;
   --tabActiveTxt3: #717171;
-  --tabActiveAccent: #3A8EAB;
+  --tabActiveAccent: #3a8eab;
   --tabActiveAccentTxt: rgba(255, 255, 255, 0.9);
   --tabActiveRGBA: rgba(226, 226, 226, 0.7);
   --tabActiveRGBA2: rgba(226, 226, 226, 0.5);
@@ -1318,7 +1357,7 @@
   --tabSecondaryActiveTxt: #000;
   --tabSecondaryActiveTxt2: #444444;
   --tabSecondaryActiveTxt3: #717171;
-  --tabSecondaryActiveAccent: #3A8EAB;
+  --tabSecondaryActiveAccent: #3a8eab;
   --tabSecondaryActiveAccentTxt: rgba(255, 255, 255, 0.9);
   --tabSecondaryActiveRGBA: rgba(226, 226, 226, 0.7);
   --tabSecondaryActiveRGBA2: rgba(226, 226, 226, 0.5);
@@ -1337,7 +1376,7 @@
   --menu_1Txt: #000;
   --menu_1Txt2: #414344;
   --menu_1Txt3: #6d7072;
-  --menu_1Accent: #3A8EAB;
+  --menu_1Accent: #3a8eab;
   --menu_1AccentTxt: rgba(255, 255, 255, 0.9);
   --menu_1RGBA: rgba(218, 224, 228, 0.7);
   --menu_1RGBA2: rgba(218, 224, 228, 0.5);
@@ -1356,7 +1395,7 @@
   --menu_2Txt: #000;
   --menu_2Txt2: #3f4143;
   --menu_2Txt3: #696d6f;
-  --menu_2Accent: #3A8EAB;
+  --menu_2Accent: #3a8eab;
   --menu_2AccentTxt: rgba(255, 255, 255, 0.9);
   --menu_2RGBA: rgba(209, 217, 222, 0.7);
   --menu_2RGBA2: rgba(209, 217, 222, 0.5);
@@ -1375,7 +1414,7 @@
   --menu_3Txt: #000;
   --menu_3Txt2: #3c3f41;
   --menu_3Txt3: #65696c;
-  --menu_3Accent: #3A8EAB;
+  --menu_3Accent: #3a8eab;
   --menu_3AccentTxt: rgba(255, 255, 255, 0.9);
   --menu_3RGBA: rgba(201, 209, 215, 0.7);
   --menu_3RGBA2: rgba(201, 209, 215, 0.5);
@@ -1394,7 +1433,7 @@
   --inputTxt: #000;
   --inputTxt2: #414344;
   --inputTxt3: #6d7072;
-  --inputAccent: #3A8EAB;
+  --inputAccent: #3a8eab;
   --inputAccentTxt: rgba(255, 255, 255, 0.9);
   --inputRGBA: rgba(218, 224, 228, 0.7);
   --inputRGBA2: rgba(218, 224, 228, 0.5);
@@ -1413,7 +1452,7 @@
   --inputSecondaryTxt: #000;
   --inputSecondaryTxt2: #3f4143;
   --inputSecondaryTxt3: #696d6f;
-  --inputSecondaryAccent: #3A8EAB;
+  --inputSecondaryAccent: #3a8eab;
   --inputSecondaryAccentTxt: rgba(255, 255, 255, 0.9);
   --inputSecondaryRGBA: rgba(209, 217, 222, 0.7);
   --inputSecondaryRGBA2: rgba(209, 217, 222, 0.5);
@@ -1432,7 +1471,7 @@
   --filterTxt: #000;
   --filterTxt2: #3f4143;
   --filterTxt3: #696d6f;
-  --filterAccent: #3A8EAB;
+  --filterAccent: #3a8eab;
   --filterAccentTxt: rgba(255, 255, 255, 0.9);
   --filterRGBA: rgba(209, 217, 222, 0.7);
   --filterRGBA2: rgba(209, 217, 222, 0.5);
@@ -1451,7 +1490,7 @@
   --tooltipTxt: #000;
   --tooltipTxt2: #414344;
   --tooltipTxt3: #6d7072;
-  --tooltipAccent: #3A8EAB;
+  --tooltipAccent: #3a8eab;
   --tooltipAccentTxt: rgba(255, 255, 255, 0.9);
   --tooltipRGBA: rgba(218, 224, 228, 0.7);
   --tooltipRGBA2: rgba(218, 224, 228, 0.5);
@@ -1470,7 +1509,7 @@
   --modalTxt: #000;
   --modalTxt2: #444646;
   --modalTxt3: #727475;
-  --modalAccent: #3A8EAB;
+  --modalAccent: #3a8eab;
   --modalAccentTxt: rgba(255, 255, 255, 0.9);
   --modalRGBA: rgba(227, 232, 234, 0.7);
   --modalRGBA2: rgba(227, 232, 234, 0.5);
@@ -1482,7 +1521,7 @@
 }
 
 .dg_bs_betamount_col:last-child {
-  background: #d8e0e6  !important;
+  background: #d8e0e6 !important;
   border-color: #d8e0e6;
 }
 
@@ -1495,42 +1534,47 @@
   color: #474848;
 }
 
-.dg_bs_stake_group.dg_bs_stake_group{
+.dg_bs_stake_group.dg_bs_stake_group {
   background-color: #f0f0f0;
 }
 
-.dg_bs_betamount_system_dropdown_btn.dg_bs_betamount_system_dropdown_btn, .dg_bs_betamount_system_dropdown_select.dg_bs_betamount_system_dropdown_select{
+.dg_bs_betamount_system_dropdown_btn.dg_bs_betamount_system_dropdown_btn,
+.dg_bs_betamount_system_dropdown_select.dg_bs_betamount_system_dropdown_select {
   border-color: #d8e0e6;
   background-color: #ebeff2;
 }
 
-.dg_bs_betamount_system_calculator_btn.dg_bs_betamount_system_calculator_btn{
+.dg_bs_betamount_system_calculator_btn.dg_bs_betamount_system_calculator_btn {
   background-color: #ebeff2;
   border-color: #d8e0e6;
 }
 
-.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_page_close_btn.dg_bs_page_close_btn{
+.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_page_close_btn.dg_bs_page_close_btn {
   color: #000;
 }
 
-.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_toggle.dg_bs_toggle{
+.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_toggle.dg_bs_toggle {
   background-color: #edf0f2;
 }
 
-.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_toggle.dg_bs_toggle:before{
+.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_toggle.dg_bs_toggle:before {
   background-color: #d3d4d6;
 }
 
-.dg_bs_page_wrap.dg_bs_page_wrap .dg_bs_toggle_input:checked + .dg_bs_toggle.dg_bs_toggle:before{
+.dg_bs_page_wrap.dg_bs_page_wrap
+  .dg_bs_toggle_input:checked
+  + .dg_bs_toggle.dg_bs_toggle:before {
   background-color: #3f97b6;
 }
 
-.dg_bs_page_switcher_header_start .dg_bs_tooltip.dg_bs_tooltip .sport_front_icon-info {
+.dg_bs_page_switcher_header_start
+  .dg_bs_tooltip.dg_bs_tooltip
+  .sport_front_icon-info {
   color: #767879;
 }
 
-.dg_bs_cashout_form_input.dg_bs_cashout_form_input{
-  background-color: #EBEFF2;
+.dg_bs_cashout_form_input.dg_bs_cashout_form_input {
+  background-color: #ebeff2;
   border-color: #d9e0e5;
 }
 
@@ -1540,15 +1584,15 @@
   background: #ebeff2;
 }
 
-.dg_bs_double_range_slider.dg_bs_double_range_slider::-webkit-slider-thumb{
+.dg_bs_double_range_slider.dg_bs_double_range_slider::-webkit-slider-thumb {
   border: 1px solid #e7e9eb;
 }
 
-.dg_system_calculator_key_value.dg_system_calculator_key_value{
+.dg_system_calculator_key_value.dg_system_calculator_key_value {
   color: #474848;
 }
 
-.dg_system_calculator_key_value_txt_accent.dg_system_calculator_key_value_txt_accent{
+.dg_system_calculator_key_value_txt_accent.dg_system_calculator_key_value_txt_accent {
   color: #3f97b6;
 }
 
@@ -1559,47 +1603,46 @@
 }
 
 .dg_bs_page_wrap.dg_bs_page_wrap[data-testid="autobet-container"] {
-  --bs_page_bg: #E7E9EB;
+  --bs_page_bg: #e7e9eb;
   border-color: #dfe1e3;
 }
 
-.dg_bs_page_wrap .dg_bs_stake.dg_bs_stake{
+.dg_bs_page_wrap .dg_bs_stake.dg_bs_stake {
   --eventBg2: #fff;
 }
 
-.dg_bs_page_wrap .dg_bs_stake_group_wrapper.dg_bs_stake_group_wrapper{
+.dg_bs_page_wrap .dg_bs_stake_group_wrapper.dg_bs_stake_group_wrapper {
   background-color: #e7e9eb;
   row-gap: 8px;
 }
 
-
-
-.dg_bs_double_range_input.dg_bs_double_range_input{
+.dg_bs_double_range_input.dg_bs_double_range_input {
   background-color: #ebeff2;
   border-color: #d9e0e5;
 }
 
-.dg_bs_double_range_slider_wrap:before{
+.dg_bs_double_range_slider_wrap:before {
   --bodyBg2: #dfe1e3;
 }
 
-.dg_bs_cashout_form_input_label{
+.dg_bs_cashout_form_input_label {
   color: #474848;
 }
 
-.dg_bs_betamount_system_dropdown_icon.dg_bs_betamount_system_dropdown_icon{
+.dg_bs_betamount_system_dropdown_icon.dg_bs_betamount_system_dropdown_icon {
   color: #000;
 }
 
-.dg_bs_stakes_infobar_total_text.dg_bs_stakes_infobar_total_text{
+.dg_bs_stakes_infobar_total_text.dg_bs_stakes_infobar_total_text {
   color: #474848;
 }
 
-.dg_bs_betamount_input.dg_bs_betamount_input{
-  border-color:  #dde3e8;
+.dg_bs_betamount_input.dg_bs_betamount_input {
+  border-color: #dde3e8;
 }
 
-.dg_bs_balance_dropdown.dg_bs_balance_dropdown .dg_bs_balance_dropdown_item--active {
+.dg_bs_balance_dropdown.dg_bs_balance_dropdown
+  .dg_bs_balance_dropdown_item--active {
   background: #d9e0e5;
 }
 
@@ -1616,19 +1659,17 @@
   border: 1px solid #f0f0f0;
 }
 
-
 .dg_bs_betamount_fav_btn.dg_bs_betamount_fav_btn:after {
   background-color: #f0f0f0;
 }
 
-.dg_bs_betamount_fav_btn{
+.dg_bs_betamount_fav_btn {
   color: #474848;
 }
 
-.dg_system_calculator_row_checkbox>input:checked+i {
+.dg_system_calculator_row_checkbox > input:checked + i {
   --accentBg: #67bd81;
   --accentTxt: #fff;
-
 }
 
 .dg_system_calculator_factors_wrapper.dg_system_calculator_factors_wrapper {
@@ -1636,7 +1677,8 @@
 }
 
 .dg_bs_stakes_infobar_btn--remove.dg_bs_stakes_infobar_btn--remove,
-.dg_bs_stakes_infobar_btn--remove.dg_bs_stakes_infobar_btn--remove .dg_bs_stakes_infobar_btn_icon {
+.dg_bs_stakes_infobar_btn--remove.dg_bs_stakes_infobar_btn--remove
+  .dg_bs_stakes_infobar_btn_icon {
   color: #767879;
 }
 
@@ -1645,15 +1687,15 @@
   background: #67bd81 !important;
 }
 
-.dg_bs_stake_actions_btn.dg_bs_stake_actions_btn{
+.dg_bs_stake_actions_btn.dg_bs_stake_actions_btn {
   background-color: #f0f0f0;
 }
 
-.dg_bs_stake_selection_input.dg_bs_stake_selection_input{
+.dg_bs_stake_selection_input.dg_bs_stake_selection_input {
   border-color: #eceff1;
 }
 
-.dg_bs_stake_selection_input.dg_bs_stake_selection_input::placeholder{
+.dg_bs_stake_selection_input.dg_bs_stake_selection_input::placeholder {
   color: #474848;
 }
 
@@ -1668,9 +1710,10 @@
 
 .lv_stake.lv_stake::before,
 .lv_stake.lv_stake::after,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake::before,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake::after
-{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake::before,
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake::after {
   content: "";
   transition: opacity 0.2s;
   top: 0;
@@ -1680,70 +1723,74 @@
   transform: translate(50%, -50%) rotate(45deg);
   width: 12px;
   opacity: 0;
-  
+
   box-shadow: 0 0 0 1px var(--eventBg);
 }
 
 .lv_stake.lv_stake::before,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake::before{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake::before {
   top: 0;
   background-color: var(--success);
 }
 .lv_stake.lv_stake::after,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake::after
-{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake::after {
   background-color: var(--error);
   top: 100%;
 }
 
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-increment > .lv_stake_factor{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-increment
+  > .lv_stake_factor {
   color: var(--success);
 }
 
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-decrement > .lv_stake_factor{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-decrement
+  > .lv_stake_factor {
   color: var(--error);
 }
 
-.lv_stake.lv_stake.lv_stake-increment{
+.lv_stake.lv_stake.lv_stake-increment {
   color: var(--success);
   border-top-right-radius: 0;
 }
 
-.lv_stake.lv_stake.lv_stake-decrement{
+.lv_stake.lv_stake.lv_stake-decrement {
   color: var(--error);
   border-bottom-right-radius: 0;
 }
 
 .lv_stake.lv_stake.lv_stake-increment::before,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-increment::before
-{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-increment::before {
   opacity: 1;
 }
 
 .lv_stake.lv_stake.lv_stake-decrement::after,
-.lv_stakes_wrapper.lv_stakes_wrapper >.lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-decrement::after{
+.lv_stakes_wrapper.lv_stakes_wrapper
+  > .lv_marketStake.lv_marketStake.lv_marketStake.lv_stake-decrement::after {
   opacity: 1;
 }
 
 @keyframes increment_custom {
   0% {
-      background-color: var(--oddBg)
+    background-color: var(--oddBg);
   }
 
   50% {
-      background-color: #da291c40
+    background-color: #da291c40;
   }
 
   to {
-      background-color: var(--error-light)
+    background-color: var(--error-light);
   }
 }
 
-.lv_stake.lv_stake.lv_stake.lv_stake-selected{
+.lv_stake.lv_stake.lv_stake.lv_stake-selected {
   color: var(--oddActiveTxt);
 }
-
-
 
 .lv_stake.lv_stake-increment,
 .lv_stake.lv_stake-decrement,
@@ -1758,24 +1805,24 @@
   animation: none !important;
 }
 
-
-.lv_horizontal_scroll.lv_horizontal_scroll::-webkit-scrollbar-thumb{
+.lv_horizontal_scroll.lv_horizontal_scroll::-webkit-scrollbar-thumb {
   background-color: var(--dominantBg);
 }
 
-.dg_bs_stake_header_live_indicator.dg_bs_stake_header_live_indicator{
---accentBg: #FC0C4D;
+.dg_bs_stake_header_live_indicator.dg_bs_stake_header_live_indicator {
+  --accentBg: #fc0c4d;
 }
 
-.dg_bs_page_wrap.dg_bs_page_wrap.dg_bs_page_wrap--sharebet > .dg_bs_page_header{
+.dg_bs_page_wrap.dg_bs_page_wrap.dg_bs_page_wrap--sharebet
+  > .dg_bs_page_header {
   background-color: #dee5ed;
   margin-left: -12px;
   margin-right: -12px;
   padding: 4px 16px;
 }
 
-
-.sr-content_new.sr-content_new .lv_stake:not(.lv_stake-empty):not(.lv_stake--vertical) {
+.sr-content_new.sr-content_new
+  .lv_stake:not(.lv_stake-empty):not(.lv_stake--vertical) {
   background-color: none;
 }
 
@@ -1795,50 +1842,66 @@
   font-weight: 100;
 }
 
-:is(.lv_main_container) .lv_menu_item.lv_menu_item-selected [class*="imgSpr"]::after,
-:is(.lv_main_container) .lv_sportTab.lv_sportTab-selected [class*="imgSpr"]::after{
+:is(.lv_main_container)
+  .lv_menu_item.lv_menu_item-selected
+  [class*="imgSpr"]::after,
+:is(.lv_main_container)
+  .lv_sportTab.lv_sportTab-selected
+  [class*="imgSpr"]::after {
   display: inline-flex;
 }
 
-:is(.lv_main_container) .lv_menu_item.lv_menu_item-selected [class*="imgSpr"]::before,
-:is(.lv_main_container) .lv_sportTab.lv_sportTab-selected [class*="imgSpr"]::before{
+:is(.lv_main_container)
+  .lv_menu_item.lv_menu_item-selected
+  [class*="imgSpr"]::before,
+:is(.lv_main_container)
+  .lv_sportTab.lv_sportTab-selected
+  [class*="imgSpr"]::before {
   display: none;
 }
 
-.dg_bs_stake_selection_arg.dg_bs_stake_selection_arg{
+.dg_bs_stake_selection_arg.dg_bs_stake_selection_arg {
   font-size: 13px;
 }
 
-.ai_root .collapse-wrapper{
+.ai_root .collapse-wrapper {
   background-color: var(--background_4);
 }
 .ai_root .ai_filterTabs_wrapper,
-.ai_root .dg_multibet_widget_header{
+.ai_root .dg_multibet_widget_header {
   background: inherit;
 }
 
-.dg_bet_generator_wrapper.dg_bet_generator_wrapper .collapse-container{
+.dg_bet_generator_wrapper.dg_bet_generator_wrapper .collapse-container {
   --bodyBg: var(--background_1);
 }
 
-.lv_collapse_header.lv_collapse_header{
---dominantBg2: var(--background_3);
+.lv_collapse_header.lv_collapse_header {
+  --dominantBg2: var(--background_3);
 }
 
-.dg_widget_root .dg_filter_tabs_wrapper{
+.dg_widget_root .dg_filter_tabs_wrapper {
   --bodyBg: var(--background_1);
 }
 
-.ai_widget_content .ai_widget_body{
+.ai_widget_content .ai_widget_body {
   background: var(--background_1);
 }
 
-.lv_main_panel.lv_main_panel .dg_favorites_content>div{
+.lv_main_panel.lv_main_panel .dg_favorites_content > div {
   --bodyBg2: var(--background_1);
 }
 
-.lv_results_widget .lv_results_filter_widget{
-  --filterBg:  var(--background_1);
+.lv_results_widget .lv_results_filter_widget {
+  --filterBg: var(--background_1);
   --inputBg: var(--background_4);
   --inputG: var(--background_4);
+}
+
+.lv_sideBar .lv_treeWrapper .lv_subItem_group .lv_favorite_base {
+  background: var(--background_4);
+}
+
+.sr-content.sr-content_new {
+  --bodyBgHover: var(--background_1);
 }
