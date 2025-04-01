@@ -4,7 +4,7 @@ import { Skinner } from "./skinner.js";
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
 
-// import ViewDemoEuropean from "./views/european.js";
+import ViewDemoEuropean from "./views/european.js";
 
 const configOrderCasino = [
   {
@@ -766,8 +766,8 @@ function setOrUpdateIframeCss(cssStyle, target) {
   styleElement.innerHTML = cssStyle;
 }
 
-// const demo = new ViewDemoEuropean();
-// demo.init();
+const demo = new ViewDemoEuropean();
+demo.init();
 const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.querySelector(".demo_body").parentElement;
 // const target = document.body;

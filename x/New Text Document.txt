@@ -11,9 +11,13 @@ https://cdn-sp-bn.kertn.net/assets/fonts/sport-ui-icons/style.css*
 http://127.0.0.1:5500/icons/icons.css*
 
 
+https://cdn-sp-bn.****/skinning/***/**/custom_LatinoView.css*
+
 
 
 
 https://projectx-projectx.centrivo.io/en/sport
 
 https://www.figma.com/design/ru4RN81nmcKKDoLp83RCns/Project-X-Web-%26-Mobile?node-id=804-16699&t=TZEmw2TRyqXsQ5Ju-0
+
+https://www.figma.com/design/ru4RN81nmcKKDoLp83RCns/Project-X-Web-%26-Mobile?node-id=2576-203096&t=QuWkRa0hHGrdgDQR-0
