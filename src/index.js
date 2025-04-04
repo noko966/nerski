@@ -768,8 +768,8 @@ function setOrUpdateIframeCss(cssStyle, target) {
 
 const demo = new ViewDemoEuropean();
 demo.init();
-const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
-// const target = document.querySelector(".demo_body").parentElement;
+// const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
+const target = document.querySelector(".demo_body");
 // const target = document.body;
 
 const configTree = {

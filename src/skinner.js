@@ -395,16 +395,10 @@ class Skinner {
 
     groupObj.blurRangeEl.disabled = !isActive;
     groupObj.blurInputEl.disabled = !isActive;
-
-  
   }
 
   isColorReadable(c1, c2) {
-    return tinycolor.isReadable(
-      c1,
-      c2
-    );
-
+    return tinycolor.isReadable(c1, c2);
   }
 
   buildEssenceState(name, parentName) {
@@ -758,11 +752,11 @@ class Skinner {
 
     this.customStyler = new MouseIntersectStyler(
       "*",
-      () => { },
-      () => { },
-      () => { },
+      () => {},
+      () => {},
+      () => {},
       this.root,
-      this.patientRoot,
+      this.patientRoot
     );
 
     if (this.toolBox) {
@@ -902,9 +896,9 @@ class Skinner {
         GradientState.stops && GradientState.stops.length > 0
           ? GradientState.stops
           : [
-            [_t.skin[_vd.nameBg], 0],
-            [_t.skin[_vd.nameBg3], 1],
-          ];
+              [_t.skin[_vd.nameBg], 0],
+              [_t.skin[_vd.nameBg3], 1],
+            ];
       GradientState.stops = stops;
 
       const gradient = this.createGradientString(GradientState);
@@ -1003,17 +997,15 @@ class Skinner {
     const issueIndicator = _t.ui.essenceGroups[`${name}Issue`];
     const group = _t.ui.essenceGroups[name].groupEl;
 
-    if(!isReadable) {
+    if (!isReadable) {
       issueIndicator.title = `accent color will not be readable on background`;
       issueIndicator.classList.add("state_issue");
       group.classList.add("state_issue");
-        }
-    else{
+    } else {
       issueIndicator.title = ``;
       issueIndicator.classList.remove("state_issue");
       group.classList.remove("state_issue");
     }
-    
   }
 
   buildSkin(node) {
@@ -1028,14 +1020,24 @@ class Skinner {
 
   updateOverlayCSS(name) {
     const _t = this;
-
     const _vd = _t.verbalData(name);
     const _id = `sk_style_elem_${name}`;
-    let style = _t.patientRoot.getElementById(_id);
-    if (!style) {
-      style = document.createElement("style");
-      style.id = _id;
-      _t.patientRoot.appendChild(style);
+    let styleElement = document.getElementById(_id);
+    if (_t.patientRoot instanceof ShadowRoot) {
+      styleElement = target.querySelector(`#${styleId}`);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        target.appendChild(styleElement);
+      }
+    } else {
+      // Otherwise, assume the target is `document`
+      styleElement = document.getElementById(_id);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        document.head.appendChild(styleElement);
+      }
     }
 
     const backgrounds = ["nameBg", "nameBgHov"];
@@ -1055,21 +1057,31 @@ class Skinner {
 
     css += `--${_vd.nameBlur}: ${_t.skin[_vd.nameBlur]}px;\n`;
 
-    style.innerHTML = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
+    styleElement.innerHTML = _t.wrapInRootTag(":root", css);
 
     this.state[name].css = css;
   }
 
   updateCSS(name) {
     const _t = this;
-
     const _vd = _t.verbalData(name);
     const _id = `sk_style_elem_${name}`;
-    let style = _t.patientRoot.getElementById(_id);
-    if (!style) {
-      style = document.createElement("style");
-      style.id = _id;
-      _t.patientRoot.appendChild(style);
+    let styleElement = document.getElementById(_id);
+    if (_t.patientRoot instanceof ShadowRoot) {
+      styleElement = target.querySelector(`#${styleId}`);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        target.appendChild(styleElement);
+      }
+    } else {
+      // Otherwise, assume the target is `document`
+      styleElement = document.getElementById(_id);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        document.head.appendChild(styleElement);
+      }
     }
 
     const backgrounds = [
@@ -1082,7 +1094,7 @@ class Skinner {
     ];
     let css = "";
     backgrounds.forEach((bg) => {
-      css += `--${_vd[bg]}: ${_t.skin[_vd[bg]]};\n`;
+      css += `--${_vd[bg]}: ${tinycolor(_t.skin[_vd[bg]]).toHexString()};\n`;
     });
 
     css += `--${_vd.nameG}: ${_t.skin[_vd.nameG]};\n`;
@@ -1099,7 +1111,7 @@ class Skinner {
     css += `--${_vd.nameBorder}: ${_t.skin[_vd.nameBorder]};\n`;
     css += `--${_vd.nameRadius}: ${_t.skin[_vd.nameRadius]}px;\n`;
 
-    style.innerHTML = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
+    styleElement.innerHTML = _t.wrapInRootTag(":root", css);
 
     this.state[name].css = css;
   }
@@ -1118,14 +1130,11 @@ class Skinner {
     _t.updateControl(name);
     _t.updateSkin(name);
 
-
     if (name === "overlay") {
       _t.updateOverlayCSS(name);
     } else {
       _t.updateCSS(name);
     }
-
-    
 
     if (node.children && node.children.length > 0) {
       node.children.forEach((n) => {
@@ -1678,7 +1687,6 @@ class Skinner {
         "isActive"
       );
 
-
       const label = `${name}Issue`;
       const cb = (e) => {
         label;
@@ -1702,8 +1710,6 @@ class Skinner {
       borderGroupWrapper.appendChild(chbBorderRef.el);
       borderGroupWrapper.appendChild(borderPickerEl);
 
-      
-
       group.appendChild(groupChild1);
       group.appendChild(groupChild2);
       group.appendChild(gradientGroupWrapper);
@@ -1712,9 +1718,6 @@ class Skinner {
       group.appendChild(borderGroupWrapper);
       group.appendChild(radiusGroupWrapper.el);
       group.appendChild(blurGroupWrapper.el);
-
-      
-      
 
       this.ui.content.appendChild(group);
 
@@ -1783,7 +1786,10 @@ class Skinner {
       css += _t.state[essenceObj.name].css;
     });
 
-    const wrappedInRoot = _t.wrapInRootTag(":host:host:host:host:host:host:host:host", css);
+    const wrappedInRoot = _t.wrapInRootTag(
+      ":host:host:host:host:host:host:host:host",
+      css
+    );
 
     var element = document.createElement("a");
     var date = new Date();
