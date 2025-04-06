@@ -19,6 +19,7 @@ class Skinner {
       statechange: [],
     };
     this.root = root || document.body;
+    this.rootSelector = ":root";
     this.ui = {
       colors: {
         dark: {
@@ -766,7 +767,7 @@ class Skinner {
     this.customStyler.on("cssupdate", (newCss) => {
       // 2) Insert the CSS into a <style> element in THIS file
       console.log("asd");
-
+      this.state.customCSS = newCss;
       this.createUpdateStyle("styler_custom", newCss);
     });
 
@@ -1089,7 +1090,7 @@ class Skinner {
 
     css += `--${_vd.nameBlur}: ${_t.skin[_vd.nameBlur]}px;\n`;
 
-    styleElement.innerHTML = _t.wrapInRootTag(":root", css);
+    styleElement.innerHTML = _t.wrapInRootTag(this.rootSelector, css);
 
     this.state[name].css = css;
   }
@@ -1143,7 +1144,7 @@ class Skinner {
     css += `--${_vd.nameBorder}: ${_t.skin[_vd.nameBorder]};\n`;
     css += `--${_vd.nameRadius}: ${_t.skin[_vd.nameRadius]}px;\n`;
 
-    styleElement.innerHTML = _t.wrapInRootTag(":root", css);
+    styleElement.innerHTML = _t.wrapInRootTag(this.rootSelector, css);
 
     this.state[name].css = css;
   }
@@ -1812,10 +1813,9 @@ class Skinner {
       css += _t.state[essenceObj.name].css;
     });
 
-    const wrappedInRoot = _t.wrapInRootTag(
-      ":host:host:host:host:host:host:host:host",
-      css
-    );
+    let wrappedInRoot = _t.wrapInRootTag(this.rootSelector, css);
+
+    wrappedInRoot += _t.state.customCSS;
 
     var element = document.createElement("a");
     var date = new Date();
