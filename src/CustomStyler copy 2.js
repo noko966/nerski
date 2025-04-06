@@ -2,11 +2,10 @@ import SKPicker from "./modules/picker.js";
 
 // Class to handle mouse move intersection with DOM elements and apply styles
 class MouseIntersectStyler {
-  constructor(root, patientRoot) {
-    this.eventListeners = {
-      cssupdate: [],
-      // possibly other events
-    };
+  constructor(clickCallback, root, patientRoot) {
+    this.styleCallback = styleCallback;
+    this.resetCallback = resetCallback;
+    this.clickCallback = clickCallback;
     this.currentElement = null;
     this.isStopped = false;
     this.isRunning = false; // Track if the styler is active
@@ -228,7 +227,7 @@ ${cn} > * {
 
       if (clickedElement) {
         this.isStopped = true;
-        // this.clickCallback(clickedElement);
+        this.clickCallback(clickedElement);
 
         // Show UI near the clicked element
         const bounds = clickedElement.getBoundingClientRect();

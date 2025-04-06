@@ -76,6 +76,7 @@ class Skinner {
       content: null,
       essenceGroups: {},
     };
+    this.domEventBindings = [];
     this.eventBindings = [];
     this.rootNodes = [];
     this.state = {};
@@ -236,14 +237,14 @@ class Skinner {
         nameBg2: 6,
         nameBg2Hov: 9,
         nameBg3: 12,
-        nameBg3Hov: 16,
+        nameBg3Hov: 15,
       },
       light: {
         nameBgHov: 3,
         nameBg2: 7,
         nameBg2Hov: 10,
         nameBg3: 13,
-        nameBg3Hov: 16,
+        nameBg3Hov: 15,
       },
       alpha: {
         1: 0.7,
@@ -314,6 +315,11 @@ class Skinner {
       isDark: _isDark,
       isActive: false,
     };
+  }
+
+  addDomListener(element, eventType, handler) {
+    element.addEventListener(eventType, handler);
+    this.domEventBindings.push({ element, eventType, handler });
   }
 
   updateControl(name) {
@@ -751,24 +757,27 @@ class Skinner {
     this.generateUiPalette(this.ui.colors["light"]);
 
     this.customStyler = new MouseIntersectStyler(
-      "*",
-      () => {},
-      () => {},
       () => {},
       this.root,
       this.patientRoot
     );
 
+    // 1) Listen for the 'cssupdate' event from customStyler
+    this.customStyler.on("cssupdate", (newCss) => {
+      // 2) Insert the CSS into a <style> element in THIS file
+      console.log("asd");
+
+      this.createUpdateStyle("styler_custom", newCss);
+    });
+
     if (this.toolBox) {
-      this.ui.root.addEventListener("mouseover", () => {
-        // If styler is running, stop it when entering toolbox
+      this.addDomListener(this.ui.root, "mouseover", () => {
         if (this.customStyler && this.customStyler.isRunning) {
           this.customStyler.stop();
         }
       });
 
-      this.ui.root.addEventListener("mouseout", () => {
-        // Only restart if styler is toggled on AND not running
+      this.addDomListener(this.ui.root, "mouseout", () => {
         if (
           this.isStylerToggledOn &&
           !this.isPickerOpen &&
@@ -779,7 +788,6 @@ class Skinner {
         }
       });
     }
-    // this.emit("init");
   }
 
   loadSavedConfig(configOverrides) {
@@ -1018,17 +1026,41 @@ class Skinner {
     }
   }
 
+  createUpdateStyle(id, css) {
+    const _t = this;
+    const _id = `sk_style_elem_${id}`;
+    let styleElement = document.getElementById(_id);
+    if (_t.patientRoot instanceof ShadowRoot) {
+      styleElement = _t.patientRoot.querySelector(`#${styleId}`);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        _t.patientRoot.appendChild(styleElement);
+      }
+    } else {
+      // Otherwise, assume the target is `document`
+      styleElement = document.getElementById(_id);
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.setAttribute("id", _id);
+        document.head.appendChild(styleElement);
+      }
+    }
+
+    styleElement.innerHTML = css;
+  }
+
   updateOverlayCSS(name) {
     const _t = this;
     const _vd = _t.verbalData(name);
     const _id = `sk_style_elem_${name}`;
     let styleElement = document.getElementById(_id);
     if (_t.patientRoot instanceof ShadowRoot) {
-      styleElement = target.querySelector(`#${styleId}`);
+      styleElement = _t.patientRoot.querySelector(`#${styleId}`);
       if (!styleElement) {
         styleElement = document.createElement("style");
         styleElement.setAttribute("id", _id);
-        target.appendChild(styleElement);
+        _t.patientRoot.appendChild(styleElement);
       }
     } else {
       // Otherwise, assume the target is `document`
@@ -1068,11 +1100,11 @@ class Skinner {
     const _id = `sk_style_elem_${name}`;
     let styleElement = document.getElementById(_id);
     if (_t.patientRoot instanceof ShadowRoot) {
-      styleElement = target.querySelector(`#${styleId}`);
+      styleElement = _t.patientRoot.querySelector(`#${styleId}`);
       if (!styleElement) {
         styleElement = document.createElement("style");
         styleElement.setAttribute("id", _id);
-        target.appendChild(styleElement);
+        _t.patientRoot.appendChild(styleElement);
       }
     } else {
       // Otherwise, assume the target is `document`
@@ -1207,15 +1239,13 @@ class Skinner {
   }
 
   createBackgrounPicker(name, mode) {
-    const _mode = mode;
-    const _t = this;
     const backgroundPickerEl = document.createElement("div");
     backgroundPickerEl.className = "sk_picker_trigger";
 
-    backgroundPickerEl.addEventListener("click", (evt) => {
-      const color = _t.state[name].Background.color;
-      _t.handlePicker(evt, color, _mode, (newColor) => {
-        _t.updateEssenceState(name, "Background", "color", newColor);
+    this.addDomListener(backgroundPickerEl, "click", (evt) => {
+      const color = this.state[name].Background.color;
+      this.handlePicker(evt, color, mode, (newColor) => {
+        this.updateEssenceState(name, "Background", "color", newColor);
         this.build(name);
       });
     });
@@ -1224,14 +1254,13 @@ class Skinner {
   }
 
   createTextPicker(name) {
-    const _t = this;
     const textPickerEl = document.createElement("div");
     textPickerEl.className = "sk_picker_trigger";
 
-    textPickerEl.addEventListener("click", (evt) => {
-      const color = _t.state[name].Text.color;
-      _t.handlePicker(evt, color, "color", (newColor) => {
-        _t.updateEssenceState(name, "Text", "color", newColor);
+    this.addDomListener(textPickerEl, "click", (evt) => {
+      const color = this.state[name].Text.color;
+      this.handlePicker(evt, color, "color", (newColor) => {
+        this.updateEssenceState(name, "Text", "color", newColor);
         this.build(name);
       });
     });
@@ -1240,16 +1269,15 @@ class Skinner {
   }
 
   createGradientPicker(name) {
-    const _t = this;
     const gradientPickerEl = document.createElement("div");
     gradientPickerEl.className = "sk_picker_trigger";
 
-    gradientPickerEl.addEventListener("click", (evt) => {
-      _t.handleGradientPicker(evt, name, (data) => {
-        _t.updateEssenceState(name, "Gradient", "angle", data.angle);
-        _t.updateEssenceState(name, "Gradient", "stops", data.stops);
-        _t.updateEssenceState(name, "Gradient", "type", data.type);
-        _t.updateEssenceState(name, "Gradient", "color", data.color);
+    this.addDomListener(gradientPickerEl, "click", (evt) => {
+      this.handleGradientPicker(evt, name, (data) => {
+        this.updateEssenceState(name, "Gradient", "angle", data.angle);
+        this.updateEssenceState(name, "Gradient", "stops", data.stops);
+        this.updateEssenceState(name, "Gradient", "type", data.type);
+        this.updateEssenceState(name, "Gradient", "color", data.color);
         this.build(name);
       });
     });
@@ -1258,14 +1286,13 @@ class Skinner {
   }
 
   createBorderPicker(name) {
-    const _t = this;
     const borderPickerEl = document.createElement("div");
     borderPickerEl.className = "sk_picker_trigger";
 
-    borderPickerEl.addEventListener("click", (evt) => {
-      const color = _t.state[name].Border.color;
-      _t.handlePicker(evt, color, "color", (newColor) => {
-        _t.updateEssenceState(name, "Border", "color", newColor);
+    this.addDomListener(borderPickerEl, "click", (evt) => {
+      const color = this.state[name].Border.color;
+      this.handlePicker(evt, color, "color", (newColor) => {
+        this.updateEssenceState(name, "Border", "color", newColor);
         this.build(name);
       });
     });
@@ -1288,15 +1315,16 @@ class Skinner {
     input.type = "number";
     input.className = "sk_input_text";
 
-    input.addEventListener("input", (e) => {
+    this.addDomListener(input, "input", (e) => {
       input.value = e.target.value;
-      _t.updateEssenceState(name, _prop, null, e.target.value);
-      _t.build(name);
+      this.updateEssenceState(name, _prop, null, e.target.value);
+      this.build(name);
     });
-    range.addEventListener("input", (e) => {
+
+    this.addDomListener(range, "input", (e) => {
       range.value = e.target.value;
-      _t.updateEssenceState(name, _prop, null, e.target.value);
-      _t.build(name);
+      this.updateEssenceState(name, _prop, null, e.target.value);
+      this.build(name);
     });
 
     const label = document.createElement("div");
@@ -1314,14 +1342,13 @@ class Skinner {
   }
 
   createAccentPicker(name) {
-    const _t = this;
     const accentPickerEl = document.createElement("div");
     accentPickerEl.className = "sk_picker_trigger";
 
-    accentPickerEl.addEventListener("click", (evt) => {
-      const color = _t.state[name].Accent.color;
-      _t.handlePicker(evt, color, "color", (newColor) => {
-        _t.updateEssenceState(name, "Accent", "color", newColor);
+    this.addDomListener(accentPickerEl, "click", (evt) => {
+      const color = this.state[name].Accent.color;
+      this.handlePicker(evt, color, "color", (newColor) => {
+        this.updateEssenceState(name, "Accent", "color", newColor);
         this.build(name);
       });
     });
@@ -1341,12 +1368,12 @@ class Skinner {
     const chbRef = _t.createCheckBox(`${name}${prop}${key}`);
     // chbRef.chb.checked = !!this.state[name][prop].isActive;
 
-    chbRef.chb.addEventListener("change", (e) => {
+    this.addDomListener(chbRef.chb, "change", (e) => {
       const newActiveVal = e.target.checked;
-      _t.updateEssenceState(name, prop, key, newActiveVal);
-      const bg = _t.state[name][prop].color;
-      _t.updateEssenceState(name, prop, "color", bg);
-      _t.build(name);
+      this.updateEssenceState(name, prop, key, newActiveVal);
+      const bg = this.state[name][prop].color;
+      this.updateEssenceState(name, prop, "color", bg);
+      this.build(name);
     });
 
     return chbRef;
@@ -1357,7 +1384,7 @@ class Skinner {
     const chbRef = _t.createCheckBox(`Is${name}EssenceGroupActive`);
     // chbRef.chb.checked = !!this.state[name][prop].isActive;
 
-    chbRef.chb.addEventListener("change", (e) => {
+    _t.addDomListener(chbRef.chb, "change", (e) => {
       const newActiveVal = e.target.checked;
       _t.updateEssenceState(name, "Background", "isActive", newActiveVal);
       _t.build(name);
@@ -1371,7 +1398,7 @@ class Skinner {
     const chbRef = this.createCheckBox(`${name}${prop}`);
     // chbRef.chb.checked = !!this.state[name].Background.isDark;
 
-    chbRef.chb.addEventListener("change", (e) => {
+    this.addDomListener(chbRef.chb, "change", (e) => {
       const newActiveVal = e.target.checked;
 
       this.updateEssenceState(name, "Background", prop, newActiveVal);
@@ -1534,9 +1561,9 @@ class Skinner {
       progress = 0;
     };
 
-    box.addEventListener("mouseenter", manageMouseEnter);
-    box.addEventListener("mousemove", manageMouseMove);
-    box.addEventListener("mouseleave", manageMouseLeave);
+    this.addDomListener(box, "mouseenter", manageMouseEnter);
+    this.addDomListener(box, "mousemove", manageMouseMove);
+    this.addDomListener(box, "mouseleave", manageMouseLeave);
 
     setPath(progress);
   }
@@ -1560,7 +1587,7 @@ class Skinner {
 
     const load = this.createButton("load", "download");
     load.classList.add("variant_load");
-    load.addEventListener("click", () => {
+    this.addDomListener(load, "click", () => {
       const _config = _input.value ? JSON.parse(_input.value) : null;
       // console.log(_config);
 
@@ -1591,18 +1618,17 @@ class Skinner {
     this.ui.themeTrigger = this.createSwitch("theme", "moon");
     this.ui.collapseTrigger = this.createSwitch("collapse", "collapse");
     this.ui.customStylerTrigger = this.createSwitch("paint", "brush");
-    this.ui.themeTrigger.chb.addEventListener("change", (e) => {
+    this.addDomListener(this.ui.themeTrigger.chb, "change", (e) => {
       let uiTheme = e.currentTarget.checked
         ? this.ui.colors["dark"]
         : this.ui.colors["light"];
       this.generateUiPalette(uiTheme);
     });
 
-    this.ui.customStylerTrigger.chb.addEventListener("change", (e) => {
+    this.addDomListener(this.ui.customStylerTrigger.chb, "change", (e) => {
       if (this.customStyler) {
         // Toggle the boolean flag
         this.isStylerToggledOn = !this.isStylerToggledOn;
-        // this.toggleBtn.classList.toggle("state_active");
         this.customStyler.toggleStyler();
       }
     });
@@ -1748,14 +1774,14 @@ class Skinner {
 
     this.ui.saveTrigger = this.createButton("save", "download");
 
-    this.ui.saveTrigger.addEventListener("click", () => this.saveConfig());
+    this.addDomListener(this.ui.saveTrigger, "click", () => this.saveConfig());
 
     this.ui.downloadTrigger = this.createButton("variables", "download");
     this.ui.downloadTrigger.classList.add("variant_cta");
 
-    this.ui.downloadTrigger.addEventListener("click", () =>
-      this.makeDownloadRequest("sport")
-    );
+    this.addDomListener(this.ui.downloadTrigger, "click", () => {
+      this.makeDownloadRequest("sport");
+    });
 
     const configInput = this.createTextArea();
     this.ui.footer.appendChild(this.ui.downloadTrigger);
@@ -1769,7 +1795,7 @@ class Skinner {
     const root = document.createElement("button");
     root.className = "sk_control_group_action";
     root.innerHTML = this.ui.icons.info;
-    root.addEventListener("click", (e) => {
+    this.addDomListener(root, "click", (e) => {
       console.log(`action ${label} starting`);
       cb(e);
     });
@@ -1943,6 +1969,21 @@ class Skinner {
       instance.destroy();
       _t.pickerInstance = null;
     });
+  }
+
+  destroy() {
+    this.domEventBindings.forEach(({ element, eventType, handler }) => {
+      element.removeEventListener(eventType, handler);
+    });
+    this.domEventBindings = [];
+
+    if (this.ui.root && this.root.contains(this.ui.root)) {
+      this.root.removeChild(this.ui.root);
+    }
+
+    if (this.customStyler && this.customStyler.isRunning) {
+      this.customStyler.stop();
+    }
   }
 
   cloneState(state) {
