@@ -24,15 +24,15 @@ class Skinner {
       colors: {
         dark: {
           name: "dark",
-          dominant: "#1F2122",
-          button: "#464559",
-          accent: "#7872E0",
+          dominant: "#2f2f2f",
+          button: "#2f2f2f",
+          accent: "#bbd893",
         },
         light: {
           name: "light",
           dominant: "#d4d7db",
-          button: "#a6a8c3",
-          accent: "#7872E0",
+          button: "#494949",
+          accent: "#bbd893",
         },
       },
       icons: {
@@ -477,7 +477,7 @@ class Skinner {
     const txtKeyNames = ["nameTxt", "nameTxt2", "nameTxt3"];
 
     const createShadow = (c) => {
-      return tinycolor(c).desaturate(2).darken(6).toHexString();
+      return tinycolor(c).desaturate(2).darken(20).toHexString();
     };
 
     const createGlass = (c1, alpha) => {
@@ -493,14 +493,16 @@ class Skinner {
       UISkin[name][_vd.nameBg] = bg;
       bgKeyNames.forEach((bgName, i) => {
         UISkin[name][_vd[bgName]] = tinycolor(bg)
-          .lighten(5 * (i + 1))
+          .lighten(3 * (i + 1))
           .toHexString();
       });
       const txt = guessVisibleColor(bg);
 
       txtKeyNames.forEach((txtName, i) => {
+        console.log();
+        
         UISkin[name][_vd[txtName]] = tinycolor(txt)
-          .setAlpha(1 - (i + 1) * 0.1)
+          .setAlpha(1 - (i + 1) * 0.15)
           .toRgbString();
       });
 
@@ -1064,7 +1066,6 @@ class Skinner {
         _t.patientRoot.appendChild(styleElement);
       }
     } else {
-      // Otherwise, assume the target is `document`
       styleElement = document.getElementById(_id);
       if (!styleElement) {
         styleElement = document.createElement("style");
@@ -1360,7 +1361,7 @@ class Skinner {
   createWrapper(cn) {
     const _cn = cn || "";
     const root = document.createElement("div");
-    root.className = `sk_checkbox_wrapper ${_cn && `variant_${_cn}`}`;
+    root.className = `sk_checkbox_wrapper ${_cn && `variant_${_cn} variant_two_items`}`;
     return root;
   }
 
@@ -1483,12 +1484,13 @@ class Skinner {
 
     const colors = [
       "#FF637C",
-      "#8144CD",
-      "#7872E0",
-      "#56A9E2",
+      "#FFD76B",
+      "#D2F58D",
+"#FF637C",
       "#D2F58D",
       "#FFD76B",
       "#FF637C",
+      
     ];
 
     // Distribute offsets evenly (0% to 100%)
@@ -1673,7 +1675,7 @@ class Skinner {
       const groupChild1 = document.createElement("div");
       groupChild1.className = "sk_checkbox_wrapper";
       const groupChild2 = document.createElement("div");
-      groupChild2.className = "sk_checkbox_wrapper";
+      groupChild2.className = "sk_checkbox_wrapper variant_two_items";
 
       if (essenceState.Background && essenceState.Background.isActive) {
         group.classList.add("state_active");
@@ -2052,10 +2054,10 @@ class Skinner {
   --skinnerHeaderHeight: 32px;
   --skinnerHeaderTogglerSize: 50px;
   --skinnerToolboxHeight: 28px;
-  --skinnerToolboxFooterHeight: 48px;
-  --skinnerBtnHeight: 28px;
+  --skinnerToolboxFooterHeight: 40px;
+  --skinnerBtnHeight: 24px;
   --skinnerToolboxCollapserSize: 42px;
-  --control-picker-size: 24px;
+  --control-picker-size: 28px;
   --control-picker-size-border: calc(var(--control-picker-size) - 4px);
   --controls-row-height: 36px;
   --controls-ui-gap: 6px;
@@ -2071,22 +2073,22 @@ class Skinner {
 }
 
 .sk_path_string_root {
-  height: 40px;
+  height: 48px;
   position: relative;
   width: 100%;
   position: absolute;
-  top: 10px;
+  top: 0;
 }
 
 .sk_path_string_box {
   width: 100%;
-  height: 40px;
+  height: 100%;
   position: relative;
 }
 
 .sk_path_string_root > svg {
   position: absolute;
-  height: 40px;
+  height: 100%;
   width: 100%;
   top: 0px;
   stroke: var(--sk_accentBg);
@@ -2110,7 +2112,7 @@ body {
   column-gap: 6px;
   padding: 0 8px;
   height: var(--skinnerToolboxFooterHeight);
-  background: var(--sk_dominantBg2);
+  background: var(--sk_dominantBg3);
   position: absolute;
   border-top: 1px solid var(--sk_dominantBg3Hover);
   bottom: 0;
@@ -2210,28 +2212,38 @@ body {
 }
 
 .sk_header {
-  width: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt);
+    background: var(--sk_dominantBg);
+    color: var(--sk_dominantTxt3);
     border-bottom: 1px solid var(--sk_dominantBgHover);
-    height: 30px;
-    padding: 0 12px;
-    column-gap: 6px;
+    height: 24px;
+    padding: 0;
+    column-gap: 1px;
     font-size: 11px;
 }
 
 .sk_header_label {
-    width: 66px;
+    width: 80px;
+    flex-shrink: 0;
+    background: var(--sk_dominantBg3);
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding-inline-start: 8px;
     flex-shrink: 0;
 }
 
 .sk_header_label.variant-essence{
-    width: 118px;
-    display: flex;
-    align-items: center;
+    width: 155px;
+    padding-inline-start: 12px;
+}
+
+.sk_header_label.variant-radius{
+        flex-grow: 1;
+    min-width: 1px;
 }
 
 .skinner_ico {
@@ -2306,7 +2318,7 @@ body {
   transform: translate(-50%, 0);
   transition: transform 0.5s;
   z-index: var(--sk_zind);
-  height: 200px;
+  height: 320px;
   width: auto;
   color: var(--sk_dominantTxt);
   border: 1px solid var(--sk_dominantBgHover);
@@ -2317,14 +2329,14 @@ body {
 }
 
 .sk_tools_root{
-      background: var(--sk_dominantBgHover);
+          background: var(--sk_dominantBg3);
     color: var(--sk_dominantTxt);
     position: absolute;
     right: 0;
     top: 0;
     transform: translateY(calc(-100% - 8px));
-    border-radius: 4px;
-    border: 1px solid var(--sk_dominantBg2);
+    border-radius: 2px;
+    border: 1px solid var(--sk_dominantBg);
     padding: 2px;
     display: flex;
     align-items: center;
@@ -2398,11 +2410,11 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100% - var(--skinnerToolboxFooterHeight));
-  padding: 12px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  row-gap: 6px;
+  row-gap: 4px;
   padding-bottom: var(--skinnerToolboxFooterHeight);
 }
 
@@ -2419,9 +2431,11 @@ body {
 }
 
 .sk_control_group {
---sk_errorT1: rgba(206, 53, 61, 1.0);
---sk_errorT0: rgba(206, 53, 61, 0.0);
---sk_errorT2: rgba(206, 53, 61, 0.2);
+--sk_errorT1: rgba(206, 6, 6, 1.0);
+--sk_errorT0: rgba(206, 6, 6, 0.0);
+--sk_errorT2: rgba(206, 6, 6, 0.2);
+--sk_errorBg1: rgba(255, 255, 255, 0.6);
+
 --blur: none;
 --radius: flex;
 --border: flex;
@@ -2444,10 +2458,10 @@ body {
   align-items: center;
   border-radius: 4px;
   opacity: 0.5;
-      background: linear-gradient(0deg, var(--sk_dominantBg2) 0%, var(--sk_dominantBg) 48.21426023755949%, var(--sk_dominantBg2) 100%);
+      background: var(--sk_dominantBg);
       overflow: hidden;
     flex-shrink: 0;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid var(--sk_dominantBg3Hover);
 }
 
@@ -2497,7 +2511,7 @@ body {
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.314s;
-  border: 1px solid var(--sk_dominantBg3Hover);
+  border: 1px solid var(--sk_dominantShadow);
   position: relative;
   overflow: hidden;
 }
@@ -2658,8 +2672,6 @@ body {
 .sk_btn {
   appearance: none;
   border:0;
-  border-top: 1px solid var(--sk_buttonBg2);
-  border-bottom: 1px solid var(--sk_buttonShadow);
   text-align: center;
   height: var(--skinnerBtnHeight);
   text-decoration: none;
@@ -2672,7 +2684,7 @@ body {
   position: relative;
   font-weight: 700;
   padding: 0 6px;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: all 0.2s;
   cursor: pointer;
   display: flex;
@@ -2716,8 +2728,6 @@ body {
 .sk_btn.variant_cta {
   background-color: var(--sk_accentBg);
   color: var(--sk_accentTxt);
-  border-top: 1px solid var(--sk_accentBg2);
-  border-bottom: 1px solid var(--sk_accentShadow);
   position: relative;
 }
 
@@ -2842,7 +2852,7 @@ body {
   font-weight: 500;
   background: var(--sk_dominantBg);
   color: var(--sk_dominantTxt2);
-  border-radius: 4px;
+  border-radius: 2px;
   text-align: right;
   border: 0;
   border: 1px solid var(--sk_dominantShadow);
@@ -2914,7 +2924,7 @@ height: var(--skinnerBtnHeight);
   height: var(--controls-row-height);
   align-items: center;
   justify-content: center;
-  background-color: var(--sk_dominantBg2);
+  background-color: var(--sk_dominantBg3);
   flex-shrink: 0;
   position: relative;
   margin: 0;
@@ -2922,6 +2932,11 @@ height: var(--skinnerBtnHeight);
   border-radius: 0;
   column-gap: 4px;
   padding: 2px 8px;
+}
+
+.sk_checkbox_wrapper.variant_two_items {
+    width: 80px;
+    flex-shrink: 0;
 }
 
 .sk_checkbox_wrapper.variant_blur{
@@ -3150,11 +3165,12 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-      margin-top: calc(var(--chbSize) / -3);
-    width: var(--chbSize);
-    height: var(--chbH);
+       margin-top: -4px;
+    width: 14px;
+    height: 14px;
     background-color: var(--sk_dominantBg3);
-    border-radius: 50%;
+    border: 1px solid var(--sk_dominantShadow);
+    border-radius: 4px;
     cursor: pointer;
     -webkit-appearance: none;
 }
@@ -3181,10 +3197,6 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
     position: relative;
     align-items: center;
-    column-gap: 6px;
-    background: var(--sk_dominantBg2);
-    padding: 4px;
-    border-radius: 4px;
 }
   .sk_switch_lbl{
     font-size: 9px;
@@ -3241,13 +3253,15 @@ input[type="range"]::-moz-range-thumb {
     width: var(--size);
     height: var(--size);
     flex-shrink: 0;
-    background: var(--sk_dominantBg);
-    color: var(--sk_dominantTxt);
-    border-radius: 4px;
+    background: var(--sk_buttonBg);
+    color: var(--sk_buttonTxt2);
+    border-radius: 2px;
+    border: 1px solid var(--sk_dominantShadow);
     display: flex;
-      position: relative;
+    position: relative;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 input[type="range"]::-ms-track {
@@ -3306,7 +3320,7 @@ how to remove the virtical space around the range input in IE*/
 }
 
 :root {
-  --chbSize: 20px;
+  --chbSize: 24px;
   --chbH: var(--chbSize);
   --wrapperChbSize: 42px;
   --chbSizeBorder: 1px;
@@ -3366,6 +3380,8 @@ input[type="number"] {
   width: var(--chbSize);
   height: var(--chbH);
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .sk_chb_label
@@ -3444,9 +3460,8 @@ border-radius: 50%;*/
   background-color: var(--sk_dominantBg);
   color: var(--sk_dominantTxt);
   border: 0;
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid var(--sk_dominantShadow);
-  border-bottom: 1px solid var(--sk_dominantBg3Hover);
   outline: 0;
   font-size: 11px;
   display: block;
@@ -3459,7 +3474,7 @@ border-radius: 50%;*/
   transform: translate(-50%, 0);
   width: 100%;
   height: 100%;
-  line-height: 26px;
+  line-height: 22px;
   font-weight: 500;
   overflow: hidden;
   z-index: 80;
@@ -3765,7 +3780,7 @@ border-radius: 50%;*/
 .sk_svg{
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.5px;
+    stroke-width: 1px;
     width: 22px;
     height: 22px;
 }
@@ -3985,40 +4000,6 @@ display: none;
     outline: 0;
     padding: 0 6px;
 }
-
-.sk_btn {
-    appearance: none;
-    border: 0;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    text-align: center;
-    height: var(--input_size);
-    text-decoration: none;
-    background-color: var(--sk_dominantBg2);
-    color: var(--sk_dominantTxt2);
-    text-transform: capitalize;
-    font-size: 12px;
-    position: relative;
-    font-weight: 500;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 4px;
-    box-shadow: 0px 0px 0px 1px var(--sk_dominantShadow);
-}
-    .sk_btn.variant_primary{
-        width: 100%;
-    background-color: var(--sk_accentBg);
-    color: var(--sk_accentTxt);
-    }
-
-    .sk_btn.variant_styler{
-    width: 60px;
-    }
-
 
 
     /*********** Baseline, reset styles ***********/
@@ -4369,7 +4350,7 @@ width: var(--size);
 --iconColor: var(--sk_dominantTxt3);
 --iconOpacity: 0.2;
       appearance: none;
-    --size: 20px;
+    --size: 18px;
     border: 0;
     outline: 0;
     color: var(--iconColor);
@@ -4379,14 +4360,17 @@ width: var(--size);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    background: transparent;
+    padding: 2px;
+        background: var(--iconBg);
+    position: relative;
+    z-index: 10;
+    cursor: help;
+    border-radius: 4px;
     
     }
     .sk_control_group_action > .sk_svg{
-    --size: 16px;
-    width: var(--size);
-    height: var(--size);
+    width: 100%;
+    height: 100%;
     flex-shrink: 0;
     }
 .sk_control_group.state_active.state_issue:before{
@@ -4403,6 +4387,7 @@ width: var(--size);
 
     .sk_control_group_action.state_issue {
 --iconColor: var(--sk_errorT1);
+--iconBg: var(--sk_errorBg1);
 --iconOpacity: 1;
     }
    
