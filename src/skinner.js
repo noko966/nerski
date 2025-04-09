@@ -2329,14 +2329,14 @@ body {
 }
 
 .sk_tools_root{
-          background: var(--sk_dominantBg3);
+    background: var(--sk_dominantBg);
     color: var(--sk_dominantTxt);
     position: absolute;
     right: 0;
     top: 0;
     transform: translateY(calc(-100% - 8px));
     border-radius: 2px;
-    border: 1px solid var(--sk_dominantBg);
+    border: 1px solid var(--sk_dominantBg3);
     padding: 2px;
     display: flex;
     align-items: center;
@@ -3253,10 +3253,10 @@ input[type="range"]::-moz-range-thumb {
     width: var(--size);
     height: var(--size);
     flex-shrink: 0;
-    background: var(--sk_buttonBg);
-    color: var(--sk_buttonTxt2);
+    background: var(--sk_dominantBg2);
+    color: var(--sk_dominantTxt2);
     border-radius: 2px;
-    border: 1px solid var(--sk_dominantShadow);
+    border: 1px solid var(--sk_dominantBg3);
     display: flex;
     position: relative;
     align-items: center;
