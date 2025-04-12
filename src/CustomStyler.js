@@ -20,7 +20,16 @@ class MouseIntersectStyler {
     this.activeSelectorId = null;
     this.skin = {};
     this.colors = {};
+    this.flags = Object.create(null);
     this.patientRoot = patientRoot || document.body;
+  }
+
+  scheduleCssUpdate() {
+    clearTimeout(this.__cssTimer);
+    this.__cssTimer = setTimeout(() => {
+      const css = this.createCss();
+      if (css) this.emit("cssupdate", css);
+    }, 0);
   }
 
   init() {
@@ -239,137 +248,77 @@ ${cn} > * {
   }
 
   modifyKey(group, name, value) {
-    const selectedRuleState = this.skin[this.activeSelectorId];
-
-    if (selectedRuleState) {
-      // Update the rule and state
-      selectedRuleState[group][name] = value;
-
-      let css = this.createCss();
-      this.emit("cssupdate", css);
-      // this.setOrUpdateIframeCustomCss(css, this.patientRoot);
-    }
+    const sel = this.activeSelectorId;
+    const selectedRuleState = this.skin[sel];
+    if (!selectedRuleState) return;
+    selectedRuleState[group][name] = value;
+    if (!this.flags[sel]) this.flags[sel] = this.freshFlags();
+    this.flags[sel][group] = true;
+    this.scheduleCssUpdate();
   }
 
   createCss() {
     let css = "";
-    let CSSVariableRuleStart = "";
     for (const key in this.skin) {
-      const _skin = this.skin[key];
-
-      CSSVariableRuleStart += `
-${key} {
-  --${_skin.varPrefix}G: ${_skin.background.main};
-  --${_skin.varPrefix}Bg: ${_skin.background.main};
- `;
-
-      for (const txt in _skin.colors) {
-        CSSVariableRuleStart += `
-  --${_skin.varPrefix}${txt}: ${_skin.colors[txt]};
-`;
+      const f = this.flags[key];
+      if (!f) continue;
+      const s = this.skin[key];
+      let block = `${key}{`;
+      if (f.background)
+        block += `--${s.varPrefix}Bg:${s.background.main};--${s.varPrefix}G:${s.background.main};`;
+      if (f.colors)
+        Object.keys(s.colors).forEach(
+          (k) => (block += `--${s.varPrefix}${k}:${s.colors[k]};`)
+        );
+      if (f.accentColors)
+        Object.keys(s.accentColors).forEach(
+          (k) => (block += `--${s.varPrefix}${k}:${s.accentColors[k]};`)
+        );
+      if (f.padding) {
+        block += `--${s.varPrefix}Ps:${s.padding.start};--${s.varPrefix}Pe:${s.padding.end};--${s.varPrefix}Pt:${s.padding.top};--${s.varPrefix}Pb:${s.padding.bottom};`;
+        block += `padding-inline-start:var(--${s.varPrefix}Ps);padding-inline-end:var(--${s.varPrefix}Pe);padding-top:var(--${s.varPrefix}Pt);padding-bottom:var(--${s.varPrefix}Pb);`;
       }
-
-      for (const accent in _skin.accentColors) {
-        CSSVariableRuleStart += `
-  --${_skin.varPrefix}${accent}: ${_skin.accentColors[accent]};
-`;
+      if (f.border) {
+        block += `--${s.varPrefix}BorderStartWidth:${s.border.start};--${s.varPrefix}BorderEndWidth:${s.border.end};--${s.varPrefix}BorderTopWidth:${s.border.top};--${s.varPrefix}BorderBottomWidth:${s.border.bottom};--${s.varPrefix}Border:${s.border.color};`;
+        block += `border-inline-start:var(--${s.varPrefix}BorderStartWidth) solid var(--${s.varPrefix}Border);border-inline-end:var(--${s.varPrefix}BorderEndWidth) solid var(--${s.varPrefix}Border);border-top:var(--${s.varPrefix}BorderTopWidth) solid var(--${s.varPrefix}Border);border-bottom:var(--${s.varPrefix}BorderBottomWidth) solid var(--${s.varPrefix}Border);`;
       }
-
-      CSSVariableRuleStart += `
-  --${_skin.varPrefix}Ps: ${_skin.padding.start};
-  --${_skin.varPrefix}Pe: ${_skin.padding.end};
-  --${_skin.varPrefix}Pt: ${_skin.padding.top};
-  --${_skin.varPrefix}Pb: ${_skin.padding.bottom};
-`;
-
-      CSSVariableRuleStart += `
---${_skin.varPrefix}BorderStartWidth: ${_skin.border.start};
---${_skin.varPrefix}BorderEndWidth: ${_skin.border.end};
---${_skin.varPrefix}BorderTopWidth: ${_skin.border.top};
---${_skin.varPrefix}BorderBottomWidth: ${_skin.border.bottom};
---${_skin.varPrefix}Border: ${_skin.border.color};
-`;
-
-      CSSVariableRuleStart += `
-  --${_skin.varPrefix}RTL: ${_skin.radius.tl};
-  --${_skin.varPrefix}RTR: ${_skin.radius.tr};
-  --${_skin.varPrefix}RBR: ${_skin.radius.br};
-  --${_skin.varPrefix}RBL: ${_skin.radius.bl};
-`;
-
-      // Define CSS variables for colors
-
-      CSSVariableRuleStart += `
-  padding-inline-start: var(--${_skin.varPrefix}Ps);
-  padding-inline-end: var(--${_skin.varPrefix}Pe);
-  padding-top: var(--${_skin.varPrefix}Pt);
-  padding-bottom: var(--${_skin.varPrefix}Pb);
-
-  border-inline-start: var(--${_skin.varPrefix}BorderStartWidth) solid var(--${_skin.varPrefix}Border);
-  border-inline-end: var(--${_skin.varPrefix}BorderEndWidth) solid var(--${_skin.varPrefix}Border);
-  border-top: var(--${_skin.varPrefix}BorderTopWidth) solid var(--${_skin.varPrefix}Border);
-  border-bottom: var(--${_skin.varPrefix}BorderBottomWidth) solid var(--${_skin.varPrefix}Border);
-
-  border-top-left-radius: var(--${_skin.varPrefix}RTL);
-  border-top-right-radius: var(--${_skin.varPrefix}RTR);
-  border-bottom-right-radius: var(--${_skin.varPrefix}RBR);
-  border-bottom-left-radius: var(--${_skin.varPrefix}RBL);
-  `;
-      CSSVariableRuleStart += `}`;
+      if (f.radius) {
+        block += `--${s.varPrefix}RTL:${s.radius.tl};--${s.varPrefix}RTR:${s.radius.tr};--${s.varPrefix}RBR:${s.radius.br};--${s.varPrefix}RBL:${s.radius.bl};`;
+        block += `border-top-left-radius:var(--${s.varPrefix}RTL);border-top-right-radius:var(--${s.varPrefix}RTR);border-bottom-right-radius:var(--${s.varPrefix}RBR);border-bottom-left-radius:var(--${s.varPrefix}RBL);`;
+      }
+      block += "}";
+      css += block;
     }
-
-    // Apply the CSS variables to the element styles
-
-    // Apply the color variables to elements with data-sk-color
-
-    const res = `
-    ${CSSVariableRuleStart}`;
-
-    return res;
+    return css;
   }
 
   createKey(name, el) {
-    const _t = this;
     this.skin[name] = {};
     const css = this.getSelectorEssenceStyles(el);
-    let uniqueClass = el.getAttribute("data-sk");
-
-    // Helper function to group elements by `data-sk-color`
-    this.skin[name].colors = {};
-
-    this.skin[name].colors = {
-      Txt: css.txt,
-      Txt2: css.txt2,
-      Txt3: css.txt3,
-    };
-
-    this.skin[name].accentColors = {};
-
+    const uniqueClass = el.getAttribute("data-sk");
+    this.skin[name].colors = { Txt: css.txt, Txt2: css.txt2, Txt3: css.txt3 };
     this.skin[name].accentColors = {
       Accent: css.accent,
       AccentTxt: css.accentTxt,
     };
-
-    // Set up your skin structure
     this.skin[name].background = { main: css.bg };
     this.skin[name].gradient = {
       isActive: false,
       stops: [
-        [this.skin[css.bg], 0],
-        [this.skin[css.bg], 1],
+        [css.bg, 0],
+        [css.bg, 1],
       ],
       angle: 0,
       type: "linear",
-      color: _t.createGradientString({
+      color: this.createGradientString({
         stops: [
-          [this.skin[css.bg], 0],
-          [this.skin[css.bg], 1],
+          [css.bg, 0],
+          [css.bg, 1],
         ],
         angle: 0,
         type: "linear",
       }),
     };
-
     this.skin[name].padding = {
       start: css.padding.start,
       end: css.padding.end,
@@ -390,8 +339,6 @@ ${key} {
       br: css.radius.br,
       bl: css.radius.bl,
     };
-
-    // Extract up to 3 unique color keys
   }
   createTextColorPickers(root) {
     const colors = ["Txt", "Txt2", "Txt3"];
@@ -478,55 +425,6 @@ ${key} {
     };
   }
 
-  createSVGOverlay(x, y, w, h) {
-    const svgNS = "http://www.w3.org/2000/svg";
-
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("id", "overlay");
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
-    svg.setAttribute(
-      "style",
-      "position:fixed;top:0;left:0;z-index:9999;pointer-events:none"
-    );
-
-    const defs = document.createElementNS(svgNS, "defs");
-    const mask = document.createElementNS(svgNS, "mask");
-    mask.setAttribute("id", "cutout");
-
-    const fullRect = document.createElementNS(svgNS, "rect");
-    fullRect.setAttribute("x", "0");
-    fullRect.setAttribute("y", "0");
-    fullRect.setAttribute("width", "100%");
-    fullRect.setAttribute("height", "100%");
-    fullRect.setAttribute("fill", "white");
-
-    // Cutout black rect
-    const cutout = document.createElementNS(svgNS, "rect");
-    cutout.setAttribute("x", x);
-    cutout.setAttribute("y", y);
-    cutout.setAttribute("width", w);
-    cutout.setAttribute("height", h);
-    cutout.setAttribute("fill", "black");
-
-    mask.appendChild(fullRect);
-    mask.appendChild(cutout);
-    defs.appendChild(mask);
-    svg.appendChild(defs);
-
-    const overlay = document.createElementNS(svgNS, "rect");
-    overlay.setAttribute("x", "0");
-    overlay.setAttribute("y", "0");
-    overlay.setAttribute("width", "100%");
-    overlay.setAttribute("height", "100%");
-    overlay.setAttribute("fill", "rgba(0,0,0,0.7)");
-    overlay.setAttribute("mask", "url(#cutout)");
-
-    svg.appendChild(overlay);
-
-    return svg;
-  }
-
   createUI() {
     let self = this;
     if (this.UIRoot) return; // Prevent duplicate UI creation
@@ -555,8 +453,6 @@ ${key} {
     root.style.opacity = 0;
     root.style.pointerEvents = "none";
     this.ui = {};
-
-    this.ui.overlay = this.createSVGOverlay(100, 100, 100, 20);
 
     // Callback for color picker
     const handleBackgroundPickerCallBack = (e) => {
@@ -594,7 +490,6 @@ ${key} {
     );
 
     const rootBounds = root.getBoundingClientRect();
-    root.appendChild(this.ui.overlay);
 
     const group1 = document.createElement("div");
     group1.className = "sk_ui_custom_change_modals_group variant_colors";
@@ -1210,61 +1105,20 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     return styles;
   }
 
-  getElementsWithColorAttr(rootEl) {
-    const grouped = {};
-    const stack = [rootEl];
-
-    while (stack.length > 0) {
-      const current = stack.pop();
-      for (const child of current.children) {
-        if (child.hasAttribute("data-sk")) continue;
-        if (child.hasAttribute("data-sk-color")) {
-          const color = child.getAttribute("data-sk-color");
-          if (!grouped[color]) grouped[color] = [];
-          grouped[color].push(child);
-        }
-        stack.push(child);
-      }
-    }
-    return grouped;
-  }
-
   parseValueForInput(rawValue) {
     return parseInt(rawValue, 10);
   }
 
   showUI(x, y, currentElement) {
-    const _t = this;
     if (!this.UIRoot) return;
-
-    if (this.ui.overlay) {
-      const overlay = this.ui.overlay;
-      const mask = overlay.querySelector("mask#cutout");
-      const cutout = mask.querySelector("rect[fill='black']");
-
-      const bounds = currentElement.getBoundingClientRect();
-      const gap = 4;
-
-      cutout.setAttribute("x", bounds.left - gap);
-      cutout.setAttribute("y", bounds.top - gap);
-      cutout.setAttribute("width", bounds.width + gap * 2);
-      cutout.setAttribute("height", bounds.height + gap * 2);
-    }
-
     const css = this.getSelectorEssenceStyles(currentElement);
-
     const bounds = currentElement.getBoundingClientRect();
-    const bg = css.bg;
-
-    this.stylerControls.background.main.style.background = bg;
-
+    this.stylerControls.background.main.style.background = css.bg;
     this.stylerControls.colors.Txt.style.background = css.txt;
-    this.stylerControls.colors.Txt.style.background = css.txt2;
-    this.stylerControls.colors.Txt.style.background = css.txt3;
-
+    this.stylerControls.colors.Txt2.style.background = css.txt2;
+    this.stylerControls.colors.Txt3.style.background = css.txt3;
     this.stylerControls.accentColors.Accent.style.background = css.accent;
     this.stylerControls.accentColors.AccentTxt.style.background = css.accentTxt;
-
     this.stylerControls.padding.start.value = this.parseValueForInput(
       css.padding.start
     );
@@ -1277,7 +1131,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.padding.bottom.value = this.parseValueForInput(
       css.padding.bottom
     );
-
     this.stylerControls.border.color.style.background = css.border.color;
     this.stylerControls.border.start.value = this.parseValueForInput(
       css.border.start
@@ -1291,7 +1144,6 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.border.bottom.value = this.parseValueForInput(
       css.border.bottom
     );
-
     this.stylerControls.radius.tl.value = this.parseValueForInput(
       css.radius.tl
     );
@@ -1304,47 +1156,43 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
     this.stylerControls.radius.bl.value = this.parseValueForInput(
       css.radius.bl
     );
-    this.stylerControls.radius.bl.parentElement;
-
     const radiusMax = Math.ceil(bounds.height / 2);
     this.stylerControls.radius.tl.setAttribute("max", radiusMax);
     this.stylerControls.radius.tr.setAttribute("max", radiusMax);
     this.stylerControls.radius.br.setAttribute("max", radiusMax);
     this.stylerControls.radius.bl.setAttribute("max", radiusMax);
-
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     const uiWidth = this.UIRoot.offsetWidth || 300;
     const uiHeight = this.UIRoot.offsetHeight || 150;
-
     if (x + uiWidth > windowWidth) x = windowWidth - uiWidth - 10;
     if (y + uiHeight > windowHeight) y = windowHeight - uiHeight - 10;
     x = Math.max(x, 10);
     y = Math.max(y, 10);
-
     this.UIRoot.style.opacity = "1";
     this.UIRoot.style.pointerEvents = "";
     this.UIRoot.classList.remove("variant_start");
-    if (bounds.x + bounds.width >= windowWidth - 160) {
+    if (bounds.x + bounds.width >= windowWidth - 160)
       this.UIRoot.classList.add("variant_start");
-    }
-
-    let uniqueClass = currentElement.getAttribute("data-sk");
-    let specificCn = this.generateCssPath(currentElement);
-    let selector = `${specificCn}[data-sk="${uniqueClass}"]`;
-
+    const uniqueClass = currentElement.getAttribute("data-sk");
+    const specificCn = this.generateCssPath(currentElement);
+    const selector = `${specificCn}[data-sk="${uniqueClass}"]`;
     this.activeSelectorId = selector;
-
+    if (!this.flags[selector]) this.flags[selector] = this.freshFlags();
     this.UIRoot.classList.add("state-reveal");
+    setTimeout(() => this.UIRoot.classList.remove("state-reveal"), 3000);
+    this.createKey(selector, currentElement);
+  }
 
-    let timeoutId = setTimeout(() => {
-      this.UIRoot.classList.remove("state-reveal");
-      timeoutId = null;
-    }, 3000);
-
-    // 🔥 Attach dynamic color pickers
-
-    this.createKey(selector, currentElement); // saves txt1/2/3
+  freshFlags() {
+    return {
+      padding: false,
+      border: false,
+      radius: false,
+      colors: false,
+      accentColors: false,
+      background: false,
+    };
   }
 
   createGradientString(gradientConfig) {
@@ -1378,11 +1226,10 @@ viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve
   }
 
   hideUI() {
-    if (this.UIRoot) {
-      this.isStopped = false;
-      this.UIRoot.style.opacity = "0";
-      this.UIRoot.style.pointerEvents = "none";
-    }
+    if (!this.UIRoot) return;
+    this.isStopped = false;
+    this.UIRoot.style.opacity = "0";
+    this.UIRoot.style.pointerEvents = "none";
   }
 
   updateControl(group, control, value) {
