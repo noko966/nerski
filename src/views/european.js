@@ -448,18 +448,15 @@ export default class ViewDemoEuropean {
     defs.appendChild(filter);
     svg.appendChild(defs);
 
-    // Create 'count' random circles
     for (let i = 0; i < count; i++) {
-      // Create an SVG circle element
       const circle = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "circle"
       );
 
-      // Generate random position, radius, and color
-      const cx = Math.random() * w; // random x in the range [0, svgWidth)
-      const cy = Math.random() * w; // random y in the range [0, svgHeight)
-      const r = 10 + Math.random() * 30; // radius between 10 and 40
+      const cx = Math.random() * w;
+      const cy = Math.random() * w;
+      const r = 10 + Math.random() * 30;
       const fillsArr = [
         "var(--accentBg)",
         "var(--accentBg)",

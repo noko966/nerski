@@ -500,7 +500,7 @@ class Skinner {
 
       txtKeyNames.forEach((txtName, i) => {
         console.log();
-        
+
         UISkin[name][_vd[txtName]] = tinycolor(txt)
           .setAlpha(1 - (i + 1) * 0.15)
           .toRgbString();
@@ -1361,7 +1361,9 @@ class Skinner {
   createWrapper(cn) {
     const _cn = cn || "";
     const root = document.createElement("div");
-    root.className = `sk_checkbox_wrapper ${_cn && `variant_${_cn} variant_two_items`}`;
+    root.className = `sk_checkbox_wrapper ${
+      _cn && `variant_${_cn} variant_two_items`
+    }`;
     return root;
   }
 
@@ -1411,10 +1413,6 @@ class Skinner {
   }
 
   createSwitch(lbl, i) {
-    // const txt = document.createElement("span");
-    // txt.innerText = lbl || "default";
-    // txt.className = "sk_switch_lbl";
-
     const _lbl = document.createElement("label");
     _lbl.className = "sk_switch_root";
     const input = document.createElement("input");
@@ -1427,9 +1425,7 @@ class Skinner {
     icon.className = "sk_switch_icon";
     icon.innerHTML = this.ui.icons[i] || this.ui.icons["brush"];
 
-    // _lbl.appendChild(txt);
     _lbl.appendChild(input);
-    // _lbl.appendChild(ic);
     _lbl.appendChild(icon);
 
     return { el: _lbl, chb: input };
@@ -1486,11 +1482,10 @@ class Skinner {
       "#FF637C",
       "#FFD76B",
       "#D2F58D",
-"#FF637C",
+      "#FF637C",
       "#D2F58D",
       "#FFD76B",
       "#FF637C",
-      
     ];
 
     // Distribute offsets evenly (0% to 100%)
@@ -1817,7 +1812,7 @@ class Skinner {
 
     let wrappedInRoot = _t.wrapInRootTag(this.rootSelector, css);
 
-    wrappedInRoot += _t.state.customCSS;
+    wrappedInRoot += _t.state.customCSS ? _t.state.customCSS : "";
 
     var element = document.createElement("a");
     var date = new Date();
@@ -2865,6 +2860,7 @@ body {
     align-items: stretch;
     border: 1px solid var(--sk_dominantBg3Hover);
     border-radius: 4px;
+    row-gap: 6px;
     overflow: hidden;
 }
 
@@ -2874,11 +2870,12 @@ body {
     display: flex;
     align-items: center;
     padding: 0 8px;
-    background: var(--sk_dominantBgHover);
-    color: var(--sk_dominantTxt2);
-    font-size: 11px;
+    background: var(--sk_dominantBg3);
+    color: var(--sk_dominantTxt3);
+    font-size: 10px;
     text-transform: capitalize;
     column-gap: 6px;
+    
     }
     .sk_widget_block_content{
     width: 100%;
@@ -2887,7 +2884,7 @@ body {
     align-items: stretch;
     padding: 6px;
     padding-bottom: 6px;
-    background: var(--sk_dominantBg2);
+    background: var(--sk_dominantBg3);
     color: var(--sk_dominantTxt);
     font-size: 10px;
     }

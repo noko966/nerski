@@ -167,7 +167,7 @@ export default class SKPicker {
     background: var(--sk_dominantBgHover);
     border: 1px solid var(--sk_dominantBg);
     align-items: stretch;
-    padding: 6px;
+    padding: 0px;
     border-radius: 4px;
     column-gap: 4px;
     }
