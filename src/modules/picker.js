@@ -171,6 +171,13 @@ export default class SKPicker {
     border-radius: 4px;
     column-gap: 4px;
     }
+    .sk_picker_block{
+    background: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantBg3Hover);
+    color: var(--sk_dominantTxt2);
+    padding: 8px;
+        border-radius: 4px;
+    }
     .sk_block_picker {
         width: 200px;
     flex-shrink: 0;
@@ -500,6 +507,9 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     display: flex;
     align-items: center;
 }
+    .sk_widget_block_content{
+    padding: 8px;
+    }
     .sk_widget_block_content.variant_gradient_preview{
     padding-bottom: 16px;
     }
@@ -783,13 +793,15 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     });
 
     const slidersWrapper = document.createElement("div");
-    slidersWrapper.className = "sk_widget_block_content sk_layout_col";
-    slidersWrapper.appendChild(paletteElement);
-    slidersWrapper.appendChild(this.createSeparator());
-    slidersWrapper.appendChild(hueElement);
+    slidersWrapper.className = "sk_widget_block_content";
+    const pickerWrapper = document.createElement("div");
+    pickerWrapper.className = "sk_picker_block sk_layout_col";
+    pickerWrapper.appendChild(paletteElement);
+    pickerWrapper.appendChild(this.createSeparator());
+    pickerWrapper.appendChild(hueElement);
     if (this.options.mode === "opacity") {
       const opacitySlider = this.createOpacityElement();
-      slidersWrapper.appendChild(opacitySlider);
+      pickerWrapper.appendChild(opacitySlider);
     }
 
     const actionsWrapper = document.createElement("div");
@@ -807,12 +819,13 @@ background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     this.applyAndClose = document.createElement("button");
     this.applyAndClose.className = "sk_btn variant_cta sk_grow";
     this.applyAndClose.innerText = "Apply";
-    slidersWrapper.appendChild(this.createSeparator());
-    slidersWrapper.appendChild(inputsWrapper);
+    pickerWrapper.appendChild(this.createSeparator());
+    pickerWrapper.appendChild(inputsWrapper);
     actionsWrapper.appendChild(this.cancelAndClose);
     actionsWrapper.appendChild(this.applyAndClose);
 
     pickerBlock.appendChild(this.createUiHeader("picker"));
+    slidersWrapper.appendChild(pickerWrapper);
     pickerBlock.appendChild(slidersWrapper);
     swatchesWidgetRoot.appendChild(this.createUiHeader("swatches"));
     swatchesWidgetRoot.appendChild(swatchesWidget);

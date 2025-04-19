@@ -2858,9 +2858,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    border: 1px solid var(--sk_dominantBg3Hover);
-    border-radius: 4px;
-    row-gap: 6px;
     overflow: hidden;
 }
 
@@ -2882,10 +2879,6 @@ body {
     display: flex;
         flex-direction: column;
     align-items: stretch;
-    padding: 6px;
-    padding-bottom: 6px;
-    background: var(--sk_dominantBg3);
-    color: var(--sk_dominantTxt);
     font-size: 10px;
     }
     .sk_layout_row{
@@ -3218,8 +3211,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .sk_switch_root > .sk_switch_input:checked ~ .sk_switch_icon{
-    background: conic-gradient(from 90deg at 50% 50%, #FF637C, #8144CD, #7872E0, #56A9E2, #D2F58D, #FFD76B, #FF637C);
-    color: #fff;
+    background: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
+    border-color: var(--sk_accentBg2);
 }
 
 .sk_switch_imitator {
