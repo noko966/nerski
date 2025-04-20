@@ -1488,6 +1488,7 @@ class Skinner {
 
       this.pickers.push(picker);
   }
+  
 
   removePicker(instance) {
       this.pickers = this.pickers.filter((p) => p !== instance);
