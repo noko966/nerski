@@ -1,10 +1,3 @@
-import guessVisibleColor from "./neuron.js";
-var tinycolor = require("tinycolor2");
-// import chroma from "chroma-js";
-// import SKPicker from "./modules/picker.js";
-// import SKStylePicker from "./modules/stylePicker.js";
-// import { MouseIntersectStyler } from "./CustomStyler.js";
-
 class Skinner {
   constructor(cssCb, starterConfig, header, root, variant) {
     this.variant = variant || "sport";
@@ -2637,5 +2630,3 @@ ${cn} > * {
     return css;
   }
 }
-
-export { Skinner };

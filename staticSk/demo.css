@@ -1,0 +1,5 @@
+.demo_root {
+  background: var(--bodyG);
+  color: var(--bodyTxt);
+  height: 100vh;
+}

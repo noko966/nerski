@@ -6,7 +6,412 @@ import { Skinner } from "./skinner.js";
 
 import ViewDemoEuropean from "./views/european.js";
 
-const configOrderCasino = [
+const demo = new ViewDemoEuropean();
+demo.init();
+
+window.colors = {
+  body: {
+    Background: {
+      isDark: false,
+      isActive: true,
+      color: "#514A4A",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  accent: {
+    Background: {
+      isDark: false,
+      isActive: true,
+      color: "#C7961A",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  dominant: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  button: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#d4a01c",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  buttonSecondary: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  navbar: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  slider: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  header: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  subHeader: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  event: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  eventLive: null,
+  odd: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  oddActive: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#d4a01c",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  showMore: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  marketHeader: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#595151",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  collapse: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  tab: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  tabActive: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  tabSecondaryActiv: null,
+  menu_1: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  menu_2: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  menu_3: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#796f6f",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  input: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  inputSecondary: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  filter: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  tooltip: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  modal: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlip: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipStake: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipInput: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipButton: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipHeader: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipTab: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  betSlipTabActive: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#746969",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  tmLogo: {
+    Background: {
+      isDark: false,
+      isActive: false,
+      color: "#6c6262",
+    },
+    Gradient: null,
+    Text: null,
+    Accent: null,
+    Border: null,
+    borderRadius: 0,
+  },
+  overlay: {},
+};
+
+const configOrder = [
   {
     name: "body",
     inherits: null,
@@ -15,21 +420,8 @@ const configOrderCasino = [
     name: "accent",
     inherits: null,
   },
-
   {
     name: "dominant",
-    inherits: ["body"],
-  },
-  {
-    name: "card",
-    inherits: ["body"],
-  },
-  {
-    name: "game",
-    inherits: ["body"],
-  },
-  {
-    name: "jackpot",
     inherits: ["body"],
   },
   {
@@ -38,8 +430,8 @@ const configOrderCasino = [
   },
   {
     name: "buttonSecondary",
-    inherits: ["dominant", "body"],
-    // variation: 5,
+    inherits: ["body"],
+    variation: 5,
   },
   {
     name: "navbar",
@@ -52,89 +444,7 @@ const configOrderCasino = [
   {
     name: "header",
     inherits: ["dominant", "body"],
-  },
-  {
-    name: "headerSecondary",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "footer",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "subHeader",
-    inherits: ["header", "dominant", "body"],
-  },
-  {
-    name: "tab",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "tabActive",
-    inherits: ["tab", "dominant", "body"],
-  },
-  {
-    name: "input",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "inputSecondary",
-    inherits: ["input", "dominant", "body"],
-  },
-  {
-    name: "filter",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "tooltip",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "modal",
-    inherits: ["body"],
-  },
-  {
-    name: "login",
-    inherits: ["modal", "body"],
-  },
-  {
-    name: "register",
-    inherits: ["modal", "body"],
-  },
-];
-
-const configOrderSport = [
-  {
-    name: "body",
-    inherits: null,
-  },
-  {
-    name: "accent",
-    inherits: null,
-  },
-  {
-    name: "dominant",
-    inherits: ["body"],
-  },
-  {
-    name: "button",
-    inherits: ["accent"],
-  },
-  {
-    name: "buttonSecondary",
-    inherits: ["body"],
-  },
-  {
-    name: "navbar",
-    inherits: ["dominant", "body"],
-  },
-  {
-    name: "slider",
-    inherits: ["body"],
-  },
-  {
-    name: "header",
-    inherits: ["dominant", "body"],
+    variation: 5,
   },
   {
     name: "subHeader",
@@ -147,6 +457,7 @@ const configOrderSport = [
   {
     name: "eventLive",
     inherits: ["event", "body"],
+    variation: 5,
   },
   {
     name: "odd",
@@ -210,7 +521,7 @@ const configOrderSport = [
   },
   {
     name: "modal",
-    inherits: ["body"],
+    inherits: ["dominant", "body"],
   },
   {
     name: "betSlip",
@@ -246,305 +557,213 @@ const configOrderSport = [
   },
 ];
 
-window.colorsCasweb = {
-  body: {
-    Background: {
-      color: "#101010",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#A3D140",
-    },
-    borderRadius: 8,
-  },
-  button: {
-    Background: {
-      color: "#177B17",
-    },
-  },
-  buttonSecondary: {
-    Background: {
-      color: "#333",
-    },
-  },
-  dominant: {
-    Background: {
-      color: "#777",
-    },
-  },
-  card: {
-    Background: {
-      color: "#777",
-    },
-  },
-  game: {
-    Background: {
-      color: "#777",
-    },
-  },
-  jackpot: {
-    Background: {
-      color: "#777",
-    },
-  },
-  navbar: {
-    Background: {
-      color: "#333",
-    },
-  },
-  slider: {
-    Background: {
-      color: "#000",
-    },
-  },
-  header: {
-    Background: {
-      color: "#333",
-    },
-  },
-  headerSecondary: {
-    Background: {
-      color: "#333",
-    },
-  },
-  footer: {
-    Background: {
-      color: "#333",
-    },
-  },
-  subHeader: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tab: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tabActive: {
-    Background: {
-      color: "#333",
-    },
-  },
-  input: {
-    Background: {
-      color: "#333",
-    },
-  },
-  inputSecondary: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  tooltip: {
-    Background: {
-      color: "#2b2b2b",
-    },
-  },
-  filter: {
-    Background: {
-      color: "#333",
-    },
-  },
-  modal: {
-    Background: {
-      color: "#333",
-    },
-  },
-  login: {
-    Background: {
-      color: "#333",
-    },
-  },
-  register: {
-    Background: {
-      color: "#333",
-    },
-  },
-};
+function verbalData(name) {
+  let data = {};
+  data.name = name;
+  data.nameBg = data.name + "Bg";
+  data.nameBg_g = data.nameBg + "_g";
+  data.nameG = data.name + "G";
+  data.nameRGBA = data.name + "RGBA";
+  data.nameRGBA2 = data.name + "RGBA2";
+  data.nameRGBA3 = data.name + "RGBA3";
+  data.nameG2 = data.nameG + "2";
+  data.nameBgHov = data.nameBg + "Hover";
+  data.nameBg2 = data.nameBg + "2";
+  data.nameBg2Hov = data.nameBg2 + "Hover";
+  data.nameBg3 = data.nameBg + "3";
+  data.nameBg3Hov = data.nameBg3 + "Hover";
+  data.upperCaseName = data.name[0].toUpperCase() + data.name.substring(1);
+  data.isName = "is" + data.upperCaseName + "Bg";
+  data.isGradient = "is" + data.upperCaseName + "Gradient";
+  data.isGradientReversed = data.isGradient + "Reversed";
+  data.gradientAngle = data.upperCaseName + "GradientAngle";
 
-window.colorsSport = {
-  body: {
-    Background: {
-      color: "#111111",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#ffb700",
-    },
-  },
-  dominant: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  button: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  buttonSecondary: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  navbar: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  slider: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  header: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  subHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  event: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  eventLive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  odd: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  oddActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  showMore: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  marketHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  collapse: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tab: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tabActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tabSecondaryActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_1: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_2: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  menu_3: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  input: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  inputSecondary: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  filter: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tooltip: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  modal: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlip: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipStake: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipInput: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipButton: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipHeader: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipTab: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  betSlipTabActive: {
-    Background: {
-      color: "#111111",
-    },
-  },
-  tmLogo: {
-    Background: {
-      color: "#111111",
-    },
-  },
-};
+  data.isDark = "is" + data.upperCaseName + "BgDark";
 
+  data.nameTxt = data.name + "Txt";
+  data.nameTxt2 = data.nameTxt + "2";
+  data.nameTxt3 = data.nameTxt + "3";
+  data.nameTxtInverse = data.nameTxt + "Inverse";
+
+  data.isCustomTxt = "isCustom" + data.upperCaseName + "Txt";
+
+  data.nameBorder = data.name + "Border";
+  data.isCustomBorder = "isCustom" + data.upperCaseName + "Border";
+
+  data.nameAccent = data.name + "Accent";
+  data.isCustomAccent = "isCustom" + data.upperCaseName + "Accent";
+  data.nameAccentTxt = data.name + "AccentTxt";
+
+  data.nameRadius = data.name + "Radius";
+
+  return data;
+}
+
+let colorsUpdateTimer = null;
+
+function createCss(c) {
+  let css = `
+:host,
+:root,
+:root[data-theme],
+#sport-modern-view,
+#sport-modern-view[data-theme] {
+${createCssString(c)}
+}`;
+
+  let results = {
+    css: css,
+    name: "modern",
+  };
+
+  if (window.colorsUpdateTimer) {
+    clearTimeout(window.colorsUpdateTimer);
+  }
+
+  window.colorsUpdateTimer = setTimeout(setOrUpdateIframeCss, 200, results.css);
+
+  return results;
+}
+
+function createCssString(skin) {
+  let res = ``;
+
+  configOrder.forEach((c, i) => {
+    let essence = verbalData(c.name);
+
+    res += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
+    res += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
+    res += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+    res += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+    res += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
+    res += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
+    res += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
+    res += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+    res += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+    res += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
+    res += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
+    res += `    --${essence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`;
+    res += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
+    res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
+    res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
+    res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
+    res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
+
+    if (i !== configOrder.length - 1) {
+      res += `\n\n`;
+    }
+  });
+
+  return res;
+}
+const configOrderCasino = [
+  {
+    name: "body",
+    inherits: null,
+  },
+  {
+    name: "accent",
+    inherits: null,
+  },
+
+  {
+    name: "dominant",
+    inherits: ["body"],
+  },
+  {
+    name: "card",
+    inherits: ["body"],
+  },
+  {
+    name: "game",
+    inherits: ["body"],
+  },
+  {
+    name: "jackpot",
+    inherits: ["body"],
+  },
+  {
+    name: "button",
+    inherits: ["accent"],
+  },
+  {
+    name: "signInButton",
+    inherits: ["accent"],
+  },
+  {
+    name: "depositButton",
+    inherits: ["accent"],
+  },
+  {
+    name: "buttonSecondary",
+    inherits: ["dominant", "body"],
+    variation: 5,
+  },
+  {
+    name: "navbar",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "slider",
+    inherits: ["body"],
+  },
+  {
+    name: "header",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "headerSecondary",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "footer",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "subHeader",
+    inherits: ["header", "dominant", "body"],
+  },
+  {
+    name: "tab",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "tabActive",
+    inherits: ["tab", "dominant", "body"],
+  },
+  {
+    name: "input",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "inputSecondary",
+    inherits: ["input", "dominant", "body"],
+  },
+  {
+    name: "filter",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "tooltip",
+    inherits: ["dominant", "body"],
+  },
+  {
+    name: "modal",
+    inherits: ["body"],
+  },
+  {
+    name: "login",
+    inherits: ["modal", "body"],
+  },
+  {
+    name: "register",
+    inherits: ["modal", "body"],
+  },
+  {
+    name: "overlay",
+    inherits: ["body"],
+  },
+];
 function verbalDataCasino(name) {
   let data = {};
   data.name = name;
@@ -587,100 +806,59 @@ function verbalDataCasino(name) {
   return data;
 }
 
-function verbalData(name) {
-  let data = {};
-  data.name = name;
-  data.nameBg = data.name + "Bg";
-  `.demo_event_stake[data-sk="odd"]`;
-  data.selector = `[data-sk="${data.name}"]`;
-  data.style = data.nameBg + "Style";
-  data.nameBg_g = data.nameBg + "_g";
-  data.nameG = data.name + "G";
-  data.nameRGBA = data.name + "RGBA";
-  data.nameRGBA2 = data.name + "RGBA2";
-  data.nameRGBA3 = data.name + "RGBA3";
-  data.nameG2 = data.nameG + "2";
-  data.nameBgHov = data.nameBg + "Hover";
-  data.nameBg2 = data.nameBg + "2";
-  data.nameBg2Hov = data.nameBg2 + "Hover";
-  data.nameBg3 = data.nameBg + "3";
-  data.nameBg3Hov = data.nameBg3 + "Hover";
+function templateFull(upperCaseEssence, essence, skin) {
+  let res = "";
+  res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+  res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+  res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+  res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+  res += `    --cw${upperCaseEssence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
+  res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+    skin[essence.nameBg2Hov]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameBg3Hov}: ${
+    skin[essence.nameBg3Hov]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+  res += `    --cw${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+  res += `    --cw${upperCaseEssence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
+  res += `    --cw${upperCaseEssence.nameAccent}: ${
+    skin[essence.nameAccent]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+    skin[essence.nameAccentTxt]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
+  res += `    --cw${upperCaseEssence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
+  res += `    --cw${upperCaseEssence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
+  res += `    --cw${upperCaseEssence.name}Shadow: ${
+    skin[`${essence.name}Shadow`]
+  };\n`;
+  res += `    --cw${upperCaseEssence.name}ShadowFade: ${
+    skin[`${essence.name}ShadowFade`]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameRadius}: ${
+    skin[essence.nameRadius]
+  }px;\n`;
+  res += `    --cw${upperCaseEssence.nameBorder}: ${skin[essence.nameBorder]};`;
 
-  data.upperCaseName = data.name[0].toUpperCase() + data.name.substring(1);
-  data.isName = "is" + data.upperCaseName + "Bg";
-  data.isGradient = "is" + data.upperCaseName + "Gradient";
-  data.isGradientReversed = data.isGradient + "Reversed";
-  data.gradientAngle = data.upperCaseName + "GradientAngle";
-  data.gradientType = data.upperCaseName + "GradientType";
-
-  data.isDark = "is" + data.upperCaseName + "BgDark";
-
-  data.nameTxt = data.name + "Txt";
-  data.nameTxt2 = data.nameTxt + "2";
-  data.nameTxt3 = data.nameTxt + "3";
-  data.nameTxtInverse = data.nameTxt + "Inverse";
-
-  data.isCustomTxt = "isCustom" + data.upperCaseName + "Txt";
-
-  data.nameBorder = data.name + "Border";
-  data.isCustomBorder = "isCustom" + data.upperCaseName + "Border";
-
-  data.nameAccent = data.name + "Accent";
-  data.isCustomAccent = "isCustom" + data.upperCaseName + "Accent";
-  data.nameAccentTxt = data.name + "AccentTxt";
-
-  data.nameRadius = data.name + "Radius";
-
-  return data;
+  return res;
 }
 
-function createCssStringSport(skin) {
-  let styles = ``;
-  let variables = ``;
+function templateOverlay(upperCaseEssence, essence, skin) {
+  let res = "";
+  res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+  res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+  res += `    --cw${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+  res += `    --cw${upperCaseEssence.nameAccent}: ${
+    skin[essence.nameAccent]
+  };\n`;
+  res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+    skin[essence.nameAccentTxt]
+  };\n`;
+  res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
 
-  configOrderSport.forEach((c, i) => {
-    let essence = verbalData(c.name);
-
-    styles += skin[essence.style]
-      ? `${essence.selector.repeat(4)} {
-      ${skin[essence.style]}\n
-    }\n`
-      : "";
-
-    variables += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
-    variables += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
-    variables += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-    variables += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-    variables += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
-    variables += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
-    variables += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
-    variables += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-    variables += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
-    variables += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
-    variables += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
-    variables += `    --${essence.nameAccentTxt}: ${
-      skin[essence.nameAccentTxt]
-    };\n`;
-    variables += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
-    variables += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
-    variables += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
-    variables += `    --${essence.name}Shadow: ${
-      skin[`${essence.name}Shadow`]
-    };\n`;
-    variables += `    --${essence.name}ShadowFade: ${
-      skin[`${essence.name}ShadowFade`]
-    };\n`;
-    variables += `    --${essence.nameRadius}: ${
-      skin[essence.nameRadius]
-    }px;\n`;
-    variables += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};`;
-
-    if (i !== configOrderSport.length - 1) {
-      variables += `\n`;
-    }
-  });
-
-  return { styles, variables };
+  return res;
 }
 
 function createCssStringCasino(skin) {
@@ -691,179 +869,112 @@ function createCssStringCasino(skin) {
     let essence = verbalData(n);
     let value = verbalData(c.name);
 
-    res += `    --cw${essence.nameG}: ${skin[value.nameG]};\n`;
-    res += `    --cw${essence.nameBg}: ${skin[value.nameBg]};\n`;
-    res += `    --cw${essence.nameBg2}: ${skin[value.nameBg2]};\n`;
-    res += `    --cw${essence.nameBg3}: ${skin[value.nameBg3]};\n`;
-    res += `    --cw${essence.nameBgHov}: ${skin[value.nameBgHov]};\n`;
-    res += `    --cw${essence.nameBg2Hov}: ${skin[value.nameBg2Hov]};\n`;
-    res += `    --cw${essence.nameBg3Hov}: ${skin[value.nameBg3Hov]};\n`;
-    res += `    --cw${essence.nameTxt}: ${skin[value.nameTxt]};\n`;
-    res += `    --cw${essence.nameTxt2}: ${skin[value.nameTxt2]};\n`;
-    res += `    --cw${essence.nameTxt3}: ${skin[value.nameTxt3]};\n`;
-    res += `    --cw${essence.nameAccent}: ${skin[value.nameAccent]};\n`;
-    res += `    --cw${essence.nameAccentTxt}: ${skin[value.nameAccentTxt]};\n`;
-    res += `    --cw${essence.nameRGBA}: ${skin[value.nameRGBA]};\n`;
-    res += `    --cw${essence.nameRGBA2}: ${skin[value.nameRGBA2]};\n`;
-    res += `    --cw${essence.nameRGBA3}: ${skin[value.nameRGBA3]};\n`;
-    res += `    --cw${essence.name}Shadow: ${skin[`${value.name}Shadow`]};\n`;
-    res += `    --cw${essence.name}ShadowFade: ${
-      skin[`${value.name}ShadowFade`]
-    };\n`;
-    res += `    --cw${essence.nameRadius}: ${skin[value.nameRadius]}px;\n`;
-    res += `    --cw${essence.nameBorder}: ${skin[value.nameBorder]};`;
+    if (c.name === "overlay") {
+      res += templateOverlay(essence, value, skin);
+    } else {
+      res += templateFull(essence, value, skin);
+    }
 
     if (i !== configOrderCasino.length - 1) {
-      res += `\n`;
+      res += `\n\n`;
     }
+
+    res += `\n`;
   });
 
   return res;
 }
-let dd = "";
 
-function createCss(c) {
-  const rootSel = false && "#sport-modern-view";
+function LoginTrigger() {
+  alert("Login clicked!");
+}
 
-  let css = `
-${createCssStringSport(c).styles}
-${rootSel ? rootSel : ":host:host:host,:root:root:root"} {
-${createCssStringSport(c).variables}
-}`;
+function RegisterTrigger() {
+  alert("Register clicked!");
+}
 
-  let results = {
-    css: css,
-    name: "tst",
+function WithdrawalTrigger() {
+  alert("Withdraw clicked!");
+}
+
+function InitSkinnerOnContentLoad(
+  mobileInstance,
+  isMobile,
+  minHeight,
+  variant
+) {
+  var classNames = {
+    root: ".skinner_main_wrapper",
+    mobile: "sk_variant_mobile",
   };
 
-  setOrUpdateIframeCss(css, target);
-  dd = results.css;
-  return results;
+  var _isMobile = isMobile || false;
+  var _minHeight = minHeight || 846;
+
+  var root = document.querySelector(classNames.root);
+  if (_isMobile) {
+    document.body.classList.add(classNames.mobile);
+    var iframe = root.querySelector("iframe");
+    var h = _minHeight ? _minHeight : window.innerHeight - 200;
+    iframe.setAttribute("height", h);
+  }
+
+  window.mobileInstance = mobileInstance;
+  if (variant === "casino") {
+    window.SkinnerInstance = new Skinner(
+      createCss,
+      colorsCasweb,
+      null,
+      null,
+      "casino"
+    );
+    window.SkinnerInstance.init();
+  } else {
+    window.SkinnerInstance = new Skinner(createCss, colors, null, null);
+    window.SkinnerInstance.init();
+
+    if (window.savedColorsModel && window.savedColorsModel.Colors) {
+      setTimeout(
+        window.SkinnerInstance.initBasedOnCustomConfig,
+        1000,
+        window.savedColorsModel.Colors
+      );
+    }
+  }
 }
 
 function setOrUpdateIframeCss(cssStyle, target) {
   var styleId = "css-as-test-stylesheet";
-  var styleElement = document.getElementById(styleId);
+  var targetElement =
+    target ||
+    window?.mobileInstance.configExtractor.appConfig.shadowRoot ||
+    window?.mobileInstance?.iframe?.contentDocument.head;
+  var styleElement = null;
 
-  if (target instanceof ShadowRoot) {
-    styleElement = target.querySelector(`#${styleId}`);
+  if (targetElement) {
+    styleElement = targetElement.querySelector(`#${styleId}`);
     if (!styleElement) {
-      styleElement = document.createElement("style");
+      var styleElement = document.createElement("style");
       styleElement.setAttribute("id", styleId);
-      target.appendChild(styleElement);
+
+      targetElement.appendChild(styleElement);
     }
-  } else {
-    // Otherwise, assume the target is `document`
-    styleElement = document.getElementById(styleId);
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.setAttribute("id", styleId);
-      document.head.appendChild(styleElement);
-    }
+
+    styleElement.innerHTML = cssStyle;
   }
 
-  // Update the inner HTML of the style element with the new CSS
-  styleElement.innerHTML = cssStyle;
+  var betslip = window?.mobileInstance.Betslip?.iframe.contentDocument.head;
+
+  if (betslip) {
+    var oldStyle = betslip.querySelector(`#${styleId}`);
+
+    if (!oldStyle) {
+      oldStyle = styleElement.cloneNode(true);
+      betslip.appendChild(oldStyle);
+    }
+
+    oldStyle.innerHTML = cssStyle;
+  }
 }
 
-const demo = new ViewDemoEuropean();
-demo.init();
-// const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
-const target = document.querySelector(".demo_body");
-// const target = document.body;
-
-const configTree = {
-  body: {
-    Background: {
-      color: "#111111",
-    },
-    children: {
-      dominant: {
-        children: {
-          buttonSecondary: {},
-          navbar: {},
-          header: {
-            children: {
-              subHeader: {},
-              collapse: {},
-              marketHeader: {},
-            },
-          },
-          event: {
-            children: {
-              eventLive: {},
-            },
-          },
-          showMore: {},
-          tabActive: {
-            children: {
-              tab: {
-                children: {
-                  tabSecondaryActive: {},
-                },
-              },
-            },
-          },
-          menu_1: {
-            children: {
-              menu_2: {
-                children: {
-                  menu_3: {},
-                },
-              },
-            },
-          },
-          input: {
-            children: {
-              inputSecondary: {},
-            },
-          },
-          filter: {},
-          tooltip: {},
-          tmLogo: {},
-        },
-      },
-      slider: {},
-      odd: {},
-      modal: {},
-    },
-  },
-  accent: {
-    children: {
-      button: {},
-      oddActive: {},
-    },
-  },
-};
-
-const starterConfig = {
-  body: {
-    Background: {
-      color: "#111111",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#ffb700",
-    },
-  },
-};
-
-const config = {
-  body: {
-    Background: {
-      color: "#1a1a1a",
-    },
-    borderRadius: 8,
-  },
-  accent: {
-    Background: {
-      color: "#ffb800",
-    },
-    borderRadius: 8,
-  },
-};
-
-window.SkinnerInstance = new Skinner(config, null, target);
-window.SkinnerInstance.init();
+InitSkinnerOnContentLoad();
