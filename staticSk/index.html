@@ -9,7 +9,19 @@
     <link rel="stylesheet" href="demo.css" />
   </head>
   <body>
-    <div class="demo_root"></div>
+    <div class="demo_root">
+      <div
+        class="demo_card"
+        data-sk="event"
+        data-sk-edit="Bg Txt Txt2 Ps Pe"
+      ></div>
+
+      <div
+        class="demo_button"
+        data-sk="button"
+        data-sk-edit="Bg Txt Txt2"
+      ></div>
+    </div>
 
     <style id="css-as-test-stylesheet"></style>
   </body>
@@ -994,5 +1006,6 @@ ${createCssString(c)}
 
     window.SkinnerInstance = new Skinner(createCss, colors, null, null, null);
     window.SkinnerInstance.init();
+    window.SkinnerInstance.initStyler(document.querySelector(".demo_root"));
   </script>
 </html>

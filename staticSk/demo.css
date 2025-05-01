@@ -3,3 +3,18 @@
   color: var(--bodyTxt);
   height: 100vh;
 }
+
+.demo_card {
+  width: 400px;
+  height: 400px;
+  background: var(--eventG);
+  color: var(--eventTxt);
+  margin: 8px;
+}
+.demo_button {
+  width: 400px;
+  height: 400px;
+  background: var(--buttonG);
+  color: var(--buttonTxt);
+  margin: 8px;
+}

@@ -2419,3 +2419,21 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   justify-content: flex-start;
   column-gap: 8px;
 }
+
+.sk_checkbox_wrapper.variant_name {
+  flex-grow: 1;
+  min-width: 1px;
+  justify-content: flex-start;
+  column-gap: 8px;
+}
+
+.sk_styler_ui_root {
+  background: var(--sk_dominantBg2);
+  color: var(--sk_dominantTxt);
+  width: 100%;
+  height: 200px;
+}
+
+.sk_hidden {
+  display: none;
+}

@@ -882,6 +882,15 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     return { el: _lbl, chb: input };
   }
 
+  addStylerSwitcher() {
+    const stylerSwitcher = this.createSwitch("theme", "recolor");
+    this.addDomListener(stylerSwitcher.chb, "change", (e) => {
+      this.stylerToggle();
+    });
+
+    this.skinnerUiControls.appendChild(stylerSwitcher.el);
+  }
+
   addUiThemeSwitcher() {
     let _id = "skinner_ui_switcher";
 
@@ -1623,6 +1632,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     let toolboxWrapper = document.createElement("div");
     toolboxWrapper.className = "skinner_toolbox_wrapper";
     let main = document.createElement("div");
+    this.essencesWrapper = main;
     main.className = "sk_content sk_scrollbar";
     let header = document.createElement("div");
     header.className = "sk_header";
@@ -1877,6 +1887,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     inputWrapper.className = "sk_input_wrapper";
 
     this.toolboxWrapper.appendChild(actionsWrapper);
+    this.actionsWrapper = actionsWrapper;
 
     let config = this.cssCb(this.skin);
     let name = config.name;
@@ -2507,34 +2518,169 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     });
   }
 
-  stylerInit() {}
+  initStyler(target) {
+    this.stylerSkin = {};
+    this.stylerState.target = target;
+    this.addStylerSwitcher();
 
-  stylerStart() {}
+    this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
+    this.stylerClickHandler = this.stylerClickHandler.bind(this);
 
-  stylerClick() {}
+    this.stylerUI = {};
+    this.stylerUI.root = document.createElement("div");
+    this.stylerUI.root.className = "sk_styler_ui_root sk_hidden";
+    this.stylerUI.actionsWrapper = document.createElement("div");
+    this.stylerUI.actionsWrapper.className =
+      "sk_actions_wrapper variant_styler sk_hidden";
 
-  stylerHover(evt) {
+    this.stylerUI.save = this.createBtn("save", "variant_styler");
+    this.stylerUI.save.addEventListener("click", () => {
+      this.stylerUiHide();
+    });
+
+    this.toolboxWrapper.appendChild(this.stylerUI.root);
+    this.stylerUI.actionsWrapper.appendChild(this.stylerUI.save);
+    this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
+
+    this.stylerControls = {};
+
+    this.stylerControls.paddings = {};
+    this.stylerControls.borders = {};
+
+    this.createStylerPickers();
+  }
+
+  stylerCreateState(selector, el) {
+    this.stylerSkin[selector] = {};
+    this.stylerSkin[selector].colors = {};
+    const computedStyles = getComputedStyle(el);
+    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
+    const essence = el.getAttribute("data-sk");
+    if (props.includes("Bg")) {
+      this.stylerSkin[selector].colors.Bg = computedStyles.getPropertyValue(
+        `--${essence}Bg`
+      );
+    }
+    if (props.includes("Txt")) {
+      this.stylerSkin[selector].colors.Txt = computedStyles.getPropertyValue(
+        `--${essence}Txt`
+      );
+    }
+    if (props.includes("Txt2")) {
+      this.stylerSkin[selector].colors.Txt2 = computedStyles.getPropertyValue(
+        `--${essence}Txt2`
+      );
+    }
+  }
+
+  updateStylerPickers(selector, el) {
+    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
+    const pickerNamesArray = ["Bg", "Txt", "Txt2", "Txt3"];
+
+    pickerNamesArray.forEach((pn) => {
+      if (props.includes(pn)) {
+        this.stylerControls.colors[pn].style.background =
+          this.stylerSkin[selector].colors[pn];
+      }
+    });
+  }
+
+  createStylerPickers() {
+    const root = this.stylerUI.root;
+    this.stylerControls.colors = {};
+
+    const pickerNamesArray = ["Bg", "Txt", "Txt2", "Txt3"];
+
+    pickerNamesArray.forEach((pn) => {
+      this.stylerControls.colors[pn] = document.createElement("div");
+      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
+
+      root.appendChild(this.stylerControls.colors[pn]);
+    });
+  }
+
+  stylerUiShow() {
+    this.stylerStop();
+
+    this.essencesWrapper.classList.add("sk_hidden");
+    this.stylerUI.root.classList.remove("sk_hidden");
+
+    this.actionsWrapper.classList.add("sk_hidden");
+    this.stylerUI.actionsWrapper.classList.remove("sk_hidden");
+  }
+
+  stylerUiHide() {
+    this.stylerStart();
+    this.essencesWrapper.classList.remove("sk_hidden");
+    this.stylerUI.root.classList.add("sk_hidden");
+
+    this.actionsWrapper.classList.remove("sk_hidden");
+    this.stylerUI.actionsWrapper.classList.add("sk_hidden");
+  }
+
+  stylerToggle() {
+    if (this.stylerState.isRunning) {
+      this.stylerStop();
+    } else {
+      this.stylerStart();
+    }
+  }
+
+  addDemoAttribute() {
+    const elements = this.stylerState.target.querySelectorAll(".lv_event_row");
+    elements.forEach((el) => {
+      el.setAttribute("data-sk", "event");
+      el.setAttribute("data-sk-edit", "Bg Txt Txt2 Ps Pe");
+    });
+  }
+
+  stylerStart() {
+    this.stylerState.isRunning = true;
+
+    this.addDemoAttribute();
+
+    this.stylerState.editableElements =
+      this.stylerState.target.querySelectorAll("[data-sk]");
+
+    this.stylerState.editableElements.forEach((el) => {
+      el.addEventListener("mouseenter", this.stylerMouseOverHandler, true);
+      el.addEventListener("click", this.stylerClickHandler, true);
+    });
+    console.log("styler started");
+  }
+
+  stylerStop() {
+    this.stylerState.isRunning = false;
+
+    this.stylerState.editableElements.forEach((el) => {
+      el.removeEventListener("mouseenter", this.stylerMouseOverHandler, true);
+      el.removeEventListener("click", this.stylerClickHandler, true);
+    });
+    console.log("styler stopped");
+  }
+
+  stylerMouseOverHandler(evt) {
     if (this.stylerState.isRunning) {
       evt.preventDefault();
       evt.stopPropagation();
+
       const path = evt.composedPath();
       const hoveredElement = path.find(
         (el) => el.matches && el.matches("[data-sk]")
       );
+
       if (hoveredElement) {
         let target = hoveredElement;
-        let uniqueClass = target.getAttribute("data-sk");
-        //let specificCn = this.generateCssPath(hoveredElement);
-        let className = `[data-sk="${uniqueClass}"]`;
-        let css = this.stylerHoverCss(className);
-        this.stylerInjectHoverCss(css);
+        let selector = this.stylerGetSelector(target);
+        let css = this.stylerHighlightStlye(selector);
+        this.setStylerStyle(css);
 
         const cleanup = () => {
-          this.stylerInjectHoverCss("");
+          this.setStylerStyle("");
           target.removeEventListener("mouseleave", handleMouseOut);
         };
 
-        const handleMouseOut = () => {
+        const handleMouseOut = (evy) => {
           cleanup();
         };
 
@@ -2543,31 +2689,46 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     }
   }
 
-  injectStyle(css) {
-    const _id = "sk_custom_styler_injected";
-    let styleElement = document.getElementById(_id);
-    if (this.patientRoot instanceof ShadowRoot) {
-      styleElement = this.patientRoot.querySelector(`#${styleId}`);
-      if (!styleElement) {
-        styleElement = document.createElement("style");
-        styleElement.setAttribute("id", _id);
-        this.patientRoot.appendChild(styleElement);
-      }
-    } else {
-      // Otherwise, assume the target is `document`
-      styleElement = document.getElementById(_id);
-      if (!styleElement) {
-        styleElement = document.createElement("style");
-        styleElement.setAttribute("id", _id);
-        document.head.appendChild(styleElement);
+  stylerGetSelector(target) {
+    const uniqueClass = target.getAttribute("data-sk");
+    const selector = `[data-sk="${uniqueClass}"]`;
+    return selector;
+  }
+
+  stylerClickHandler(evt) {
+    if (this.stylerState.isRunning) {
+      this.stylerStop();
+      evt.preventDefault();
+      evt.stopPropagation();
+
+      const path = evt.composedPath();
+      const clickedElement = path.find(
+        (el) => el.matches && el.matches("[data-sk]")
+      );
+
+      if (clickedElement) {
+        const target = clickedElement;
+        let selector = this.stylerGetSelector(target);
+        this.stylerUiShow(target);
+        this.stylerCreateState(selector, target);
+        this.updateStylerPickers(selector, target);
       }
     }
+  }
 
+  setStylerStyle(css) {
+    const _id = "sk_styler_injected";
+    let styleElement = this.stylerState.target.querySelector(`#${_id}`);
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.setAttribute("id", _id);
+      this.stylerState.target.appendChild(styleElement);
+    }
     this.injectedStyle = styleElement;
     this.injectedStyle.innerHTML = css;
   }
 
-  stylerHoverCss(cn) {
+  stylerHighlightStlye(cn) {
     const colors = [
       "#FF637C",
       "#8144CD",
