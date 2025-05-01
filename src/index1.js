@@ -1,4 +1,4 @@
-import { Skinner } from "./main.js";
+import { Skinner } from "./skinner.js";
 // const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-european-view")[0].shadowRoot;
 // const target = document.getElementsByTagName("sport-root")[0].shadowRoot;
@@ -766,61 +766,104 @@ function setOrUpdateIframeCss(cssStyle, target) {
   styleElement.innerHTML = cssStyle;
 }
 
-// Check if init and destroy are already defined in the global scope
-if (!window.Skinner) {
-  window.Skinner = Skinner;
-} else {
-  console.warn("window.skinner already exists!");
-}
-
 const demo = new ViewDemoEuropean();
 demo.init();
-// const target = document.getElementsByTagName("sport-modern-view")[0].shadowRoot;
-// const target = document.querySelector(".demo_body").parentElement;
-const target = document.body;
+// const target = document.getElementsByTagName("sport-latino-view")[0].shadowRoot;
+const target = document.querySelector(".demo_body");
+// const target = document.body;
 
-function init() {
-  if (window.SkinnerInstance) {
-    console.warn("SkinnerInstance already exists!");
-    return;
-  }
+const configTree = {
+  body: {
+    Background: {
+      color: "#111111",
+    },
+    children: {
+      dominant: {
+        children: {
+          buttonSecondary: {},
+          navbar: {},
+          header: {
+            children: {
+              subHeader: {},
+              collapse: {},
+              marketHeader: {},
+            },
+          },
+          event: {
+            children: {
+              eventLive: {},
+            },
+          },
+          showMore: {},
+          tabActive: {
+            children: {
+              tab: {
+                children: {
+                  tabSecondaryActive: {},
+                },
+              },
+            },
+          },
+          menu_1: {
+            children: {
+              menu_2: {
+                children: {
+                  menu_3: {},
+                },
+              },
+            },
+          },
+          input: {
+            children: {
+              inputSecondary: {},
+            },
+          },
+          filter: {},
+          tooltip: {},
+          tmLogo: {},
+        },
+      },
+      slider: {},
+      odd: {},
+      modal: {},
+    },
+  },
+  accent: {
+    children: {
+      button: {},
+      oddActive: {},
+    },
+  },
+};
 
-  window.SkinnerInstance = new Skinner(
-    createCss,
-    colorsSport,
-    null,
-    null,
-    "sport",
-    target
-  );
-  window.SkinnerInstance.init();
-  console.log("SkinnerInstance initialized");
-}
+const starterConfig = {
+  body: {
+    Background: {
+      color: "#111111",
+    },
+    borderRadius: 8,
+  },
+  accent: {
+    Background: {
+      color: "#ffb700",
+    },
+  },
+};
 
-function destroy() {
-  if (!window.SkinnerInstance) {
-    console.warn("No SkinnerInstance to destroy");
-    return;
-  }
+const config = {
+  body: {
+    Background: {
+      color: "#1a1a1a",
+    },
+    borderRadius: 8,
+  },
+  accent: {
+    Background: {
+      color: "#ffb800",
+    },
+    borderRadius: 8,
+  },
+};
 
-  if (typeof window.SkinnerInstance.destroy === "function") {
-    window.SkinnerInstance.destroy(); // Call destroy method if it exists
-  }
-
-  delete window.SkinnerInstance; // Remove the instance from the global object
-  console.log("SkinnerInstance destroyed");
-}
-
-init();
-window.addEventListener("keydown", (event) => {
-  if (event.key === "a" || event.key === "A") {
-    // Trigger init function
-  } else if (event.key === "q" || event.key === "Q") {
-    // Trigger destroy function
-    destroy();
-  }
-});
-
-window.addEventListener("beforeunload", () => {
-  // window.SkinnerInstance.saveProgress();
-});
+window.SkinnerInstance = new Skinner(config, null, target);
+window.SkinnerInstance.init();

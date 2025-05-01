@@ -423,3 +423,12 @@ let a = {
 
 
 
+
+
+const undefined = () => (
+  <Flex backgroundColor="teal.500">
+    <Button variant="solid" size="md">
+      Button text
+    </Button>
+  </Flex>
+)
