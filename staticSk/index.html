@@ -11,16 +11,70 @@
   <body>
     <div class="demo_root">
       <div
-        class="demo_card"
+        class="demo_item demo_card"
         data-sk="event"
         data-sk-edit="Bg Txt Txt2 Ps Pe"
-      ></div>
+      >
+        <strong>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </strong>
+        <span>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </span>
+      </div>
 
       <div
-        class="demo_button"
+        class="demo_item demo_button"
         data-sk="button"
         data-sk-edit="Bg Txt Txt2"
-      ></div>
+      >
+        <strong>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </strong>
+        <span>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </span>
+      </div>
+
+      <div
+        class="demo_item demo_button"
+        data-sk="button"
+        data-sk-edit="Bg Txt Txt2"
+      >
+        <strong>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </strong>
+        <span>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam corrupti
+          debitis ducimus voluptatem maxime, eaque excepturi necessitatibus
+          placeat dolorem nemo voluptatibus quisquam error labore ipsum aliquam
+          voluptates asperiores vel. Animi?
+        </span>
+      </div>
+
+      <div
+        class="demo_item demo_header"
+        data-sk="header"
+        data-sk-edit="Bg Bg2 Txt"
+      >
+        <div class="demo_header_child">sub item txt</div>
+        <strong> Header </strong>
+      </div>
     </div>
 
     <style id="css-as-test-stylesheet"></style>
@@ -984,7 +1038,9 @@
 #sport-modern-view,
 #sport-modern-view[data-theme] {
 ${createCssString(c)}
-}`;
+}
+${c.stylerCSS}
+`;
 
       let results = {
         css: css,

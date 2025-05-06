@@ -2374,32 +2374,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     };
   }
 
-  createPicker(el, defaultColor, callback) {
-    let picker = Pickr.create({
-      el: el,
-      theme: "classic",
-      comparison: false,
-      default: defaultColor,
-      components: {
-        preview: false,
-        hue: true,
-        interaction: {
-          //hex: false,
-          input: true,
-          save: false,
-        },
-      },
-    });
-
-    picker.on("change", (color, source, instance) => {
-      callback(color);
-    });
-    picker.on("show", this.showOverlay);
-    picker.on("hide", this.hideOverlay);
-
-    return picker;
-  }
-
   message(text, show) {
     let t = this;
     let _text = text || "generic message";
@@ -2528,7 +2502,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     this.stylerUI = {};
     this.stylerUI.root = document.createElement("div");
-    this.stylerUI.root.className = "sk_styler_ui_root sk_hidden";
+    this.stylerUI.root.className = "sk_styler_ui_root sk_scrollbar sk_hidden";
     this.stylerUI.actionsWrapper = document.createElement("div");
     this.stylerUI.actionsWrapper.className =
       "sk_actions_wrapper variant_styler sk_hidden";
@@ -2536,8 +2510,14 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerUI.save = this.createBtn("save", "variant_styler");
     this.stylerUI.save.addEventListener("click", () => {
       this.stylerUiHide();
+      this.removeStylerPickersListeners();
     });
 
+    this.stylerUI.colorsControlWrapper = document.createElement("div");
+    this.stylerUI.colorsControlWrapper.className =
+      "sk_styler_ui_control_wrapper";
+
+    this.stylerUI.root.appendChild(this.stylerUI.colorsControlWrapper);
     this.toolboxWrapper.appendChild(this.stylerUI.root);
     this.stylerUI.actionsWrapper.appendChild(this.stylerUI.save);
     this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
@@ -2556,47 +2536,161 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const computedStyles = getComputedStyle(el);
     const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
     const essence = el.getAttribute("data-sk");
-    if (props.includes("Bg")) {
-      this.stylerSkin[selector].colors.Bg = computedStyles.getPropertyValue(
-        `--${essence}Bg`
+    this.stylerSkin[selector].uniqueSelector = `${essence}`;
+
+    const pickerNamesArray = [
+      "Bg",
+      "BgHover",
+      "Bg2",
+      "Bg2Hover",
+      "Bg3",
+      "Bg3Hover",
+      "Txt",
+      "Txt2",
+      "Txt3",
+    ];
+
+    pickerNamesArray.forEach((p) => {
+      if (props.includes(p)) {
+        this.stylerSkin[selector].colors[p] = computedStyles.getPropertyValue(
+          `--${essence}${p}`
+        );
+      }
+    });
+  }
+
+  stylerCreateCSS() {
+    let css = "";
+    for (const key in this.stylerSkin) {
+      const s = this.stylerSkin[key];
+      let block = `${key}{\n`;
+      Object.keys(s.colors).forEach(
+        (k) => (block += `--${s.uniqueSelector}${k}:${s.colors[k]};\n`)
       );
+      block += "}\n";
+      css += block;
     }
-    if (props.includes("Txt")) {
-      this.stylerSkin[selector].colors.Txt = computedStyles.getPropertyValue(
-        `--${essence}Txt`
-      );
-    }
-    if (props.includes("Txt2")) {
-      this.stylerSkin[selector].colors.Txt2 = computedStyles.getPropertyValue(
-        `--${essence}Txt2`
-      );
-    }
+
+    this.skin.stylerCSS = css;
+
+    this.cssCb(this.skin);
+
+    return css;
   }
 
   updateStylerPickers(selector, el) {
     const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
-    const pickerNamesArray = ["Bg", "Txt", "Txt2", "Txt3"];
+    const pickerNamesArray = [
+      "Bg",
+      "BgHover",
+      "Bg2",
+      "Bg2Hover",
+      "Bg3",
+      "Bg3Hover",
+      "Txt",
+      "Txt2",
+      "Txt3",
+    ];
 
     pickerNamesArray.forEach((pn) => {
+      this.stylerControls.colors[pn].parentElement.classList.remove(
+        "state_active"
+      );
       if (props.includes(pn)) {
-        this.stylerControls.colors[pn].style.background =
-          this.stylerSkin[selector].colors[pn];
+        const color = this.stylerSkin[selector].colors[pn];
+        this.stylerControls.colors[pn].style.background = color;
+        this.stylerControls.colors[pn].parentElement.classList.add(
+          "state_active"
+        );
+
+        // Store listener so it can be removed later
+        const listener = (evt) => {
+          this.handlePicker(evt, color, null, (color) => {
+            const _color = color.toHEXA().toString();
+            this.stylerSkin[selector].colors[pn] = _color;
+            this.stylerCreateCSS();
+            this.stylerControls.colors[pn].style.background = _color;
+          });
+        };
+
+        this.stylerControls.colors[pn]._listener = listener;
+        this.stylerControls.colors[pn].addEventListener("click", listener);
+      }
+    });
+  }
+
+  removeStylerPickersListeners() {
+    const props =
+      this.stylerState.activeTarget.getAttribute("data-sk-edit")?.split(" ") ||
+      [];
+    const pickerNamesArray = [
+      "Bg",
+      "BgHover",
+      "Bg2",
+      "Bg2Hover",
+      "Bg3",
+      "Bg3Hover",
+      "Txt",
+      "Txt2",
+      "Txt3",
+    ];
+
+    pickerNamesArray.forEach((pn) => {
+      const el = this.stylerControls.colors[pn];
+      if (props.includes(pn) && el._listener) {
+        el.style.background = "";
+        el.removeEventListener("click", el._listener);
+        delete el._listener;
       }
     });
   }
 
   createStylerPickers() {
-    const root = this.stylerUI.root;
+    const root = this.stylerUI.colorsControlWrapper;
     this.stylerControls.colors = {};
 
-    const pickerNamesArray = ["Bg", "Txt", "Txt2", "Txt3"];
+    const backgrounds = ["Bg", "BgHover", "Bg2", "Bg2Hover", "Bg3", "Bg3Hover"];
 
-    pickerNamesArray.forEach((pn) => {
+    const texts = ["Txt", "Txt2", "Txt3"];
+
+    let backgroundsWrapper = document.createElement("div");
+    let foregroundsWrapper = document.createElement("div");
+    backgroundsWrapper.className = "sk_styler_ui_control_group";
+    foregroundsWrapper.className = "sk_styler_ui_control_group";
+    backgrounds.forEach((pn) => {
       this.stylerControls.colors[pn] = document.createElement("div");
       this.stylerControls.colors[pn].className = "sk_picker_trigger ";
 
-      root.appendChild(this.stylerControls.colors[pn]);
+      const label = document.createElement("div");
+      label.className = "sk_styler_ui_control_label";
+      label.innerText = pn;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "sk_styler_ui_control";
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(this.stylerControls.colors[pn]);
+      backgroundsWrapper.appendChild(wrapper);
     });
+
+    texts.forEach((pn) => {
+      this.stylerControls.colors[pn] = document.createElement("div");
+      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
+
+      const label = document.createElement("div");
+      label.className = "sk_styler_ui_control_label";
+      label.innerText = pn;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "sk_styler_ui_control";
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(this.stylerControls.colors[pn]);
+      foregroundsWrapper.appendChild(wrapper);
+    });
+
+    root.appendChild(backgroundsWrapper);
+    root.appendChild(foregroundsWrapper);
   }
 
   stylerUiShow() {
@@ -2710,7 +2804,11 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         const target = clickedElement;
         let selector = this.stylerGetSelector(target);
         this.stylerUiShow(target);
+        this.stylerState.activeTarget = target;
+        this.stylerState.activeSelector = selector;
+
         this.stylerCreateState(selector, target);
+        this.stylerCurrentSelector = selector;
         this.updateStylerPickers(selector, target);
       }
     }
