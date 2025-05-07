@@ -501,19 +501,19 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+        .darken(this.defaults.dark.bg2)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+        .lighten(this.defaults.light.bg2)
+        .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bg3)
-          .toString()
+        .darken(this.defaults.dark.bg3)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bg3)
-          .toString();
+        .lighten(this.defaults.light.bg3)
+        .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -564,27 +564,27 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-          .darken(this.defaults.dark.bgHov)
-          .toString()
+        .darken(this.defaults.dark.bgHov)
+        .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-          .lighten(this.defaults.light.bgHov)
-          .toString();
+        .lighten(this.defaults.light.bgHov)
+        .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -666,12 +666,22 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
   generateBorderss(essence) {
     let _essence = essence;
     let _vb = this.verbalData(_essence);
+    let _isDark = this.skin[_vb.isDark];
     let _isCustomBorderActive = this.skin[_vb.isCustomBorder];
     let _customBorderColor = this.skin[_vb.nameBorder];
     if (_isCustomBorderActive) {
       this.skin[_vb.nameBorder] = _customBorderColor;
+
+      this.skin[_vb.nameBorder2] = _isDark
+        ? tinycolor(this.skin[_vb.nameBorder])
+          .darken(this.defaults.dark.bg2)
+          .toString()
+        : tinycolor(this.skin[_vb.nameBorder])
+          .lighten(this.defaults.light.bg2)
+          .toString();
     } else {
       this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
+      this.skin[_vb.nameBorder2] = this.skin[_vb.nameBg2Hov];
     }
   }
 
@@ -1027,6 +1037,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     data.isCustomTxt = "isCustom" + data.upperCaseName + "Txt";
 
     data.nameBorder = data.name + "Border";
+    data.nameBorder2 = data.name + "Border2";
     data.isCustomBorder = "isCustom" + data.upperCaseName + "Border";
 
     data.nameAccent = data.name + "Accent";
@@ -1772,9 +1783,8 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     svg.setAttribute("viewBox", `0 0 ${width} 40`);
 
     const setPath = (progress) => {
-      const p = `M-4 0 -4 20 Q${width * x} ${20 + progress}, ${width + 4} 20 ${
-        width + 4
-      } 0 ${width + 4} 0`;
+      const p = `M-4 0 -4 20 Q${width * x} ${20 + progress}, ${width + 4} 20 ${width + 4
+        } 0 ${width + 4} 0`;
       pathMask.setAttribute("d", p);
       path.setAttribute("d", p);
     };
@@ -2497,6 +2507,8 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerState.target = target;
     this.addStylerSwitcher();
 
+    this.createHighlighterSVG();
+
     this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
     this.stylerClickHandler = this.stylerClickHandler.bind(this);
 
@@ -2753,6 +2765,45 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     console.log("styler stopped");
   }
 
+  createHighlighterSVG() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("id", "sk-styler-highlighter");
+    svg.style.position = "absolute";
+    svg.style.pointerEvents = "none";
+    svg.style.zIndex = "9999";
+    svg.style.display = "none";
+
+    document.body.appendChild(svg);
+  }
+
+  drawHighlightCorners(el, size = 8, color = "#05d3ff") {
+    const svg = document.getElementById("sk-styler-highlighter");
+    const rect = el.getBoundingClientRect();
+
+    svg.setAttribute("width", rect.width);
+    svg.setAttribute("height", rect.height);
+    svg.style.top = `${rect.top + window.scrollY}px`;
+    svg.style.left = `${rect.left + window.scrollX}px`;
+    svg.style.display = "block";
+
+    const lines = [
+      // Top-left
+      `<line x1="0" y1="0" x2="${size}" y2="0" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="0" y1="0" x2="0" y2="${size}" stroke="${color}" stroke-width="2"/>`,
+      // Top-right
+      `<line x1="${rect.width}" y1="0" x2="${rect.width - size}" y2="0" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="${rect.width}" y1="0" x2="${rect.width}" y2="${size}" stroke="${color}" stroke-width="2"/>`,
+      // Bottom-left
+      `<line x1="0" y1="${rect.height}" x2="0" y2="${rect.height - size}" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="0" y1="${rect.height}" x2="${size}" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
+      // Bottom-right
+      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width - size}" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width}" y2="${rect.height - size}" stroke="${color}" stroke-width="2"/>`
+    ];
+
+    svg.innerHTML = lines.join("");
+  }
+
   stylerMouseOverHandler(evt) {
     if (this.stylerState.isRunning) {
       evt.preventDefault();
@@ -2768,7 +2819,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         let selector = this.stylerGetSelector(target);
         let css = this.stylerHighlightStlye(selector);
         this.setStylerStyle(css);
-
+        this.drawHighlightCorners(target);
         const cleanup = () => {
           this.setStylerStyle("");
           target.removeEventListener("mouseleave", handleMouseOut);
@@ -2826,6 +2877,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.injectedStyle.innerHTML = css;
   }
 
+
   stylerHighlightStlye(cn) {
     const colors = [
       "#FF637C",
@@ -2856,35 +2908,46 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
 
-    let css = `
-@keyframes sk_custom_hover_anim {
-from{
-  background-position: 0 0;
-}
-to{
-  background-position: 50% 0;
-}
-}
 
+
+    let css_ = `
+@keyframes sk_custom_hover_anim {
+  from{
+    background-position: 0 0;
+  }
+  to{
+    background-position: 50% 0;
+  }
+}
 
 ${cn}{
-background-image: ${repeatingGradient} !important;
-color: var(--dominantTxt) !important;
-background-size: 200% 200%;
-animation-duration: 10s;
-animation-direction: normal;
-animation-iteration-count: 88;
-animation-name: sk_custom_hover_anim;
-animation-timing-function: linear;
+  background-image: ${repeatingGradient} !important;
+  color: var(--dominantTxt) !important;
+  background-size: 200% 200%;
+  animation-duration: 5s;
+  animation-direction: normal;
+  animation-iteration-count: 88;
+  animation-name: pulseGlow ;
+  animation-timing-function: linear;
 }
 ${cn}:nth-child(even){
-animation-direction: reverse;
+  animation-direction: reverse;
 }
 
-${cn} > * {
-  opacity: 0.8;
+
+`;
+
+let css = `
+
+${cn}{
+  outline-width: 1px;
+  outline-offset: 1px;
+  outline-style: double;
+  transition: outline-offset 0.3s linear;
+  outline-color: #7872E0;
 }
 `;
+
 
     return css;
   }
