@@ -13,16 +13,14 @@
   --controls-ui-gap: 6px;
   --controls-ui-pad-x: 6px;
   --controls-ui-pad-y: 6px;
-  --sk_grad_rainbow: linear-gradient(
-    90deg,
-    #ff637c,
-    #8144cd,
-    #7872e0,
-    #56a9e2,
-    #d2f58d,
-    #ffd76b,
-    #ff637c
-  );
+  --sk_grad_rainbow: linear-gradient(90deg,
+      #ff637c,
+      #8144cd,
+      #7872e0,
+      #56a9e2,
+      #d2f58d,
+      #ffd76b,
+      #ff637c);
   --sk_rainbow_1: #ff637c;
   --sk_rainbow_2: #8144cd;
   --sk_rainbow_3: #7872e0;
@@ -46,7 +44,7 @@
   position: relative;
 }
 
-.sk_path_string_root > svg {
+.sk_path_string_root>svg {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -96,7 +94,7 @@ body {
   justify-content: center;
 }
 
-#loader > div {
+#loader>div {
   width: 40px;
   height: 40px;
   margin: 4px;
@@ -109,31 +107,31 @@ body {
   animation: loader_letter_animation 2s infinite ease-in-out;
 }
 
-#loader > div:nth-child(1) {
+#loader>div:nth-child(1) {
   animation-delay: 0s;
 }
 
-#loader > div:nth-child(2) {
+#loader>div:nth-child(2) {
   animation-delay: 0.1s;
 }
 
-#loader > div:nth-child(3) {
+#loader>div:nth-child(3) {
   animation-delay: 0.2s;
 }
 
-#loader > div:nth-child(4) {
+#loader>div:nth-child(4) {
   animation-delay: 0.3s;
 }
 
-#loader > div:nth-child(5) {
+#loader>div:nth-child(5) {
   animation-delay: 0.4s;
 }
 
-#loader > div:nth-child(6) {
+#loader>div:nth-child(6) {
   animation-delay: 0.5s;
 }
 
-#loader > div:nth-child(7) {
+#loader>div:nth-child(7) {
   animation-delay: 0.6s;
 }
 
@@ -217,7 +215,7 @@ body {
   fill: currentColor;
 }
 
-.skinner_ico > svg {
+.skinner_ico>svg {
   width: 100%;
   height: 100%;
 }
@@ -536,8 +534,7 @@ body {
   background: var(--acc) !important;
 }
 
-.nik_skinner_control_group_picker:hover {
-}
+.nik_skinner_control_group_picker:hover {}
 
 .nik_skinner_control_group_picker::-webkit-color-swatch-wrapper {
   padding: 0;
@@ -574,7 +571,7 @@ body {
   border: 0;
 }
 
-.nik_skinner_control_collapse_collapser > span {
+.nik_skinner_control_collapse_collapser>span {
   flex-grow: 1;
   color: var(--sk_dominantTxt) !important;
 }
@@ -674,8 +671,7 @@ body {
   column-gap: 4px;
 }
 
-.sk_btn.variant_load {
-}
+.sk_btn.variant_load {}
 
 .sk_config_root {
   display: flex;
@@ -686,16 +682,14 @@ body {
 }
 
 .sk_btn.state_active {
-  background: conic-gradient(
-    from 90deg at 50% 50%,
-    #ff637c,
-    #8144cd,
-    #7872e0,
-    #56a9e2,
-    #d2f58d,
-    #ffd76b,
-    #ff637c
-  );
+  background: conic-gradient(from 90deg at 50% 50%,
+      #ff637c,
+      #8144cd,
+      #7872e0,
+      #56a9e2,
+      #d2f58d,
+      #ffd76b,
+      #ff637c);
   color: #fff;
 }
 
@@ -725,6 +719,7 @@ body {
   background-color: var(--sk_accentBgHover);
   color: var(--sk_accentTxt);
 }
+
 /* view switchers */
 .nik_sport_web_views_switchers_wrapper {
   display: flex;
@@ -750,19 +745,19 @@ body {
 }
 
 .view_switcher_lbl:hover,
-.view_switcher_btn:checked + .view_switcher_lbl {
+.view_switcher_btn:checked+.view_switcher_lbl {
   background-color: #00aabe;
 }
 
-#euviewSwitcher:checked ~ .europeanView {
+#euviewSwitcher:checked~.europeanView {
   display: flex !important;
 }
 
-#ppviewSwitcher:checked ~ .paperView {
+#ppviewSwitcher:checked~.paperView {
   display: block !important;
 }
 
-#africanviewSwitcher:checked ~ .africanView {
+#africanviewSwitcher:checked~.africanView {
   display: block !important;
 }
 
@@ -869,6 +864,7 @@ body {
   outline: 0;
   padding: 0 6px;
 }
+
 .sk_widget_collapse_block {
   display: flex;
   flex-direction: column;
@@ -888,6 +884,7 @@ body {
   text-transform: capitalize;
   column-gap: 6px;
 }
+
 .sk_widget_block_content {
   width: 100%;
   display: flex;
@@ -895,12 +892,14 @@ body {
   align-items: stretch;
   font-size: 10px;
 }
+
 .sk_layout_row {
   display: flex;
   flex-direction: row;
   align-items: center;
   column-gap: 4px;
 }
+
 .sk_layout_col {
   display: flex;
   flex-direction: column;
@@ -946,12 +945,15 @@ body {
 .sk_checkbox_wrapper.variant_blur {
   display: var(--blur);
 }
+
 .sk_checkbox_wrapper.variant_borderRadius {
   display: var(--radius);
 }
+
 .sk_checkbox_wrapper.variant_gradient {
   display: var(--gradient);
 }
+
 .sk_checkbox_wrapper.variant_border {
   display: var(--border);
 }
@@ -973,7 +975,7 @@ body {
   overflow: hidden;
 }
 
-.sk_checkbox_wrapper > .pickr {
+.sk_checkbox_wrapper>.pickr {
   position: absolute;
 }
 
@@ -987,12 +989,11 @@ body {
   padding: 4px 8px;
 }
 
-.nik_skinner_control_group_checkbox_wrapper > input {
+.nik_skinner_control_group_checkbox_wrapper>input {
   display: none;
 }
 
-.nik_skinner_control_group_checkbox_wrapper
-  > .nik_skinner_control_group_checkbox_imitator {
+.nik_skinner_control_group_checkbox_wrapper>.nik_skinner_control_group_checkbox_imitator {
   background-image: url("../assets/chb_unchecked.svg");
   background-size: 20px;
   background-repeat: no-repeat;
@@ -1018,9 +1019,7 @@ body {
     transition-delay: 0.4s;
   }*/
 
-.nik_skinner_control_group_checkbox_wrapper
-  > input:disabled
-  + .nik_skinner_control_group_checkbox_imitator {
+.nik_skinner_control_group_checkbox_wrapper>input:disabled+.nik_skinner_control_group_checkbox_imitator {
   opacity: 0.2;
 }
 
@@ -1138,7 +1137,7 @@ body {
   padding-bottom: 4px;
 }
 
-.nik-hidden > * {
+.nik-hidden>* {
   visibility: hidden;
 }
 
@@ -1201,6 +1200,7 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   align-items: center;
 }
+
 .sk_switch_lbl {
   font-size: 9px;
   width: 40px;
@@ -1211,19 +1211,19 @@ input[type="range"]::-moz-range-thumb {
   display: none;
 }
 
-.sk_switch_root > .sk_switch_input + .sk_switch_imitator {
+.sk_switch_root>.sk_switch_input+.sk_switch_imitator {
   --trackBg: var(--sk_dominantShadow);
   --thumbBg: var(--sk_dominantBg2);
   --tr: 0;
 }
 
-.sk_switch_root > .sk_switch_input:checked + .sk_switch_imitator {
+.sk_switch_root>.sk_switch_input:checked+.sk_switch_imitator {
   --trackBg: var(--sk_accentBg);
   --thumbBg: var(--sk_accentTxt);
   --tr: 16px;
 }
 
-.sk_switch_root > .sk_switch_input:checked ~ .sk_switch_icon {
+.sk_switch_root>.sk_switch_input:checked~.sk_switch_icon {
   background: var(--sk_accentBg);
   color: var(--sk_accentTxt);
   border-color: var(--sk_accentBg2);
@@ -1308,9 +1308,11 @@ input[type="range"]:focus::-ms-fill-lower {
 input[type="range"]:focus::-ms-fill-upper {
   background: var(--sk_accentBg);
 }
+
 /*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
   how to remove the virtical space around the range input in IE*/
 @supports (-ms-ime-align: auto) {
+
   /* Pre-Chromium Edge only styles, selector taken from hhttps://stackoverflow.com/a/32202953/7077589 */
   input[type="range"] {
     margin: 0;
@@ -1357,15 +1359,13 @@ input[type="range"]:focus::-ms-fill-upper {
   border: 0 !important;
   opacity: 1 !important;
   border-radius: 0;
-  background: linear-gradient(
-    to right,
-    var(--bg1) 0%,
-    var(--bg1) 33.33%,
-    var(--bg2) 33.33%,
-    var(--bg2) 66.66%,
-    var(--bg3) 66.66%,
-    var(--bg3) 100%
-  ) !important;
+  background: linear-gradient(to right,
+      var(--bg1) 0%,
+      var(--bg1) 33.33%,
+      var(--bg2) 33.33%,
+      var(--bg2) 66.66%,
+      var(--bg3) 66.66%,
+      var(--bg3) 100%) !important;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -1388,7 +1388,7 @@ input[type="number"] {
   z-index: 10;
 }
 
-.sk_chb_label > input[type="checkbox"]:checked + .sk_chb {
+.sk_chb_label>input[type="checkbox"]:checked+.sk_chb {
   background: var(--sk_accentBg);
   color: var(--sk_accentTxt);
   border-color: var(--sk_accentBgHover);
@@ -1527,11 +1527,9 @@ input[type="number"] {
 .skinner_main_wrapper-mobile .nik_skinner_mobile_iframe_wrapper {
   width: 100%;
   box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(
-    to right,
-    var(--sk_dominantBgHover),
-    var(--sk_dominantBg2)
-  );
+  background: linear-gradient(to right,
+      var(--sk_dominantBgHover),
+      var(--sk_dominantBg2));
   border-radius: 20px;
   border: 2px solid var(--sk_dominantBg2);
 }
@@ -1602,17 +1600,17 @@ input[type="number"] {
   transform: translateX(calc(-100% - 12px));
 }
 
-.skinner_ui_switcher > i {
+.skinner_ui_switcher>i {
   display: relative;
   z-index: 10;
   transition: color 0.1s;
 }
 
-.skinner_ui_switcher > input {
+.skinner_ui_switcher>input {
   display: none;
 }
 
-.skinner_ui_switcher > span {
+.skinner_ui_switcher>span {
   content: "";
   display: block;
   width: 20px;
@@ -1626,7 +1624,7 @@ input[type="number"] {
   transition: background-color 0.2s, transform 0.1s;
 }
 
-.skinner_ui_switcher > input:checked ~ span {
+.skinner_ui_switcher>input:checked~span {
   transform: translateX(10px);
 }
 
@@ -1643,7 +1641,7 @@ input[type="number"] {
   font-size: 11px;
 }
 
-.nik_skinner_control_collapse_collapser > .skinner_ico_arrow {
+.nik_skinner_control_collapse_collapser>.skinner_ico_arrow {
   display: none;
 }
 
@@ -1770,7 +1768,7 @@ input[type="number"] {
   padding-bottom: 2px;
 }
 
-.skinner_main_wrapper-mobile > .skinner_toolbox {
+.skinner_main_wrapper-mobile>.skinner_toolbox {
   bottom: auto;
   position: relative;
   transform: none;
@@ -1803,11 +1801,12 @@ input[type="number"] {
   width: 22px;
   height: 22px;
 }
+
 .sk_chb_base {
   cursor: pointer;
 }
 
-.sk_chb_base > input {
+.sk_chb_base>input {
   display: none;
 }
 
@@ -1816,7 +1815,7 @@ input[type="number"] {
   --passiveDisplay: block;
 }
 
-.sk_chb_base > input:checked + .sk_chb_base_ico {
+.sk_chb_base>input:checked+.sk_chb_base_ico {
   --activeDisplay: block;
   --passiveDisplay: none;
 }
@@ -1859,11 +1858,9 @@ input[type="number"] {
   right: 0;
   bottom: 0;
   z-index: 20;
-  background: linear-gradient(
-    90deg,
-    rgb(189 24 7 / 17%),
-    rgb(189 24 7 / 0%) 50%
-  );
+  background: linear-gradient(90deg,
+      rgb(189 24 7 / 17%),
+      rgb(189 24 7 / 0%) 50%);
   pointer-events: none;
 }
 
@@ -1900,7 +1897,7 @@ input[type="number"] {
   width: calc(50% - 4px);
 }
 
-.sk_input_control_group > .sk_input {
+.sk_input_control_group>.sk_input {
   width: 100%;
 }
 
@@ -1937,6 +1934,7 @@ input[type="number"] {
 .sk_input_control_group_block.state_hide {
   display: none;
 }
+
 .sk_input_control_icon {
   fill: none;
   stroke: currentColor;
@@ -1968,30 +1966,35 @@ input[type="number"] {
 .sk_ui_custom_change_root.state-reveal {
   animation: appear 0.3s;
 }
+
 @keyframes appear {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
 }
+
 .sk_styler_control_row {
   display: flex;
   align-items: center;
   column-gap: var(--controls-ui-gap);
 }
+
 .sk_styler_control_row_label {
   flex-grow: 1;
   min-width: 1px;
   font-size: 10px;
   text-align: right;
 }
+
 .sk_styler_control_row.variant_color {
   width: calc(50% - 5px);
 }
 
-.sk_styler_control_holder > .pickr {
+.sk_styler_control_holder>.pickr {
   position: absolute;
 }
 
@@ -2055,7 +2058,8 @@ input[type="range"].sk_control_padding::-webkit-slider-runnable-track {
 
 /* slider thumb */
 input[type="range"].sk_control_padding::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
+  -webkit-appearance: none;
+  /* Override default look */
   appearance: none;
   margin-top: -4px;
   margin-top: 0;
@@ -2082,7 +2086,8 @@ input[type="range"].sk_control_padding::-moz-range-track {
 /* slider thumb */
 input[type="range"].sk_control_padding::-moz-range-thumb {
   background-color: var(--inputsOverlay);
-  border: none; /*Removes extra border that FF applies*/
+  border: none;
+  /*Removes extra border that FF applies*/
   border-radius: 0px;
   height: 100%;
   width: 12px;
@@ -2104,12 +2109,10 @@ input[type="range"].sk_control_padding:focus::-moz-range-thumb {
   position: absolute;
   left: 0;
   height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--sk_dominantTxt2) 0 1px,
-    transparent 0 6px,
-    var(--sk_dominantTxt2) 0 7px
-  );
+  background: repeating-linear-gradient(45deg,
+      var(--sk_dominantTxt2) 0 1px,
+      transparent 0 6px,
+      var(--sk_dominantTxt2) 0 7px);
   width: var(--percent);
   pointer-events: none;
   border: 2px solid var(--sk_dominantTxt2);
@@ -2143,13 +2146,14 @@ input[type="range"].sk_control_padding:focus::-moz-range-thumb {
   position: absolute;
 }
 
-.sk_control_radius_root > .sk_control_radius {
+.sk_control_radius_root>.sk_control_radius {
   transform-origin: left center;
   transform: rotate(45deg);
   position: absolute;
   top: 0;
   left: 0;
 }
+
 .sk_control_radius_root.variant_tl {
   top: 0;
   left: 0;
@@ -2185,12 +2189,10 @@ input[type="range"].sk_control_padding:focus::-moz-range-thumb {
   border-radius: 50%;
   position: absolute;
   left: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--sk_dominantTxt2) 0 1px,
-    transparent 0 6px,
-    var(--sk_dominantTxt2) 0 7px
-  );
+  background: repeating-linear-gradient(45deg,
+      var(--sk_dominantTxt2) 0 1px,
+      transparent 0 6px,
+      var(--sk_dominantTxt2) 0 7px);
   pointer-events: none;
   border: 2px solid var(--sk_dominantTxt2);
 }
@@ -2222,9 +2224,11 @@ input[type="range"].sk_control_radius::-webkit-slider-runnable-track {
 
 /* slider thumb */
 input[type="range"].sk_control_radius::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
+  -webkit-appearance: none;
+  /* Override default look */
   appearance: none;
-  margin-top: 0px; /* Centers thumb on the track */
+  margin-top: 0px;
+  /* Centers thumb on the track */
   background-color: var(--inputsCta);
   border-radius: 50%;
   height: 12px;
@@ -2248,7 +2252,8 @@ input[type="range"].sk_control_radius::-moz-range-track {
 /* slider thumb */
 input[type="range"].sk_control_radius::-moz-range-thumb {
   background-color: var(--inputsOverlay);
-  border: none; /*Removes extra border that FF applies*/
+  border: none;
+  /*Removes extra border that FF applies*/
   border-radius: 50%;
   height: 100%;
   width: 4px;
@@ -2319,6 +2324,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   width: 160px;
   flex-shrink: 0;
 }
+
 .sk_ui_pickers_row {
   display: flex;
   align-items: center;
@@ -2337,6 +2343,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   right: auto;
   left: 0;
 }
+
 .sk_iconic_checkbox {
   --size: 24px;
   width: var(--size);
@@ -2345,11 +2352,11 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   display: block;
 }
 
-.sk_iconic_checkbox > input {
+.sk_iconic_checkbox>input {
   display: none;
 }
 
-.sk_iconic_checkbox > i {
+.sk_iconic_checkbox>i {
   width: 100%;
   height: 100%;
   border-radius: 2px;
@@ -2360,12 +2367,13 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   justify-content: center;
 }
 
-.sk_iconic_checkbox > i > .sk_svg {
+.sk_iconic_checkbox>i>.sk_svg {
   --size: 16px;
   width: var(--size);
   height: var(--size);
 }
-.sk_iconic_checkbox > input:checked + i {
+
+.sk_iconic_checkbox>input:checked+i {
   background: var(--sk_dominantBg3);
 }
 
@@ -2390,11 +2398,13 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   cursor: help;
   border-radius: 4px;
 }
-.sk_control_group_action > .sk_svg {
+
+.sk_control_group_action>.sk_svg {
   width: 100%;
   height: 100%;
   flex-shrink: 0;
 }
+
 .sk_control_group.state_active.state_issue:before {
   content: "";
   background: linear-gradient(90deg, var(--sk_errorT2), var(--sk_errorT0));
@@ -2450,7 +2460,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
 .sk_styler_ui_control_wrapper {
   display: flex;
   /* flex-direction: column; */
-  align-items: stretch;
+  align-items: flex-start;
   column-gap: 8px;
   /* background-color: var(--sk_dominantBg); */
   flex-shrink: 0;
@@ -2460,18 +2470,18 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
 }
 
 .sk_styler_ui_control {
-  display: none;
-  height: var(--controls-row-height);
-  align-items: center;
-  background-color: var(--sk_dominantBg3);
-  flex-shrink: 0;
-  position: relative;
-  margin: 0;
-  border-radius: 4px;
-  column-gap: 4px;
-  padding: 2px 8px;
-  opacity: 0.2;
-  pointer-events: none;
+  display: flex;
+    height: var(--controls-row-height);
+    align-items: center;
+    background-color: var(--sk_dominantBg3);
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+    border-radius: 4px;
+    column-gap: 4px;
+    padding: 2px 8px;
+    opacity: 0.2;
+    pointer-events: none;
 }
 
 .sk_styler_ui_control.state_active {
@@ -2486,4 +2496,65 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   align-items: stretch;
   row-gap: 4px;
   width: 50%;
+}
+
+.sk_styler_ui_control_group.variant_paddings {
+  display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      row-gap: 1px;
+      column-gap: 1px;
+      background: var(--sk_dominantBg2);
+      padding: 2px;
+      border-radius: 6px;
+}
+
+
+.sk_styler_ui_control_group.variant_paddings .sk_styler_ui_control{
+  border-radius: 0;
+}
+
+.sk_styler_ui_control.variant_pt {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+}
+
+.sk_styler_ui_control.variant_pb {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 3;
+}
+
+.sk_styler_ui_control.variant_ps {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+}
+
+.sk_styler_ui_control.variant_pe {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+}
+
+.sk_styler_input_wrapper{
+  position: relative;
+  width: 100%;
+}
+
+.sk_styler_input_wrapper > .sk_styler_ui_control_label{
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+}
+
+.sk_styler_input_wrapper > .sk_input_text {
+  width: 100%
+}
+
+.sk_styler_ui_control_background{
+  
 }

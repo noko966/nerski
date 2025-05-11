@@ -76,10 +76,17 @@
 
 
 .demo_event_card {
+  --eventPs: 8px;
+  --eventPe: 8px;
+  --eventPt: 8px;
+  --eventPb: 8px;
   background: var(--eventBg);
   color: var(--eventTxt);
   border: 2px solid var(--eventBorder);
-  padding: 8px;
+  padding-inline-start: var(--eventPs);
+  padding-inline-end: var(--eventPe);
+  padding-top: var(--eventPt);
+  padding-bottom: var(--eventPb);
   border-radius: 4px;
   height: auto;
   width: 250px;
