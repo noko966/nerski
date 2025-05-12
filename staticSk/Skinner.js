@@ -501,19 +501,19 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     let _isDark = this.skin[_vb.isDark];
     this.skin[_vb.nameBg2] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg2)
-        .toString()
+          .darken(this.defaults.dark.bg2)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg2)
-        .toString();
+          .lighten(this.defaults.light.bg2)
+          .toString();
 
     this.skin[_vb.nameBg3] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bg3)
-        .toString()
+          .darken(this.defaults.dark.bg3)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bg3)
-        .toString();
+          .lighten(this.defaults.light.bg3)
+          .toString();
 
     if (this.variant === "casino") {
       /* 
@@ -564,27 +564,27 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     this.skin[_vb.nameBgHov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg2Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg2])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg2])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameBg3Hov] = _isDark
       ? tinycolor(this.skin[_vb.nameBg3])
-        .darken(this.defaults.dark.bgHov)
-        .toString()
+          .darken(this.defaults.dark.bgHov)
+          .toString()
       : tinycolor(this.skin[_vb.nameBg3])
-        .lighten(this.defaults.light.bgHov)
-        .toString();
+          .lighten(this.defaults.light.bgHov)
+          .toString();
 
     this.skin[_vb.nameRGBA] = tinycolor(this.skin[_vb.nameBg])
       .setAlpha(this.defaults.alpha.bg)
@@ -674,11 +674,11 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
       this.skin[_vb.nameBorder2] = _isDark
         ? tinycolor(this.skin[_vb.nameBorder])
-          .darken(this.defaults.dark.bg2)
-          .toString()
+            .darken(this.defaults.dark.bg2)
+            .toString()
         : tinycolor(this.skin[_vb.nameBorder])
-          .lighten(this.defaults.light.bg2)
-          .toString();
+            .lighten(this.defaults.light.bg2)
+            .toString();
     } else {
       this.skin[_vb.nameBorder] = this.skin[_vb.nameBgHov];
       this.skin[_vb.nameBorder2] = this.skin[_vb.nameBg2Hov];
@@ -1783,8 +1783,9 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     svg.setAttribute("viewBox", `0 0 ${width} 40`);
 
     const setPath = (progress) => {
-      const p = `M-4 0 -4 20 Q${width * x} ${20 + progress}, ${width + 4} 20 ${width + 4
-        } 0 ${width + 4} 0`;
+      const p = `M-4 0 -4 20 Q${width * x} ${20 + progress}, ${width + 4} 20 ${
+        width + 4
+      } 0 ${width + 4} 0`;
       pathMask.setAttribute("d", p);
       path.setAttribute("d", p);
     };
@@ -1840,14 +1841,16 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.domEventBindings.push({ element, eventType, handler });
   }
 
-  createBtn(name, className) {
+  createBtn(name, className, withoutIcon) {
     let _class = className || "";
     let btn = document.createElement("button");
     let txt = document.createElement("span");
     let icon = document.createElement("i");
-    icon.innerHTML = this.icons.download;
+    if (!withoutIcon) {
+      icon.innerHTML = this.icons.download;
+      btn.append(icon);
+    }
     txt.innerText = name;
-    btn.append(icon);
     btn.append(txt);
     btn.className = `sk_btn ${_class}`;
 
@@ -2515,7 +2518,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       paddings: ["Ps", "Pt", "Pe", "Pb"],
       corners: ["Rtl", "Rtr", "Rbl", "Rbr"],
       borderWidths: ["Wbs", "Wbt", "Wbe", "Wbb"],
-    }
+    };
     this.createHighlighterSVG();
 
     this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
@@ -2528,7 +2531,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerUI.actionsWrapper.className =
       "sk_actions_wrapper variant_styler sk_hidden";
 
-    this.stylerUI.save = this.createBtn("save", "variant_styler");
+    this.stylerUI.save = this.createBtn("save", "variant_styler", true);
     this.stylerUI.save.addEventListener("click", () => {
       this.stylerUiHide();
       this.removeStylerPickersListeners();
@@ -2546,8 +2549,10 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerControls = {};
     this.stylerControls.paddings = {};
     this.stylerControls.borders = {};
+    this.stylerControls.corners = {};
     this.createStylerPickers();
     this.createStylerPaddings();
+    this.createStylerCorners();
   }
 
   stylerCreateState(selector, el) {
@@ -2572,7 +2577,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const cornerNamesArray = this.stylerEditableProps.corners;
     const borderWidthsNamesArray = this.stylerEditableProps.borderWidths;
 
-
     pickerNamesArray.forEach((p) => {
       if (props.includes(p)) {
         this.stylerSkin[selector].colors[p] = computedStyles.getPropertyValue(
@@ -2585,33 +2589,32 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       if (props.includes(p)) {
         const valueWithUnit = computedStyles.getPropertyValue(
           `--${essence}${p}`
-        )
+        );
         const numericValue = parseFloat(valueWithUnit);
 
         this.stylerSkin[selector].paddings[p] = numericValue;
       }
     });
-    
+
     cornerNamesArray.forEach((p) => {
       if (props.includes(p)) {
-        this.stylerSkin[selector].corners[p] = computedStyles.getPropertyValue(
+        const valueWithUnit = computedStyles.getPropertyValue(
           `--${essence}${p}`
         );
+        const numericValue = parseFloat(valueWithUnit);
+
+        this.stylerSkin[selector].corners[p] = numericValue;
       }
     });
 
     borderWidthsNamesArray.forEach((p) => {
       if (props.includes(p)) {
-        this.stylerSkin[selector].borderWidths[p] = computedStyles.getPropertyValue(
-          `--${essence}${p}`
-        );
+        this.stylerSkin[selector].borderWidths[p] =
+          computedStyles.getPropertyValue(`--${essence}${p}`);
       }
     });
-
-    
-    
   }
-  
+
   stylerCreateCSS() {
     let css = "";
     for (const key in this.stylerSkin) {
@@ -2623,6 +2626,10 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
       Object.keys(s.paddings).forEach(
         (k) => (block += `--${s.uniqueSelector}${k}:${s.paddings[k]}px;\n`)
+      );
+
+      Object.keys(s.corners).forEach(
+        (k) => (block += `--${s.uniqueSelector}${k}:${s.corners[k]}px;\n`)
       );
       block += "}\n";
       css += block;
@@ -2644,6 +2651,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       ...this.stylerEditableProps.borders,
     ];
     const paddingNamesArray = this.stylerEditableProps.paddings;
+    const cornerNamesArray = this.stylerEditableProps.corners;
 
     pickerNamesArray.forEach((pn) => {
       this.stylerControls.colors[pn].parentElement.classList.remove(
@@ -2671,24 +2679,23 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       }
     });
 
-
     paddingNamesArray.forEach((pn) => {
-      this.stylerControls.paddings[pn].parentElement.parentElement.classList.remove(
-        "state_active"
-      );
+      this.stylerControls.paddings[
+        pn
+      ].parentElement.parentElement.classList.remove("state_active");
       if (props.includes(pn)) {
         const _value = this.stylerSkin[selector].paddings[pn];
         this.stylerControls.paddings[pn].value = _value;
-        this.stylerControls.paddings[pn].parentElement.parentElement.classList.add(
-          "state_active"
-        );
+        this.stylerControls.paddings[
+          pn
+        ].parentElement.parentElement.classList.add("state_active");
 
         // Store listener so it can be removed later
         const listener = (evt) => {
-            const _value = evt.target.value;
-            this.stylerSkin[selector].paddings[pn] = _value;
-            this.stylerCreateCSS();
-            this.stylerControls.paddings[pn].value  = _value;
+          const _value = evt.target.value;
+          this.stylerSkin[selector].paddings[pn] = _value;
+          this.stylerCreateCSS();
+          this.stylerControls.paddings[pn].value = _value;
         };
 
         this.stylerControls.paddings[pn]._listener = listener;
@@ -2696,10 +2703,30 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       }
     });
 
+    cornerNamesArray.forEach((cn) => {
+      this.stylerControls.corners[
+        cn
+      ].parentElement.parentElement.classList.remove("state_active");
+      if (props.includes(cn)) {
+        const _value = this.stylerSkin[selector].corners[cn];
+        this.stylerControls.corners[cn].value = _value;
+        this.stylerControls.corners[
+          cn
+        ].parentElement.parentElement.classList.add("state_active");
 
+        // Store listener so it can be removed later
+        const listener = (evt) => {
+          const _value = evt.target.value;
+          this.stylerSkin[selector].corners[cn] = _value;
+          this.stylerCreateCSS();
+          this.stylerControls.corners[cn].value = _value;
+        };
+
+        this.stylerControls.corners[cn]._listener = listener;
+        this.stylerControls.corners[cn].addEventListener("input", listener);
+      }
+    });
   }
-
- 
 
   removeStylerPickersListeners() {
     const props =
@@ -2713,7 +2740,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     ];
 
     const paddingNamesArray = this.stylerEditableProps.paddings;
-
+    const cornerNamesArray = this.stylerEditableProps.corners;
 
     pickerNamesArray.forEach((pn) => {
       const el = this.stylerControls.colors[pn];
@@ -2731,17 +2758,56 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         delete el._listener;
       }
     });
+
+    cornerNamesArray.forEach((pn) => {
+      const el = this.stylerControls.corners[pn];
+      if (props.includes(pn) && el._listener) {
+        el.removeEventListener("input", el._listener);
+        delete el._listener;
+      }
+    });
+  }
+
+  createStylerCorners() {
+    const root = this.stylerUI.colorsControlWrapper;
+    this.stylerControls.corners = {};
+
+    const namesArray = this.stylerEditableProps.corners;
+
+    const group = document.createElement("div");
+    group.className = "sk_styler_ui_control_group variant_corners";
+
+    namesArray.forEach((pn) => {
+      this.stylerControls.corners[pn] = document.createElement("input");
+      this.stylerControls.corners[pn].type = "number";
+      this.stylerControls.corners[pn].className = "sk_input_text ";
+      const label = document.createElement("div");
+      label.className = "sk_styler_ui_control_label";
+      label.innerText = pn;
+
+      const inputWrapper = document.createElement("div");
+      inputWrapper.className = "sk_styler_input_wrapper";
+
+      inputWrapper.appendChild(this.stylerControls.corners[pn]);
+      inputWrapper.appendChild(label);
+
+      const wrapper = document.createElement("div");
+      wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
+      wrapper.appendChild(inputWrapper);
+
+      group.appendChild(wrapper);
+    });
+
+    root.appendChild(group);
   }
 
   createStylerPaddings() {
     const root = this.stylerUI.colorsControlWrapper;
-    this.stylerControls.paddings = {};
 
     const paddingNamesArray = this.stylerEditableProps.paddings;
 
-
     const group = document.createElement("div");
-      group.className = "sk_styler_ui_control_group variant_paddings";
+    group.className = "sk_styler_ui_control_group variant_paddings";
 
     paddingNamesArray.forEach((pn) => {
       this.stylerControls.paddings[pn] = document.createElement("input");
@@ -2761,15 +2827,26 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
       wrapper.appendChild(inputWrapper);
 
-      
-
       group.appendChild(wrapper);
-
     });
 
     root.appendChild(group);
+  }
 
-
+  createPickersWrapper(l) {
+    const root = document.createElement("div");
+    root.className = "sk_styler_ui_control_group variant_picker";
+    const label = document.createElement("div");
+    label.className = "sk_styler_ui_control_group label";
+    label.innerText = l || "colors";
+    const wrapper = document.createElement("div");
+    wrapper.className = "sk_styler_ui_pickers_wrapper";
+    root.appendChild(label);
+    root.appendChild(wrapper);
+    return {
+      root: root,
+      wrapper: wrapper,
+    };
   }
 
   createStylerPickers() {
@@ -2781,14 +2858,10 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const accents = this.stylerEditableProps.accents;
     const borders = this.stylerEditableProps.borders;
 
-    const backgroundsWrapper = document.createElement("div");
-    const foregroundsWrapper = document.createElement("div");
-    const accentsWrapper = document.createElement("div");
-    const bordersWrapper = document.createElement("div");
-    backgroundsWrapper.className = "sk_styler_ui_control_group";
-    foregroundsWrapper.className = "sk_styler_ui_control_group";
-    accentsWrapper.className = "sk_styler_ui_control_group";
-    bordersWrapper.className = "sk_styler_ui_control_group";
+    const backgroundsWrapper = this.createPickersWrapper("background's");
+    const foregroundsWrapper = this.createPickersWrapper("text's");
+    const accentsWrapper = this.createPickersWrapper("accent's");
+    const bordersWrapper = this.createPickersWrapper("border's");
 
     backgrounds.forEach((pn) => {
       this.stylerControls.colors[pn] = document.createElement("div");
@@ -2799,11 +2872,11 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       label.innerText = pn;
 
       const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control_background";
+      wrapper.className = "sk_styler_ui_control";
 
       // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
-      backgroundsWrapper.appendChild(wrapper);
+      backgroundsWrapper.wrapper.appendChild(wrapper);
     });
 
     accents.forEach((pn) => {
@@ -2817,9 +2890,9 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       const wrapper = document.createElement("div");
       wrapper.className = "sk_styler_ui_control";
 
-      wrapper.appendChild(label);
+      // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
-      accentsWrapper.appendChild(wrapper);
+      accentsWrapper.wrapper.appendChild(wrapper);
     });
 
     borders.forEach((pn) => {
@@ -2833,9 +2906,9 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       const wrapper = document.createElement("div");
       wrapper.className = "sk_styler_ui_control";
 
-      wrapper.appendChild(label);
+      // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
-      bordersWrapper.appendChild(wrapper);
+      bordersWrapper.wrapper.appendChild(wrapper);
     });
 
     texts.forEach((pn) => {
@@ -2849,20 +2922,19 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       const wrapper = document.createElement("div");
       wrapper.className = "sk_styler_ui_control";
 
-      wrapper.appendChild(label);
+      // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
-      foregroundsWrapper.appendChild(wrapper);
+      foregroundsWrapper.wrapper.appendChild(wrapper);
     });
 
-    root.appendChild(backgroundsWrapper);
-    root.appendChild(foregroundsWrapper);
-    root.appendChild(foregroundsWrapper);
-    root.appendChild(foregroundsWrapper);
+    root.appendChild(backgroundsWrapper.root);
+    root.appendChild(foregroundsWrapper.root);
+    root.appendChild(accentsWrapper.root);
   }
 
   stylerUiShow() {
     this.stylerStop();
-
+    this.toolBox.classList.add("state_styler_open");
     this.essencesWrapper.classList.add("sk_hidden");
     this.stylerUI.root.classList.remove("sk_hidden");
 
@@ -2872,6 +2944,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
   stylerUiHide() {
     this.stylerStart();
+    this.toolBox.classList.remove("state_styler_open");
     this.essencesWrapper.classList.remove("sk_hidden");
     this.stylerUI.root.classList.add("sk_hidden");
 
@@ -2946,14 +3019,22 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       `<line x1="0" y1="0" x2="${size}" y2="0" stroke="${color}" stroke-width="2"/>`,
       `<line x1="0" y1="0" x2="0" y2="${size}" stroke="${color}" stroke-width="2"/>`,
       // Top-right
-      `<line x1="${rect.width}" y1="0" x2="${rect.width - size}" y2="0" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="${rect.width}" y1="0" x2="${
+        rect.width - size
+      }" y2="0" stroke="${color}" stroke-width="2"/>`,
       `<line x1="${rect.width}" y1="0" x2="${rect.width}" y2="${size}" stroke="${color}" stroke-width="2"/>`,
       // Bottom-left
-      `<line x1="0" y1="${rect.height}" x2="0" y2="${rect.height - size}" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="0" y1="${rect.height}" x2="0" y2="${
+        rect.height - size
+      }" stroke="${color}" stroke-width="2"/>`,
       `<line x1="0" y1="${rect.height}" x2="${size}" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
       // Bottom-right
-      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width - size}" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
-      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width}" y2="${rect.height - size}" stroke="${color}" stroke-width="2"/>`
+      `<line x1="${rect.width}" y1="${rect.height}" x2="${
+        rect.width - size
+      }" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
+      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width}" y2="${
+        rect.height - size
+      }" stroke="${color}" stroke-width="2"/>`,
     ];
 
     svg.innerHTML = lines.join("");
@@ -3032,7 +3113,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.injectedStyle.innerHTML = css;
   }
 
-
   stylerHighlightStlye(cn) {
     const colors = [
       "#FF637C",
@@ -3062,8 +3142,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const gradientStops = stops.join(", ");
 
     const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
-
-
 
     let css_ = `
 @keyframes sk_custom_hover_anim {
@@ -3102,7 +3180,6 @@ ${cn}{
   outline-color: #7872E0;
 }
 `;
-
 
     return css;
   }

@@ -60,7 +60,7 @@
       <div
         class="demo_event_card"
         data-sk="event"
-        data-sk-edit="Bg Bg2 Txt Txt2 Ps Pe"
+        data-sk-edit="Bg Bg2 Txt Txt2 Ps Pe Rtl Rtr"
       >
         <div class="demo_row">
           <span>text 21</span>
@@ -682,40 +682,37 @@
       return data;
     }
 
-
     function createCssStringCasino(skin) {
-    let res = ``;
+      let res = ``;
 
-    configOrderCasino.forEach((c, i) => {
+      configOrderCasino.forEach((c, i) => {
         let n = c.name.charAt(0).toUpperCase() + c.name.slice(1);
         let essence = verbalData(n);
         let value = verbalData(c.name);
 
         switch (c.name) {
-            case "overlay":
-                res += templateOverlay(essence, value, skin);
-                break;
-            case "signInButton":
-            case "depositButton":
-            case "button":
-            case "buttonSecondary":
-                res += templateButton(essence, value, skin);
-                break;
-            default:
-                res += templateFull(essence, value, skin);
-
+          case "overlay":
+            res += templateOverlay(essence, essence, skin);
+            break;
+          case "signInButton":
+          case "depositButton":
+          case "button":
+          case "buttonSecondary":
+            res += templateButton(essence, essence, skin);
+            break;
+          default:
+            res += templateFull(essence, essence, skin);
         }
-
 
         if (i !== configOrderCasino.length - 1) {
-            res += `\n\n`
+          res += `\n\n`;
         }
 
-        res += `\n`
-    });
+        res += `\n`;
+      });
 
-    return res;
-}
+      return res;
+    }
 
     function createCssString(skin) {
       let res = ``;
@@ -723,26 +720,19 @@
       configOrder.forEach((c, i) => {
         let essence = verbalData(c.name);
 
-        res += `    --${essence.nameG}: ${skin[essence.nameG]};\n`;
-        res += `    --${essence.nameBg}: ${skin[essence.nameBg]};\n`;
-        res += `    --${essence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-        res += `    --${essence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-        res += `    --${essence.nameBgHov}: ${skin[essence.nameBgHov]};\n`;
-        res += `    --${essence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`;
-        res += `    --${essence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`;
-        res += `    --${essence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-        res += `    --${essence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
-        res += `    --${essence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
-        res += `    --${essence.nameAccent}: ${skin[essence.nameAccent]};\n`;
-        res += `    --${essence.nameAccentTxt}: ${
-          skin[essence.nameAccentTxt]
-        };\n`;
-        res += `    --${essence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
-        res += `    --${essence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`;
-        res += `    --${essence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`;
-        res += `    --${essence.nameRadius}: ${skin[essence.nameRadius]}px;\n`;
-        res += `    --${essence.nameBorder}: ${skin[essence.nameBorder]};\n`;
-        res += `    --${essence.nameBorder2}: ${skin[essence.nameBorder2]};\n`;
+        switch (c.name) {
+          case "overlay":
+            res += templateOverlay(essence, essence, skin);
+            break;
+          case "signInButton":
+          case "depositButton":
+          case "button":
+          case "buttonSecondary":
+            res += templateButton(essence, essence, skin);
+            break;
+          default:
+            res += templateFull(essence, essence, skin);
+        }
 
         if (i !== configOrder.length - 1) {
           res += `\n\n`;
@@ -981,9 +971,9 @@
         let value = verbalData(c.name);
 
         if (c.name === "overlay") {
-          res += templateOverlay(essence, value, skin);
+          res += templateOverlay(value, value, skin);
         } else {
-          res += templateFull(essence, value, skin);
+          res += templateFull(value, value, skin);
         }
 
         if (i !== configOrderCasino.length - 1) {
@@ -1072,60 +1062,107 @@
       }
     }
 
-
     function templateFull(upperCaseEssence, essence, skin) {
-    let res = '';
-    res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`
-    res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`
-    res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`
-    res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`
-    res += `    --cw${upperCaseEssence.nameBgHov}: ${skin[essence.nameBgHov]};\n`
-    res += `    --cw${upperCaseEssence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`
-    res += `    --cw${upperCaseEssence.nameBg3Hov}: ${skin[essence.nameBg3Hov]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt3}: ${skin[essence.nameTxt3]};\n`
-    res += `    --cw${upperCaseEssence.nameAccent}: ${skin[essence.nameAccent]};\n`
-    res += `    --cw${upperCaseEssence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`
-    res += `    --cw${upperCaseEssence.nameRGBA}: ${skin[essence.nameRGBA]};\n`
-    res += `    --cw${upperCaseEssence.nameRGBA2}: ${skin[essence.nameRGBA2]};\n`
-    res += `    --cw${upperCaseEssence.nameRGBA3}: ${skin[essence.nameRGBA3]};\n`
-    res += `    --cw${upperCaseEssence.name}Shadow: ${skin[`${essence.name}Shadow`]};\n`
-    res += `    --cw${upperCaseEssence.name}ShadowFade: ${skin[`${essence.name}ShadowFade`]};\n`
-    res += `    --cw${upperCaseEssence.nameRadius}: ${skin[essence.nameRadius]}px;\n`
-    res += `    --cw${upperCaseEssence.nameBorder}: ${skin[essence.nameBorder]};`
+      let res = "";
+      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+        skin[essence.nameBgHov]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+        skin[essence.nameBg2Hov]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameBg3Hov}: ${
+        skin[essence.nameBg3Hov]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+        skin[essence.nameTxt2]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameTxt3}: ${
+        skin[essence.nameTxt3]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccent}: ${
+        skin[essence.nameAccent]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+        skin[essence.nameAccentTxt]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameRGBA}: ${
+        skin[essence.nameRGBA]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameRGBA2}: ${
+        skin[essence.nameRGBA2]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameRGBA3}: ${
+        skin[essence.nameRGBA3]
+      };\n`;
+      res += `    --cw${upperCaseEssence.name}Shadow: ${
+        skin[`${essence.name}Shadow`]
+      };\n`;
+      res += `    --cw${upperCaseEssence.name}ShadowFade: ${
+        skin[`${essence.name}ShadowFade`]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameRadius}: ${
+        skin[essence.nameRadius]
+      }px;\n`;
+      res += `    --cw${upperCaseEssence.nameBorder}: ${
+        skin[essence.nameBorder]
+      };`;
 
-    return res;
-}
+      return res;
+    }
 
-function templateOverlay(upperCaseEssence, essence, skin) {
-    let res = '';
-    res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`
-    res += `    --cw${upperCaseEssence.nameAccent}: ${skin[essence.nameAccent]};\n`
-    res += `    --cw${upperCaseEssence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`
-    res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
+    function templateOverlay(upperCaseEssence, essence, skin) {
+      let res = "";
+      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+        skin[essence.nameTxt2]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccent}: ${
+        skin[essence.nameAccent]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+        skin[essence.nameAccentTxt]
+      };\n`;
+      res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
 
-    return res;
-}
+      return res;
+    }
 
-function templateButton(upperCaseEssence, essence, skin) {
-    let res = '';
-    res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`
-    res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`
-    res += `    --cw${upperCaseEssence.nameBgHov}: ${skin[essence.nameBgHov]};\n`
-    res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`
-    res += `    --cw${upperCaseEssence.nameBg2Hov}: ${skin[essence.nameBg2Hov]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`
-    res += `    --cw${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`
-    res += `    --cw${upperCaseEssence.nameAccent}: ${skin[essence.nameAccent]};\n`
-    res += `    --cw${upperCaseEssence.nameAccentTxt}: ${skin[essence.nameAccentTxt]};\n`
-    res += `    --cw${upperCaseEssence.nameRadius}: ${skin[essence.nameRadius]}px;\n`
-    res += `    --cw${upperCaseEssence.nameBorder}: ${skin[essence.nameBorder]};`
+    function templateButton(upperCaseEssence, essence, skin) {
+      let res = "";
+      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+        skin[essence.nameBgHov]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+        skin[essence.nameBg2Hov]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+        skin[essence.nameTxt2]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccent}: ${
+        skin[essence.nameAccent]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+        skin[essence.nameAccentTxt]
+      };\n`;
+      res += `    --cw${upperCaseEssence.nameRadius}: ${
+        skin[essence.nameRadius]
+      }px;\n`;
+      res += `    --cw${upperCaseEssence.nameBorder}: ${
+        skin[essence.nameBorder]
+      };`;
 
-    return res;
-}
+      return res;
+    }
 
     function createCss(c) {
       let css = `

@@ -31,12 +31,12 @@
   padding: 2px 8px;
 }
 
-.demo_card>span {
+.demo_card > span {
   color: var(--eventTxt2);
   display: block;
 }
 
-.demo_button>strong {
+.demo_button > strong {
   color: var(--buttonTxt2);
 }
 
@@ -48,7 +48,7 @@
   height: 32px;
 }
 
-.demo_button>span {
+.demo_button > span {
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -64,18 +64,21 @@
   width: 100%;
 }
 
-.demo_button.variant_sec{
+.demo_button.variant_sec {
   background: var(--buttonSecondaryBg);
   color: var(--buttonSecondaryTxt);
 }
 
-.demo_button.variant_sec:hover{
+.demo_button.variant_sec:hover {
   background: var(--buttonSecondaryBgHover);
   color: var(--buttonSecondaryTxt);
 }
 
-
 .demo_event_card {
+  --eventRtl: 8px;
+  --eventRtr: 8px;
+  --eventRbl: 8px;
+  --eventRbr: 8px;
   --eventPs: 8px;
   --eventPe: 8px;
   --eventPt: 8px;
@@ -87,7 +90,10 @@
   padding-inline-end: var(--eventPe);
   padding-top: var(--eventPt);
   padding-bottom: var(--eventPb);
-  border-radius: 4px;
+  border-top-left-radius: var(--eventRtl);
+  border-top-right-radius: var(--eventRtr);
+  border-bottom-left-radius: var(--eventRbl);
+  border-bottom-right-radius: var(--eventRbr);
   height: auto;
   width: 250px;
   display: flex;
@@ -107,7 +113,6 @@
   border-radius: 50%;
 }
 
-
 .demo_event_card2 {
   background: var(--eventBg2);
   color: var(--eventTxt);
@@ -115,5 +120,4 @@
   border-radius: 4px;
   padding: 8px;
   height: 80px;
-
 }
