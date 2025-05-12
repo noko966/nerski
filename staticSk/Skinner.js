@@ -2511,11 +2511,11 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.addStylerSwitcher();
 
     this.stylerEditableProps = {
-      backgrounds: ["Bg", "BgHover", "Bg2", "Bg2Hover", "Bg3", "Bg3Hover"],
+      backgrounds: ["Bg", "BgHov", "Bg2", "Bg2Hov", "Bg3", "Bg3Hov"],
       texts: ["Txt", "Txt2", "Txt3"],
       accents: ["Accent", "AccentTxt"],
       borders: ["Border", "Border2"],
-      paddings: ["Ps", "Pt", "Pe", "Pb"],
+      paddings: ["paddingStart", "paddingTop", "paddingEnd", "paddingBottom"],
       corners: ["Rtl", "Rtr", "Rbl", "Rbr"],
       borderWidths: ["Wbs", "Wbt", "Wbe", "Wbb"],
     };
@@ -2534,7 +2534,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerUI.save = this.createBtn("save", "variant_styler", true);
     this.stylerUI.save.addEventListener("click", () => {
       this.stylerUiHide();
-      this.removeStylerPickersListeners();
+      this.destroyStylerPickers();
     });
 
     this.stylerUI.colorsControlWrapper = document.createElement("div");
@@ -2547,90 +2547,113 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
 
     this.stylerControls = {};
-    this.stylerControls.paddings = {};
-    this.stylerControls.borders = {};
-    this.stylerControls.corners = {};
-    this.createStylerPickers();
-    this.createStylerPaddings();
-    this.createStylerCorners();
+    // this.stylerControls.paddings = {};
+    // this.stylerControls.corners = {};
+    // this.stylerControls.borders = {};
+    // this.createStylerPickers();
+    // this.createStylerPaddings();
+    // this.createStylerCorners();
   }
 
-  stylerCreateState(selector, el) {
-    this.stylerSkin[selector] = {};
-    this.stylerSkin[selector].colors = {};
-    this.stylerSkin[selector].paddings = {};
-    this.stylerSkin[selector].corners = {};
-    this.stylerSkin[selector].borderWidths = {};
-    const computedStyles = getComputedStyle(el);
-    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
-    const essence = el.getAttribute("data-sk");
-    this.stylerSkin[selector].uniqueSelector = `${essence}`;
 
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-      ...this.stylerEditableProps.accents,
-      ...this.stylerEditableProps.borders,
+
+  stylerCreateState(target){
+    let _selector = this.stylerGetSelector(target);
+    const essence = target.getAttribute("data-sk");
+
+    const computedStyles = getComputedStyle(target);
+
+    this.stylerSkin[_selector] = {
+        essence: essence,
+        isColorsActive: true,
+        Bg: computedStyles.getPropertyValue(`--${essence}Bg`),
+        BgHov: computedStyles.getPropertyValue(`--${essence}Bg2Hover`),
+        Bg2: computedStyles.getPropertyValue(`--${essence}Bg2`),
+        Bg2Hov: computedStyles.getPropertyValue(`--${essence}Bg2Hover`),
+        Bg3: computedStyles.getPropertyValue(`--${essence}Bg3`),
+        Bg3Hov: computedStyles.getPropertyValue(`--${essence}Bg3Hover`),
+        Txt: computedStyles.getPropertyValue(`--${essence}Txt`),
+        Txt2: computedStyles.getPropertyValue(`--${essence}Txt2`),
+        Txt3: computedStyles.getPropertyValue(`--${essence}Txt3`),
+        Accent: computedStyles.getPropertyValue(`--${essence}Accent`),
+        AccentTxt: computedStyles.getPropertyValue(`--${essence}AccentTxt`),
+        isPaddingsActive: false,
+        paddingStart: parseFloat(computedStyles.paddingInlineStart),
+        paddingEnd: parseFloat(computedStyles.paddingInlineEnd),
+        paddingTop: parseFloat(computedStyles.paddingTop),
+        paddingBottom: parseFloat(computedStyles.paddingBottom),
+        isCornersActive:false,
+        cornerTopLeft: parseFloat(computedStyles.borderTopLeftRadius),
+        cornerTopRight: parseFloat(computedStyles.borderTopRightRadius),
+        cornerBottomLeft: parseFloat(computedStyles.borderBottomLeftRadius),
+        cornerBottomRight: parseFloat(computedStyles.borderBottomRightRadius),
+        isBordersActive:false,
+        borderStart: null,
+        borderEnd: null,
+        borderTop: null,
+        borderBottom: null,
+    };
+
+
+    
+  }
+
+  stylerUpdateControls(){
+    const activeSelectorId = this.stylerCurrentSelector;
+    const { backgrounds, texts, accents, borders, paddings } = this.stylerEditableProps;
+  
+    const all = [
+      ...backgrounds,
+      ...texts,
+      ...accents,
+      ...borders,
     ];
 
-    const paddingNamesArray = this.stylerEditableProps.paddings;
-    const cornerNamesArray = this.stylerEditableProps.corners;
-    const borderWidthsNamesArray = this.stylerEditableProps.borderWidths;
+    all.forEach(p => {
+      this.stylerControls.colors[p].style.background = this.stylerSkin[activeSelectorId][p]
+    })
 
-    pickerNamesArray.forEach((p) => {
-      if (props.includes(p)) {
-        this.stylerSkin[selector].colors[p] = computedStyles.getPropertyValue(
-          `--${essence}${p}`
-        );
-      }
-    });
-
-    paddingNamesArray.forEach((p) => {
-      if (props.includes(p)) {
-        const valueWithUnit = computedStyles.getPropertyValue(
-          `--${essence}${p}`
-        );
-        const numericValue = parseFloat(valueWithUnit);
-
-        this.stylerSkin[selector].paddings[p] = numericValue;
-      }
-    });
-
-    cornerNamesArray.forEach((p) => {
-      if (props.includes(p)) {
-        const valueWithUnit = computedStyles.getPropertyValue(
-          `--${essence}${p}`
-        );
-        const numericValue = parseFloat(valueWithUnit);
-
-        this.stylerSkin[selector].corners[p] = numericValue;
-      }
-    });
-
-    borderWidthsNamesArray.forEach((p) => {
-      if (props.includes(p)) {
-        this.stylerSkin[selector].borderWidths[p] =
-          computedStyles.getPropertyValue(`--${essence}${p}`);
-      }
-    });
+    paddings.forEach(p => {
+      this.stylerControls.paddings[p].range.value = this.stylerSkin[activeSelectorId][p]
+      this.stylerControls.paddings[p].input.value = this.stylerSkin[activeSelectorId][p]
+    })
   }
+
+
 
   stylerCreateCSS() {
     let css = "";
     for (const key in this.stylerSkin) {
       const s = this.stylerSkin[key];
       let block = `${key}{\n`;
-      Object.keys(s.colors).forEach(
-        (k) => (block += `--${s.uniqueSelector}${k}:${s.colors[k]};\n`)
-      );
 
-      Object.keys(s.paddings).forEach(
-        (k) => (block += `--${s.uniqueSelector}${k}:${s.paddings[k]}px;\n`)
-      );
+      block += `--${s.essence}Bg: ${s.Bg};\n`;
+      block += `--${s.essence}BgHover: ${s.BgHov};\n`;
+      block += `--${s.essence}Bg2: ${s.Bg2};\n`;
+      block += `--${s.essence}Bg2Hover: ${s.Bg2Hov};\n`;
+      block += `--${s.essence}Bg3: ${s.Bg3};\n`;
+      block += `--${s.essence}Bg3Hover: ${s.Bg3Hov};\n`;
 
-      Object.keys(s.corners).forEach(
-        (k) => (block += `--${s.uniqueSelector}${k}:${s.corners[k]}px;\n`)
-      );
+      block += `--${s.essence}Txt: ${s.Txt};\n`;
+      block += `--${s.essence}Txt2: ${s.Txt2};\n`;
+      block += `--${s.essence}Txt3: ${s.Txt3};\n`;
+
+      block += `--${s.essence}Accent: ${s.Accent};\n`;
+      block += `--${s.essence}AccentTxt: ${s.AccentTxt};\n`;
+
+
+
+      block += `--${s.essence}PaddingStart: ${s.paddingStart}px;\n`;
+      block += `--${s.essence}PaddingEnd: ${s.PaddingEnd}px;\n`;
+      block += `--${s.essence}PaddingTop: ${s.PaddingTop}px;\n`;
+      block += `--${s.essence}PaddingBottom: ${s.PaddingBottom}px;\n`;
+
+
+      block += `padding-inline-start: var(--${s.essence}PaddingStart);\n`;
+      block += `padding-inline-end: var(--${s.essence}PaddingEnd);\n`;
+      block += `padding-top: var(--${s.essence}PaddingTop);\n`;
+      block += `padding-bottom: var(--${s.essence}PaddingBottom);\n`;
+     
       block += "}\n";
       css += block;
     }
@@ -2642,131 +2665,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     return css;
   }
 
-  updateStylerPickers(selector, el) {
-    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-      ...this.stylerEditableProps.accents,
-      ...this.stylerEditableProps.borders,
-    ];
-    const paddingNamesArray = this.stylerEditableProps.paddings;
-    const cornerNamesArray = this.stylerEditableProps.corners;
-
-    pickerNamesArray.forEach((pn) => {
-      this.stylerControls.colors[pn].parentElement.classList.remove(
-        "state_active"
-      );
-      if (props.includes(pn)) {
-        const color = this.stylerSkin[selector].colors[pn];
-        this.stylerControls.colors[pn].style.background = color;
-        this.stylerControls.colors[pn].parentElement.classList.add(
-          "state_active"
-        );
-
-        // Store listener so it can be removed later
-        const listener = (evt) => {
-          this.handlePicker(evt, color, null, (color) => {
-            const _color = color.toHEXA().toString();
-            this.stylerSkin[selector].colors[pn] = _color;
-            this.stylerCreateCSS();
-            this.stylerControls.colors[pn].style.background = _color;
-          });
-        };
-
-        this.stylerControls.colors[pn]._listener = listener;
-        this.stylerControls.colors[pn].addEventListener("click", listener);
-      }
-    });
-
-    paddingNamesArray.forEach((pn) => {
-      this.stylerControls.paddings[
-        pn
-      ].parentElement.parentElement.classList.remove("state_active");
-      if (props.includes(pn)) {
-        const _value = this.stylerSkin[selector].paddings[pn];
-        this.stylerControls.paddings[pn].value = _value;
-        this.stylerControls.paddings[
-          pn
-        ].parentElement.parentElement.classList.add("state_active");
-
-        // Store listener so it can be removed later
-        const listener = (evt) => {
-          const _value = evt.target.value;
-          this.stylerSkin[selector].paddings[pn] = _value;
-          this.stylerCreateCSS();
-          this.stylerControls.paddings[pn].value = _value;
-        };
-
-        this.stylerControls.paddings[pn]._listener = listener;
-        this.stylerControls.paddings[pn].addEventListener("input", listener);
-      }
-    });
-
-    cornerNamesArray.forEach((cn) => {
-      this.stylerControls.corners[
-        cn
-      ].parentElement.parentElement.classList.remove("state_active");
-      if (props.includes(cn)) {
-        const _value = this.stylerSkin[selector].corners[cn];
-        this.stylerControls.corners[cn].value = _value;
-        this.stylerControls.corners[
-          cn
-        ].parentElement.parentElement.classList.add("state_active");
-
-        // Store listener so it can be removed later
-        const listener = (evt) => {
-          const _value = evt.target.value;
-          this.stylerSkin[selector].corners[cn] = _value;
-          this.stylerCreateCSS();
-          this.stylerControls.corners[cn].value = _value;
-        };
-
-        this.stylerControls.corners[cn]._listener = listener;
-        this.stylerControls.corners[cn].addEventListener("input", listener);
-      }
-    });
-  }
-
-  removeStylerPickersListeners() {
-    const props =
-      this.stylerState.activeTarget.getAttribute("data-sk-edit")?.split(" ") ||
-      [];
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-      ...this.stylerEditableProps.accents,
-      ...this.stylerEditableProps.borders,
-    ];
-
-    const paddingNamesArray = this.stylerEditableProps.paddings;
-    const cornerNamesArray = this.stylerEditableProps.corners;
-
-    pickerNamesArray.forEach((pn) => {
-      const el = this.stylerControls.colors[pn];
-      if (props.includes(pn) && el._listener) {
-        el.style.background = "";
-        el.removeEventListener("click", el._listener);
-        delete el._listener;
-      }
-    });
-
-    paddingNamesArray.forEach((pn) => {
-      const el = this.stylerControls.paddings[pn];
-      if (props.includes(pn) && el._listener) {
-        el.removeEventListener("input", el._listener);
-        delete el._listener;
-      }
-    });
-
-    cornerNamesArray.forEach((pn) => {
-      const el = this.stylerControls.corners[pn];
-      if (props.includes(pn) && el._listener) {
-        el.removeEventListener("input", el._listener);
-        delete el._listener;
-      }
-    });
-  }
 
   createStylerCorners() {
     const root = this.stylerUI.colorsControlWrapper;
@@ -2801,13 +2699,46 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     root.appendChild(group);
   }
 
+
+  modifyStylerKey(key, value){
+    let self = this;
+    self.stylerSkin[this.stylerCurrentSelector][key] = value;
+    self.stylerUpdateControls();
+    self.stylerCreateCSS();
+  }
+
   createStylerPaddings() {
     const root = this.stylerUI.colorsControlWrapper;
+
+    const chb = this.createCheckBox("stylerPadding");
+    const isPaddingsEnabledChb = chb.checkbox;
+
+    const onEnableChange = function (e) {
+      checkboxCallback(e);
+      t.modifyKey(
+        verbalData.nameBg,
+        tinycolor(t[verbalData.nameBg].picker.style.background).toHexString()
+      );
+    };
+
+    isPaddingsEnabledChb.addEventListener("change", onEnableChange);
+
+    this.eventListeners.push({
+      element: isPaddingsEnabledChb,
+      type: "change",
+      listener: onEnableChange,
+    });
 
     const paddingNamesArray = this.stylerEditableProps.paddings;
 
     const group = document.createElement("div");
-    group.className = "sk_styler_ui_control_group variant_paddings";
+    group.className = "";
+
+    const layout = document.createElement("div");
+    layout.className = "sk_styler_ui_control_group variant_paddings";
+
+    group.appendChild(chb.label);
+    group.appendChild(layout);
 
     paddingNamesArray.forEach((pn) => {
       this.stylerControls.paddings[pn] = document.createElement("input");
@@ -2827,7 +2758,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
       wrapper.appendChild(inputWrapper);
 
-      group.appendChild(wrapper);
+      layout.appendChild(wrapper);
     });
 
     root.appendChild(group);
@@ -2849,88 +2780,145 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     };
   }
 
-  createStylerPickers() {
+  createInputsWrapper(l) {
+    const root = document.createElement("div");
+    root.className = "sk_styler_ui_control_group variant_padding";
+    const label = document.createElement("div");
+    label.className = "sk_styler_ui_control_group label";
+    label.innerText = l || "colors";
+    const wrapper = document.createElement("div");
+    wrapper.className = "sk_styler_ui_paddings_wrapper";
+    root.appendChild(label);
+    root.appendChild(wrapper);
+    return {
+      root: root,
+      wrapper: wrapper,
+    };
+  }
+
+  createStylerPickers(selector) {
+    const self = this;
     const root = this.stylerUI.colorsControlWrapper;
+    this.destroyStylerPickers(); // Ensure cleanup before creating
+  
     this.stylerControls.colors = {};
-
-    const backgrounds = this.stylerEditableProps.backgrounds;
-    const texts = this.stylerEditableProps.texts;
-    const accents = this.stylerEditableProps.accents;
-    const borders = this.stylerEditableProps.borders;
-
+    this.stylerControls.paddings = {};
+  
+    const { backgrounds, texts, accents, borders, paddings } = this.stylerEditableProps;
+  
     const backgroundsWrapper = this.createPickersWrapper("background's");
-    const foregroundsWrapper = this.createPickersWrapper("text's");
+    const textsWrapper = this.createPickersWrapper("text's");
     const accentsWrapper = this.createPickersWrapper("accent's");
     const bordersWrapper = this.createPickersWrapper("border's");
 
-    backgrounds.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
+    const paddingsWrapper = this.createInputsWrapper("paddings's");
 
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-      backgroundsWrapper.wrapper.appendChild(wrapper);
+  
+    const all = [
+      { list: backgrounds, wrapper: backgroundsWrapper },
+      { list: texts, wrapper: textsWrapper },
+      { list: accents, wrapper: accentsWrapper },
+      { list: borders, wrapper: bordersWrapper },
+    ];
+  
+    all.forEach(({ list, wrapper }) => {
+      list.forEach((pn) => {
+        const el = document.createElement("div");
+        el.className = "sk_picker_trigger";
+  
+        const wrapperEl = document.createElement("div");
+        wrapperEl.className = "sk_styler_ui_control";
+        wrapperEl.appendChild(el);
+  
+        wrapper.wrapper.appendChild(wrapperEl);
+        this.stylerControls.colors[pn] = el;
+  
+        const color = this.stylerSkin[selector][pn];
+  
+        const listener = (evt) => {
+          this.handlePicker(evt, color, null, (color) => {
+            const _color = color.toHEXA().toString();
+            self.modifyStylerKey(pn, _color);
+          });
+        };
+  
+        el._listener = listener;
+        el.addEventListener("click", listener);
+      });
     });
 
-    accents.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
 
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-      accentsWrapper.wrapper.appendChild(wrapper);
-    });
-
-    borders.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-      bordersWrapper.wrapper.appendChild(wrapper);
-    });
-
-    texts.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-      foregroundsWrapper.wrapper.appendChild(wrapper);
-    });
-
+  
     root.appendChild(backgroundsWrapper.root);
-    root.appendChild(foregroundsWrapper.root);
+    root.appendChild(textsWrapper.root);
     root.appendChild(accentsWrapper.root);
+    root.appendChild(bordersWrapper.root);
+    root.appendChild(paddingsWrapper.root);
+
+    paddings.forEach(p => {
+      const padControl = this.createDiv(
+        "sk_styler_ui_control variant_padding"
+      );
+      const range = document.createElement("input");
+      range.type = "range";
+      range.min = 0;
+      range.max = 100;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.className = "sk_input_text";
+
+      const onRangeInput = function (e) {
+        range.value = e.target.value;
+        self.modifyStylerKey(p, e.target.value);
+      };
+
+
+      this.stylerControls.paddings[p] = {
+        range: range,
+        input: input,
+      }
+
+      const onInputInput = function (e) {
+        input.value = e.target.value;
+        self.modifyStylerKey(p, e.target.value);
+      };
+
+
+      range._listener = onRangeInput;
+      range.addEventListener("input", onRangeInput);
+
+      input._listener = onInputInput;
+      input.addEventListener("input", onInputInput);
+
+      padControl.appendChild(range);
+      padControl.appendChild(input);
+      paddingsWrapper.wrapper.appendChild(padControl);
+
+    })
+
+
+
+
   }
+
+
+  destroyStylerPickers() {
+    const colors = this.stylerControls.colors || {};
+  
+    Object.values(colors).forEach((el) => {
+      if (el._listener) {
+        el.removeEventListener("click", el._listener);
+        delete el._listener;
+      }
+    });
+  
+    this.stylerControls.colors = {};
+  
+    if (this.stylerUI?.colorsControlWrapper) {
+      this.stylerUI.colorsControlWrapper.innerHTML = "";
+    }
+  }
+
 
   stylerUiShow() {
     this.stylerStop();
@@ -3094,9 +3082,13 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         this.stylerState.activeTarget = target;
         this.stylerState.activeSelector = selector;
 
-        this.stylerCreateState(selector, target);
+
         this.stylerCurrentSelector = selector;
-        this.updateStylerPickers(selector, target);
+        this.stylerCreateState(target);
+        this.createStylerPickers(selector);
+        this.stylerUpdateControls();
+
+        // this.stylerCreateControls();
       }
     }
   }

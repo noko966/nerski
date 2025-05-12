@@ -891,77 +891,6 @@
       return data;
     }
 
-    function templateFull(upperCaseEssence, essence, skin) {
-      let res = "";
-      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-      res += `    --cw${upperCaseEssence.nameBgHov}: ${
-        skin[essence.nameBgHov]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
-        skin[essence.nameBg2Hov]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameBg3Hov}: ${
-        skin[essence.nameBg3Hov]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
-        skin[essence.nameTxt2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt3}: ${
-        skin[essence.nameTxt3]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
-        skin[essence.nameAccent]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
-        skin[essence.nameAccentTxt]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA}: ${
-        skin[essence.nameRGBA]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA2}: ${
-        skin[essence.nameRGBA2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA3}: ${
-        skin[essence.nameRGBA3]
-      };\n`;
-      res += `    --cw${upperCaseEssence.name}Shadow: ${
-        skin[`${essence.name}Shadow`]
-      };\n`;
-      res += `    --cw${upperCaseEssence.name}ShadowFade: ${
-        skin[`${essence.name}ShadowFade`]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameRadius}: ${
-        skin[essence.nameRadius]
-      }px;\n`;
-      res += `    --cw${upperCaseEssence.nameBorder}: ${
-        skin[essence.nameBorder]
-      };`;
-
-      return res;
-    }
-
-    function templateOverlay(upperCaseEssence, essence, skin) {
-      let res = "";
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
-        skin[essence.nameTxt2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
-        skin[essence.nameAccent]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
-        skin[essence.nameAccentTxt]
-      };\n`;
-      res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
-
-      return res;
-    }
-
     function createCssStringCasino(skin) {
       let res = ``;
 
@@ -1064,51 +993,51 @@
 
     function templateFull(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+      res += `    --${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+      res += `    --${upperCaseEssence.nameBgHov}: ${
         skin[essence.nameBgHov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+      res += `    --${upperCaseEssence.nameBg2Hov}: ${
         skin[essence.nameBg2Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg3Hov}: ${
+      res += `    --${upperCaseEssence.nameBg3Hov}: ${
         skin[essence.nameBg3Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${
         skin[essence.nameTxt2]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt3}: ${
+      res += `    --${upperCaseEssence.nameTxt3}: ${
         skin[essence.nameTxt3]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA}: ${
+      res += `    --${upperCaseEssence.nameRGBA}: ${
         skin[essence.nameRGBA]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA2}: ${
+      res += `    --${upperCaseEssence.nameRGBA2}: ${
         skin[essence.nameRGBA2]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA3}: ${
+      res += `    --${upperCaseEssence.nameRGBA3}: ${
         skin[essence.nameRGBA3]
       };\n`;
-      res += `    --cw${upperCaseEssence.name}Shadow: ${
+      res += `    --${upperCaseEssence.name}Shadow: ${
         skin[`${essence.name}Shadow`]
       };\n`;
-      res += `    --cw${upperCaseEssence.name}ShadowFade: ${
+      res += `    --${upperCaseEssence.name}ShadowFade: ${
         skin[`${essence.name}ShadowFade`]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRadius}: ${
+      res += `    --${upperCaseEssence.nameRadius}: ${
         skin[essence.nameRadius]
       }px;\n`;
-      res += `    --cw${upperCaseEssence.nameBorder}: ${
+      res += `    --${upperCaseEssence.nameBorder}: ${
         skin[essence.nameBorder]
       };`;
 
@@ -1117,47 +1046,47 @@
 
     function templateOverlay(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${
         skin[essence.nameTxt2]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
+      res += `    --overlayBlur: ${skin.overlayBlur}px;`;
 
       return res;
     }
 
     function templateButton(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+      res += `    --${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameBgHov}: ${
         skin[essence.nameBgHov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+      res += `    --${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --${upperCaseEssence.nameBg2Hov}: ${
         skin[essence.nameBg2Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${
         skin[essence.nameTxt2]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRadius}: ${
+      res += `    --${upperCaseEssence.nameRadius}: ${
         skin[essence.nameRadius]
       }px;\n`;
-      res += `    --cw${upperCaseEssence.nameBorder}: ${
+      res += `    --${upperCaseEssence.nameBorder}: ${
         skin[essence.nameBorder]
       };`;
 
