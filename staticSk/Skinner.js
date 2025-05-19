@@ -2878,7 +2878,13 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     // const paddingNamesArray = this.stylerEditableProps.paddings;
 
     const group = document.createElement("div");
-    group.className = "sk_styler_ui_control_group variant_paddings";
+    group.className = "";
+
+    const layout = document.createElement("div");
+    layout.className = "sk_styler_ui_control_group variant_paddings";
+
+    group.appendChild(chb.label);
+    group.appendChild(layout);
 
     paddingNamesArray.forEach((pn) => {
       this.stylerControls.paddings[pn] = document.createElement("input");
@@ -2898,7 +2904,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
       wrapper.appendChild(inputWrapper);
 
-      group.appendChild(wrapper);
+      layout.appendChild(wrapper);
     });
 
     root.appendChild(group);
@@ -2920,22 +2926,35 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     };
   }
 
+  createInputsWrapper(l) {
+    const root = document.createElement("div");
+    root.className = "sk_styler_ui_control_group variant_padding";
+    const label = document.createElement("div");
+    label.className = "sk_styler_ui_control_group label";
+    label.innerText = l || "colors";
+    const wrapper = document.createElement("div");
+    wrapper.className = "sk_styler_ui_paddings_wrapper";
+    root.appendChild(label);
+    root.appendChild(wrapper);
+    return {
+      root: root,
+      wrapper: wrapper,
+    };
+  }
+
   createStylerPickers() {
     const root = this.stylerUI.colorsControlWrapper;
     this.stylerControls.colors = {};
 
     const backgrounds = this.stylerEditableProps.backgrounds;
     const texts = this.stylerEditableProps.texts;
-    // const borders = this.stylerEditableProps.borders;
 
     const backgroundsWrapper = this.createPickersWrapper("background's");
-    const foregroundsWrapper = this.createPickersWrapper("text's");
-    // const accentsWrapper = this.createPickersWrapper("accent's");
-    // const bordersWrapper = this.createPickersWrapper("border's");
+    const textsWrapper = this.createPickersWrapper("text's");
 
     backgrounds.forEach((pn) => {
       this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
+      this.stylerControls.colors[pn].className = "sk_picker_trigger";
 
       const label = document.createElement("div");
       label.className = "sk_styler_ui_control_label";
@@ -2943,31 +2962,14 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
       const wrapper = document.createElement("div");
       wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
+
       backgroundsWrapper.wrapper.appendChild(wrapper);
     });
 
-    // borders.forEach((pn) => {
-    //   this.stylerControls.colors[pn] = document.createElement("div");
-    //   this.stylerControls.colors[pn].className = "sk_picker_trigger ";
-
-    //   const label = document.createElement("div");
-    //   label.className = "sk_styler_ui_control_label";
-    //   label.innerText = pn;
-
-    //   const wrapper = document.createElement("div");
-    //   wrapper.className = "sk_styler_ui_control";
-
-    //   // wrapper.appendChild(label);
-    //   wrapper.appendChild(this.stylerControls.colors[pn]);
-    //   bordersWrapper.wrapper.appendChild(wrapper);
-    // });
-
     texts.forEach((pn) => {
       this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger ";
+      this.stylerControls.colors[pn].className = "sk_picker_trigger";
 
       const label = document.createElement("div");
       label.className = "sk_styler_ui_control_label";
@@ -2975,15 +2977,30 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
       const wrapper = document.createElement("div");
       wrapper.className = "sk_styler_ui_control";
-
-      // wrapper.appendChild(label);
       wrapper.appendChild(this.stylerControls.colors[pn]);
-      foregroundsWrapper.wrapper.appendChild(wrapper);
+
+      textsWrapper.wrapper.appendChild(wrapper);
     });
 
     root.appendChild(backgroundsWrapper.root);
-    root.appendChild(foregroundsWrapper.root);
-    // root.appendChild(accentsWrapper.root);
+    root.appendChild(textsWrapper.root);
+  }
+
+  destroyStylerPickers() {
+    const colors = this.stylerControls.colors || {};
+
+    Object.values(colors).forEach((el) => {
+      if (el._listener) {
+        el.removeEventListener("click", el._listener);
+        delete el._listener;
+      }
+    });
+
+    this.stylerControls.colors = {};
+
+    if (this.stylerUI?.colorsControlWrapper) {
+      this.stylerUI.colorsControlWrapper.innerHTML = "";
+    }
   }
 
   stylerUiShow() {
@@ -3200,9 +3217,11 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
         this.stylerState.activeSelector = selector;
 
-        this.stylerCreateState(selector, target);
         this.stylerCurrentSelector = selector;
-        this.updateStylerPickers(selector, target);
+        this.stylerCreateState(selector, target);
+        this.createStylerPickers(selector);
+
+        // this.stylerCreateControls();
       }
     }
   }
