@@ -1,0 +1,35 @@
+#sport-latino-view,
+:host:host,
+.dg_bs_root_holder {
+  --background_1: #1a2c38;
+  --background_2: #192a39;
+  --background_3: #173a5a;
+  --background_4: #15202d;
+  --background_5: #153a5b;
+  --background_6: #1a2737;
+  --background_rgba: #1a283844;
+  --text_1: #ffffff;
+  --text_2: rgba(255, 255, 255, 0.6);
+  --text_3: rgba(255, 255, 255, 0.4);
+  --accent_1: #0072ed;
+  --accent_1_txt: #fff;
+  --accent_2: #00acff;
+  --accent_2_txt: #fff;
+  --accent_3: #0072ed;
+  --accent_3_txt: #fff;
+
+  --oddG: var(--background_5);
+  --oddBg: var(--background_5);
+  --oddBg2: var(--background_5);
+  --oddBg3: var(--background_5);
+  --oddBgHover: var(--background_5);
+  --oddBg2Hover: var(--background_5);
+  --oddBg3Hover: var(--background_5);
+  --oddTxt: var(--text_1);
+  --oddTxt2: var(--text_2);
+  --oddTxt3: var(--text_3);
+  --oddAccent: var(--text_1);
+  --oddAccentTxt: var(--background_5);
+  --oddRadius: 2px;
+  --oddBorder: var(--background_5);
+}
