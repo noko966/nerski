@@ -1,0 +1,16 @@
+div.ms_root, :host:host, .dg_bs_root_holder {
+  --background_1: #15202d;
+  --background_2: #202d3c;
+  --background_3: #19293a;
+  --background_4: #1f2f42;
+  --background_rgba: #1f2f4244;
+  --text_1: #ffffff;
+  --text_2: rgba(255, 255, 255, 0.6);
+  --text_3: rgba(255, 255, 255, 0.4);
+  --accent_1: #0072ed;
+  --accent_1_txt: #fff;
+  --accent_2: #EB3675;
+  --accent_2_txt: #fff;
+  --accent_3: #06B081;
+  --accent_3_txt: #fff;
+}
