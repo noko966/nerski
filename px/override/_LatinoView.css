@@ -1,0 +1,17 @@
+#sport-latino-view, :host:host, .dg_bs_root_holder {
+  --background_1: #292c31;
+  --background_2: #454851;
+  --background_3: #30343e;
+  --background_4: #3d4049;
+  --background_rgba: #3d404944;
+  --text_1: #ffffff;
+  --text_2: rgba(255, 255, 255, 0.6);
+  --text_3: rgba(255, 255, 255, 0.4);
+  
+  --accent_1: #3a8eab;
+  --accent_1_txt: #fff;
+  --accent_2: #F91C24;
+  --accent_2_txt: #fff;
+  --accent_3: #06B081;
+  --accent_3_txt: #fff;
+}

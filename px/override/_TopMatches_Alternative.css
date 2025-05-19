@@ -1,0 +1,18 @@
+:host:host, .jackpot_root_variables, .dg-tm-app-wrapper, .dgw_event_widget_wrapper, .dg_bs_root_holder {
+  --background_1: #eef1f4;
+  --background_2: #f9f9f9;
+  --background_3: #dee5ed;
+  --background_4: #ffffff;
+  --background_rgba: #eef1f444;
+
+  --text_1: #000;
+  --text_2: rgba(0, 0, 0, 0.6);
+  --text_3: rgba(0, 0, 0, 0.4);
+  
+  --accent_1: #3a8eab;
+  --accent_1_txt: #fff;
+  --accent_2: #F91C24;
+  --accent_2_txt: #fff;
+  --accent_3: #06B081;
+  --accent_3_txt: #fff;
+}
