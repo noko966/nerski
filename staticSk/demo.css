@@ -3,9 +3,11 @@
   color: var(--bodyTxt);
   height: 100%;
   display: flex;
-  column-gap: 12px;
+  flex-direction: column;
+  row-gap: 12px;
   padding: 16px;
   align-items: flex-start;
+  align-items: stretch;
 }
 
 .demo_item {
@@ -120,4 +122,145 @@
   border-radius: 4px;
   padding: 8px;
   height: 80px;
+}
+
+.tg__match_header {
+  background: var(--headerG);
+  color: var(--headerTxt2);
+  border-bottom: 1px solid var(--headerBorder);
+  border-top-left-radius: var(--headerRadius);
+  border-top-right-radius: var(--headerRadius);
+}
+
+.tg__match_header {
+  height: 44px;
+  position: relative;
+}
+.tg--cp {
+  cursor: pointer;
+}
+.tg--pad-16 {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.tg--align-center {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.tg-flex-grow {
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  min-width: 1px;
+}
+.tg--flex,
+.tg_flex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.tg__match_item {
+  --yg: 1px;
+  --sep-bg: var(--headerBorder);
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.tg__match_header {
+  --Bg1: var(--headerG);
+  --Txt1: var(--headerTxt);
+  --Txt2: var(--headerTxt2);
+  --Txt3: var(--headerTxt3);
+  --xtr: var(--headerRadius);
+  --Border: 0;
+  --BorderColor: var(--Bg1);
+  background: var(--Bg1);
+  color: var(--Txt1);
+  border-bottom: var(--Border) solid var(--BorderColor);
+  border-top-left-radius: var(--xr);
+  border-top-right-radius: var(--xr);
+  column-gap: 8px;
+}
+
+.tg__match_header > .tg-ico-fav {
+  color: var(--Txt1);
+}
+.tg__match_header > .tg-ico-arrow {
+  color: var(--Txt2);
+}
+.tg__match_header > .tg__teams {
+  color: var(--Txt2);
+}
+.tg__match_header > .tg__cashout {
+  color: var(--Txt4);
+}
+
+.tg__match_header.state_liked {
+  --Txt1: var(--headerTxt2);
+}
+.tg__match_header.state_switched {
+  --Txt1: var(--headerTxt2);
+}
+
+.odCnt {
+  gap: 8px;
+}
+.tg__match_item_stake {
+  padding: 8px 16px;
+  width: 50%;
+  text-decoration: none;
+}
+
+.tg__match_item_stake > span {
+  color: var(--Txt1);
+}
+.tg__stake_2 {
+  width: 50%;
+}
+
+.l_od,
+.l_od_empty {
+  --Bg1: var(--oddG);
+  --Txt1: var(--oddTxt);
+  background: var(--Bg1);
+  color: var(--Txt1);
+  border: 1px solid var(--oddBorder);
+  border-radius: var(--oddRadius);
+}
+.l_od,
+.l_od_empty,
+.l_od_empty_argument {
+  width: 56px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 2px;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  flex-shrink: 0;
+  flex-grow: 0;
+  cursor: pointer;
+  -moz-transition: background-color 0.3s, color 0.3s;
+  -webkit-transition: background-color 0.3s ease, color 0.3s;
+  transition: all 0.3s ease, color 0.3s;
+}
+
+.tg__match_items_list {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  row-gap: 8px;
+  width: 400px;
+}
+
+.matchListWrapper {
+  --Bg1: var(--headerG);
+  --Txt1: var(--headerTxt);
+  background: var(--Bg1);
+  color: var(--Txt1);
 }

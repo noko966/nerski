@@ -2507,10 +2507,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
   initStyler(target) {
     this.stylerSkin = {};
-
     this.stylerState.target = target;
-    this.stylerState.activeSubState = "default";
-
     this.addStylerSwitcher();
 
     this.stylerEditableProps = {
@@ -2522,7 +2519,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       sepBg: ["Bg1"],
     };
     this.createHighlighterSVG();
-    this.stylerEditableProps.borders = ["Border", "BorderColor"];
 
     this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
     this.stylerClickHandler = this.stylerClickHandler.bind(this);
@@ -2538,12 +2534,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.stylerUI.save.addEventListener("click", () => {
       this.stylerUiHide();
       this.removeStylerPickersListeners();
-      this.clearStateClasses(this.stylerState.activeTarget);
-    });
-
-    this.stylerUI.reset = this.createBtn("reset", "variant_styler", true);
-    this.stylerUI.reset.addEventListener("click", () => {
-      this.resetStylerState();
     });
 
     this.stylerUI.colorsControlWrapper = document.createElement("div");
@@ -2552,8 +2542,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     this.stylerUI.root.appendChild(this.stylerUI.colorsControlWrapper);
     this.toolboxWrapper.appendChild(this.stylerUI.root);
-    this.stylerUI.actionsWrapper.appendChild(this.stylerUI.reset);
-
     this.stylerUI.actionsWrapper.appendChild(this.stylerUI.save);
     this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
 
@@ -2562,14 +2550,16 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     // this.stylerControls.borders = {};
     this.stylerControls.corners = {};
     this.createStylerPickers();
-    this.createStylerBorders();
-
     // this.createStylerPaddings();
     // this.createStylerCorners();
   }
 
   stylerCreateState(selector, el) {
     this.stylerSkin[selector] = {};
+    this.stylerSkin[selector].colors = {};
+    this.stylerSkin[selector].paddings = {};
+    this.stylerSkin[selector].corners = {};
+    this.stylerSkin[selector].borderWidths = {};
     const computedStyles = getComputedStyle(el);
     const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
     const essence = el.getAttribute("data-sk");
@@ -2578,90 +2568,77 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const pickerNamesArray = [
       ...this.stylerEditableProps.backgrounds,
       ...this.stylerEditableProps.texts,
+      // ...this.stylerEditableProps.sepBg,
     ];
 
-    const states = el.getAttribute("data-sk-state")?.split(" ") || ["default"];
-    states.forEach((state) => {
-      this.stylerSkin[selector][state] = {
-        colors: {},
-        borders: {},
-      };
+    // const paddingNamesArray = this.stylerEditableProps.paddings;
+    // const cornerNamesArray = this.stylerEditableProps.corners;
+    const borderWidthsNamesArray = this.stylerEditableProps.sepW;
 
-      pickerNamesArray.forEach((p) => {
-        if (props.includes(p)) {
-          this.stylerSkin[selector][state].colors[p] =
-            computedStyles.getPropertyValue(`--${p}`);
-        }
-      });
-
-      this.stylerEditableProps.borders.forEach((p) => {
-        if (props.includes(p)) {
-          this.stylerSkin[selector][state].borders[p] =
-            computedStyles.getPropertyValue(`--${p}`);
-        }
-      });
+    pickerNamesArray.forEach((p) => {
+      if (props.includes(p)) {
+        this.stylerSkin[selector].colors[p] = computedStyles.getPropertyValue(
+          `--${p}`
+        );
+      }
     });
+
+    // paddingNamesArray.forEach((p) => {
+    //   if (props.includes(p)) {
+    //     const valueWithUnit = computedStyles.getPropertyValue(
+    //       `--${essence}${p}`
+    //     );
+    //     const numericValue = parseFloat(valueWithUnit);
+
+    //     this.stylerSkin[selector].paddings[p] = numericValue;
+    //   }
+    // });
+
+    // cornerNamesArray.forEach((p) => {
+    //   if (props.includes(p)) {
+    //     const valueWithUnit = computedStyles.getPropertyValue(
+    //       `--${essence}${p}`
+    //     );
+    //     const numericValue = parseFloat(valueWithUnit);
+
+    //     this.stylerSkin[selector].corners[p] = numericValue;
+    //   }
+    // });
+
+    // borderWidthsNamesArray.forEach((p) => {
+    //   if (props.includes(p)) {
+    //     this.stylerSkin[selector].borderWidths[p] =
+    //       computedStyles.getPropertyValue(`--${essence}${p}`);
+    //   }
+    // });
   }
 
   stylerCreateCSS() {
     let css = "";
+    for (const key in this.stylerSkin) {
+      const s = this.stylerSkin[key];
+      let block = `${key}{\n`;
 
-    for (const selector in this.stylerSkin) {
-      const skin = this.stylerSkin[selector];
+      Object.keys(s.colors).forEach(
+        (k) => (block += `--${k}:${s.colors[k]};\n`)
+      );
 
-      for (const state in skin) {
-        if (["uniqueSelector"].includes(state)) continue;
+      // Object.keys(s.paddings).forEach(
+      //   (k) => (block += `--${s.uniqueSelector}${k}:${s.paddings[k]}px;\n`)
+      // );
 
-        const colors = skin[state]?.colors || {};
-        const borders = skin[state]?.borders || {};
-
-        let ruleSelector;
-        if (state === "default") {
-          ruleSelector = selector;
-        } else if (state === "hover") {
-          ruleSelector = `${selector}:hover`;
-        } else {
-          ruleSelector = `${selector}.${state}`;
-        }
-
-        let block = `${ruleSelector} {\n`;
-
-        Object.entries(colors).forEach(([key, value]) => {
-          block += `\t--${key}: ${value};\n`;
-        });
-
-        Object.entries(borders).forEach(([key, value]) => {
-          block += `\t--${key}: ${value};\n`;
-        });
-
-        block += `}\n`;
-        css += block;
-      }
+      // Object.keys(s.corners).forEach(
+      //   (k) => (block += `--${s.uniqueSelector}${k}:${s.corners[k]}px;\n`)
+      // );
+      block += "}\n";
+      css += block;
     }
 
     this.skin.stylerCSS = css;
+
     this.cssCb(this.skin);
 
     return css;
-  }
-
-  resetStylerState() {
-    const selector = this.stylerState.activeSelector;
-    const el = this.stylerState.activeTarget;
-    if (!selector || !el) return;
-
-    delete this.stylerSkin[selector];
-
-    this.clearStateClasses(el);
-
-    this.stylerState.activeSubState = "default";
-    const stateAttr = el.getAttribute("data-sk-state") || "default";
-    this.stylerState.availableSubStates = stateAttr.split(" ");
-
-    this.stylerCreateState(selector, el);
-    this.createStateSwitcher();
-    this.updateStylerPickers(selector, el);
-    this.stylerCreateCSS();
   }
 
   updateStylerPickers(selector, el) {
@@ -2669,102 +2646,83 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     const pickerNamesArray = [
       ...this.stylerEditableProps.backgrounds,
       ...this.stylerEditableProps.texts,
+      // ...this.stylerEditableProps.sepBg,
     ];
-
-    const state = this.stylerState.activeSubState;
-    const states = this.stylerState.availableSubStates;
-    const stateData = this.stylerSkin[selector][state];
+    // const cornerNamesArray = this.stylerEditableProps.corners;
 
     pickerNamesArray.forEach((pn) => {
-      const pickerEl = this.stylerControls.colors[pn];
-      pickerEl.parentElement.classList.remove("state_active");
-
+      this.stylerControls.colors[pn].parentElement.classList.remove(
+        "state_active"
+      );
       if (props.includes(pn)) {
-        const color = stateData?.colors?.[pn] || "";
-        pickerEl.style.background = color;
-        pickerEl.parentElement.classList.add("state_active");
+        const color = this.stylerSkin[selector].colors[pn];
+        this.stylerControls.colors[pn].style.background = color;
+        this.stylerControls.colors[pn].parentElement.classList.add(
+          "state_active"
+        );
 
-        if (pickerEl._listener) {
-          pickerEl.removeEventListener("click", pickerEl._listener);
-          delete pickerEl._listener;
-        }
-
+        // Store listener so it can be removed later
         const listener = (evt) => {
-          this.handlePicker(evt, color, null, (pickedColor) => {
-            const _color = pickedColor.toHEXA().toString();
-
-            states.forEach((st) => {
-              const skin = this.stylerSkin[selector][st];
-              const wasModified = !!skin.colors[pn];
-              if (!wasModified || st === state) {
-                skin.colors[pn] = _color;
-              }
-            });
-
+          this.handlePicker(evt, color, null, (color) => {
+            const _color = color.toHEXA().toString();
+            this.stylerSkin[selector].colors[pn] = _color;
             this.stylerCreateCSS();
-            pickerEl.style.background = _color;
+            this.stylerControls.colors[pn].style.background = _color;
           });
         };
 
-        pickerEl._listener = listener;
-        pickerEl.addEventListener("click", listener);
-      } else {
-        if (pickerEl._listener) {
-          pickerEl.removeEventListener("click", pickerEl._listener);
-          delete pickerEl._listener;
-        }
-        pickerEl.style.background = "";
+        this.stylerControls.colors[pn]._listener = listener;
+        this.stylerControls.colors[pn].addEventListener("click", listener);
       }
     });
 
-    const borderData = this.stylerSkin[selector][state]?.borders || {};
-    this.stylerEditableProps.borders.forEach((bn) => {
-      const input = this.stylerControls.borders?.[bn];
-      if (!input) return;
+    // paddingNamesArray.forEach((pn) => {
+    //   this.stylerControls.paddings[
+    //     pn
+    //   ].parentElement.parentElement.classList.remove("state_active");
+    //   if (props.includes(pn)) {
+    //     const _value = this.stylerSkin[selector].paddings[pn];
+    //     this.stylerControls.paddings[pn].value = _value;
+    //     this.stylerControls.paddings[
+    //       pn
+    //     ].parentElement.parentElement.classList.add("state_active");
 
-      const wrapper = input.parentElement?.parentElement;
-      if (wrapper) wrapper.classList.remove("state_active");
+    //     // Store listener so it can be removed later
+    //     const listener = (evt) => {
+    //       const _value = evt.target.value;
+    //       this.stylerSkin[selector].paddings[pn] = _value;
+    //       this.stylerCreateCSS();
+    //       this.stylerControls.paddings[pn].value = _value;
+    //     };
 
-      if (props.includes(bn)) {
-        const val = borderData[bn] || "";
-        if (bn === "BorderColor") {
-          input.value = val || "#000000";
-        } else {
-          input.value = parseFloat(val) || 0;
-        }
+    //     this.stylerControls.paddings[pn]._listener = listener;
+    //     this.stylerControls.paddings[pn].addEventListener("input", listener);
+    //   }
+    // });
 
-        if (wrapper) wrapper.classList.add("state_active");
+    // cornerNamesArray.forEach((cn) => {
+    //   this.stylerControls.corners[
+    //     cn
+    //   ].parentElement.parentElement.classList.remove("state_active");
+    //   if (props.includes(cn)) {
+    //     const _value = this.stylerSkin[selector].corners[cn];
+    //     this.stylerControls.corners[cn].value = _value;
+    //     this.stylerControls.corners[
+    //       cn
+    //     ].parentElement.parentElement.classList.add("state_active");
 
-        if (input._listener) {
-          input.removeEventListener("input", input._listener);
-          delete input._listener;
-        }
+    //     // Store listener so it can be removed later
+    //     const listener = (evt) => {
+    //       const _value = evt.target.value;
+    //       this.stylerSkin[selector].corners[cn] = _value;
+    //       this.stylerCreateCSS();
+    //       this.stylerControls.corners[cn].value = _value;
+    //     };
 
-        const listener = (evt) => {
-          const newVal =
-            bn === "BorderColor" ? evt.target.value : `${evt.target.value}px`;
-
-          states.forEach((st) => {
-            const skin = this.stylerSkin[selector][st];
-            const wasModified = !!skin.borders[bn];
-            if (!wasModified || st === state) {
-              skin.borders[bn] = newVal;
-            }
-          });
-
-          this.stylerCreateCSS();
-        };
-
-        input._listener = listener;
-        input.addEventListener("input", listener);
-      } else {
-        if (input._listener) {
-          input.removeEventListener("input", input._listener);
-          delete input._listener;
-        }
-        input.value = "";
-      }
-    });
+    //     this.stylerControls.corners[cn]._listener = listener;
+    //     this.stylerControls.corners[cn].addEventListener("input", listener);
+    //   }
+    // });
   }
 
   removeStylerPickersListeners() {
@@ -2831,39 +2789,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
       const wrapper = document.createElement("div");
       wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
-      wrapper.appendChild(inputWrapper);
-
-      group.appendChild(wrapper);
-    });
-
-    root.appendChild(group);
-  }
-
-  createStylerBorders() {
-    const root = this.stylerUI.colorsControlWrapper;
-    this.stylerControls.borders = {};
-
-    const group = document.createElement("div");
-    group.className = "sk_styler_ui_control_group variant_borders";
-
-    this.stylerEditableProps.borders.forEach((pn) => {
-      const input = document.createElement("input");
-      input.type = pn === "BorderColor" ? "color" : "number";
-      input.className = "sk_input_text";
-      this.stylerControls.borders[pn] = input;
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "sk_styler_input_wrapper";
-
-      inputWrapper.appendChild(input);
-      inputWrapper.appendChild(label);
-
-      const wrapper = document.createElement("div");
-      wrapper.className = `sk_styler_ui_control variant_${pn.toLowerCase()}`;
       wrapper.appendChild(inputWrapper);
 
       group.appendChild(wrapper);
@@ -3004,9 +2929,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
     this.actionsWrapper.classList.remove("sk_hidden");
     this.stylerUI.actionsWrapper.classList.add("sk_hidden");
-    if (this.stylerState.activeTarget) {
-      this.clearStateClasses(this.stylerState.activeTarget);
-    }
   }
 
   stylerToggle() {
@@ -3047,10 +2969,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       el.removeEventListener("mouseenter", this.stylerMouseOverHandler, true);
       el.removeEventListener("click", this.stylerClickHandler, true);
     });
-
-    if (this.stylerState.activeTarget) {
-      this.clearStateClasses(this.stylerState.activeTarget);
-    }
     console.log("styler stopped");
   }
 
@@ -3133,49 +3051,8 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
   stylerGetSelector(target) {
     const uniqueClass = target.getAttribute("data-sk");
-    const selector = uniqueClass;
+    const selector = `[data-sk="${uniqueClass}"]`;
     return selector;
-  }
-
-  createStateSwitcher() {
-    if (this.stylerUI.stateSwitcher) {
-      this.stylerUI.stateSwitcher.remove();
-    }
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "sk_state_switcher";
-
-    this.stylerState.availableSubStates.forEach((state) => {
-      const btn = document.createElement("button");
-      btn.innerText = state;
-      btn.className = "sk_state_btn";
-      if (state === this.stylerState.activeSubState) {
-        btn.classList.add("active");
-      }
-
-      btn.addEventListener("click", () => {
-        this.stylerState.activeSubState = state;
-        [...wrapper.children].forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const el = this.stylerState.activeTarget;
-
-        this.clearStateClasses(el);
-
-        if (state === "hover") {
-          el.classList.add("sk_preview_hover");
-        } else if (state !== "default") {
-          el.classList.add(state);
-        }
-
-        this.updateStylerPickers(this.stylerState.activeSelector, el);
-      });
-
-      wrapper.appendChild(btn);
-    });
-
-    this.stylerUI.colorsControlWrapper.prepend(wrapper);
-    this.stylerUI.stateSwitcher = wrapper;
   }
 
   stylerClickHandler(evt) {
@@ -3194,10 +3071,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         let selector = this.stylerGetSelector(target);
         this.stylerUiShow(target);
         this.stylerState.activeTarget = target;
-        const stateAttr = target.getAttribute("data-sk-state") || "default";
-        this.stylerState.availableSubStates = stateAttr.split(" ");
-        this.createStateSwitcher(); // create UI to switch state
-
         this.stylerState.activeSelector = selector;
 
         this.stylerCreateState(selector, target);
@@ -3207,13 +3080,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     }
   }
 
-  clearStateClasses(el) {
-    const states = this.stylerState.availableSubStates || [];
-    states.forEach((s) => {
-      if (s !== "default") el.classList.remove(s);
-    });
-    el.classList.remove("sk_preview_hover");
-  }
   setStylerStyle(css) {
     const _id = "sk_styler_injected";
     let styleElement = this.stylerState.target.querySelector(`#${_id}`);

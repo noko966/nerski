@@ -14,52 +14,6 @@
       <div
         class="demo_event_card"
         data-sk="event"
-        data-sk-edit="Bg Bg2 Txt Txt2"
-      >
-        <div class="demo_row">
-          <span>text 21</span>
-          <div class="demo_event_coin">2</div>
-        </div>
-
-        <div class="demo_event_card2">
-          <span>text card inner</span>
-        </div>
-        <button
-          class="demo_item demo_button"
-          data-sk="button"
-          data-sk-edit="Bg Txt Txt2"
-        >
-          <span> action button </span>
-          <strong> $ </strong>
-        </button>
-
-        <button
-          class="demo_item demo_button variant_sec"
-          data-sk="buttonSecondary"
-          data-sk-edit="Bg BgHover Txt"
-        >
-          <span> cancel </span>
-        </button>
-      </div>
-
-      <div
-        class="demo_event_card"
-        data-sk="event"
-        data-sk-edit="Bg Bg2 Txt Txt2 Ps Pe Pt Pb"
-      >
-        <div class="demo_row">
-          <span>text 21</span>
-          <div class="demo_event_coin">2</div>
-        </div>
-
-        <div class="demo_event_card2">
-          <span>text card inner</span>
-        </div>
-      </div>
-
-      <div
-        class="demo_event_card"
-        data-sk="event"
         data-sk-edit="Bg Bg2 Txt Txt2 Ps Pe Rtl Rtr"
       >
         <div class="demo_row">
@@ -80,9 +34,99 @@
           <strong> $ </strong>
         </button>
       </div>
-    </div>
 
-    <style id="css-as-test-stylesheet"></style>
+      <style id="css-as-test-stylesheet"></style>
+
+      <div class="tg__match_items_list">
+        <div class="tg__match_item tg--mar-b-16 tg_widget_bg">
+          <div
+            class="tg--flex tg--align-center tg--pad-16 tg__match_header selectedPrematchItem tg--cp tg_widget_header"
+            data-sk=".tg__match_header"
+            data-sk-edit="Bg1 Txt1 Txt2 Border BorderColor"
+            ;
+            data-sk-state="default hover inactive"
+          >
+            <div
+              id="svg2748818337"
+              class="+ ' tg-ico-fav tg-ico tg--ns tg--cp"
+              title="Add to Favorites"
+            >
+              Ù
+            </div>
+            <div class="exp tg-ico-arrow tg--ns tg--rotated">Ã</div>
+            <span class="tg__teams tg--oe tg--pad-8">Double Chance </span>
+            <div class="tg--flex tg-flex-grow">
+              <div class="tg__cashout tg-ico tg--ns tg--ch" title="Cashout">
+                Á
+              </div>
+
+              <div class="dg_market_offers"></div>
+            </div>
+          </div>
+          <div class="s matchListWrapper" id="ev27488183stb37p0">
+            <div
+              class="s tg--flex tg--flex-wrap matchListWrapper"
+              data-sk=".matchListWrapper"
+              data-sk-edit="Bg1 Txt1"
+              data-sk-state="default hover inactive"
+            >
+              <a
+                href="#"
+                class="odCnt tg--flex tg--align-center tg__match_item_stake tg__stake_3 shp1"
+              >
+                <span
+                  class="tg__match_item_odd_name tg-flex-grow tg--tar tg--pad-8 tg--oe"
+                  title="1X"
+                >
+                  1X
+                </span>
+                <div
+                  class="l_od coef Decimal false"
+                  data-sk=".matchListWrapper .l_od"
+                  data-sk-edit="Bg1 Txt1"
+                  data-sk-state="default hover active"
+                >
+                  1.02
+                  <div class="sTriangle"></div>
+                </div>
+              </a>
+
+              <a
+                href="#"
+                class="odCnt tg--flex tg--align-center tg__match_item_stake tg__stake_3 shp1"
+              >
+                <span
+                  class="tg__match_item_odd_name tg-flex-grow tg--tar tg--pad-8 tg--oe"
+                  title="12"
+                >
+                  12
+                </span>
+                <div class="l_od coef Decimal false">
+                  4.70
+                  <div class="sTriangle"></div>
+                </div>
+              </a>
+
+              <a
+                href="#"
+                class="odCnt tg--flex tg--align-center tg__match_item_stake tg__stake_3 shp1"
+              >
+                <span
+                  class="tg__match_item_odd_name tg-flex-grow tg--tar tg--pad-8 tg--oe"
+                  title="X2"
+                >
+                  X2
+                </span>
+                <div class="l_od coef Decimal false">
+                  1.03
+                  <div class="sTriangle"></div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 
   <script src="picker.js"></script>
@@ -1064,51 +1108,45 @@
 
     function templateFull(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
-      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+      res += `    --${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --${upperCaseEssence.nameBg3}: ${skin[essence.nameBg3]};\n`;
+      res += `    --${upperCaseEssence.nameBgHov}: ${
         skin[essence.nameBgHov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+      res += `    --${upperCaseEssence.nameBg2Hov}: ${
         skin[essence.nameBg2Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg3Hov}: ${
+      res += `    --${upperCaseEssence.nameBg3Hov}: ${
         skin[essence.nameBg3Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
-        skin[essence.nameTxt2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt3}: ${
-        skin[essence.nameTxt3]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+      res += `    --${upperCaseEssence.nameTxt3}: ${skin[essence.nameTxt3]};\n`;
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA}: ${
-        skin[essence.nameRGBA]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA2}: ${
+      res += `    --${upperCaseEssence.nameRGBA}: ${skin[essence.nameRGBA]};\n`;
+      res += `    --${upperCaseEssence.nameRGBA2}: ${
         skin[essence.nameRGBA2]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRGBA3}: ${
+      res += `    --${upperCaseEssence.nameRGBA3}: ${
         skin[essence.nameRGBA3]
       };\n`;
-      res += `    --cw${upperCaseEssence.name}Shadow: ${
+      res += `    --${upperCaseEssence.name}Shadow: ${
         skin[`${essence.name}Shadow`]
       };\n`;
-      res += `    --cw${upperCaseEssence.name}ShadowFade: ${
+      res += `    --${upperCaseEssence.name}ShadowFade: ${
         skin[`${essence.name}ShadowFade`]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRadius}: ${
+      res += `    --${upperCaseEssence.nameRadius}: ${
         skin[essence.nameRadius]
       }px;\n`;
-      res += `    --cw${upperCaseEssence.nameBorder}: ${
+      res += `    --${upperCaseEssence.nameBorder}: ${
         skin[essence.nameBorder]
       };`;
 
@@ -1117,47 +1155,43 @@
 
     function templateOverlay(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
-        skin[essence.nameTxt2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cwOverlayBlur: ${skin.overlayBlur}px;`;
+      res += `    --overlayBlur: ${skin.overlayBlur}px;`;
 
       return res;
     }
 
     function templateButton(upperCaseEssence, essence, skin) {
       let res = "";
-      res += `    --cw${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
-      res += `    --cw${upperCaseEssence.nameBgHov}: ${
+      res += `    --${upperCaseEssence.nameG}: ${skin[essence.nameG]};\n`;
+      res += `    --${upperCaseEssence.nameBg}: ${skin[essence.nameBg]};\n`;
+      res += `    --${upperCaseEssence.nameBgHov}: ${
         skin[essence.nameBgHov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
-      res += `    --cw${upperCaseEssence.nameBg2Hov}: ${
+      res += `    --${upperCaseEssence.nameBg2}: ${skin[essence.nameBg2]};\n`;
+      res += `    --${upperCaseEssence.nameBg2Hov}: ${
         skin[essence.nameBg2Hov]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
-      res += `    --cw${upperCaseEssence.nameTxt2}: ${
-        skin[essence.nameTxt2]
-      };\n`;
-      res += `    --cw${upperCaseEssence.nameAccent}: ${
+      res += `    --${upperCaseEssence.nameTxt}: ${skin[essence.nameTxt]};\n`;
+      res += `    --${upperCaseEssence.nameTxt2}: ${skin[essence.nameTxt2]};\n`;
+      res += `    --${upperCaseEssence.nameAccent}: ${
         skin[essence.nameAccent]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameAccentTxt}: ${
+      res += `    --${upperCaseEssence.nameAccentTxt}: ${
         skin[essence.nameAccentTxt]
       };\n`;
-      res += `    --cw${upperCaseEssence.nameRadius}: ${
+      res += `    --${upperCaseEssence.nameRadius}: ${
         skin[essence.nameRadius]
       }px;\n`;
-      res += `    --cw${upperCaseEssence.nameBorder}: ${
+      res += `    --${upperCaseEssence.nameBorder}: ${
         skin[essence.nameBorder]
       };`;
 
