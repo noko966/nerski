@@ -2458,7 +2458,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
 
 .sk_styler_ui_root {
   width: 100%;
-  padding: 8px;
+  padding: 24px 8px 8px;
   height: calc(100% - var(--skinnerToolboxFooterHeight));
   overflow-y: auto;
   overflow-x: hidden;
@@ -2606,4 +2606,36 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
   font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
+}
+.sk_state_btn {
+  appearance: none;
+  border: 0;
+  text-align: center;
+  height: var(--skinnerBtnHeight);
+  text-decoration: none;
+  background-color: var(--sk_buttonBg);
+  color: var(--sk_buttonTxt);
+  fill: var(--sk_buttonTxt);
+  display: block;
+  text-transform: capitalize;
+  font-size: 12px;
+  position: relative;
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 2px;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+}
+.sk_state_btn.active {
+  background-color: var(--sk_accentBg);
+  color: var(--sk_accentTxt);
+}
+
+.sk_state_switcher {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
 }

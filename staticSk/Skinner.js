@@ -2571,6 +2571,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
   stylerCreateState(selector, el) {
     this.stylerSkin[selector] = {};
     const computedStyles = getComputedStyle(el);
+    debugger;
     const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
     const essence = el.getAttribute("data-sk");
     this.stylerSkin[selector].uniqueSelector = `${essence}`;
@@ -3219,7 +3220,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
         this.stylerCurrentSelector = selector;
         this.stylerCreateState(selector, target);
-        this.createStylerPickers(selector);
+        this.updateStylerPickers(selector, target);
 
         // this.stylerCreateControls();
       }
