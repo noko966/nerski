@@ -1,7 +1,51 @@
 class Skinner {
-  constructor(cssCb, starterConfig, header, root, variant) {
+  constructor(cssCb, starterConfig, header, root, variant, stylerTargets) {
     this.variant = variant || "sport";
     this.pickers = [];
+    this.stylerTargets = stylerTargets || [{
+    selector: '.lv_menu_item.lv_menu_item-sport',
+    props: ['bg', 'txt'],
+    states: ['default', 'hover', 'active'],
+    essence: ['menu_1'],
+    stateCnMask: {
+        'default': 'lv_menu_item',
+        'active': 'lv_menu_item-selected',
+    }, stateEssenceMask: {
+        default: {
+            bg: 'menu_1Bg',
+            txt: 'menu_1Txt2',
+        },
+        hover: {
+            bg: 'menu_1BgHover',
+            txt: 'menu_1Txt2',
+        },
+        active: {
+            bg: 'menu_3Bg',
+            txt: 'menu_3Txt',
+        },
+    }
+},
+{
+    selector: '.lv_events_widget > .lv_event_row',
+    props: ['bg', 'txt', 'txt2', 'acc'],
+    states: ['default', 'hover'],
+    essence: ['event'],
+    stateEssenceMask: {
+        default: {
+            bg: 'eventBg',
+            txt: 'eventTxt',
+            txt2: 'eventTxt2',
+            acc: 'eventAccent',
+        },
+        hover: {
+            bg: 'eventBg',
+            txt: 'eventTxt',
+            txt2: 'eventTxt2',
+            acc: 'eventAccent',
+        },
+    }
+
+}];
     this.eventListeners = [];
     this.header =
       document.querySelector(header) ||
@@ -2505,778 +2549,470 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     });
   }
 
-  initStyler(target) {
-    this.stylerSkin = {};
+      initStyler(target) {
+        this.stylerSkin = {};
+        this.stylerState.target = target;
+        this.addStylerSwitcher();
 
-    this.stylerState.target = target;
-    this.stylerState.activeSubState = "default";
+        this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
+        this.stylerClickHandler = this.stylerClickHandler.bind(this);
 
-    this.addStylerSwitcher();
+        this.stylerUI = {};
+        this.stylerUI.root = document.createElement("div");
+        this.stylerUI.root.className = "sk_styler_ui_root sk_hidden";
+        this.stylerUI.actionsWrapper = document.createElement("div");
+        this.stylerUI.actionsWrapper.className = "sk_actions_wrapper variant_styler sk_hidden";
 
-    this.stylerEditableProps = {
-      backgrounds: ["Bg1", "Bg2", "Bg3", "Bg4", "Bg5"],
-      texts: ["Txt1", "Txt2", "Txt3", "Txt4", "Txt5"],
-      // paddings: ["Ps", "Pt", "Pe", "Pb"],
-      corners: ["rtxtr", "rfull"],
-      sepW: ["1"],
-      sepBg: ["Bg1"],
-    };
-    this.createHighlighterSVG();
-    this.stylerEditableProps.borders = ["Border", "BorderColor"];
-
-    this.stylerMouseOverHandler = this.stylerMouseOverHandler.bind(this);
-    this.stylerClickHandler = this.stylerClickHandler.bind(this);
-
-    this.stylerUI = {};
-    this.stylerUI.root = document.createElement("div");
-    this.stylerUI.root.className = "sk_styler_ui_root sk_scrollbar sk_hidden";
-    this.stylerUI.actionsWrapper = document.createElement("div");
-    this.stylerUI.actionsWrapper.className =
-      "sk_actions_wrapper variant_styler sk_hidden";
-
-    this.stylerUI.save = this.createBtn("save", "variant_styler", true);
-    this.stylerUI.save.addEventListener("click", () => {
-      this.stylerUiHide();
-      this.removeStylerPickersListeners();
-      this.clearStateClasses(this.stylerState.activeTarget);
-    });
-
-    this.stylerUI.reset = this.createBtn("reset", "variant_styler", true);
-    this.stylerUI.reset.addEventListener("click", () => {
-      this.resetStylerState();
-    });
-
-    this.stylerUI.colorsControlWrapper = document.createElement("div");
-    this.stylerUI.colorsControlWrapper.className =
-      "sk_styler_ui_control_wrapper";
-
-    this.stylerUI.root.appendChild(this.stylerUI.colorsControlWrapper);
-    this.toolboxWrapper.appendChild(this.stylerUI.root);
-    this.stylerUI.actionsWrapper.appendChild(this.stylerUI.reset);
-
-    this.stylerUI.actionsWrapper.appendChild(this.stylerUI.save);
-    this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
-
-    this.stylerControls = {};
-    this.stylerControls.paddings = {};
-    // this.stylerControls.borders = {};
-    this.stylerControls.corners = {};
-    this.createStylerPickers();
-    this.createStylerBorders();
-
-    // this.createStylerPaddings();
-    // this.createStylerCorners();
-  }
-
-  stylerCreateState(selector, el) {
-    this.stylerSkin[selector] = {};
-    const computedStyles = getComputedStyle(el);
-    debugger;
-    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
-    const essence = el.getAttribute("data-sk");
-    this.stylerSkin[selector].uniqueSelector = `${essence}`;
-
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-    ];
-
-    const states = el.getAttribute("data-sk-state")?.split(" ") || ["default"];
-    states.forEach((state) => {
-      this.stylerSkin[selector][state] = {
-        colors: {},
-        borders: {},
-      };
-
-      pickerNamesArray.forEach((p) => {
-        if (props.includes(p)) {
-          this.stylerSkin[selector][state].colors[p] =
-            computedStyles.getPropertyValue(`--${p}`);
-        }
-      });
-
-      this.stylerEditableProps.borders.forEach((p) => {
-        if (props.includes(p)) {
-          this.stylerSkin[selector][state].borders[p] =
-            computedStyles.getPropertyValue(`--${p}`);
-        }
-      });
-    });
-  }
-
-  stylerCreateCSS() {
-    let css = "";
-
-    for (const selector in this.stylerSkin) {
-      const skin = this.stylerSkin[selector];
-
-      for (const state in skin) {
-        if (["uniqueSelector"].includes(state)) continue;
-
-        const colors = skin[state]?.colors || {};
-        const borders = skin[state]?.borders || {};
-
-        let ruleSelector;
-        if (state === "default") {
-          ruleSelector = selector;
-        } else if (state === "hover") {
-          ruleSelector = `${selector}:hover`;
-        } else {
-          ruleSelector = `${selector}.${state}`;
-        }
-
-        let block = `${ruleSelector} {\n`;
-
-        Object.entries(colors).forEach(([key, value]) => {
-          block += `\t--${key}: ${value};\n`;
+        this.stylerUI.save = this.createBtn("save", "variant_styler");
+        this.stylerUI.save.addEventListener("click", () => {
+            this.stylerUiHide();
+            this.destroyStylerControls();
         });
 
-        Object.entries(borders).forEach(([key, value]) => {
-          block += `\t--${key}: ${value};\n`;
-        });
+        this.toolboxWrapper.appendChild(this.stylerUI.root);
+        this.stylerUI.actionsWrapper.appendChild(this.stylerUI.save);
+        this.toolboxWrapper.appendChild(this.stylerUI.actionsWrapper);
 
-        block += `}\n`;
-        css += block;
-      }
+        this.stylerCreateStateBase();
+
+
+        this.stylerControls = {};
+
+        this.stylerControls.paddings = {};
+        this.stylerControls.borders = {};
+
+
     }
 
-    this.skin.stylerCSS = css;
-    this.cssCb(this.skin);
+    stylerCreateStateBase() {
+        this.stylerTargets.forEach(t => {
+            this.stylerSkin[t.selector] = {};
 
-    return css;
-  }
+        })
+    }
 
-  resetStylerState() {
-    const selector = this.stylerState.activeSelector;
-    const el = this.stylerState.activeTarget;
-    if (!selector || !el) return;
-
-    delete this.stylerSkin[selector];
-
-    this.clearStateClasses(el);
-
-    this.stylerState.activeSubState = "default";
-    const stateAttr = el.getAttribute("data-sk-state") || "default";
-    this.stylerState.availableSubStates = stateAttr.split(" ");
-
-    this.stylerCreateState(selector, el);
-    this.createStateSwitcher();
-    this.updateStylerPickers(selector, el);
-    this.stylerCreateCSS();
-  }
-
-  updateStylerPickers(selector, el) {
-    const props = el.getAttribute("data-sk-edit")?.split(" ") || [];
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-    ];
-
-    const state = this.stylerState.activeSubState;
-    const states = this.stylerState.availableSubStates;
-    const stateData = this.stylerSkin[selector][state];
-
-    pickerNamesArray.forEach((pn) => {
-      const pickerEl = this.stylerControls.colors[pn];
-      pickerEl.parentElement.classList.remove("state_active");
-
-      if (props.includes(pn)) {
-        const color = stateData?.colors?.[pn] || "";
-        pickerEl.style.background = color;
-        pickerEl.parentElement.classList.add("state_active");
-
-        if (pickerEl._listener) {
-          pickerEl.removeEventListener("click", pickerEl._listener);
-          delete pickerEl._listener;
+    stylerCreateState() {
+        const selector = this.stylerActiveTarget.selector;
+        const props = this.stylerActiveTarget.props;
+        const states = this.stylerActiveTarget.states;
+        const el = this.stylerActiveTargetDomElement;
+        const computedStyles = getComputedStyle(el);
+        if (!this.stylerSkin[selector]) {
+            this.stylerSkin[selector] = {};
         }
+        states.forEach(s => {
+            if (!this.stylerSkin[selector][s]) {
+                this.stylerSkin[selector][s] = {
+                    backgrounds: {},
+                    texts: {},
+                    accents: {},
+                };
+            }
 
-        const listener = (evt) => {
-          this.handlePicker(evt, color, null, (pickedColor) => {
-            const _color = pickedColor.toHEXA().toString();
+            const targetConfig = this.stylerTargets.find(t => t.selector === selector);
 
-            states.forEach((st) => {
-              const skin = this.stylerSkin[selector][st];
-              const wasModified = !!skin.colors[pn];
-              if (!wasModified || st === state) {
-                skin.colors[pn] = _color;
-              }
+            props.forEach(p => {
+                const mask = targetConfig.stateEssenceMask[s];
+                //const varName = `--${mask[p]}${this.cfl(p)}`;
+                const varName = `--${mask[p]}`;
+                const value = computedStyles.getPropertyValue(varName);
+
+                if (p.startsWith("bg") && !(p in this.stylerSkin[selector][s].backgrounds)) {
+                    this.stylerSkin[selector][s].backgrounds[p] = value;
+                } else if (p.startsWith("txt") && !(p in this.stylerSkin[selector][s].texts)) {
+                    this.stylerSkin[selector][s].texts[p] = value;
+                } else if (p.startsWith("acc") && !(p in this.stylerSkin[selector][s].accents)) {
+                    this.stylerSkin[selector][s].accents[p] = value;
+                }
+            });
+        });
+    }
+
+    cfl(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    destroyStylerControls() {
+        const states = this.stylerActiveTarget?.states || [];
+
+        states.forEach(s => {
+            const stateControls = this.stylerControls[s];
+            if (!stateControls) return;
+
+            Object.entries(stateControls.backgrounds).forEach(([key, control]) => {
+                if (control.listener) {
+                    control.removeEventListener("click", control.listener);
+                }
             });
 
-            this.stylerCreateCSS();
-            pickerEl.style.background = _color;
-          });
-        };
+            Object.entries(stateControls.texts).forEach(([key, control]) => {
+                if (control.listener) {
+                    control.removeEventListener("click", control.listener);
+                }
+            });
 
-        pickerEl._listener = listener;
-        pickerEl.addEventListener("click", listener);
-      } else {
-        if (pickerEl._listener) {
-          pickerEl.removeEventListener("click", pickerEl._listener);
-          delete pickerEl._listener;
-        }
-        pickerEl.style.background = "";
-      }
-    });
+            Object.entries(stateControls.accents).forEach(([key, control]) => {
+                if (control.listener) {
+                    control.removeEventListener("click", control.listener);
+                }
+            });
+        });
 
-    const borderData = this.stylerSkin[selector][state]?.borders || {};
-    this.stylerEditableProps.borders.forEach((bn) => {
-      const input = this.stylerControls.borders?.[bn];
-      if (!input) return;
-
-      const wrapper = input.parentElement?.parentElement;
-      if (wrapper) wrapper.classList.remove("state_active");
-
-      if (props.includes(bn)) {
-        const val = borderData[bn] || "";
-        if (bn === "BorderColor") {
-          input.value = val || "#000000";
-        } else {
-          input.value = parseFloat(val) || 0;
+        while (this.stylerUI.root.firstChild) {
+            this.stylerUI.root.removeChild(this.stylerUI.root.firstChild);
         }
 
-        if (wrapper) wrapper.classList.add("state_active");
+        this.stylerControls = {};
+    }
 
-        if (input._listener) {
-          input.removeEventListener("input", input._listener);
-          delete input._listener;
-        }
 
-        const listener = (evt) => {
-          const newVal =
-            bn === "BorderColor" ? evt.target.value : `${evt.target.value}px`;
+    createStylerControls() {
+        const selector = this.stylerActiveTarget.selector;
+        const props = this.stylerActiveTarget.props;
+        const states = this.stylerActiveTarget.states;
+        const el = this.stylerActiveTargetDomElement;
 
-          states.forEach((st) => {
-            const skin = this.stylerSkin[selector][st];
-            const wasModified = !!skin.borders[bn];
-            if (!wasModified || st === state) {
-              skin.borders[bn] = newVal;
+        const stateTabsWrapper = document.createElement('div');
+        stateTabsWrapper.className = "sk_styler_control_state_tabs_wrapper";
+        this.stylerUI.root.appendChild(stateTabsWrapper);
+
+        states.forEach(s => {
+            const skin = this.stylerSkin[selector][s];
+            this.stylerControls[s] = {
+                backgrounds: {},
+                texts: {},
+                accents: {},
+            };
+
+            const stateTab = document.createElement('button');
+            stateTab.className = "sk_styler_control_state_tab";
+            stateTab.id = `tab-${s}`;
+            stateTab.innerText = s;
+            stateTabsWrapper.appendChild(stateTab);
+
+            const stateWrapper = document.createElement('div');
+            stateWrapper.className = "sk_styler_control_state_wrapper";
+            stateWrapper.id = `wrapper-${s}`;
+            this.stylerUI.root.appendChild(stateWrapper);
+
+            function createWrapper(lbl) {
+                const el = document.createElement('div');
+                el.className = "sk_styler_control_group";
+                const cont = document.createElement('div');
+                cont.className = "sk_styler_control_group_container";
+                const label = document.createElement('span');
+                label.innerText = `${s} / ${lbl}`;
+                el.appendChild(label);
+                el.appendChild(cont);
+                return { root: el, cont: cont };
             }
-          });
 
-          this.stylerCreateCSS();
-        };
+            const wrapperBg = createWrapper("background's");
+            const wrapperTxt = createWrapper("text's");
+            const wrapperAcc = createWrapper("accents's");
+            stateWrapper.appendChild(wrapperBg.root);
+            stateWrapper.appendChild(wrapperTxt.root);
+            stateWrapper.appendChild(wrapperAcc.root);
 
-        input._listener = listener;
-        input.addEventListener("input", listener);
-      } else {
-        if (input._listener) {
-          input.removeEventListener("input", input._listener);
-          delete input._listener;
+            Object.entries(skin.backgrounds).forEach(([key, value]) => {
+                const pickerControl = this.createColorBox();
+                pickerControl.className = "sk_picker_trigger";
+                pickerControl.style.background = value;
+                this.stylerControls[s].backgrounds[key] = pickerControl;
+                wrapperBg.cont.appendChild(pickerControl);
+
+                const listener = (evt) => {
+                    this.handlePicker(evt, value, null, (pickedColor) => {
+                        const _color = pickedColor.toHEXA().toString();
+                        skin.backgrounds[key] = _color;
+                        pickerControl.style.background = _color;
+                        this.stylerCreateCssBasedOnState();
+                    })
+                }
+                this.stylerControls[s].backgrounds[key].listener = listener;
+                pickerControl.addEventListener('click', listener);
+            });
+
+            Object.entries(skin.texts).forEach(([key, value]) => {
+                const pickerControl = this.createColorBox();
+                pickerControl.className = "sk_picker_trigger";
+                pickerControl.style.background = value;
+                this.stylerControls[s].texts[key] = pickerControl;
+                wrapperTxt.cont.appendChild(pickerControl);
+
+                const listener = (evt) => {
+                    this.handlePicker(evt, value, null, (pickedColor) => {
+                        const _color = pickedColor.toHEXA().toString();
+                        skin.texts[key] = _color;
+                        pickerControl.style.background = _color;
+                        this.stylerCreateCssBasedOnState();
+                    })
+                }
+                this.stylerControls[s].texts[key].listener = listener;
+                pickerControl.addEventListener('click', listener);
+            });
+
+            Object.entries(skin.accents).forEach(([key, value]) => {
+                const pickerControl = this.createColorBox();
+                pickerControl.className = "sk_picker_trigger";
+                pickerControl.style.background = value;
+                this.stylerControls[s].accents[key] = pickerControl;
+                wrapperAcc.cont.appendChild(pickerControl);
+
+                const listener = (evt) => {
+                    this.handlePicker(evt, value, null, (pickedColor) => {
+                        const _color = pickedColor.toHEXA().toString();
+                        skin.accents[key] = _color;
+                        pickerControl.style.background = _color;
+                        this.stylerCreateCssBasedOnState();
+                    })
+                }
+                this.stylerControls[s].accents[key].listener = listener;
+                pickerControl.addEventListener('click', listener);
+            });
+
+            stateTab.addEventListener("click", () => {
+                states.forEach(other => {
+                    document.getElementById(`wrapper-${other}`).classList.remove("active");
+                    document.getElementById(`tab-${other}`).classList.remove("active");
+                });
+
+                stateTab.classList.add("active");
+                document.getElementById(`wrapper-${s}`).classList.add("active");
+                this.stylerState.activeSubState = s;
+            });
+        });
+
+        if (states.length > 0) {
+            document.getElementById(`tab-${states[0]}`).click();
         }
-        input.value = "";
-      }
-    });
-  }
-
-  removeStylerPickersListeners() {
-    const props =
-      this.stylerState.activeTarget.getAttribute("data-sk-edit")?.split(" ") ||
-      [];
-    const pickerNamesArray = [
-      ...this.stylerEditableProps.backgrounds,
-      ...this.stylerEditableProps.texts,
-      // ...this.stylerEditableProps.sepBg,
-    ];
-
-    // const paddingNamesArray = this.stylerEditableProps.paddings;
-    // const cornerNamesArray = this.stylerEditableProps.corners;
-
-    pickerNamesArray.forEach((pn) => {
-      const el = this.stylerControls.colors[pn];
-      if (props.includes(pn) && el._listener) {
-        el.style.background = "";
-        el.removeEventListener("click", el._listener);
-        delete el._listener;
-      }
-    });
-
-    // paddingNamesArray.forEach((pn) => {
-    //   const el = this.stylerControls.paddings[pn];
-    //   if (props.includes(pn) && el._listener) {
-    //     el.removeEventListener("input", el._listener);
-    //     delete el._listener;
-    //   }
-    // });
-
-    // cornerNamesArray.forEach((pn) => {
-    //   const el = this.stylerControls.corners[pn];
-    //   if (props.includes(pn) && el._listener) {
-    //     el.removeEventListener("input", el._listener);
-    //     delete el._listener;
-    //   }
-    // });
-  }
-
-  createStylerCorners() {
-    const root = this.stylerUI.colorsControlWrapper;
-    this.stylerControls.corners = {};
-
-    const namesArray = this.stylerEditableProps.corners;
-
-    const group = document.createElement("div");
-    group.className = "sk_styler_ui_control_group variant_corners";
-
-    namesArray.forEach((pn) => {
-      this.stylerControls.corners[pn] = document.createElement("input");
-      this.stylerControls.corners[pn].type = "number";
-      this.stylerControls.corners[pn].className = "sk_input_text ";
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "sk_styler_input_wrapper";
-
-      inputWrapper.appendChild(this.stylerControls.corners[pn]);
-      inputWrapper.appendChild(label);
-
-      const wrapper = document.createElement("div");
-      wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
-      wrapper.appendChild(inputWrapper);
-
-      group.appendChild(wrapper);
-    });
-
-    root.appendChild(group);
-  }
-
-  createStylerBorders() {
-    const root = this.stylerUI.colorsControlWrapper;
-    this.stylerControls.borders = {};
-
-    const group = document.createElement("div");
-    group.className = "sk_styler_ui_control_group variant_borders";
-
-    this.stylerEditableProps.borders.forEach((pn) => {
-      const input = document.createElement("input");
-      input.type = pn === "BorderColor" ? "color" : "number";
-      input.className = "sk_input_text";
-      this.stylerControls.borders[pn] = input;
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "sk_styler_input_wrapper";
-
-      inputWrapper.appendChild(input);
-      inputWrapper.appendChild(label);
-
-      const wrapper = document.createElement("div");
-      wrapper.className = `sk_styler_ui_control variant_${pn.toLowerCase()}`;
-      wrapper.appendChild(inputWrapper);
-
-      group.appendChild(wrapper);
-    });
-
-    root.appendChild(group);
-  }
-
-  createStylerPaddings() {
-    const root = this.stylerUI.colorsControlWrapper;
-
-    // const paddingNamesArray = this.stylerEditableProps.paddings;
-
-    const group = document.createElement("div");
-    group.className = "";
-
-    const layout = document.createElement("div");
-    layout.className = "sk_styler_ui_control_group variant_paddings";
-
-    group.appendChild(chb.label);
-    group.appendChild(layout);
-
-    paddingNamesArray.forEach((pn) => {
-      this.stylerControls.paddings[pn] = document.createElement("input");
-      this.stylerControls.paddings[pn].type = "number";
-      this.stylerControls.paddings[pn].className = "sk_input_text ";
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "sk_styler_input_wrapper";
-
-      inputWrapper.appendChild(this.stylerControls.paddings[pn]);
-      inputWrapper.appendChild(label);
-
-      const wrapper = document.createElement("div");
-      wrapper.className = `sk_styler_ui_control variant_${pn.toLocaleLowerCase()}`;
-      wrapper.appendChild(inputWrapper);
-
-      layout.appendChild(wrapper);
-    });
-
-    root.appendChild(group);
-  }
-
-  createPickersWrapper(l) {
-    const root = document.createElement("div");
-    root.className = "sk_styler_ui_control_group variant_picker";
-    const label = document.createElement("div");
-    label.className = "sk_styler_ui_control_group label";
-    label.innerText = l || "colors";
-    const wrapper = document.createElement("div");
-    wrapper.className = "sk_styler_ui_pickers_wrapper";
-    root.appendChild(label);
-    root.appendChild(wrapper);
-    return {
-      root: root,
-      wrapper: wrapper,
-    };
-  }
-
-  createInputsWrapper(l) {
-    const root = document.createElement("div");
-    root.className = "sk_styler_ui_control_group variant_padding";
-    const label = document.createElement("div");
-    label.className = "sk_styler_ui_control_group label";
-    label.innerText = l || "colors";
-    const wrapper = document.createElement("div");
-    wrapper.className = "sk_styler_ui_paddings_wrapper";
-    root.appendChild(label);
-    root.appendChild(wrapper);
-    return {
-      root: root,
-      wrapper: wrapper,
-    };
-  }
-
-  createStylerPickers() {
-    const root = this.stylerUI.colorsControlWrapper;
-    this.stylerControls.colors = {};
-
-    const backgrounds = this.stylerEditableProps.backgrounds;
-    const texts = this.stylerEditableProps.texts;
-
-    const backgroundsWrapper = this.createPickersWrapper("background's");
-    const textsWrapper = this.createPickersWrapper("text's");
-
-    backgrounds.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger";
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-
-      backgroundsWrapper.wrapper.appendChild(wrapper);
-    });
-
-    texts.forEach((pn) => {
-      this.stylerControls.colors[pn] = document.createElement("div");
-      this.stylerControls.colors[pn].className = "sk_picker_trigger";
-
-      const label = document.createElement("div");
-      label.className = "sk_styler_ui_control_label";
-      label.innerText = pn;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "sk_styler_ui_control";
-      wrapper.appendChild(this.stylerControls.colors[pn]);
-
-      textsWrapper.wrapper.appendChild(wrapper);
-    });
-
-    root.appendChild(backgroundsWrapper.root);
-    root.appendChild(textsWrapper.root);
-  }
-
-  destroyStylerPickers() {
-    const colors = this.stylerControls.colors || {};
-
-    Object.values(colors).forEach((el) => {
-      if (el._listener) {
-        el.removeEventListener("click", el._listener);
-        delete el._listener;
-      }
-    });
-
-    this.stylerControls.colors = {};
-
-    if (this.stylerUI?.colorsControlWrapper) {
-      this.stylerUI.colorsControlWrapper.innerHTML = "";
-    }
-  }
-
-  stylerUiShow() {
-    this.stylerStop();
-    this.toolBox.classList.add("state_styler_open");
-    this.essencesWrapper.classList.add("sk_hidden");
-    this.stylerUI.root.classList.remove("sk_hidden");
-
-    this.actionsWrapper.classList.add("sk_hidden");
-    this.stylerUI.actionsWrapper.classList.remove("sk_hidden");
-  }
-
-  stylerUiHide() {
-    this.stylerStart();
-    this.toolBox.classList.remove("state_styler_open");
-    this.essencesWrapper.classList.remove("sk_hidden");
-    this.stylerUI.root.classList.add("sk_hidden");
-
-    this.actionsWrapper.classList.remove("sk_hidden");
-    this.stylerUI.actionsWrapper.classList.add("sk_hidden");
-    if (this.stylerState.activeTarget) {
-      this.clearStateClasses(this.stylerState.activeTarget);
-    }
-  }
-
-  stylerToggle() {
-    if (this.stylerState.isRunning) {
-      this.stylerStop();
-    } else {
-      this.stylerStart();
-    }
-  }
-
-  addDemoAttribute() {
-    const elements = this.stylerState.target.querySelectorAll(".lv_event_row");
-    elements.forEach((el) => {
-      el.setAttribute("data-sk", "event");
-      el.setAttribute("data-sk-edit", "Bg Txt Txt2 Ps Pe");
-    });
-  }
-
-  stylerStart() {
-    this.stylerState.isRunning = true;
-
-    this.addDemoAttribute();
-
-    this.stylerState.editableElements =
-      this.stylerState.target.querySelectorAll("[data-sk]");
-
-    this.stylerState.editableElements.forEach((el) => {
-      el.addEventListener("mouseenter", this.stylerMouseOverHandler, true);
-      el.addEventListener("click", this.stylerClickHandler, true);
-    });
-    console.log("styler started");
-  }
-
-  stylerStop() {
-    this.stylerState.isRunning = false;
-
-    this.stylerState.editableElements.forEach((el) => {
-      el.removeEventListener("mouseenter", this.stylerMouseOverHandler, true);
-      el.removeEventListener("click", this.stylerClickHandler, true);
-    });
-
-    if (this.stylerState.activeTarget) {
-      this.clearStateClasses(this.stylerState.activeTarget);
-    }
-    console.log("styler stopped");
-  }
-
-  createHighlighterSVG() {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("id", "sk-styler-highlighter");
-    svg.style.position = "absolute";
-    svg.style.pointerEvents = "none";
-    svg.style.zIndex = "9999";
-    svg.style.display = "none";
-
-    document.body.appendChild(svg);
-  }
-
-  drawHighlightCorners(el, size = 8, color = "#05d3ff") {
-    const svg = document.getElementById("sk-styler-highlighter");
-    const rect = el.getBoundingClientRect();
-
-    svg.setAttribute("width", rect.width);
-    svg.setAttribute("height", rect.height);
-    svg.style.top = `${rect.top + window.scrollY}px`;
-    svg.style.left = `${rect.left + window.scrollX}px`;
-    svg.style.display = "block";
-
-    const lines = [
-      // Top-left
-      `<line x1="0" y1="0" x2="${size}" y2="0" stroke="${color}" stroke-width="2"/>`,
-      `<line x1="0" y1="0" x2="0" y2="${size}" stroke="${color}" stroke-width="2"/>`,
-      // Top-right
-      `<line x1="${rect.width}" y1="0" x2="${
-        rect.width - size
-      }" y2="0" stroke="${color}" stroke-width="2"/>`,
-      `<line x1="${rect.width}" y1="0" x2="${rect.width}" y2="${size}" stroke="${color}" stroke-width="2"/>`,
-      // Bottom-left
-      `<line x1="0" y1="${rect.height}" x2="0" y2="${
-        rect.height - size
-      }" stroke="${color}" stroke-width="2"/>`,
-      `<line x1="0" y1="${rect.height}" x2="${size}" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
-      // Bottom-right
-      `<line x1="${rect.width}" y1="${rect.height}" x2="${
-        rect.width - size
-      }" y2="${rect.height}" stroke="${color}" stroke-width="2"/>`,
-      `<line x1="${rect.width}" y1="${rect.height}" x2="${rect.width}" y2="${
-        rect.height - size
-      }" stroke="${color}" stroke-width="2"/>`,
-    ];
-
-    svg.innerHTML = lines.join("");
-  }
-
-  stylerMouseOverHandler(evt) {
-    if (this.stylerState.isRunning) {
-      evt.preventDefault();
-      evt.stopPropagation();
-
-      const path = evt.composedPath();
-      const hoveredElement = path.find(
-        (el) => el.matches && el.matches("[data-sk]")
-      );
-
-      if (hoveredElement) {
-        let target = hoveredElement;
-        let selector = this.stylerGetSelector(target);
-        let css = this.stylerHighlightStlye(selector);
-        this.setStylerStyle(css);
-        this.drawHighlightCorners(target);
-        const cleanup = () => {
-          this.setStylerStyle("");
-          target.removeEventListener("mouseleave", handleMouseOut);
-        };
-
-        const handleMouseOut = (evy) => {
-          cleanup();
-        };
-
-        target.addEventListener("mouseleave", handleMouseOut);
-      }
-    }
-  }
-
-  stylerGetSelector(target) {
-    const uniqueClass = target.getAttribute("data-sk");
-    const selector = uniqueClass;
-    return selector;
-  }
-
-  createStateSwitcher() {
-    if (this.stylerUI.stateSwitcher) {
-      this.stylerUI.stateSwitcher.remove();
     }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "sk_state_switcher";
 
-    this.stylerState.availableSubStates.forEach((state) => {
-      const btn = document.createElement("button");
-      btn.innerText = state;
-      btn.className = "sk_state_btn";
-      if (state === this.stylerState.activeSubState) {
-        btn.classList.add("active");
-      }
+    stylerUiShow() {
+        this.stylerStop();
 
-      btn.addEventListener("click", () => {
-        this.stylerState.activeSubState = state;
-        [...wrapper.children].forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
+        this.essencesWrapper.classList.add("sk_hidden");
+        this.stylerUI.root.classList.remove("sk_hidden");
 
-        const el = this.stylerState.activeTarget;
+        this.actionsWrapper.classList.add("sk_hidden");
+        this.stylerUI.actionsWrapper.classList.remove("sk_hidden");
+    }
 
-        this.clearStateClasses(el);
+    stylerUiHide() {
+        this.stylerStart();
+        this.stylerState.isRunning = true;
+        this.essencesWrapper.classList.remove("sk_hidden");
+        this.stylerUI.root.classList.add("sk_hidden");
 
-        if (state === "hover") {
-          el.classList.add("sk_preview_hover");
-        } else if (state !== "default") {
-          el.classList.add(state);
+        this.actionsWrapper.classList.remove("sk_hidden");
+        this.stylerUI.actionsWrapper.classList.add("sk_hidden");
+    }
+
+    stylerToggle() {
+        if (this.stylerState.isRunning) {
+            this.stylerStop();
+        } else {
+            this.stylerStart();
+        }
+    }
+
+
+    stylerStart() {
+        this.stylerState.isRunning = true;
+
+        this.stylerTargets.forEach(t => {
+            let currentPageTargets = this.stylerState.target.querySelectorAll(t.selector);
+            currentPageTargets.forEach((el) => {
+                el.addEventListener("mouseenter", this.stylerMouseOverHandler, true);
+                el.addEventListener("click", this.stylerClickHandler, true);
+            });
+        })
+
+        console.log('styler started');
+
+    }
+
+    stylerStop() {
+        this.stylerState.isRunning = false;
+
+        this.stylerState.editableElements.forEach((el) => {
+            el.removeEventListener("mouseenter", this.stylerMouseOverHandler, true);
+            el.removeEventListener("click", this.stylerClickHandler, true);
+        });
+        console.log('styler stopped');
+
+    }
+
+    stylerMouseOverHandler(evt) {
+        if (this.stylerState.isRunning) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            const path = evt.composedPath();
+
+            const hoveredElement = this.stylerTargets.find(entry =>
+                path.find(el => el.matches?.(entry.selector))
+            );
+
+            if (hoveredElement) {
+                const target = path.find(el => el.matches?.(hoveredElement.selector));
+                let selector = hoveredElement.selector;
+                let css = this.stylerHighlightStlye(selector);
+                this.setStylerStyle(css);
+
+                const cleanup = () => {
+                    this.setStylerStyle("");
+                    target.removeEventListener("mouseleave", handleMouseOut);
+                };
+
+                const handleMouseOut = (evy) => {
+                    cleanup();
+                };
+
+                target.addEventListener("mouseleave", handleMouseOut);
+            }
+        }
+    }
+
+    stylerClickHandler(evt) {
+        if (this.stylerState.isRunning) {
+            this.stylerStop();
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            const path = evt.composedPath();
+
+            const clickedElement = this.stylerTargets.find(entry =>
+                path.find(el => el.matches?.(entry.selector))
+            );
+
+            this.stylerActiveTarget = clickedElement;
+
+            if (clickedElement) {
+                const target = path.find(el => el.matches?.(clickedElement.selector));
+                this.stylerActiveTargetDomElement = target;
+                this.stylerUiShow(target);
+                this.stylerCreateState();
+                this.createStylerControls();
+            }
+        }
+    }
+
+
+    stylerCreateCssBasedOnState() {
+
+        const fullSkin = this.stylerSkin;
+
+        let css = "";
+
+        for (const selector in fullSkin) {
+
+            const targetConfig = this.stylerTargets.find(t => t.selector === selector);
+            if (!targetConfig) continue;
+
+            const essence = Array.isArray(targetConfig.essence)
+                ? targetConfig.essence[0]
+                : targetConfig.essence;
+
+            const skinChunk = fullSkin[selector];
+            const stateCnMask = targetConfig?.stateCnMask || {};
+
+            for (const state in skinChunk) {
+                const mask = targetConfig.stateEssenceMask[state];
+                //if (["uniqueSelector"].includes(state)) continue;
+
+                const backgrounds = skinChunk[state]?.backgrounds || {};
+                const texts = skinChunk[state]?.texts || {};
+                const accents = skinChunk[state]?.accents || {};
+
+                let ruleSelector;
+                if (state === "default") {
+                    ruleSelector = selector;
+                } else if (stateCnMask[state]) {
+                    ruleSelector = `${selector}.${stateCnMask[state]}`;
+                } else if (state === "hover") {
+                    ruleSelector = `${selector}:hover`;
+                } else {
+                    ruleSelector = `${selector}.${state}`;
+                }
+
+                let block = `${ruleSelector} {\n`;
+
+                Object.entries(backgrounds).forEach(([key, value]) => {
+                    //block += `\t--${essence}${this.cfl(key)}: var(--${key});\n`;
+                    block += `\t--${mask[key]}: var(--${key});\n`;
+                    block += `\t--${key}: ${value};\n`;
+                });
+
+                Object.entries(texts).forEach(([key, value]) => {
+                    //block += `\t--${essence}${this.cfl(key)}: var(--${key});\n`;
+                    block += `\t--${mask[key]}: var(--${key});\n`;
+                    block += `\t--${key}: ${value};\n`;
+                });
+
+                Object.entries(accents).forEach(([key, value]) => {
+                    //block += `\t--${essence}${this.cfl(key)}: var(--${key});\n`;
+                    block += `\t--${mask[key]}: var(--${key});\n`;
+                    block += `\t--${key}: ${value};\n`;
+                });
+
+                block += `}\n`;
+                css += block;
+            }
         }
 
-        this.updateStylerPickers(this.stylerState.activeSelector, el);
-      });
+        this.skin.stylerCSS = css;
+        this.cssCb(this.skin);
 
-      wrapper.appendChild(btn);
-    });
+        return css;
 
-    this.stylerUI.colorsControlWrapper.prepend(wrapper);
-    this.stylerUI.stateSwitcher = wrapper;
-  }
-
-  stylerClickHandler(evt) {
-    if (this.stylerState.isRunning) {
-      this.stylerStop();
-      evt.preventDefault();
-      evt.stopPropagation();
-
-      const path = evt.composedPath();
-      const clickedElement = path.find(
-        (el) => el.matches && el.matches("[data-sk]")
-      );
-
-      if (clickedElement) {
-        const target = clickedElement;
-        let selector = this.stylerGetSelector(target);
-        this.stylerUiShow(target);
-        this.stylerState.activeTarget = target;
-        const stateAttr = target.getAttribute("data-sk-state") || "default";
-        this.stylerState.availableSubStates = stateAttr.split(" ");
-        this.createStateSwitcher(); // create UI to switch state
-
-        this.stylerState.activeSelector = selector;
-
-        this.stylerCurrentSelector = selector;
-        this.stylerCreateState(selector, target);
-        this.updateStylerPickers(selector, target);
-
-        // this.stylerCreateControls();
-      }
     }
-  }
 
-  clearStateClasses(el) {
-    const states = this.stylerState.availableSubStates || [];
-    states.forEach((s) => {
-      if (s !== "default") el.classList.remove(s);
-    });
-    el.classList.remove("sk_preview_hover");
-  }
-  setStylerStyle(css) {
-    const _id = "sk_styler_injected";
-    let styleElement = this.stylerState.target.querySelector(`#${_id}`);
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.setAttribute("id", _id);
-      this.stylerState.target.appendChild(styleElement);
+
+    setStylerStyle(css) {
+        const _id = "sk_styler_injected";
+        let styleElement = this.stylerState.target.querySelector(`#${_id}`);
+        if (!styleElement) {
+            styleElement = document.createElement("style");
+            styleElement.setAttribute("id", _id);
+            this.stylerState.target.appendChild(styleElement);
+        }
+        this.injectedStyle = styleElement;
+        this.injectedStyle.innerHTML = css;
     }
-    this.injectedStyle = styleElement;
-    this.injectedStyle.innerHTML = css;
-  }
 
-  stylerHighlightStlye(cn) {
-    const colors = [
-      "#FF637C",
-      "#8144CD",
-      "#7872E0",
-      "#56A9E2",
-      "#D2F58D",
-      "#FFD76B",
-    ];
 
-    const bandSize = 16;
-    const stops = [];
+    stylerHighlightStlye(cn) {
+        const colors = [
+            "#FF637C",
+            "#8144CD",
+            "#7872E0",
+            "#56A9E2",
+            "#D2F58D",
+            "#FFD76B",
+        ];
 
-    colors.forEach((color, i) => {
-      const start = i * 2 * bandSize;
-      const mid = start + bandSize;
-      const end = mid + bandSize;
+        const bandSize = 16;
+        const stops = [];
 
-      stops.push(
-        `var(--sk_dominantBg) ${start}px`,
-        `var(--sk_dominantBg) ${mid}px`,
-        `${color} ${mid}px`,
-        `${color} ${end}px`
-      );
-    });
+        colors.forEach((color, i) => {
+            const start = i * 2 * bandSize;
+            const mid = start + bandSize;
+            const end = mid + bandSize;
 
-    const gradientStops = stops.join(", ");
+            stops.push(
+                `var(--sk_dominantBg) ${start}px`,
+                `var(--sk_dominantBg) ${mid}px`,
+                `${color} ${mid}px`,
+                `${color} ${end}px`
+            );
+        });
 
-    const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
+        const gradientStops = stops.join(", ");
 
-    let css_ = `
+        const repeatingGradient = `repeating-linear-gradient(45deg, ${gradientStops})`;
+
+        let css = `
 @keyframes sk_custom_hover_anim {
   from{
     background-position: 0 0;
@@ -3286,34 +3022,26 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
   }
 }
 
+
 ${cn}{
   background-image: ${repeatingGradient} !important;
   color: var(--dominantTxt) !important;
   background-size: 200% 200%;
-  animation-duration: 5s;
+  animation-duration: 10s;
   animation-direction: normal;
   animation-iteration-count: 88;
-  animation-name: pulseGlow ;
+  animation-name: sk_custom_hover_anim;
   animation-timing-function: linear;
 }
 ${cn}:nth-child(even){
   animation-direction: reverse;
 }
 
-
-`;
-
-    let css = `
-
-${cn}{
-  outline-width: 1px;
-  outline-offset: 1px;
-  outline-style: double;
-  transition: outline-offset 0.3s linear;
-  outline-color: #7872E0;
+${cn} > * {
+    opacity: 0.8;
 }
 `;
 
-    return css;
-  }
+        return css;
+    }
 }
