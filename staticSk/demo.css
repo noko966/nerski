@@ -255,7 +255,7 @@
   align-items: stretch;
   flex-direction: column;
   row-gap: 8px;
-  width: 400px;
+  /* width: 400px; */
 }
 
 .matchListWrapper {
@@ -264,3 +264,424 @@
   background: var(--Bg1);
   color: var(--Txt1);
 }
+
+
+.lv_event_row {
+    align-items: center;
+    background-color: var(--eventBg);
+    border-bottom: 1px solid var(--eventBorder);
+    color: var(--eventTxt2);
+    display: flex;
+    font-size: 13px;
+    height: 68px;
+    padding: 0 16px;
+}
+.lv_event_row .lv_event_details_wrapper {
+    align-items: center;
+    cursor: default;
+    display: flex;
+    flex-grow: 1;
+    min-width: 1px;
+    min-width: 180px
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_time {
+    -webkit-margin-end: 5px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    font-size: 12px;
+    margin-inline-end:5px;width: 64px
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_time .lv__time_and_date {
+    align-items: center;
+    column-gap: 4px;
+    display: inline-flex
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_time>span {
+    display: block;
+    line-height: 16px;
+    margin: 2px 0;
+    max-width: 100%
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_details {
+    display: flex;
+    flex-grow: 1;
+    margin-right: 8px;
+    min-width: 1px
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_details .lv_event_info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 100px
+}
+
+.lv_event_row .lv_event_details_wrapper .lv_event_details .lv_event_info .lv_champ_name {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    font-size: 12px;
+    margin-bottom: 4px;
+    min-width: 1px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market {
+    align-items: center;
+    border: 1px solid #0000;
+    border-radius: 5px;
+    column-gap: 8px;
+    display: flex;
+    padding: 3px;
+    width: 240px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market--feature {
+    --lvEventMarketBorderX: 0;
+    position: relative
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market--feature.lv_market-overUnder {
+    --lvEventMarketBorderX: 34px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market--feature:before {
+    border: 1px solid var(--accentBg);
+    border-radius: inherit;
+    bottom: 0;
+    content: "";
+    display: block;
+    left: var(--lvEventMarketBorderX);
+    opacity: .5;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1
+}
+
+.lv_rtl .lv_event_row .lv_event_stakes .lv_event_market--feature:before {
+    left: 0;
+    right: var(--lvEventMarketBorderX)
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder {
+    position: relative;
+    width: 194px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup {
+    background: var(--modalBg);
+    border: 1px solid var(--modalBg2);
+    border-radius: 3px;
+    color: var(--modalTxt2);
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+    left: 50%;
+    max-height: 190px;
+    opacity: 0;
+    padding: 14px;
+    pointer-events: none;
+    position: absolute;
+    top: 28px;
+    transform: translateX(-50%);
+    width: 256px;
+    z-index: -99999
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup.top_popup {
+    bottom: 27px;
+    top: unset;
+    transform: translate(-50%)
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup.top_popup:before {
+    bottom: -28px;
+    top: -20px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup:before {
+    bottom: 0;
+    content: "";
+    display: block;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: -28px;
+    width: 60px;
+    z-index: -1
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup:hover {
+    opacity: 1;
+    pointer-events: all;
+    z-index: 99999
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup:hover:before {
+    pointer-events: all
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content {
+    overflow-y: auto;
+    overscroll-behavior: contain
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .selected_row {
+    background: var(--modalBg3);
+    border-radius: 8px;
+    color: var(--modalTxt);
+    padding-right: 8px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .selected_row .lv_stake:not(.lv_stake-selected) {
+    background: var(--oddBg3);
+    color: var(--oddTxt)
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .lv__ellipsis {
+    text-decoration: none
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content .lv_stakes_argument {
+    -webkit-margin-start: 5px;
+    -webkit-margin-end: -2px;
+    margin-inline-end:-2px;margin-inline-start:5px;width: 28px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content::-webkit-scrollbar {
+    background-color: var(--eventBg);
+    display: initial;
+    height: 4px;
+    width: 4px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content::-webkit-scrollbar-track {
+    background: var(--dominantBg)
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_argument_popup_content::-webkit-scrollbar-thumb {
+    background-color: var(--eventBg);
+    border-radius: 8px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_event_market {
+    height: 52px;
+    padding: 0 16px;
+    width: auto
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_event_market--feature:before {
+    content: unset;
+    display: none
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup .lv_event_market .lv_stake {
+    max-width: 72px
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup:hover {
+    display: flex;
+    flex-direction: column
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market.lv_market-overUnder .lv_argument_popup.scroll_content {
+    padding: 12px 8px 12px 12px
+}.lv_event_row .lv_event_stakes {
+    column-gap: 16px;
+    display: flex;
+}
+
+.lv_event_row .lv_event_stakes .lv_event_market {
+    align-items: center;
+    border: 1px solid #0000;
+    border-radius: 5px;
+    column-gap: 8px;
+    display: flex;
+    padding: 3px;
+    width: 240px;
+}.lv_stake {
+    align-items: center;
+    background-color: var(--oddBg);
+    border: 1px solid var(--oddBorder);
+    border-radius: var(--border-radius-2);
+    color: var(--oddTxt);
+    display: flex;
+    flex: 1 1;
+    font-size: 14px;
+    height: 40px;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition-delay: 10ms;
+    transition-duration: .18s;
+    transition-property: color,background-color;
+    transition-timing-function: ease-out
+}
+
+@media only screen and (max-width: 1540px) {
+    .lv_stake {
+        font-size:13px
+    }
+}
+
+.lv_stake:hover {
+    background-color: var(--oddBgHover)
+}
+
+.lv_stake.lv_stake-selected {
+    background-color: var(--oddActiveG);
+    color: var(--oddActiveTxt);
+    font-weight: 500
+}
+.lv_event_row .lv_event_stakes .lv_stakes_count {
+    align-items: center;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    transition-delay: 10ms;
+    transition-duration: .18s;
+    transition-timing-function: ease-out;
+    width: 42px;
+    appearance: none;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.lv_event_row .lv_event_stakes .lv_stakes_count:hover {
+    color: var(--eventTxt)
+}
+.lv_event_actions {
+    -webkit-margin-start: 16px;
+    align-items: center;
+    column-gap: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    justify-content: center;
+    margin-inline-start:16px;min-height: 1px;
+    min-width: 30px
+}
+
+.lv_event_actions--row {
+    flex-direction: row;
+    justify-content: flex-end
+}
+
+.lv_event_action_btn {
+    align-items: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    color: var(--eventTxt2);
+    cursor: pointer;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    min-width: 30px;
+    transition-delay: 10ms;
+    transition-duration: .18s;
+    transition-property: color;
+    transition-timing-function: ease-out
+}
+
+.lv_event_action_btn--line {
+    font-size: 16px;
+    line-height: 20px;
+    pointer-events: none
+}
+
+.lv_event_action_btn:hover {
+    color: var(--eventTxt)
+}
+
+.lv_event_action_score {
+    align-items: center;
+    color: var(--eventTxt);
+    display: flex;
+    flex-wrap: nowrap;
+    font-size: 14px;
+    font-weight: 400;
+    justify-content: flex-start;
+    line-height: 18px;
+    min-width: 26px;
+    text-align: end;
+    unicode-bidi: bidi-override
+}
+
+.lv_event_name{
+  font-weight: 500;
+  color: var(--eventTxt);
+}
+
+.grad_demo{
+          width: 100px;
+        height: 100px;
+        flex-shrink: 0;
+}
+.grad_demo_2{
+
+  background-image: linear-gradient(123deg, #FFFFFF 0%, #00B2FF 100%), linear-gradient(236deg, #BAFF99 0%, #005E64 100%), linear-gradient(180deg, #FFFFFF 0%, #002A5A 100%), linear-gradient(225deg, #0094FF 20%, #BFF4ED 45%, #280F34 45%, #280F34 70%, #FF004E 70%, #E41655 85%, #B30753 85%, #B30753 100%), linear-gradient(135deg, #0E0220 15%, #0E0220 35%, #E40475 35%, #E40475 60%, #48E0E4 60%, #48E0E4 68%, #D7FBF6 68%, #D7FBF6 100%);
+background-blend-mode: overlay, overlay, overlay, darken, normal;
+
+}
+.grad_demo_3{
+
+background-image: conic-gradient(at center bottom, rgb(255, 255, 255), rgb(14, 165, 233), rgb(14, 165, 233));
+
+
+}
+
+.grad_demo_4{
+background-image: linear-gradient(120deg, #185494, #EE1D23, #FAAF18, #FFFFFF);
+
+}
+
+.grad_demo_1{
+  background-image: linear-gradient(114.95deg, rgba(235, 0, 255, 0.5) 0%, rgba(0, 71, 255, 0) 34.35%), linear-gradient(180deg, #004B5B 0%, #FFA7A7 100%), linear-gradient(244.35deg, #FFB26A 0%, #3676B1 50.58%, #00A3FF 100%), linear-gradient(244.35deg, #FFFFFF 0%, #004A74 49.48%, #FF0000 100%), radial-gradient(100% 233.99% at 0% 100%, #B70000 0%, #AD00FF 100%), linear-gradient(307.27deg, #1DAC92 0.37%, #2800C6 100%), radial-gradient(100% 140% at 100% 0%, #EAFF6B 0%, #006C7A 57.29%, #2200AA 100%);
+background-blend-mode: hard-light, overlay, overlay, overlay, difference, difference, normal;
+
+}
+.grad_demo_root{
+          min-height: 290px;
+        flex-grow: 0;
+        flex-shrink: 1;
+        flex-basis: calc(25% - 1em);
+        text-align: center;
+    border-radius: 24px;
+    padding: 20px;
+    min-height: 170px;
+    flex: 0 1 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: radial-gradient(100% 100% at 50% 50%, hsla(0, 0%, 100%, .05) 0, hsla(0, 0%, 100%, 0) 100%);
+    min-height: 290px;
+        flex-grow: 0;
+        flex-shrink: 1;
+        flex-basis: calc(15% - 8px);
+}
+
+.grad_demos_wrapper{
+      list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+}
+
