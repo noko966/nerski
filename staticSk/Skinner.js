@@ -4,7 +4,7 @@ class Skinner {
     this.pickers = [];
     this.stylerTargets = stylerTargets || [{
       selector: '.lv_menu_item.lv_menu_item-sport',
-      props: ['bg', 'txt', 'ps', 'pe', 'pt', 'pb'],
+      props: ['bg', 'txt', 'ps', 'pe'],
       states: ['default', 'hover', 'active'],
       essence: ['menu_1'],
       stateCnMask: {
@@ -3063,7 +3063,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
           ruleSelector = `${selector}.${state}`;
         }
 
-        block = `${ruleSelector} {\n`;
+        block += `${ruleSelector} {\n`;
 
         Object.entries(backgrounds).forEach(([key, value]) => {
           //block += `\t--${essence}${this.cfl(key)}: var(--${key});\n`;
@@ -3086,7 +3086,6 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
 
 
         block += `}\n`;
-        css += block;
       }
 
       const paddings = skinChunk.paddings || {};
