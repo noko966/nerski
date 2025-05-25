@@ -2720,3 +2720,74 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+
+.sk_styler_control_group {
+    display: flex;
+    align-items: center;
+    background: var(--sk_dominantBg3);
+    border: 1px solid var(--sk_dominantBg3Hover);
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: var(--sk_dominantTxt);
+    column-gap: 8px;
+}
+.sk_styler_control_group > .sk_styler_control_group_container {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+.sk_styler_control_group > span {
+    flex-grow: 1;
+    min-width: 1px;
+    font-size: 11px;
+}
+
+.sk_styler_control_state_wrapper{
+    display: flex;
+    align-items: stretch;
+    row-gap: 6px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    display: none;
+}
+
+.sk_styler_control_state_wrapper.active{
+    display: flex;
+}
+
+
+.sk_styler_control_state_tabs_wrapper {
+    padding: 16px 8px 0;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.sk_styler_control_state_tab {
+    appearance: none;
+    border: 0;
+    text-align: center;
+    height: var(--skinnerBtnHeight);
+    text-decoration: none;
+    background-color: var(--sk_buttonBg);
+    color: var(--sk_buttonTxt);
+    fill: var(--sk_buttonTxt);
+    display: block;
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 6px;
+    border-radius: 2px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+}
+
+.sk_styler_control_state_tab.active {
+    background-color: var(--sk_accentBg);
+    color: var(--sk_accentTxt);
+}
