@@ -92,12 +92,14 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         dominant: "#2f2f2f",
         button: "#282828",
         accent: "#00aabe",
+        theme: "dark",
       },
       light: {
         name: "light",
         dominant: "#d4d7db",
-        button: "#282828",
+        button: "#dbdbdb",
         accent: "#00aabe",
+        theme: "light",
       },
     };
 
@@ -2447,6 +2449,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
     this.generateUiPalette(colors);
   }
   generateUiPalette(colors) {
+    const themeClass = colors.theme;
     const UISkin = {};
     UISkin.order = ["dominant", "accent", "button"];
 
@@ -2494,6 +2497,7 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
       UISkin[name][`${_vd.name}Glass`] = createGlass(0.5);
       UISkin[name][`${_vd.name}Glass2`] = createGlass(0.1);
     });
+    this.skinnerRoot.classList.toggle('sk_state_light');
     const uiPrefix = "--sk_";
     UISkin.order.forEach((name, i) => {
       let _vd = this.verbalData(`${name}`);
@@ -2825,11 +2829,12 @@ h-9c-0.3,0-0.5-0.1-0.7-0.3c-0.2-0.2-0.3-0.4-0.3-0.7v-9 M12.5,10.5h-3v-3 M9.5,10.
         this.stylerState.activeSubState = s;
       });
     });
-
+    const wrapperUnstateProps = document.createElement('div');
+    wrapperUnstateProps.className = "sk_styler_ui_unstate_props_wrapper";
     const wrapperLayout = document.createElement('div');
     wrapperLayout.className = "sk_styler_layout_root";
-    this.stylerUI.root.appendChild(wrapperLayout);
-
+    wrapperUnstateProps.appendChild(wrapperLayout);
+    this.stylerUI.root.appendChild(wrapperUnstateProps);
 
     const linkToggle = document.createElement("input");
     linkToggle.type = "checkbox";

@@ -5,7 +5,7 @@
   --skinnerHeaderTogglerSize: 50px;
   --skinnerToolboxHeight: 28px;
   --skinnerToolboxFooterHeight: 40px;
-  --skinnerBtnHeight: 24px;
+  --skinnerBtnHeight: 26px;
   --skinnerToolboxCollapserSize: 42px;
   --control-picker-size: 28px;
   --control-picker-size-border: calc(var(--control-picker-size) - 4px);
@@ -29,10 +29,17 @@
   --sk_rainbow_4: #56a9e2;
   --sk_rainbow_5: #d2f58d;
   --sk_rainbow_6: #ffd76b;
+  --sk_btn_shadow: rgba(255, 255, 255, 0.15) 0 1px 0 inset, rgba(46, 54, 80, 0.015) 0 1px 1px;
+  --sk_btn_gradient: linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
+}
+
+.sk_state_light.sk_state_light {
+  --sk_btn_shadow: rgba(255, 255, 255, 0.6) 0 1px 0 inset, rgba(46, 54, 80, 0.15) 0 1px 1px;
+  --sk_btn_gradient: linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
 }
 
 .sk_path_string_root {
-  height: 48px;
+  height: 30px;
   position: relative;
   width: 100%;
   position: absolute;
@@ -48,7 +55,6 @@
 
 .sk_path_string_root > svg {
   position: absolute;
-  height: 100%;
   width: 100%;
   top: 0px;
   stroke: var(--sk_accentBg);
@@ -653,26 +659,36 @@ body {
 }
 
 .sk_btn {
-  appearance: none;
   border: 0;
-  text-align: center;
-  height: var(--skinnerBtnHeight);
-  text-decoration: none;
-  background-color: var(--sk_buttonBg);
-  color: var(--sk_buttonTxt);
-  fill: var(--sk_buttonTxt);
-  display: block;
-  text-transform: capitalize;
-  font-size: 12px;
-  position: relative;
-  font-weight: 700;
-  padding: 0 6px;
-  border-radius: 2px;
-  transition: all 0.2s;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  column-gap: 4px;
+    text-align: center;
+    height: var(--skinnerBtnHeight);
+    text-decoration: none;
+    background-color: var(--sk_buttonBg);
+    color: var(--sk_buttonTxt);
+    fill: var(--sk_buttonTxt);
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    padding: 0 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 4px;
+    appearance: button;
+    background-image: var(--sk_btn_gradient);
+    border: 1px solid var(--sk_buttonBg);
+    box-shadow: var(--sk_btn_shadow);
+    box-sizing: border-box;
+    cursor: pointer;
+    margin: 0;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
 }
 
 .sk_btn.variant_load {
@@ -713,18 +729,21 @@ body {
 }
 
 .sk_btn:hover {
-  background-color: var(--sk_buttonBgHover);
+  background-color: var(--sk_buttonBg2);
+  border-color: var(--sk_buttonBg2);
 }
 
 .sk_btn.variant_cta {
   background-color: var(--sk_accentBg);
+  border-color: var(--sk_accentBg);
   color: var(--sk_accentTxt);
   position: relative;
 }
 
 .sk_btn.variant_cta:hover {
-  background-color: var(--sk_accentBgHover);
+  background-color: var(--sk_accentBg2);
   color: var(--sk_accentTxt);
+  border-color: var(--sk_accentBg2);
 }
 
 /* view switchers */
@@ -1263,19 +1282,37 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .sk_switch_icon {
-  --size: 24px;
+  --size: 26px;
   width: var(--size);
   height: var(--size);
   flex-shrink: 0;
-  background: var(--sk_dominantBg2);
-  color: var(--sk_dominantTxt2);
-  border-radius: 2px;
-  border: 1px solid var(--sk_dominantBg3);
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  border: 0;
+    text-align: center;
+    text-decoration: none;
+    background-color: var(--sk_buttonBg);
+    color: var(--sk_buttonTxt);
+    fill: var(--sk_buttonTxt);
+    text-transform: capitalize;
+    font-size: 12px;
+    position: relative;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 4px;
+    appearance: button;
+    background-image: var(--sk_btn_gradient);
+    border: 1px solid var(--sk_buttonBg);
+    box-shadow: var(--sk_btn_shadow);
+    cursor: pointer;
+    margin: 0;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
 }
 
 input[type="range"]::-ms-track {
@@ -2459,7 +2496,7 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
 
 .sk_styler_ui_root {
   width: 100%;
-  padding: 24px 8px 8px;
+  padding: 8px 8px 32px;
   height: calc(100% - var(--skinnerToolboxFooterHeight));
   overflow-y: auto;
   overflow-x: hidden;
@@ -2758,36 +2795,60 @@ input[type="range"].sk_control_radius:focus::-moz-range-thumb {
 
 
 .sk_styler_control_state_tabs_wrapper {
-    padding: 16px 8px 0;
+    padding: 0 8px;
     display: flex;
     align-items: center;
     column-gap: 8px;
 }
 
 .sk_styler_control_state_tab {
-    appearance: none;
-    border: 0;
+        border: 0;
     text-align: center;
     height: var(--skinnerBtnHeight);
     text-decoration: none;
     background-color: var(--sk_buttonBg);
     color: var(--sk_buttonTxt);
     fill: var(--sk_buttonTxt);
-    display: block;
     text-transform: capitalize;
     font-size: 12px;
     position: relative;
     font-weight: 500;
     padding: 0 6px;
-    border-radius: 2px;
-    transition: all 0.2s;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     column-gap: 4px;
+    appearance: button;
+    background-image: var(--sk_btn_gradient);
+    border: 1px solid var(--sk_buttonBg);
+    box-shadow: var(--sk_btn_shadow);
+    box-sizing: border-box;
+    cursor: pointer;
+    margin: 0;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+}
+
+.sk_styler_control_state_tab:hover{
+  background-color: var(--sk_buttonBg2);
+    border-color: var(--sk_buttonBg2);
 }
 
 .sk_styler_control_state_tab.active {
     background-color: var(--sk_accentBg);
     color: var(--sk_accentTxt);
+    border-color: var(--sk_accentBg);
+
+}
+
+.sk_styler_ui_unstate_props_wrapper {
+        align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    padding: 0 8px;
 }
